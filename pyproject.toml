@@ -1,0 +1,17 @@
+[project]
+name = "wisp-portal"
+version = "0.3.0"
+description = "Portal WISP para gestion de nodos, AP, OLT y clientes - Version 0.3"
+requires-python = ">=3.10,<3.11"
+dependencies = [
+    "django>=5.2,<5.3",
+    "psycopg2-binary>=2.9",
+    "python-dotenv>=1.0",
+    "cryptography>=42.0",
+    "librouteros>=3.2,<4.0",
+    "pysnmp>=6.2.0,<7.0.0",
+    "pyasn1==0.6.0",
+]
+
+[tool.uv]
+python-preference = "only-managed"

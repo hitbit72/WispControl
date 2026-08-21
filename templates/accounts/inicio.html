@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block titulo %}Inicio · Portal WISP{% endblock %}
+{% block contenido %}
+<h2>Bienvenido, {{ usuario.get_full_name|default:usuario.username }}</h2>
+<p class="text-muted">Rol: {{ usuario.get_rol_display }}</p>
+<div class="alert alert-info">
+    Núcleo del sistema funcionando: login, roles y modelo de datos base listos.
+    El dashboard con métricas, mapa e inventario visual llega en la siguiente fase.
+</div>
+{% endblock %}

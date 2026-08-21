@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block titulo %}Mi perfil · Portal WISP{% endblock %}
+{% block contenido %}
+<h2><i class="bi bi-person" aria-hidden="true"></i> Mi perfil</h2>
+
+<div class="d-flex gap-2 mb-3">
+    <a href="{% url 'accounts:cambiar_contrasena' %}" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-key" aria-hidden="true"></i> Cambiar contraseña
+    </a>
+</div>
+
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-success">{{ message }}</div>
+{% endfor %}
+{% endif %}
+
+<section class="panel row g-1 mt-1" style="max-width: 760px;">
+<!-- <section class="row"> -->
+    <div class="col-md-12">
+        <div class="card mb-1">
+            <div class="card-body">
+                <h5 class="card-title">Datos de acceso</h5>
+                <p class="mb-1"><strong>Usuario:</strong> {{ request.user.username }}</p>
+                <p class="mb-0"><strong>Rol:</strong> {{ request.user.get_rol_display }}</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="panel mt-1" style="max-width: 760px;">
+    <form method="post" class="panel needs-validation" style="max-width: 760px;" novalidate>
+        {% csrf_token %}
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label" for="id_first_name">Nombre</label>
+                {{ form.first_name }}
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="id_last_name">Apellidos</label>
+                {{ form.last_name }}
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="id_email">Email</label>
+                {{ form.email }}
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="id_telefono">Teléfono</label>
+                {{ form.telefono }}
+            </div>
+            <div class="col-12">
+                <div class="form-check form-switch">
+                    {{ form.activo_en_campo }}
+                    <label class="form-check-label" for="id_activo_en_campo">
+                        Disponible para asignación de tareas
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4 d-flex gap-2">
+            <button type="submit" class="btn btn-primary"><i class="bi bi-send" aria-hidden="true"></i> Guardar</button>
+            <a href="/" class="btn btn-outline-secondary"><i class="bi bi-x" aria-hidden="true"></i> Cancelar</a>
+        </div>
+    </form>
+</section>
+{% endblock %}

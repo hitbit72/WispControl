@@ -1,0 +1,27 @@
+# Environments
+.env
+.venv
+env/
+venv/
+
+.agents/
+
+docs/
+temp/
+
+__pycache__/
+*.pyc
+
+# Pyre type checker
+.pyre/
+# pytype static type analyzer
+.pytype/
+
+staticfiles/
+migrations/
+
+*.sqlite3
+.DS_Store
+run.bat
+opencode.json
+AGENTS.md

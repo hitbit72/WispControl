@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Acceso al portal WISP · InforCEM">
+  <link rel="stylesheet" href="/static/assets/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/static/assets/vendors/bootstrap-icons/bootstrap-icons.css">
+  <link rel="stylesheet" href="/static/assets/css/style.css">
+  <title>Iniciar sesión · Portal WISP</title>
+</head>
+<body class="auth-body">
+  <button class="icon-button theme-toggle auth-theme-toggle" type="button" data-theme-toggle aria-label="Cambiar tema" title="Cambiar tema">
+    <i class="bi bi-moon-stars" data-theme-icon aria-hidden="true"></i>
+  </button>
+
+  <main class="auth-page">
+    <section class="auth-card">
+      <a class="auth-brand" href="/">
+        <span class="brand-icon"><i class="bi bi-grid-1x2-fill" aria-hidden="true"></i></span>
+        <span><strong>InforCEM</strong><small>Acceso al portal WISP.</small></span>
+      </a>
+      <div class="auth-visual"><img src="/static/assets/images/logo/dasher-ai.png" alt="Portal WISP"></div>
+      {% if form.errors %}
+      <div class="alert alert-danger">Usuario o contraseña incorrectos.</div>
+      {% endif %}
+      {% if next and request.user.is_authenticated %}
+      <div class="alert alert-warning">Tu cuenta no tiene acceso a esa página.</div>
+      {% endif %}
+      <form class="needs-validation" method="post" action="{% url 'accounts:login' %}" novalidate>
+        {% csrf_token %}
+        <div class="mb-4">
+          <p class="eyebrow mb-1">Acceso seguro</p>
+          <h1 class="h3 mb-1">Login</h1>
+          <p class="text-muted mb-0">Inicia sesión en el portal</p>
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="{{ form.username.id_for_label }}">Usuario</label>
+          {{ form.username }}
+          <div class="invalid-feedback">Introduce un nombre de usuario válido.</div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="{{ form.password.id_for_label }}">Contraseña</label>
+          {{ form.password }}
+          <div class="invalid-feedback">Introduce una contraseña válida.</div>
+        </div>
+        {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+        <button class="btn btn-primary w-100" type="submit"><i class="bi bi-box-arrow-in-right" aria-hidden="true"></i> Iniciar sesión</button>
+      </form>
+    </section>
+  </main>
+
+  <script src="/static/assets/js/bootstrap.bundle.min.js"></script>
+  <script src="/static/assets/js/main.js"></script>
+</body>
+</html>
