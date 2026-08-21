@@ -34,7 +34,7 @@ body {
   background: linear-gradient(180deg, #f8fbff 0%, var(--admin-bg) 42%, #eef4fa 100%);
   color: var(--admin-text);
   font-family: "Segoe UI", Arial, sans-serif;
-  font-size: 0.90rem;
+  font-size: 0.85rem;
 }
 
 a {

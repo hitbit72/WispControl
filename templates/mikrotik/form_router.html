@@ -11,11 +11,6 @@
 <form method="post" class="panel needs-validation {% if form.errors %}was-validated{% endif %}" style="max-width: 760px;" novalidate>
     {% csrf_token %}
     <div class="row g-3">
-        <div class="col-md-12">
-            <label class="form-label" for="{{ form.sector.id_for_label }}">Sector</label>
-            {{ form.sector }}
-            <div class="invalid-feedback">El sector es obligatorio.</div>
-        </div>
         <div class="col-md-6">
             <label class="form-label" for="{{ form.nombre.id_for_label }}">Nombre</label>
             {{ form.nombre }}
@@ -53,14 +48,23 @@
             <label class="form-label" for="{{ form.ppp_disable.id_for_label }}">Perfil desactivados</label>
             {{ form.ppp_disable }}
         </div>
-        <div class="col-md-6">
-            <label class="form-label" for="{{ form.latitud.id_for_label }}">Latitud</label>
-            {{ form.latitud }}
-        </div>
-        <div class="col-md-6">
-            <label class="form-label" for="{{ form.longitud.id_for_label }}">Longitud</label>
-            {{ form.longitud }}
-        </div>
+        <section class="panel">
+            <div class="row">
+                <div class="col-md-6">
+                    <label class="form-label" for="{{ form.sector.id_for_label }}">Sector</label>
+                    {{ form.sector }}
+                    <div class="invalid-feedback">El sector es obligatorio.</div>
+                </div>
+                    <div class="col-md-3">
+                    <label class="form-label" for="{{ form.latitud.id_for_label }}">Latitud</label>
+                    {{ form.latitud }}
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label" for="{{ form.longitud.id_for_label }}">Longitud</label>
+                    {{ form.longitud }}
+                </div>
+            </div>
+        </section>
         <div class="col-12">
             <label class="form-label" for="{{ form.notas.id_for_label }}">Notas</label>
             {{ form.notas }}
