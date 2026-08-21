@@ -1,0 +1,62 @@
+{# Partial reutilizado en la carga inicial (lista.html) y en las respuestas #}
+{# HTMX de paginación/filtro. #}
+<table class="table table-hover align-middle">
+    <thead>
+        <tr>
+            <th>Fecha</th>
+            <th>Nivel</th>
+            <th>Evento</th>
+            <th>Módulo</th>
+            <th>Estado</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for evento in pagina %}
+        <!-- <tr class="{% if not evento.leido %}table-warning{% endif %}"> -->
+        <tr>
+            <td class="text-nowrap">{{ evento.fecha|date:"d/m/Y H:i" }}</td>
+            <td><span class="badge bg-{{ evento.color_badge }}">{{ evento.get_nivel_display }}</span></td>
+            <td>
+                <div>{{ evento.titulo }}</div>
+                {% if evento.texto %}<small class="text-muted">{{ evento.texto|truncatechars:120 }}</small>{% endif %}
+            </td>
+            <td>{{ evento.modulo|default:"—" }}</td>
+            <td>
+                {% if evento.leido %}
+                <span class="badge bg-success">Leído{% if evento.user %} · {{ evento.user.get_username }}{% endif %}</span>
+                {% else %}
+                <span class="badge bg-warning text-dark">Sin leer</span>
+                {% endif %}
+            </td>
+            <td class="text-end">
+                {% if not evento.leido and puede_marcar_eventos %}
+                <form method="post" action="{% url 'eventos:marcar_leido' evento.pk %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-outline-primary" title="Marcar como leído">
+                        <i class="bi bi-check2" aria-hidden="true"></i> Marcar leído
+                    </button>
+                </form>
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6" class="text-center text-muted py-4">No hay eventos.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% if pagina.paginator.num_pages > 1 %}
+<nav aria-label="Paginación de eventos">
+    <ul class="pagination pagination-sm mb-0">
+        {% for numero in pagina.paginator.page_range %}
+        <li class="page-item {% if numero == pagina.number %}active{% endif %}">
+            <a class="page-link"
+               href="?page={{ numero }}&filtro={{ filtro }}"
+               hx-get="{% url 'eventos:lista' %}?page={{ numero }}&filtro={{ filtro }}"
+               hx-target="#tabla-eventos">{{ numero }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+</nav>
+{% endif %}

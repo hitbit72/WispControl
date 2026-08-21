@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block titulo %}{{ sector.nombre }} · Portal WISP{% endblock %}
+{% block contenido %}
+<div class="d-flex justify-content-between align-items-start mb-3">
+    <div>
+        <h2 class="mb-0">{{ sector.nombre }}</h2>
+        <div class="text-muted">{{ sector.poblacion|default:"" }} {% if sector.direccion %}· {{ sector.direccion }}{% endif %}</div>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{% url 'sectores:editar_sector' sector.pk %}" class="btn btn-outline-primary">Editar</a>
+        <a href="{% url 'sectores:eliminar_sector' sector.pk %}" class="btn btn-outline-danger">Eliminar</a>
+    </div>
+</div>
+
+{% if sector.descripcion %}
+<div class="alert alert-light border mb-4">{{ sector.descripcion|linebreaks }}</div>
+{% endif %}
+
+<section class="panel mt-1">
+<div class="d-flex justify-content-between align-items-center mb-2">
+    <h4 class="mb-0">Dispositivos</h4>
+    <a href="{% url 'sectores:nuevo_dispositivo' sector.pk %}" class="btn btn-primary btn-sm">+ Nuevo dispositivo</a>
+</div>
+
+<div id="tabla-dispositivos" class="table-responsive">
+<table class="table table-hover align-middle" id="dispositivosTable" data-searchable-table>
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Marca</th>
+            <th>Estado</th>
+            <th>IP gestión</th>
+            <th>Modo</th>
+            <th>Tipo</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for dispositivo in sector.dispositivos.all %}
+        <tr>
+            <td><a href="{% url 'sectores:detalle_dispositivo' dispositivo.pk %}">{{ dispositivo.nombre }}</a></td>
+            <td>{{ dispositivo.get_marca_display }} {{ dispositivo.modelo|default:"" }}</td>
+            <td>{% include "red/dispositivo/comun/estado.html" %}</td>
+            <td>{{ dispositivo.ip_gestion|default:"—" }}</td>
+            <td>{{ dispositivo.get_rol_display }}</td>
+            <td>{{ dispositivo.get_tipo_display }}</td>
+            <td class="text-end">
+                <a href="{% url 'sectores:editar_dispositivo' dispositivo.pk %}" class="btn btn-sm btn-outline-primary">Editar</a>
+                <!-- <a href="{% url 'sectores:detalle_dispositivo' dispositivo.pk %}" class="btn btn-sm btn-outline-secondary">Ver</a> -->
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7" class="text-center text-muted py-3">Este sector todavía no tiene dispositivos.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+</section>
+
+{% if sector.routers_mikrotik.all %}
+<section class="panel mt-1">
+<div class="d-flex justify-content-between align-items-center mb-2">
+    <h4 class="mb-0">Routers MikroTik</h4>
+    <!-- <a href="{% url 'mikrotik:lista' %}" class="btn btn-primary btn-sm">+ Nuevo router</a> -->
+</div>
+
+<div id="tabla-routers" class="table-responsive">
+<table class="table table-hover align-middle" id="routerTable" data-searchable-table>
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>IP</th>
+            <th>Modelo</th>
+            <th>Puerto API</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for router in sector.routers_mikrotik.all %}
+        <tr>
+            <td><a href="{% url 'mikrotik:detalle' router.pk %}">{{ router.nombre }}</a></td>
+            <td>{{ router.ip }}</td>
+            <td>{{ router.modelo|default:"—" }}</td>
+            <td>{{ router.puerto }}</td>
+            <td class="text-end">
+                <!-- <a href="{% url 'mikrotik:detalle' router.pk %}" class="btn btn-sm btn-outline-secondary">Ver</a> -->
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5" class="text-center text-muted py-3">Este sector no tiene routers MikroTik asociados.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+</section>
+{% endif %}
+<div style="margin-top: 0.5rem;">
+<a href="{% url 'sectores:lista' %}"  class="btn btn-sm btn-outline-primary"><i class="bi bi-box-arrow-in-left"></i> Volver</a>
+</div>
+{% endblock %}

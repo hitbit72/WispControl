@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block titulo %}Eliminar router · Portal WISP{% endblock %}
+{% block contenido %}
+<h2>Eliminar router</h2>
+
+<div class="alert alert-warning" style="max-width: 640px;">
+    ¿Seguro que quieres eliminar el router <strong>{{ router.nombre }}</strong>
+    ({{ router.ip }})?
+    {% if router.planes.count %}
+    <p class="mb-0 mt-2">Tiene <strong>{{ router.planes.count }} plan(es)</strong> asociados
+    que se quedarán sin asignar a ningún router. La acción no se puede deshacer.</p>
+    {% endif %}
+</div>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-sm btn-outline-danger">Sí, eliminar</button>
+    <a href="{% url 'mikrotik:detalle' router.pk %}" class="btn btn-sm btn-outline-primary">Cancelar</a>
+</form>
+{% endblock %}

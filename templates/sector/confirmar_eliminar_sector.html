@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block titulo %}Eliminar sector · Portal WISP{% endblock %}
+{% block contenido %}
+<h2>Eliminar sector</h2>
+
+<div class="alert alert-warning" style="max-width: 640px;">
+    ¿Seguro que quieres eliminar el sector <strong>{{ sector.nombre }}</strong>?
+    {% if sector.dispositivos.count %}
+    <p class="mb-0 mt-2">Tiene <strong>{{ sector.dispositivos.count }} dispositivo(s)</strong>,
+    que quedarán sin sector, no se borrarán.
+    La acción no se puede deshacer.</p>
+    {% endif %}
+</div>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-sm btn-outline-danger">Sí, eliminar</button>
+    <a href="{% url 'sectores:detalle_sector' sector.pk %}" class="btn btn-sm btn-outline-primary">Cancelar</a>
+</form>
+{% endblock %}

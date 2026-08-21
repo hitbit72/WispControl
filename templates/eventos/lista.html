@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block titulo %}Eventos · Portal WISP{% endblock %}
+{% block contenido %}
+<div class="page-heading">
+    <div class="page-heading-copy">
+        <span class="page-icon"><i class="bi bi-list-check" aria-hidden="true"></i></span>
+        <div>
+            <p class="eyebrow mb-1">Gestión · Portal WISP</p>
+            <h1 class="h3 mb-1">Eventos</h1>
+            <p class="text-muted mb-0">Registro de eventos.</p>
+        </div>
+    </div>
+    <div class="heading-actions">
+        {% if puede_marcar_eventos and eventos_pendientes %}
+        <form method="post" action="{% url 'eventos:marcar_todos_leidos' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary btn-sm">
+                <i class="bi bi-check-all" aria-hidden="true"></i> Marcar todos como leídos
+            </button>
+        </form>
+        {% endif %}
+    </div>
+</div>
+
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-success">{{ message }}</div>
+{% endfor %}
+{% endif %}
+
+<section class="row g-3 mt-1">
+    <div class="col-12 col-sm-6 col-xl-4"><div class="alert alert-primary" role="alert"><strong>Total eventos:</strong> {{ total_eventos }}</div></div>
+    <div class="col-12 col-sm-6 col-xl-4"><div class="alert alert-warning" role="alert"><strong>Sin leer:</strong> {{ eventos_pendientes }}</div></div>
+</section>
+
+<section class="panel row g-3 mt-1">
+    <div class="d-flex gap-2 mb-3">
+        <a href="{% url 'eventos:lista' %}" class="btn btn-sm {% if filtro != 'no_leidos' %}btn-primary{% else %}btn-outline-secondary{% endif %}">Todos</a>
+        <a href="{% url 'eventos:lista' %}?filtro=no_leidos" class="btn btn-sm {% if filtro == 'no_leidos' %}btn-primary{% else %}btn-outline-secondary{% endif %}">Sin leer</a>
+    </div>
+
+    <section class="panel mt-1">
+        <div id="tabla-eventos" class="table-responsive">
+            {% include "eventos/_tabla.html" %}
+        </div>
+    </section>
+</section>
+{% endblock %}

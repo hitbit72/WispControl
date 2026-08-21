@@ -36,25 +36,13 @@
           <span class="nav-icon"><i class="bi bi-speedometer2" aria-hidden="true"></i></span>
           <span class="nav-text">Dashboard</span>
         </a>
-        <a class="nav-link {% if '/eventos/' in request.path %}active{% endif %}" href="{% url 'eventos:lista' %}">
-          <span class="nav-icon"><i class="bi bi-list-check" aria-hidden="true"></i></span>
-          <span class="nav-text">Notificaciones</span>
-        </a>
         <a class="nav-link {% if '/mikrotik/' in request.path  %}active{% endif %}" href="{% url 'mikrotik:lista' %}">
           <span class="nav-icon"><i class="bi bi-router" aria-hidden="true"></i></span>
           <span class="nav-text">Routers</span>
         </a>
-        <a class="nav-link {% if '/red/' in request.path %}active{% endif %}" href="{% url 'red:lista' %}">
+        <a class="nav-link {% if '/sectores/' in request.path %}active{% endif %}" href="{% url 'sectores:lista' %}">
           <span class="nav-icon"><i class="bi bi-hdd-network" aria-hidden="true"></i></span>
-          <span class="nav-text">Red</span>
-        </a>
-        <a class="nav-link {% if '/red/dispositivos/' in request.path %}active{% endif %}" href="{% url 'red:lista_dispositivos' %}">
-          <span class="nav-icon"><i class="bi bi-box-seam" aria-hidden="true"></i></span>
-          <span class="nav-text">Dispositivos</span>
-        </a>
-        <a class="nav-link {% if '/clientes/' in request.path %}active{% endif %}" href="{% url 'clientes:lista' %}">
-          <span class="nav-icon"><i class="bi bi-people" aria-hidden="true"></i></span>
-          <span class="nav-text">Clientes</span>
+          <span class="nav-text">Sectores</span>
         </a>
       </nav>
 
@@ -95,7 +83,7 @@
                 <i class="bi bi-bell" aria-hidden="true"></i>
               </button>
               <div class="dropdown-menu dropdown-menu-end notification-menu" id="notification-menu">
-                {% include 'eventos/_notificaciones.html' %}
+                <!--% include 'eventos/_notificaciones.html' %-->
               </div>
             </div>
 
@@ -125,9 +113,6 @@
       <footer class="admin-footer">
         <div class="container-fluid px-3 px-lg-4">
           <span><i class="bi bi-c-circle" aria-hidden="true"></i> 2026 hitbit72 · Developed by Jorge Tejada</span>
-          <!--
-          <span>Professional dashboard template.</span>
-          -->
         </div>
       </footer>
     </div>

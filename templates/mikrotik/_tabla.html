@@ -1,0 +1,47 @@
+{# Partial reutilizado en la carga inicial (lista.html) y en las respuestas HTMX. #}
+<table class="table table-hover align-middle" id="ordersTable" data-searchable-table>
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Modelo</th>
+            <th>IP</th>
+            <th>Puerto</th>
+            <th>Sector</th>
+            <th>Planes</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for router in pagina %}
+        <tr>
+            <td><a href="{% url 'mikrotik:detalle' router.pk %}">{{ router.nombre }}</a></td>
+            <td>{{ router.modelo|default:"—" }}</td>
+            <td>{{ router.ip }}</td>
+            <td>{{ router.puerto }}</td>
+            <td>{{ router.sector.nombre|default:"—" }}</td>
+            <td>{{ router.planes.count }}</td>
+            <td class="text-end">
+                <a href="{% url 'mikrotik:editar' router.pk %}" class="btn btn-sm btn-outline-primary">Editar</a>
+                <!-- <a href="{% url 'mikrotik:detalle' router.pk %}" class="btn btn-sm btn-outline-secondary">Ver</a> -->
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7" class="text-center text-muted py-4">No se encontraron routers.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% if pagina.paginator.num_pages > 1 %}
+<nav aria-label="User pagination">
+    <ul class="pagination pagination-sm mb-0">
+        {% for numero in pagina.paginator.page_range %}
+        <li class="page-item {% if numero == pagina.number %}active{% endif %}">
+            <a class="page-link"
+               href="?page={{ numero }}&q={{ busqueda }}&sector={{ sector_seleccionado }}"
+               hx-get="{% url 'mikrotik:lista' %}?page={{ numero }}&q={{ busqueda }}&sector={{ sector_seleccionado }}"
+               hx-target="#tabla-routers">{{ numero }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+</nav>
+{% endif %}

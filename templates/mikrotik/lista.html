@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block titulo %}Routers · Portal WISP{% endblock %}
+{% block contenido %}
+          <div class="page-heading">
+            <div class="page-heading-copy">
+              <span class="page-icon"><i class="bi bi-router" aria-hidden="true"></i></span>
+              <div>
+                <p class="eyebrow mb-1">Gestión · Portal WISP</p>
+                <h1 class="h3 mb-1">Routers MikroTik</h1>
+                <!-- 
+                <p class="text-muted mb-0">Review accounts, roles, account status, and team ownership.</p>
+                -->
+              </div>
+            </div>
+            <div class="heading-actions">
+                <a class="btn btn-outline-secondary btn-sm" href="/"><i class="bi bi-download" aria-hidden="true"></i> Exportar</a>
+                <a class="btn btn-primary btn-sm" href="{% url 'mikrotik:nuevo' %}"><i class="bi bi-person-plus" aria-hidden="true"></i> Nuevo Router</a>
+            </div>
+          </div>
+
+<section class="panel row g-3 mt-1">
+<form class="row g-2 mb-3"
+      hx-get="{% url 'mikrotik:lista' %}"
+      hx-target="#tabla-routers"
+      hx-trigger="input changed delay:400ms from:#id_q, change from:#id_sector"
+      hx-push-url="true">
+    <div class="col-md-8">
+        <input type="text" name="q" id="id_q" class="form-control"
+               placeholder="Buscar por nombre, IP o modelo..." value="{{ busqueda }}">
+    </div>
+    <div class="col-md-4">
+        <select name="sector" id="id_sector" class="form-select">
+            <option value="">Todos los sectores</option>
+            {% for s in sectores %}
+            <option value="{{ s.pk }}" {% if s.pk|stringformat:'s' == sector_seleccionado %}selected{% endif %}>{{ s.nombre }}</option>
+            {% endfor %}
+        </select>
+    </div>
+</form>
+
+<section class="panel mt-1">
+<div id="tabla-routers" class="table-responsive">
+    {% include "mikrotik/_tabla.html" %}
+</div>
+</section>
+</section>
+{% endblock %}

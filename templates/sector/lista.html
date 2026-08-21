@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block titulo %}Red · Sectores · Portal WISP{% endblock %}
+{% block contenido %}
+          <div class="page-heading">
+            <div class="page-heading-copy">
+              <span class="page-icon"><i class="bi bi-pin-map" aria-hidden="true"></i></span>
+              <div>
+                <p class="eyebrow mb-1">Gestión · Portal WISP</p>
+                <h1 class="h3 mb-1">Sectores</h1>
+                <!-- 
+                <p class="text-muted mb-0">Review accounts, roles, account status, and team ownership.</p>
+                -->
+              </div>
+            </div>
+            <div class="heading-actions">
+                <a class="btn btn-primary btn-sm" href="{% url 'sectores:nuevo_sector' %}"><i class="bi bi-house-add" aria-hidden="true"></i> Nuevo Sector</a>
+            </div>
+          </div>
+
+<section class="panel row g-3 mt-1">
+<form class="row g-2 mb-3"
+      hx-get="{% url 'sectores:lista' %}"
+      hx-target="#tabla-sectores"
+      hx-trigger="input changed delay:500ms from:#id_q"
+      hx-push-url="true">
+    <div class="col-md-8">
+        <input type="text" name="q" id="id_q" class="form-control"
+               placeholder="Buscar por nombre o población..." value="{{ busqueda }}">
+    </div>
+    <div class="col-md-4 d-flex align-items-end">
+        <button class="btn btn-outline-secondary w-100" type="reset"
+                onclick="document.getElementById('id_q').value=''; htmx.trigger(document.querySelector('#id_q'), 'input');">Limpiar</button>
+    </div>
+</form>
+<section class="panel mt-1">
+<div id="tabla-sectores" class="table-responsive">
+    {% include "sector/_tabla.html" %}
+</div>
+</section>
+</section>
+{% endblock %}

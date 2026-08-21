@@ -1,0 +1,36 @@
+{# Menú de Notificaciones de base.html. Se re-renderiza vía HTMX (#notification-menu) #}
+{# al marcar eventos como leídos. #}
+<div class="dropdown-header fw-bold text-body">Notificaciones</div>
+{% for evento in eventos_notif %}
+<div class="dropdown-item d-flex justify-content-between align-items-start gap-2">
+    <div>
+        <span class="badge bg-{{ evento.color_badge }}">{{ evento.get_nivel_display }}</span>
+        <div class="notification-title-base">{{ evento.titulo|truncatechars:60 }}</div>
+        <div class="notification-time">{{ evento.fecha|date:"d/m/Y H:i" }} · {{ evento.modulo }}</div>
+    </div>
+    {% if puede_marcar_eventos and not evento.leido %}
+    <button type="button" class="btn btn-sm btn-outline-secondary"
+            hx-post="{% url 'eventos:marcar_leido' evento.pk %}"
+            hx-target="#notification-menu" hx-swap="innerHTML"
+            title="Marcar como leído"><i class="bi bi-check2" aria-hidden="true"></i></button>
+    {% endif %}
+</div>
+{% empty %}
+<div class="dropdown-item text-muted">No hay notificaciones.</div>
+{% endfor %}
+<hr class="dropdown-divider">
+<a class="dropdown-item" style="display: table;" href="{% url 'eventos:lista' %}"><i class="bi bi-list-check" aria-hidden="true"></i> Ver todos los eventos</a>
+{% if puede_marcar_eventos and eventos_notif %}
+<form method="post" action="{% url 'eventos:marcar_todos_leidos' %}">
+{% csrf_token %}
+<button type="button" class="dropdown-item" style="display: table;" 
+        hx-post="{% url 'eventos:marcar_todos_leidos' %}" 
+        hx-target="#notification-menu" hx-swap="innerHTML">
+    <i class="bi bi-check-all" aria-hidden="true"></i> Marcar todos como leídos
+</button>
+</form>
+{% endif %}
+{% if request.META.HTTP_HX_REQUEST %}
+<span class="notification-dot" id="notification-dot" hx-swap-oob="true"
+      {% if not eventos_no_leidos %}style="display:none"{% endif %}></span>
+{% endif %}

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block titulo %}Eliminar plan · Portal WISP{% endblock %}
+{% block contenido %}
+<h2>Eliminar plan</h2>
+
+<div class="alert alert-warning" style="max-width: 640px;">
+    {% if plan.contratos.count %}
+    <p class="mb-0 mt-2">Este plan esta asignado a <strong>{{ plan.contratos.count }} contrato(s)</strong>.
+    Esta operación está protegida: si hay contratos que lo usan, no se puede eliminar.</p>
+    {% else %}
+    ¿Seguro que quieres eliminar el plan <strong>{{ plan.nombre }}</strong>
+    del router <strong>{{ plan.router.nombre }}</strong>?
+    {% endif %}
+</div>
+
+<form method="post">
+    {% csrf_token %}
+    {% if not plan.contratos.count %}
+    <button type="submit" class="btn btn-sm btn-outline-danger">Sí, eliminar</button>
+    {% endif %}
+    <a href="{% url 'mikrotik:detalle' plan.router.pk %}" class="btn btn-sm btn-outline-primary">Cancelar</a>
+</form>
+{% endblock %}
