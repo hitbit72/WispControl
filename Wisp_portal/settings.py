@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     # Apps propias del núcleo
     'core',
     'accounts',
+    'sector',
 ]
 
 MIDDLEWARE = [

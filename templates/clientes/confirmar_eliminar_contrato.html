@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block titulo %}Eliminar contrato · Portal WISP{% endblock %}
+{% block contenido %}
+<h2>Eliminar contrato</h2>
+
+<div class="alert alert-warning" style="max-width: 640px;">
+    ¿Seguro que quieres eliminar el contrato <strong>{{ contrato.plan.nombre }}</strong>
+    de <strong>{{ contrato.cliente.nombre_completo }}</strong>?
+    {% if contrato.conexion == 'pppoe' or contrato.conexion == 'sq' %}
+    <p class="mb-0 mt-2">
+        Esto encola una tarea de <strong>baja</strong> para que el servicio MikroTik
+        elimine el secret/queue correspondiente del router. La acción no se puede deshacer.
+    </p>
+    {% endif %}
+</div>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-sm btn-outline-danger">Sí, eliminar</button>
+    <a href="{% url 'clientes:detalle' contrato.cliente.pk %}" class="btn btn-sm btn-outline-primary">Cancelar</a>
+</form>
+{% endblock %}

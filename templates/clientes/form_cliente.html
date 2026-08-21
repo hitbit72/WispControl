@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block titulo %}{% if cliente %}Editar cliente{% else %}Nuevo cliente{% endif %} · Portal WISP{% endblock %}
+{% block contenido %}
+<h2>{% if cliente %}
+<i class="bi bi-person" aria-hidden="true"></i> Editar cliente
+{% else %}
+<i class="bi bi-person-add" aria-hidden="true"></i> Nuevo cliente
+{% endif %}</h2>
+
+<section class="row">
+
+<form method="post" class="panel needs-validation {% if form.errors %}was-validated{% endif %}" style="max-width: 760px;" novalidate>
+    {% csrf_token %}
+    <div class="row g-3">
+        <div class="col-md-8 d-flex align-items-end pb-2">
+            <div class="form-check">
+                {{ form.activo }}
+                <label class="form-check-label" for="{{ form.activo.id_for_label }}">Cliente activo</label>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label" for="{{ form.nombre_completo.id_for_label }}">Nombre completo / Razón social</label>
+            {{ form.nombre_completo }}
+            <div class="invalid-feedback">El nombre completo es obligatorio.</div>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label" for="{{ form.apodo.id_for_label }}">Apodo / Mote</label>
+            {{ form.apodo }}
+        </div>
+        <div class="col-md-6">
+            <label class="form-label" for="{{ form.tipo_documento.id_for_label }}">Tipo de documento</label>
+            {{ form.tipo_documento }}
+        </div>
+        <div class="col-md-6">
+            <label class="form-label" for="{{ form.numero_documento.id_for_label }}">Número de documento</label>
+            {{ form.numero_documento }}
+        </div>
+        <div class="col-md-4">
+            <label class="form-label" for="{{ form.telefono.id_for_label }}">Teléfono</label>
+            {{ form.telefono }}
+            <div class="invalid-feedback">El teléfono es obligatorio.</div>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label" for="{{ form.telefono_alternativo.id_for_label }}">Teléfono alternativo</label>
+            {{ form.telefono_alternativo }}
+        </div>
+        <div class="col-md-4">
+            <label class="form-label" for="{{ form.email.id_for_label }}">Email</label>
+            {{ form.email }}
+        </div>
+        <div class="col-md-4">
+            <label class="form-label" for="{{ form.poblacion.id_for_label }}">Población</label>
+            {{ form.poblacion }}
+            <div class="invalid-feedback">La población es obligatoria.</div>
+        </div>
+        <div class="col-md-8">
+            <label class="form-label" for="{{ form.direccion.id_for_label }}">Dirección</label>
+            {{ form.direccion }}
+        </div>
+        <div class="col-md-6">
+            <label class="form-label" for="{{ form.latitud.id_for_label }}">Latitud</label>
+            {{ form.latitud }}
+        </div>
+        <div class="col-md-6">
+            <label class="form-label" for="{{ form.longitud.id_for_label }}">Longitud</label>
+            {{ form.longitud }}
+        </div>
+        <div class="col-12">
+            <label class="form-label" for="{{ form.notas.id_for_label }}">Notas</label>
+            {{ form.notas }}
+        </div>
+    </div>
+
+    <div class="mt-4 d-flex gap-2">
+        <button type="submit" class="btn btn-primary"><i class="bi bi-send" aria-hidden="true"></i> Guardar</button>
+        <a href="{% if cliente %}{% url 'clientes:detalle' cliente.pk %}{% else %}{% url 'clientes:lista' %}{% endif %}"
+           class="btn btn-outline-secondary"><i class="bi bi-x" aria-hidden="true"></i> Cancelar</a>
+    </div>
+</form>
+
+</section>
+{% endblock %}

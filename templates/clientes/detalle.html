@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+{% block titulo %}{{ cliente.nombre_completo }} · Portal WISP{% endblock %}
+{% block contenido %}
+<div class="d-flex justify-content-between align-items-start mb-3">
+    <div>
+        <h2 class="mb-0">{{ cliente.nombre_completo }}</h2>
+        {% if cliente.apodo %}<div class="text-muted">({{ cliente.apodo }})</div>{% endif %}
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{% url 'clientes:editar' cliente.pk %}" class="btn btn-outline-primary">Editar</a>
+        <form method="post" action="{% url 'clientes:alternar_activo' cliente.pk %}">
+            {% csrf_token %}
+            <button type="submit" class="btn {% if cliente.activo %}btn-outline-danger{% else %}btn-outline-success{% endif %}">
+                {% if cliente.activo %}Desactivar{% else %}Activar{% endif %}
+            </button>
+        </form>
+    </div>
+</div>
+
+<section class="panel row g-1 mt-1">
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Datos de contacto</h5>
+                <p class="mb-1"><strong>Teléfono:</strong> {{ cliente.telefono|default:"—" }}</p>
+                {% if cliente.telefono_alternativo %}<p class="mb-1"><strong>Teléfono alternativo:</strong> {{ cliente.telefono_alternativo }}</p>{% endif %}
+                <p class="mb-1"><strong>Email:</strong> {{ cliente.email|default:"—" }}</p>
+                <p class="mb-0"><strong>Documento:</strong> {{ cliente.get_tipo_documento_display }} {{ cliente.numero_documento|default:"" }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Ubicación</h5>
+                <p class="mb-1"><strong>Población:</strong> {{ cliente.poblacion|default:"—" }}</p>
+                <p class="mb-0"><strong>Dirección:</strong> {{ cliente.direccion|default:"—" }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if cliente.notas %}
+<div class="alert alert-light border mb-1">{{ cliente.notas|linebreaks }}</div>
+{% endif %}
+</section>
+
+<section class="panel mt-1">
+<div class="d-flex justify-content-between align-items-center mb-2">
+    <h4 class="mb-0">Contratos</h4>
+    <a href="{% url 'clientes:nuevo_contrato' cliente.pk %}" class="btn btn-primary btn-sm">+ Nuevo contrato</a>
+</div>
+
+<div id="tabla-contratos" class="table-responsive">
+<table class="table table-hover" id="contratoTable" data-searchable-table>
+    <thead>
+        <tr>
+            <th>Número</th>
+            <th>Descripción</th>
+            <th>Plan</th>
+            <th>Conexión</th>
+            <th>Estado</th>
+            <th>Precio</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for contrato in cliente.contratos.all %}
+        <tr>
+            <td>{{ contrato.pk }}</td>
+            <td>{{ contrato.nombre|default:"—" }}</td>
+            <td>{{ contrato.plan.nombre }} <span class="text-muted small">({{ contrato.plan.router.nombre }})</span></td>
+            <td>{{ contrato.get_conexion_display }}</td>
+            <td>
+                <span class="badge
+                    {% if contrato.estado == 'activo' %}bg-success
+                    {% elif contrato.estado == 'suspendido' %}bg-warning text-dark
+                    {% elif contrato.estado == 'cancelado' %}bg-secondary
+                    {% else %}bg-info text-dark{% endif %}">
+                    {{ contrato.get_estado_display }}
+                </span>
+            </td>
+            <td>{{ contrato.precio_mensual }} €</td>
+            <td class="text-end">
+                <a href="{% url 'clientes:editar_contrato' contrato.pk %}" class="btn btn-sm btn-outline-primary">Editar</a>
+                <a href="{% url 'clientes:eliminar_contrato' contrato.pk %}" class="btn btn-sm btn-outline-danger">Eliminar</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6" class="text-center text-muted py-3">Este cliente todavía no tiene contratos.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+</section>
+
+<section class="panel mt-1">
+<div class="d-flex justify-content-between align-items-center mb-2">
+    <h4 class="mb-0">Dispositivos</h4>
+    <a href="{% url 'red:nuevo_dispositivo_cliente' cliente.pk %}" class="btn btn-primary btn-sm">+ Nuevo dispositivo</a>
+</div>
+
+<div id="tabla-dispositivos" class="table-responsive">
+<table class="table table-hover" id="dispositivosTable" data-searchable-table>
+    <thead>
+        <tr>
+            <th>Dispositivo</th>
+            <th>Marca</th>
+            <th>Estado</th>
+            <th>IP</th>
+            <th>Tipo</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for dispositivo in cliente.dispositivos.all %}
+        <tr>
+            <td><a href="{% url 'red:detalle_dispositivo' dispositivo.pk %}">{{ dispositivo.nombre }}</a></td>
+            <td>{{ dispositivo.get_marca_display }} {{ dispositivo.modelo }}</td>
+            <td>{% include "red/dispositivo/comun/estado.html" %}</td>
+            <td>{{ dispositivo.ip_gestion|default:"—" }}</td>
+            <td>{{ dispositivo.get_tipo_display }}</td>
+            <td class="text-end">
+                <a href="{% url 'red:editar_dispositivo_cliente' dispositivo.pk %}" class="btn btn-sm btn-outline-primary">Editar</a>
+                <a href="{% url 'red:eliminar_dispositivo' dispositivo.pk %}" class="btn btn-sm btn-outline-danger">Eliminar</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5" class="text-center text-muted py-3">Este cliente todavía no tiene dispositivos.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+</section>
+
+<div style="margin-top: 0.5rem;">
+<a href="{% url 'clientes:lista' %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-box-arrow-in-left"></i> Volver</a>
+</div>
+{% endblock %}

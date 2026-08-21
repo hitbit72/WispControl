@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block titulo %}{% if contrato %}Editar contrato{% else %}Nuevo contrato{% endif %} · Portal WISP{% endblock %}
+{% block contenido %}
+<h2>
+{% if contrato %}
+<i class="bi bi-file-check" aria-hidden="true"></i> Editar contrato
+{% else %}
+<i class="bi bi-file-plus" aria-hidden="true"></i> Nuevo contrato
+{% endif %}</h2>
+<p class="text-muted">Cliente: <strong>{{ cliente.nombre_completo }}{% if cliente.apodo %} ({{ cliente.apodo }}){% endif %}</strong></p>
+
+<section class="row">
+
+<form method="post" class="panel needs-validation {% if form.errors %}was-validated{% endif %}" style="max-width: 760px;" x-data="{ conexion: '{{ form.conexion.value|default:'dhcp' }}' }" novalidate>
+    {% csrf_token %}
+    <div class="row g-3">
+        <div class="col-md-12">
+            <label class="form-label" for="id_nombre">Nombre</label>
+            {{ form.nombre }}
+            <div class="form-text">Nombre corto descriptivo del contrato.</div>
+            <div class="invalid-feedback">El nombre es obligatorio.</div>
+        </div>
+        <div class="col-md-8">
+            <label class="form-label" for="id_plan">Plan</label>
+            {{ form.plan }}
+            <div class="invalid-feedback">Seleccione un plan.</div>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label" for="id_precio_mensual">Precio mensual</label>
+            {{ form.precio_mensual }}
+            <div class="invalid-feedback">El precio mensual es obligatorio.</div>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label" for="id_estado">Estado</label>
+            {{ form.estado }}
+        </div>
+        <div class="col-md-4">
+            <label class="form-label" for="id_fecha_inicio">Fecha de inicio</label>
+            {{ form.fecha_inicio }}
+            <div class="invalid-feedback">La fecha de inicio es obligatoria.</div>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label" for="id_fecha_cancelacion">Fecha de cancelación</label>
+            {{ form.fecha_cancelacion }}
+        </div>
+        <div class="col-md-4">
+            <label class="form-label" for="id_conexion">Tipo de conexión</label>
+            {{ form.conexion }}
+        </div>
+        <div class="col-md-4" x-show="conexion === 'pppoe' || conexion === 'sq'" x-cloak>
+            <label class="form-label" for="id_identificador_mikrotik">Identificador MikroTik</label>
+            {{ form.identificador_mikrotik }}
+            <div class="form-text">Nombre del secret PPPoE o del simple queue en el router.</div>
+        </div>
+        <div class="col-md-4" x-show="conexion === 'pppoe'" x-cloak>
+            <label class="form-label" for="id_pppoe_clave">Clave PPPoE</label>
+            {{ form.pppoe_clave }}
+        </div>
+        <div class="col-md-4">
+            <label class="form-label" for="id_ip_asignada">IP asignada</label>
+            {{ form.ip_asignada }}
+        </div>
+        <div class="col-12">
+            <label class="form-label" for="id_notas">Notas</label>
+            {{ form.notas }}
+        </div>
+    </div>
+    {% if error_msg %}
+    <div class="alert alert-danger mt-3" role="alert"><strong>{{ error_msg }}</strong></div>
+    {% endif %}
+    <div class="mt-4 d-flex gap-2">
+        <button type="submit" class="btn btn-primary"><i class="bi bi-send" aria-hidden="true"></i> Guardar</button>
+        <a href="{% url 'clientes:detalle' cliente.pk %}" class="btn btn-outline-secondary"><i class="bi bi-x" aria-hidden="true"></i> Cancelar</a>
+    </div>
+</form>
+</section>
+{% endblock %}
