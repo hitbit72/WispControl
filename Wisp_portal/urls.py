@@ -6,4 +6,5 @@ urlpatterns = [
     path('', include('accounts.urls')),
     path('mikrotik/', include('mikrotik.urls')),
     path('sector/', include('sector.urls')),
+    path('eventos/', include('eventos.urls')),
 ]

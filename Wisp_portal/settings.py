@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'accounts',
     'sector',
     'mikrotik',
+    'eventos',
 ]
 
 MIDDLEWARE = [
