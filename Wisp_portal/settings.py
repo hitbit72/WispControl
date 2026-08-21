@@ -2,7 +2,6 @@
 Configuración de Django para el proyecto Portal WISP.
 
 Fase actual: NÚCLEO
-- Modelo de datos base (Marcas, usuarios, clientes, contratos, sectores, dispositivos, interfaces, enlaces, oid, metrica, notificaciones)
 - Autenticación con roles (administrador / técnico / comercial)
 """
 
@@ -39,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     # Apps propias del núcleo
-    'core'
+    'core',
     'accounts',
 ]
 
