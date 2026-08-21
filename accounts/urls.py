@@ -14,6 +14,6 @@ urlpatterns = [
     ), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('perfil/', views.perfil, name='perfil'),
-    path('contrasena/', views.CambiarContrasenaView.as_view(), name='cambiar_contrasena'),
-    path('contrasena/cambiada/', views.CambiarContrasenaOkView.as_view(), name='cambiar_contrasena_ok'),
+    path('password/', views.CambiarContrasenaView.as_view(), name='cambiar_contrasena'),
+    path('password/cambiado/', views.CambiarContrasenaOkView.as_view(), name='cambiar_contrasena_ok'),
 ]

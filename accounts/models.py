@@ -10,7 +10,7 @@ class Usuario(AbstractUser):
     - administrador: acceso total al sistema.
     - tecnico: acceso a inventario y operación de campo, sin acceso
       a configuración global ni gestión de usuarios.
-    - comercial: acceso a inventario y gfestión de susuarios
+    - comercial: acceso a inventario y gestión de susuarios
     """
 
     class Rol(models.TextChoices):

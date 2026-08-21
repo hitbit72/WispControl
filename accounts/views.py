@@ -5,7 +5,7 @@ from django.contrib.auth.views import PasswordChangeDoneView, PasswordChangeView
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 
-from .forms import FormPasswordCambio, PerfilForm
+from .forms import FormPasswordCambio, PerfilForm, LoginForm
 
 
 @login_required
