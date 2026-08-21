@@ -87,32 +87,30 @@ DATABASES = {
 
 
 # --- Base de datos: MySQL 'django.db.backends.mysql' -------------------------------------------------
-
+"""
 DATABASES = {
     'default': {
-        'ENGINE': os.environ.get('DB_ENGINE', 'django.db.backends.mysql'),
-        'PORT': os.environ.get('DB_PORT', '3306'),
-        'HOST': os.environ.get('DB_HOST', 'localhost'),
-        'NAME': os.environ.get('DB_NAME', 'DBNAME'),
-        'USER': os.environ.get('DB_USER', 'USERNAME'),
-        'PASSWORD': os.environ.get('DB_PASSWORD', 'USERPASS*'),
+        'ENGINE': os.environ.get('DB_ENGINE1', 'django.db.backends.mysql'),
+        'PORT': os.environ.get('DB_PORT1', '3306'),
+        'HOST': os.environ.get('DB_HOST1', 'localhost'),
+        'NAME': os.environ.get('DB_NAME1', 'DBNAME'),
+        'USER': os.environ.get('DB_USER1', 'USERNAME'),
+        'PASSWORD': os.environ.get('DB_PASSWORD1', 'USERPASS*'),
     }
 }
-
+"""
 
 # --- Base de datos: PostgreSQL 'django.db.backends.postgresql' --------------------------------------------
-"""
 DATABASES = {
     'default': {
-        'ENGINE': os.environ.get('DB_ENGINE2', 'django.db.backends.postgresql'),
-        'NAME': os.environ.get('DB_NAME2', 'wisp_portal'),
-        'USER': os.environ.get('DB_USER2', 'wisp_admin'),
-        'PASSWORD': os.environ.get('DB_PASSWORD2', ''),
-        'HOST': os.environ.get('DB_HOST2', 'localhost'),
-        'PORT': os.environ.get('DB_PORT2', '5432'),
+        'ENGINE': os.environ.get('DB_ENGINE', 'django.db.backends.postgresql'),
+        'NAME': os.environ.get('DB_NAME', 'wisp_portal'),
+        'USER': os.environ.get('DB_USER', 'wisp_admin'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', ''),
+        'HOST': os.environ.get('DB_HOST', 'localhost'),
+        'PORT': os.environ.get('DB_PORT', '5432'),
     }
 }
-"""
 
 # --- Usuario personalizado (con roles) ------------------------------------
 AUTH_USER_MODEL = 'accounts.Usuario'
