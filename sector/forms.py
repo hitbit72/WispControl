@@ -1,7 +1,7 @@
 from django import forms
 from django.urls import reverse
 
-from core.utils import BootstrapFormMixin
+from core.forms import BootstrapFormMixin
 from .models import Sector
 
 

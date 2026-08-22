@@ -1,5 +1,6 @@
 from django import forms
-from core.utils import BootstrapFormMixin
+
+from core.forms import BootstrapFormMixin
 from .models import Plan, Router
 
 

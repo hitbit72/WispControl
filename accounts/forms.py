@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 
-from core.utils import BootstrapFormMixin
+from core.forms import BootstrapFormMixin
 from .models import Usuario
 
 

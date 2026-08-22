@@ -1,7 +1,7 @@
 from django import forms
-# Utilidades comunes, corpartidas, por los modulos de la aplicación
 
 
+# class comun, corpartidas, por los forms de la aplicación
 class BootstrapFormMixin:
     """Agrega automáticamente las clases de Bootstrap a cada campo, para no
     tener que repetirlas a mano en cada formulario."""
