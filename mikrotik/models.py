@@ -114,3 +114,80 @@ class Plan(models.Model):
 
     def __str__(self):
         return f'{self.nombre} · {self.router.nombre} ({self.velocidad_bajada}/{self.velocidad_subida} Mbps)'
+
+
+
+class TareaSincronizacion(models.Model):
+    """
+    Cola de sincronización entre un Contrato y el router MikroTik real.
+
+    Django solo crea filas aquí al guardar/borrar un Contrato — nunca llama
+    al router directamente. El servicio MikroTik (proceso Python
+    independiente) procesa las tareas 'pendiente', las pasa a 'procesando'
+    y las deja en 'completada' o 'fallida', para no acoplar la velocidad o
+    disponibilidad del router a la del portal.
+
+    'contrato' es SET_NULL (no CASCADE): en una baja por eliminación real del
+    contrato, la tarea tiene que sobrevivir al borrado para que el servicio
+    la pueda procesar y avisarle al router. Por eso 'identificador_mikrotik'
+    y 'conexion' se guardan como copia en el momento de encolar la tarea, en
+    vez de leerse siempre desde el contrato (que puede ya no existir).
+
+    Ver docs/mikrotik_proceso.md para el detalle completo del proceso.
+    """
+
+    class Operacion(models.TextChoices):
+        ALTA = 'alta', 'Alta'
+        MODIFICACION = 'modificacion', 'Modificación'
+        BAJA = 'baja', 'Baja'
+
+    class Estado(models.TextChoices):
+        PENDIENTE = 'pendiente', 'Pendiente'
+        PROCESANDO = 'procesando', 'Procesando'
+        COMPLETADA = 'completada', 'Completada'
+        FALLIDA = 'fallida', 'Fallida'
+
+    contrato = models.ForeignKey(
+        'clientes.Contrato', on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='tareas_mikrotik',
+    )
+    plan_nombre = models.CharField(
+        max_length=100, blank=True,
+        help_text="Copia de contrato.plan.nombre en el momento de encolar la tarea",
+    )
+    router = models.ForeignKey(
+        'mikrotik.Router', on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='tareas_sincronizacion',
+        help_text='Copia de contrato.plan.router en el momento de encolar la tarea: en una baja, el contrato puede ya no existir y esta es la única forma de saber a qué router conectarse.',
+    )
+    identificador_mikrotik = models.CharField(
+        max_length=100, blank=True,
+        help_text='Copia del identificador en el momento de encolar la tarea (sobrevive aunque el contrato se elimine).',
+    )
+    conexion = models.CharField(
+        max_length=20, blank=True,
+        help_text="Copia de Contrato.conexion en el momento de encolar la tarea ('pppoe' o 'sq').",
+    )
+    estado_contrato = models.CharField(
+        max_length=20, blank=True,
+        help_text="Copia de Contrato.estado en el momento de encolar la tarea, para saber qué tipo de modificación se pidió (activo, suspendido, cancelado, etc.).",
+    )
+    operacion = models.CharField(max_length=20, choices=Operacion.choices)
+    estado = models.CharField(max_length=20, choices=Estado.choices, default=Estado.PENDIENTE)
+    identificador_anterior = models.CharField(
+        max_length=100, blank=True,
+        help_text='Solo se usa si la operación es una modificación que renombra el identificador.',
+    )
+    intentos = models.PositiveIntegerField(default=0)
+    mensaje_error = models.TextField(blank=True)
+    creada_en = models.DateTimeField(auto_now_add=True)
+    procesada_en = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        verbose_name = 'Tarea de sincronización MikroTik'
+        verbose_name_plural = 'Tareas de sincronización MikroTik'
+        ordering = ['-creada_en']
+
+    def __str__(self):
+        cliente = self.contrato.cliente.nombre_completo if self.contrato else '(contrato eliminado)'
+        return f'{cliente} · {self.identificador_mikrotik} · {self.get_operacion_display()} · {self.get_estado_display()}'

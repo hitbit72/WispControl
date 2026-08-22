@@ -7,6 +7,9 @@ from sector.models import Sector
 from .forms import PlanForm, RouterForm
 from .models import Plan, Router
 
+from eventos.models import Evento
+from eventos.services import registrar_evento
+
 MODULO = 'mikrotik'
 
 def http_ruta(ruta):
@@ -89,3 +92,72 @@ def eliminar_router(request, pk):
         router.delete()
         return redirect('mikrotik:lista')
     return render(request, 'mikrotik/confirmar_eliminar_router.html', {'router': router})
+
+
+# PLANES -----------------------------------------------------------
+
+@login_required
+def nuevo_plan(request, router_pk):
+    router = get_object_or_404(Router, pk=router_pk)
+
+    if request.method == 'POST':
+        form = PlanForm(request.POST)
+        if form.is_valid():
+            plan = form.save(commit=False)
+            plan.router = router
+            plan.save()
+            registrar_evento(
+                MODULO,
+                'PLAN de internet registrado',
+                f'Plan #{plan.pk}: {plan.nombre} - Down: {plan.velocidad_bajada} Mbps / Up: {plan.velocidad_subida} Mbps',
+                nivel=Evento.Nivel.INFO,)
+            return redirect('mikrotik:detalle', pk=router.pk)
+    else:
+        form = PlanForm()
+
+    return render(request, 'mikrotik/form_plan.html', {
+        'form': form, 'router': router, 'plan': None,
+    })
+
+
+@login_required
+def editar_plan(request, pk):
+    plan = get_object_or_404(Plan, pk=pk)
+    router = plan.router
+
+    if request.method == 'POST':
+        form = PlanForm(request.POST, instance=plan)
+        if form.is_valid():
+            form.save()
+            registrar_evento(
+                MODULO,
+                'PLAN de internet modificado',
+                f'Plan #{plan.pk}: {plan.nombre} - Down: {plan.velocidad_bajada} Mbps / Up: {plan.velocidad_subida} Mbps',
+                nivel=Evento.Nivel.INFO,)
+            return redirect('mikrotik:detalle', pk=router.pk)
+    else:
+        form = PlanForm(instance=plan)
+
+    return render(request, 'mikrotik/form_plan.html', {
+        'form': form, 'router': router, 'plan': plan,
+    })
+
+
+
+@login_required
+def eliminar_plan(request, pk):
+    plan = get_object_or_404(Plan, pk=pk)
+    router_pk = plan.router_id
+    #num_contratos = plan.contratos.count()
+
+    if request.method == 'POST':
+        registrar_evento(
+            MODULO,
+            'PLAN de internet eliminado',
+            f'Plan #{plan.pk}: {plan.nombre}',
+            nivel=Evento.Nivel.INFO,)
+        plan.delete()
+        return redirect('mikrotik:detalle', pk=router_pk)
+
+    return render(request, 'mikrotik/confirmar_eliminar_plan.html', {'plan': plan})
+
