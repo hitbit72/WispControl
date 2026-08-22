@@ -26,5 +26,5 @@ class Poblacion(models.Model):
         ordering = ['nombre']
 
     def __str__(self):
-        return f'{self.nombre}'
+        return f'{self.nombre} ({self.provincia.nombre})'
 

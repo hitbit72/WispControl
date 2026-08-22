@@ -12,7 +12,7 @@ el admin (TareaSincronizacion) y directamente en el router.
 """
 
 from django.conf import settings
-from .client import conectar
+from .client import conectar        # conexion al router
 
 from eventos.models import Evento
 from eventos.services import registrar_evento
