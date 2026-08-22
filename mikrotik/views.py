@@ -4,25 +4,14 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 
 from sector.models import Sector
-from .forms import PlanForm, RouterForm
 from .models import Plan, Router
+from .forms import PlanForm, RouterForm
 
 from eventos.models import Evento
 from eventos.services import registrar_evento
+from core.rutas import http_ruta
 
 MODULO = 'mikrotik'
-
-def http_ruta(ruta):
-    """
-    Funcion para obtener la ruta de retorno a partir de la URL anterior. Se usa para
-    evitar que al editar o crear un router/plan, la página de detalle redirija
-    correctamente a la lista de routers en lugar de volver a la página de edición.
-    """
-    if any(palabra in ruta for palabra in ['editar', 'nuevo', 'eliminar']):
-        return '/mikrotik/'
-    
-    return ruta # Devuelve la ruta original
-
 
 @login_required
 def lista_routers(request):
@@ -65,7 +54,7 @@ def detalle_router(request, pk):
     router = get_object_or_404(Router.objects.prefetch_related('planes'), pk=pk)
     # Obtiene la URL anterior, o asigna una ruta por defecto si no existe
     url_anterior = request.META.get('HTTP_REFERER', 'mikrotik:lista')
-    url_anterior = http_ruta(url_anterior)  # Cambia la ruta si es necesario
+    url_anterior = http_ruta(url_anterior, '/mikrotik/')  # Cambia la ruta si es necesario
 
     return render(request, 'mikrotik/detalle.html', {'router': router, 'url_anterior': url_anterior})
 
