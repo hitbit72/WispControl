@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class Sector(models.Model):
     """
     Zona de cobertura o agrupación lógica de dispositivos (ej. 'Sector Norte',

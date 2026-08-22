@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block titulo %}Red · Dispositivos · Portal WISP{% endblock %}
+{% block contenido %}
+          <div class="page-heading">
+            <div class="page-heading-copy">
+              <span class="page-icon"><i class="bi bi-router" aria-hidden="true"></i></span>
+              <div>
+                <p class="eyebrow mb-1">Gestión · Portal WISP</p>
+                <h1 class="h3 mb-1">Dispositivos</h1>
+                <!-- 
+                <p class="text-muted mb-0">Review accounts, roles, account status, and team ownership.</p>
+                -->
+              </div>
+            </div>
+            <div class="heading-actions">
+                <a class="btn btn-outline-secondary btn-sm" href="/"><i class="bi bi-download" aria-hidden="true"></i> Exportar</a>
+                <a class="btn btn-primary btn-sm" href="{% url 'sectores:lista' %}" class="btn btn-outline-secondary">Ver sectores</a>
+                <a class="btn btn-primary btn-sm" href="{% url 'dispositivos:nuevo_dispositivo' %}"><i class="bi bi-person-plus" aria-hidden="true"></i> Nuevo Dispositivo</a>
+            </div>
+          </div>
+
+		    <section class="row g-3 mt-1" style="border: 1px solid var(--admin-border); border-radius: 8px; background: var(--admin-surface); border-sahdow: var(--admin-shadow);">
+			    <div class="col-12 col-sm-6 col-xl-3"><div class="alert alert-primary" role="alert"><strong>Total:</strong> {{ totales.total }}</div></div>
+			    <div class="col-12 col-sm-6 col-xl-3"><div class="alert alert-primary" role="alert"><strong>Activos:</strong> {{ totales.activos }}</div></div>
+			    <div class="col-12 col-sm-6 col-xl-3"><div class="alert alert-primary" role="alert"><strong>Inactivos:</strong> {{ totales.inactivos }}</div></div>
+                <div class="col-12 col-sm-6 col-xl-3"><div class="alert alert-primary" role="alert"><strong>Mantenimiento:</strong> {{ totales.mantenimiento }}</div></div>
+		    </section>
+
+<section class="panel row g-3 mt-1">
+<form class="row g-2 mb-3"
+      hx-get="{% url 'dispositivos:lista' %}"
+      hx-target="#tabla-dispositivos"
+      hx-trigger="input changed delay:500ms from:#id_q, change from:#id_sector, change from:#id_tipo, change from:#id_estado"
+      hx-push-url="true">
+    <div class="col-md-5">
+        <input type="text" name="q" id="id_q" class="form-control"
+               placeholder="Buscar por nombre, modelo, IP o MAC..." value="{{ busqueda }}">
+    </div>
+
+    <div class="col-md-3">
+        <select name="sector" id="id_sector" class="form-select">
+            <option value="">Todos los sectores</option>
+            {% for valor, etiqueta in todos_sectores %}
+            <option value="{{ valor }}" {% if valor == sector_seleccionado %}selected{% endif %}>{{ etiqueta }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="col-md-2">
+        <select name="tipo" id="id_tipo" class="form-select">
+            <option value="">Todos los tipos</option>
+            {% for clave, valor in tipos %}
+            <option value="{{ clave }}" {% if valor == tipo_seleccionado %}selected{% endif %}>{{ valor }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-2">
+        <select name="estado" id="id_estado" class="form-select">
+            <option value="">Todos los estados</option>
+            {% for valor, etiqueta in tipos_estado %}
+            <option value="{{ valor }}" {% if valor == estado_seleccionado %}selected{% endif %}>{{ etiqueta }}</option>
+            {% endfor %}
+        </select>
+    </div>
+</form>
+
+<section class="panel mt-1">
+<div id="tabla-dispositivos" class="table-responsive">
+    {% include "dispositivo/_tabla_dispositivos.html" %}
+</div>
+</section>
+</section>
+{% endblock %}

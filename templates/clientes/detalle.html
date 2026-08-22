@@ -98,7 +98,7 @@
 <section class="panel mt-1">
 <div class="d-flex justify-content-between align-items-center mb-2">
     <h4 class="mb-0">Dispositivos</h4>
-    <a href="{% url 'red:nuevo_dispositivo_cliente' cliente.pk %}" class="btn btn-primary btn-sm">+ Nuevo dispositivo</a>
+    <a href="{% url 'dispositivos:nuevo_dispositivo_cliente' cliente.pk %}" class="btn btn-primary btn-sm">+ Nuevo dispositivo</a>
 </div>
 
 <div id="tabla-dispositivos" class="table-responsive">
@@ -116,14 +116,14 @@
     <tbody>
         {% for dispositivo in cliente.dispositivos.all %}
         <tr>
-            <td><a href="{% url 'red:detalle_dispositivo' dispositivo.pk %}">{{ dispositivo.nombre }}</a></td>
+            <td><a href="{% url 'dispositivos:detalle_dispositivo' dispositivo.pk %}">{{ dispositivo.nombre }}</a></td>
             <td>{{ dispositivo.get_marca_display }} {{ dispositivo.modelo }}</td>
-            <td>{% include "red/dispositivo/comun/estado.html" %}</td>
+            <td>{% include "dispositivo/comun/estado.html" %}</td>
             <td>{{ dispositivo.ip_gestion|default:"—" }}</td>
             <td>{{ dispositivo.get_tipo_display }}</td>
             <td class="text-end">
-                <a href="{% url 'red:editar_dispositivo_cliente' dispositivo.pk %}" class="btn btn-sm btn-outline-primary">Editar</a>
-                <a href="{% url 'red:eliminar_dispositivo' dispositivo.pk %}" class="btn btn-sm btn-outline-danger">Eliminar</a>
+                <a href="{% url 'dispositivos:editar_dispositivo_cliente' dispositivo.pk %}" class="btn btn-sm btn-outline-primary">Editar</a>
+                <a href="{% url 'dispositivos:eliminar_dispositivo' dispositivo.pk %}" class="btn btn-sm btn-outline-danger">Eliminar</a>
             </td>
         </tr>
         {% empty %}

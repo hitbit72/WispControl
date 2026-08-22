@@ -44,6 +44,10 @@
           <span class="nav-icon"><i class="bi bi-map" aria-hidden="true"></i></span>
           <span class="nav-text">Sectores</span>
         </a>
+        <a class="nav-link {% if 'dispositivos/' in request.path %}active{% endif %}" href="{% url 'dispositivos:lista' %}">
+          <span class="nav-icon"><i class="bi bi-box-seam" aria-hidden="true"></i></span>
+          <span class="nav-text">Dispositivos</span>
+        </a>
         <a class="nav-link {% if '/clientes/' in request.path %}active{% endif %}" href="{% url 'clientes:lista' %}">
           <span class="nav-icon"><i class="bi bi-people" aria-hidden="true"></i></span>
           <span class="nav-text">Clientes</span>

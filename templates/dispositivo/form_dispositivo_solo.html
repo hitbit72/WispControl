@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block titulo %}Nuevo dispositivo · Portal WISP{% endblock %}
+{% block contenido %}
+<h2><i class="bi bi-router" aria-hidden="true"></i> Nuevo dispositivo</h2>
+
+<section class="row">
+<form method="post" class="panel needs-validation {% if form.errors %}was-validated{% endif %}" style="max-width: 760px;" novalidate>
+    {% csrf_token %}
+    <input type="hidden" name="urlanterior" value='{{url_anterior}}'>
+    {% if form.non_field_errors %}
+    <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+    {% endif %}
+    {% include "dispositivo/comun/_form.html" %}
+    <div class="mt-4 d-flex gap-2">
+        <button type="submit" class="btn btn-primary"><i class="bi bi-send" aria-hidden="true"></i> Guardar</button>
+        <a href="{% url 'dispositivos:lista' %}" class="btn btn-outline-secondary"><i class="bi bi-x" aria-hidden="true"></i> Cancelar</a>
+    </div>
+</form>
+</section>
+{% endblock %}

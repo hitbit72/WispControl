@@ -1,0 +1,56 @@
+{# Partial reutilizado en la carga inicial (lista_dispositivos.html) y en las respuestas HTMX. #}
+<table class="table table-hover align-middle mb-0" id="ordersTable" data-searchable-table>
+    <thead>
+        <tr>
+            <th>Dispositivo</th>
+            <th>Marca</th>
+            <th>Estado</th>
+            <th>IP gestión</th>
+            <th>Cliente</td>
+            <th>Modo</th>
+            <th>Tipo</th>
+            <th>Sector</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for dispositivo in pagina %}
+        <tr>
+            <td><a href="{% url 'dispositivos:detalle_dispositivo' dispositivo.pk %}">{{ dispositivo.nombre }}</a></td>
+            <td>{{ dispositivo.get_marca_display }} {{ dispositivo.modelo }}</td>
+            <td>{% include "dispositivo/comun/estado.html" %}</td>
+            <td>{{ dispositivo.ip_gestion|default:"—" }}</td>
+            <td>{% if dispositivo.cliente.nombre_completo %}
+                <a href="{% url 'clientes:detalle' dispositivo.cliente.pk %}">{{ dispositivo.cliente.nombre_completo }}</a>
+                {% else %}
+                ——
+                {% endif %}
+            </td>
+            <td>{{ dispositivo.get_rol_display }}</td>
+            <td>{{ dispositivo.get_tipo_display }}</td>
+            <td>{% if dispositivo.sector %}<a href="{% url 'sector:detalle_sector' dispositivo.sector.pk %}">{{ dispositivo.sector.nombre }}</a>{% else %}—{% endif %}</td>
+            <td class="text-end">
+                <a href="{% url 'dispositivos:detalle_dispositivo' dispositivo.pk %}" class="btn btn-sm btn-outline-secondary">Ver</a>
+                <a href="{% url 'dispositivos:editar_dispositivo' dispositivo.pk %}" class="btn btn-sm btn-outline-primary">Editar</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="9" class="text-center text-muted py-4">No se encontraron dispositivos.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% if pagina.paginator.num_pages > 1 %}
+<nav aria-label="User pagination">
+    <ul class="pagination pagination-sm mb-0">
+        {% for numero in pagina.paginator.page_range %}
+        <li class="page-item {% if numero == pagina.number %}active{% endif %}">
+            <a class="page-link"
+               href="?page={{ numero }}&q={{ busqueda }}&tipo={{ tipo_seleccionado }}&estado={{ estado_seleccionado }}"
+               hx-get="{% url 'dispositivos:lista_dispositivos' %}?page={{ numero }}&q={{ busqueda }}&tipo={{ tipo_seleccionado }}&estado={{ estado_seleccionado }}"
+               hx-target="#tabla-dispositivos">{{ numero }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+</nav>
+{% endif %}

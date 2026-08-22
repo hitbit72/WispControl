@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block titulo %}{% if dispositivo %}Editar dispositivo{% else %}Nuevo dispositivo{% endif %} · Portal WISP{% endblock %}
+{% block contenido %}
+<h2>{% if dispositivo %}
+<i class="bi bi-router" aria-hidden="true"></i> Editar dispositivo
+{% else %}
+<i class="bi bi-router" aria-hidden="true"></i> Nuevo dispositivo
+{% endif %}</h2>
+{% if sector %}
+<div class="text-muted mb-3">Sector: <strong>{{ sector.nombre }}</strong> {% if sector.poblacion %}· {{ sector.poblacion }}{% endif %}</div>
+{% endif %}
+
+<section class="row">
+<form method="post" class="panel needs-validation" style="max-width: 760px;" novalidate>
+    {% csrf_token %}
+    <input type="hidden" name="urlanterior" value='{{url_anterior}}'>
+    {% if form.non_field_errors %}
+    <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+    {% endif %}
+    {% include "dispositivo/comun/_form.html" %}
+    <div class="mt-4 d-flex gap-2">
+        <button type="submit" class="btn btn-primary"><i class="bi bi-send" aria-hidden="true"></i> Guardar</button>
+        <a href="{% url 'sectores:detalle_sector' sector.pk %}"
+           class="btn btn-outline-secondary"><i class="bi bi-x" aria-hidden="true"></i> Cancelar</a>
+    </div>
+</form>
+</section>
+{% endblock %}

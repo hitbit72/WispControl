@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+{% block titulo %}{{ dispositivo.nombre }} · Portal WISP{% endblock %}
+{% block contenido %}
+<div class="d-flex justify-content-between align-items-start mb-3">
+    <div>
+        <h2 class="mb-0">{{ dispositivo.get_marca_display }} {% if dispositivo.modelo %} · {{ dispositivo.modelo }}{% endif %} ({{ dispositivo.nombre }})</h2>
+        <div class="text-muted">
+            {{ dispositivo.get_tipo_display }} · {{ dispositivo.get_rol_display }} {% if dispositivo.sector %} · <a href="{% url 'red:detalle_sector' dispositivo.sector.pk %}">{{ dispositivo.sector.nombre }}</a>{% endif %}
+        </div>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{% url dispositivos:editar_dispositivo' dispositivo.pk %}" class="btn btn-primary">Editar</a>
+        <a href="{% url 'dispositivos:eliminar_dispositivo' dispositivo.pk %}" class="btn btn-outline-danger">Eliminar</a>
+    </div>
+</div>
+
+<section class="panel row g-1 mt-1">
+<div class="row mb-2">
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Datos del equipo</h5>
+                <p class="mb-1"><strong>Estado:</strong>
+                    {% include "dispositivo/comun/estado.html" %}
+                </p>
+                <p class="mb-1"><strong>Modo:</strong> {{ dispositivo.get_rol_display|default:"—" }}</p>
+                <p class="mb-1"><strong>IP de gestión:</strong> {{ dispositivo.ip_gestion|default:"—" }}</p>
+                <p class="mb-1"><strong>MAC:</strong> {{ dispositivo.mac_address|default:"—" }}</p>
+                <p class="mb-0"><strong>Firmware:</strong> {{ dispositivo.firmware_version|default:"—" }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Ubicación</h5>
+                <p class="mb-1"><strong>Fecha de instalación:</strong> {{ dispositivo.fecha_instalacion|default:"—" }}</p>
+                <p class="mb-1"><strong>Latitud:</strong> {{ dispositivo.latitud|default:"—" }}</p>
+                <p class="mb-0"><strong>Longitud:</strong> {{ dispositivo.longitud|default:"—" }}</p>
+                {% if dispositivo.cliente %}
+                <p class="mb-1"><strong>Cliente:</strong> 
+                <a href="{% url 'clientes:detalle' dispositivo.cliente.pk %}">{{ dispositivo.cliente.nombre_completo }}</a></p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Métricas</h5>
+                <p class="mb-1"><strong>Nombre:</strong> {{ metricas.sys_name|default:"—" }}</p>
+                <p class="mb-1"><strong>SSID:</strong> {{ metricas.ssid|default:"—" }}</p>
+                <p class="mb-1"><strong>Frecuencia:</strong> {{ metricas.frequency|default:"—" }} MHz</p>
+                <p class="mb-1"><strong>Señal:</strong> {{ metricas.signal|default:"—" }} dbm</p>
+                <p class="mb-0"><strong>CCQ:</strong> {{ metricas.ccq|default:"—" }}%</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if dispositivo.atributos_extra %}
+<div class="alert alert-light border mb-2">{{ dispositivo.atributos_extra|linebreaks }}</div>
+{% endif %}
+
+{% if dispositivo.notas %}
+<div class="alert alert-light border mb-2">{{ dispositivo.notas|linebreaks }}</div>
+{% endif %}
+</section>
+
+<section class="panel mt-1">
+<div class="d-flex justify-content-between align-items-center mb-2">
+    <h4 class="mb-0">Interfaces</h4>
+    <a href="{% url 'dispositivos:nueva_interfaz' dispositivo.pk %}" class="btn btn-primary btn-sm">+ Nueva interfaz</a>
+</div>
+
+<div id="tabla-iface" class="table-responsive">
+<table class="table table-hover align-middle" id="ifaceTable" data-searchable-table>
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Tipo</th>
+            <th>Estado</th>
+            <th>IP</th>
+            <th>MAC</th>
+            <th>VLAN</th>
+            <th>Velocidad</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for interfaz in dispositivo.interfaces.all %}
+        <tr>
+            <td>{{ interfaz.nombre }}</td>
+            <td>{{ interfaz.get_tipo_display }}</td>
+            <td>
+                <span class="badge
+                    {% if interfaz.estado == 'arriba' %}bg-success
+                    {% elif interfaz.estado == 'abajo' %}bg-danger
+                    {% else %}bg-secondary{% endif %}">
+                    {{ interfaz.get_estado_display }}
+                </span>
+            </td>
+            <td>{{ interfaz.ip_address|default:"—" }}</td>
+            <td>{{ interfaz.mac_address|default:"—" }}</td>
+            <td>{{ interfaz.vlan_id|default:"—" }}</td>
+            <td>{% firstof interfaz.velocidad_mbps "—" %} {% if interfaz.velocidad_mbps %}Mbps{% endif %}</td>
+            <td class="text-end">
+                <a href="{% url 'dispositivos:editar_interfaz' interfaz.pk %}" class="btn btn-sm btn-outline-primary">Editar</a>
+                <a href="{% url 'dispositivos:eliminar_interfaz' interfaz.pk %}" class="btn btn-sm btn-outline-danger">Eliminar</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="8" class="text-center text-muted py-3">Este dispositivo no tiene interfaces.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+</section>
+
+<section class="panel mt-1">
+<div class="d-flex justify-content-between align-items-center mb-2">
+    <h4 class="mb-0">Enlaces</h4>
+    <a href="{% url 'dispositivos:nuevo_enlace' dispositivo.pk %}" class="btn btn-primary btn-sm">+ Nuevo enlace</a>
+</div>
+
+<div id="tabla-enlace" class="table-responsive">
+<table class="table table-hover align-middle" id="enlaceTable" data-searchable-table>
+    <thead>
+        <tr>
+            <th>Desde</th>
+            <th>Hacia</th>
+            <th>Tipo</th>
+            <th>Ancho de banda</th>
+            <th>Distancia</th>
+            <th>Frecuencia</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for enlace in enlaces %}
+        <tr>
+            <td>
+                {% if enlace.dispositivo_origen.pk == dispositivo.pk %}
+                <strong>{{ enlace.dispositivo_origen.nombre }}</strong> · ({{ enlace.dispositivo_origen.ip_gestion|default:"—" }})
+                {% else %}
+                <a href="{% url 'dispositivos:detalle_dispositivo' enlace.dispositivo_origen.pk %}">{{ enlace.dispositivo_origen.nombre }} · ({{ enlace.dispositivo_origen.ip_gestion|default:"—" }})</a>
+                {% endif %}
+            </td>
+            <td>
+                {% if enlace.dispositivo_destino.pk == dispositivo.pk %}
+                <strong>{{ enlace.dispositivo_destino.nombre }}</strong> · ({{ enlace.dispositivo_destino.ip_gestion|default:"—" }})
+                {% else %}
+                <a href="{% url 'dispositivos:detalle_dispositivo' enlace.dispositivo_destino.pk %}">{{ enlace.dispositivo_destino.nombre }} · ({{ enlace.dispositivo_destino.ip_gestion|default:"—" }})</a>
+                {% endif %}
+            </td>
+            <td>{{ enlace.get_tipo_display }}</td>
+            <td>{% if enlace.ancho_banda_mbps %}{{ enlace.ancho_banda_mbps }} Mbps{% else %}—{% endif %}</td>
+            <td>{% if enlace.distancia_km %}{{ enlace.distancia_km }} km{% else %}—{% endif %}</td>
+            <td>{% if enlace.frecuencia_ghz %}{{ enlace.frecuencia_ghz }} GHz{% else %}—{% endif %}</td>
+            <td class="text-end">
+                <a href="{% url 'dispositivos:editar_enlace' enlace.pk %}" class="btn btn-sm btn-outline-primary">Editar</a>
+                <a href="{% url 'dispositivos:eliminar_enlace' enlace.pk %}" class="btn btn-sm btn-outline-danger">Eliminar</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7" class="text-center text-muted py-3">Este dispositivo no tiene enlaces.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+</section>
+
+<div style="margin-top: 0.5rem;">
+<a href="{% url 'dispositivos:lista' %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-box-arrow-in-left"></i> Volver</a>
+{% if dispositivo.sector %}
+| <a href="{% url 'sectores:detalle_sector' dispositivo.sector.pk %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-box-arrow-in-left"></i> Sector</a>
+{% endif %}
+</div>
+{% endblock %}

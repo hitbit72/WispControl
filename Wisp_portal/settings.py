@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'sector',
     'mikrotik',
     'eventos',
+    'dispositivos',
     'clientes',
 ]
 
