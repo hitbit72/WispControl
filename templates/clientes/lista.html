@@ -37,8 +37,8 @@
     <div class="col-md-4">
         <select name="poblacion" id="id_poblacion" class="form-select">
             <option value="">Todas las poblaciones</option>
-            {% for p in poblaciones %}
-            <option value="{{ p }}" {% if p == poblacion_seleccionada %}selected{% endif %}>{{ p }}</option>
+            {% for c, n in poblaciones %}
+            <option value="{{ c }}" {% if p == poblacion_seleccionada %}selected{% endif %}>{{ n }}</option>
             {% endfor %}
         </select>
     </div>

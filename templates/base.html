@@ -44,6 +44,10 @@
           <span class="nav-icon"><i class="bi bi-map" aria-hidden="true"></i></span>
           <span class="nav-text">Sectores</span>
         </a>
+        <a class="nav-link {% if '/clientes/' in request.path %}active{% endif %}" href="{% url 'clientes:lista' %}">
+          <span class="nav-icon"><i class="bi bi-people" aria-hidden="true"></i></span>
+          <span class="nav-text">Clientes</span>
+        </a>
       </nav>
 
       <div class="sidebar-user">

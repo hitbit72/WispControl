@@ -42,8 +42,8 @@ def lista_clientes(request):
     pagina = paginator.get_page(request.GET.get('page'))
 
     poblaciones = (
-        Cliente.objects.exclude(poblacion='')
-        .values_list('poblacion', flat=True)
+        Cliente.objects.exclude(poblacion=0)
+        .values_list('poblacion', 'poblacion__nombre')
         .distinct()
         .order_by('poblacion')
     )
