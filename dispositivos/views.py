@@ -206,7 +206,7 @@ def editar_dispositivo(request, pk):
                     return redirect('clientes:detalle', pk=dispositivo.cliente_id or cliente_pk)
                 else:
                     return redirect('clientes:lista')
-            return redirect('dispositivos:detalle_dispositivo', pk=pk)
+            return redirect('dispositivos:detalle', pk=pk)
     else:
         form = DispositivoForm(instance=dispositivo)
 

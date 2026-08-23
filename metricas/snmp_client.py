@@ -12,6 +12,7 @@ valores por defecto de `settings.METRICAS_SNMP`.
 
 import django.conf as _conf
 
+
 from pysnmp.hlapi import (
     CommunityData,
     ContextData,
@@ -22,6 +23,18 @@ from pysnmp.hlapi import (
     getCmd,
     nextCmd,
 )
+
+"""
+from pysnmp.hlapi.asyncio import (
+    CommunityData,
+    ContextData,
+    ObjectIdentity,
+    ObjectType,
+    SnmpEngine,
+    UdpTransportTarget,
+    getCmd,
+    )
+"""
 
 MODO_IPV4 = 0  # CommunityData(mpModel=0) mpModel=0 para SNMPv1, 1 para SNMPv2c
 
@@ -71,8 +84,8 @@ def _valor_texto(valor):
 
 def _conf_snmp(dispositivo):
     conf = dict(_conf.settings.METRICAS_SNMP)
-    snmp = (dispositivo.atributos_extra or {}).get('snmp') or {}
-    conf.update(snmp)
+    #snmp = (dispositivo.atributos_extra or {}).get('snmp') or {}
+    #conf.update(snmp)
     return conf
 
 
@@ -144,7 +157,7 @@ def consultar_escalares(dispositivo, oids):
     transporte = _trasporte(dispositivo.ip_gestion, conf)
     contexto = ContextData()
 
-    error_ind, error_st, _, var_binds = next(
+    error_ind, error_st, error_idx, var_binds = next(
         getCmd(
             engine, _auth(comunidad), transporte, contexto,
             *[_objetos(oid) for oid in oids.values()],

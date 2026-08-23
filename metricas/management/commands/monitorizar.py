@@ -12,7 +12,8 @@ Ejemplo de crontab (cada minuto):
 Uso manual:
 
     uv run manage.py monitorizar
-
+    python manage.py monitorizar
+    
 Si quieres confirmar qué hay realmente en esa columna:
 
     uv run manage.py shell -c "from red.models import Dispositivo; [print(d.nombre, repr(d.snmp_community)) for d in Dispositivo.objects.all()]"

@@ -109,7 +109,7 @@ OIDS_GENERICO = {
     #'if_outerrors': '1.3.6.1.2.1.2.2.1.20'   # ifOutErrors (walk) Outbound packets failing to send.
 }
 
-def oids_dispositivo(dispositivo):
+def oids_dispositivo2(dispositivo):
     """
     Devuelve el mapa de OIDs combinado para un dispositivo: genéricos + los de su marca.
     """
@@ -117,11 +117,35 @@ def oids_dispositivo(dispositivo):
     oids = OIDS_GENERICO.copy()
 
     # Consultamos solo los campos necesarios de la BD
+    # flat=True devuelve una lista plana de los diccionarios JSON: [{}, {}]
     oids_especificos = OIDmetric.objects.filter(
         marca=dispositivo.marca
-    ).values_list('codigos',)
+    ).values_list('codigos', flat=True)
+
+    # Iteramos y fusionamos cada diccionario devuelto
+    for codigos_json in oids_especificos:
+        if codigos_json:  # Validamos que no sea None o dict vacío
+            oids.update(codigos_json)
 
     # Actualizamos el diccionario directamente con la tuplas (codigos) tipo JSon
-    oids.update(oids_especificos)
+    #if oids_especificos:
+    #    oids.update(oids_especificos)
+
     return oids
 
+
+def oids_dispositivo(dispositivo):
+    """
+    Devuelve el mapa de OIDs combinado para un dispositivo: genéricos + los de su marca.
+    """
+    # copia limpia del diccionario genérico
+    oids = OIDS_GENERICO.copy()
+
+    # Obtenemos directamente la instancia o None
+    metric = OIDmetric.objects.filter(marca=dispositivo.marca).first()
+
+    if metric and metric.codigos:
+        oids.update(metric.codigos)  # metric.codigos ya es un dict de Python
+
+    print(oids)
+    return oids
