@@ -1,0 +1,118 @@
+"""
+Servicio del módulo metricas: guarda la métrica capturada, sincroniza las
+alarmas con las reglas detectadas y actualiza el estado del dispositivo.
+"""
+
+from django.conf import settings
+from django.utils import timezone
+
+from eventos.models import Evento
+from eventos.services import registrar_evento
+
+from dispositivos.models import Dispositivo
+
+from .models import Alarma, DeviceMetrics
+from .reglas import REGLA_INACTIVO, REGLA_NIVEL, evaluar
+
+MODULO = 'metricas'
+
+
+def guardar_metrica(dispositivo, **datos):
+    """ Crea la fila DeviceMetrics.
+        Se actualiza siempre el mismo registro, ya que se refiere siempre al
+        mismo dispositivo y no necesitamos datos a lo largo del tiempo.
+        Usamos timescan solo para saber cuando se actualizó.
+    """
+    datos.setdefault('status', DeviceMetrics.Status.OK)
+    datos.setdefault('timescan', timezone.now())
+    #print(f'Datos despues: {datos}')
+    return DeviceMetrics.objects.update_or_create(
+        device=dispositivo,
+        defaults=datos
+    )[0]
+
+def evaluar_y_aplicar(dispositivo, metrica):
+    """Evalúa las reglas sobre la métrica recién creada y aplica alarmas y
+    estado. Devuelve dict {nuevas, resueltas} con las alarmas tocadas."""
+    resultados =[]
+    anterior = (
+        DeviceMetrics.objects.filter(device=dispositivo, pk__lt=metrica.pk)
+        .order_by('-pk').first()
+    )
+    activas = evaluar(dispositivo, metrica, anterior, settings.METRICAS_ALARMAS)
+    if dispositivo.alarma:
+        resultados = _sincronizar_alarmas(dispositivo, activas)
+    _actualizar_estado(dispositivo, activas)
+    return resultados
+
+
+def _sincronizar_alarmas(dispositivo, detectadas):
+    """Alta de las reglas nuevas, resolución de las que ya no se cumplen."""
+    activas = Alarma.objects.filter(device=dispositivo, estado=Alarma.Estado.ACTIVA)
+    reglas_activas = dict(activas.values_list('regla', 'pk'))
+    detectadas = {a['regla']: a for a in detectadas}
+
+    resultados = {'nuevas': [], 'resueltas': []}
+
+    for regla, pk in reglas_activas.items():
+        if regla in detectadas:
+            continue
+        alarma = Alarma.objects.get(pk=pk)
+        alarma.estado = Alarma.Estado.RESUELTA
+        alarma.resuelta_en = timezone.now()
+        alarma.save(update_fields=['estado', 'resuelta_en'])
+        registrar_evento(
+            MODULO,
+            f'Alarma resuelta: {alarma.titulo}',
+            f'{dispositivo.nombre} · {alarma.texto}',
+            nivel=Evento.Nivel.NOTICE,
+        )
+        resultados['resueltas'].append(alarma)
+
+    for regla, datos in detectadas.items():
+        if regla in reglas_activas:
+            continue
+        alarma, creada = Alarma.objects.get_or_create(
+            device=dispositivo,
+            regla=regla,
+            estado=Alarma.Estado.ACTIVA,
+            defaults={'titulo': datos['titulo'], 'texto': datos['texto']},
+        )
+        if not creada:
+            continue
+        registrar_evento(
+            MODULO, alarma.titulo,
+            f'{dispositivo.nombre} · {alarma.texto}',
+            nivel=REGLA_NIVEL.get(regla, Evento.Nivel.WARNING),
+        )
+        resultados['nuevas'].append(alarma)
+    return resultados
+
+
+def _actualizar_estado(dispositivo, detectadas):
+    """ Pasa a 'inactivo' cuando hay una regla que marca el dispositivo y
+    vuelve a 'activo' cuando las reglas se normalizan. Solo se tocan los
+    estados operativos 'activo'/'inactivo' (mantenimiento, instalación,
+    retirado quedan intactos). """
+    if dispositivo.estado not in (Dispositivo.Estado.ACTIVO, Dispositivo.Estado.INACTIVO):
+        return
+    inactivo = any(a['regla'] in REGLA_INACTIVO for a in detectadas)
+
+    if inactivo and dispositivo.estado == Dispositivo.Estado.ACTIVO:
+        dispositivo.estado = Dispositivo.Estado.INACTIVO
+        dispositivo.save(update_fields=['estado'])
+        if dispositivo.alarma:
+            registrar_evento(
+                MODULO, f'Dispositivo sin conectividad: {dispositivo.ip_gestion}',
+                'Se marcó como inactivo por falta de respuesta SNMP.',
+                nivel=Evento.Nivel.CRITICAL,
+            )
+    elif not inactivo and dispositivo.estado == Dispositivo.Estado.INACTIVO:
+        dispositivo.estado = Dispositivo.Estado.ACTIVO
+        dispositivo.save(update_fields=['estado'])
+        if dispositivo.alarma:
+            registrar_evento(
+                MODULO, f'Dispositivo recuperado: {dispositivo.ip_gestion}',
+                'Vuelve a responder correctamente a SNMP.',
+                nivel=Evento.Nivel.NOTICE,
+            )
