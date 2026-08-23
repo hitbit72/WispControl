@@ -148,7 +148,7 @@ def detalle_dispositivo(request, pk):
     # Obtiene la URL anterior, o asigna una ruta por defecto si no existe
     url_anterior = request.META.get('HTTP_REFERER', 'dispositivos/')
     url_anterior = http_ruta(url_anterior, 'dispositivos/')  # Cambia la ruta si es edicion
-    print('detalle_dispositivo url_anterior: {url_anterior}')
+    #print('detalle_dispositivo url_anterior: {url_anterior}')
 
     metricas = []
     # metricas = get_object_or_404(DeviceMetrics, device = pk)
@@ -231,15 +231,15 @@ def eliminar_dispositivo(request, pk):
 
     if 'dispositivo' in url_anterior:
         url_anterior = 'dispositivo'
-        print('* DISPOSITIVO')
+        #print('* DISPOSITIVO')
     if 'sector' in url_anterior:
         url_anterior = 'sector'
         modelo_pk = sector_pk
-        print('* SECTORES')
+        #print('* SECTORES')
     if 'cliente' in url_anterior:
         url_anterior = 'cliente'
         modelo_pk = cliente_pk
-        print('* CLIENTE')
+        #print('* CLIENTE')
 
     if request.method == 'POST':
         registrar_evento(
@@ -390,6 +390,12 @@ def eliminar_enlace(request, pk):
     dispositivo_pk = enlace.dispositivo_origen_id
 
     if request.method == 'POST':
+        registrar_evento(
+	        MODULO,
+	        f'Enlace {enlace.dispositivo_origen.nombre} eliminado',
+	        f'Enlace eliminado #{enlace.dispositivo_origen_id} - {enlace.dispositivo_origen.nombre} → {enlace.dispositivo_destino.nombre}.',
+	        nivel=Evento.Nivel.INFO,
+        )
         enlace.delete()
         return redirect('dispositivos:detalle', pk=dispositivo_pk)
 
