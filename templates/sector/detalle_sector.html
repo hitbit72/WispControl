@@ -7,8 +7,8 @@
         <div class="text-muted">{{ sector.poblacion|default:"" }} {% if sector.direccion %}· {{ sector.direccion }}{% endif %}</div>
     </div>
     <div class="d-flex gap-2">
-        <a href="{% url 'sectores:editar_sector' sector.pk %}" class="btn btn-outline-primary">Editar</a>
-        <a href="{% url 'sectores:eliminar_sector' sector.pk %}" class="btn btn-outline-danger">Eliminar</a>
+        <a href="{% url 'sectores:editar' sector.pk %}" class="btn btn-outline-primary">Editar</a>
+        <a href="{% url 'sectores:eliminar' sector.pk %}" class="btn btn-outline-danger">Eliminar</a>
     </div>
 </div>
 
@@ -19,7 +19,7 @@
 <section class="panel mt-1">
 <div class="d-flex justify-content-between align-items-center mb-2">
     <h4 class="mb-0">Dispositivos</h4>
-    <a href="{% url 'dispositivos:nuevo_dispositivo_sector' sector.pk %}" class="btn btn-primary btn-sm">+ Nuevo dispositivo</a>
+    <a href="{% url 'dispositivos:nuevo_dispositivo' sector.pk %}" class="btn btn-primary btn-sm">+ Nuevo dispositivo</a>
 </div>
 
 <div id="tabla-dispositivos" class="table-responsive">
@@ -38,15 +38,15 @@
     <tbody>
         {% for dispositivo in sector.dispositivos.all %}
         <tr>
-            <td><a href="{% url 'dispositivos:detalle_dispositivo' dispositivo.pk %}">{{ dispositivo.nombre }}</a></td>
-            <td>{{ dispositivo.get_marca_display }} {{ dispositivo.modelo|default:"" }}</td>
+            <td><a href="{% url 'dispositivos:detalle' dispositivo.pk %}">{{ dispositivo.nombre }}</a></td>
+            <td>{{ dispositivo.marca.nombre }} {{ dispositivo.marca.modelo|default:"" }}</td>
             <td>{% include "dispositivo/comun/estado.html" %}</td>
             <td>{{ dispositivo.ip_gestion|default:"—" }}</td>
             <td>{{ dispositivo.get_rol_display }}</td>
-            <td>{{ dispositivo.get_tipo_display }}</td>
+            <td>{{ dispositivo.tipo.nombre }}</td>
             <td class="text-end">
-                <a href="{% url 'dispositivos:editar_dispositivo_sector' dispositivo.pk %}" class="btn btn-sm btn-outline-primary">Editar</a>
-                <!-- <a href="{% url 'sectores:detalle_dispositivo' dispositivo.pk %}" class="btn btn-sm btn-outline-secondary">Ver</a> -->
+                <a href="{% url 'dispositivos:editar' dispositivo.pk %}" class="btn btn-sm btn-outline-primary">Editar</a>
+                <a href="{% url 'dispositivos:eliminar' dispositivo.pk %}" class="btn btn-sm btn-outline-danger">Eliminar</a>
             </td>
         </tr>
         {% empty %}

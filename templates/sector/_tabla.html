@@ -13,13 +13,13 @@
     <tbody>
         {% for sector in pagina %}
         <tr>
-            <td><a href="{% url 'sectores:detalle_sector' sector.pk %}">{{ sector.nombre }}</a></td>
+            <td><a href="{% url 'sectores:detalle' sector.pk %}">{{ sector.nombre }}</a></td>
             <td>{{ sector.poblacion|default:"—" }}</td>
             <td>{{ sector.direccion|default:"—" }}</td>
             <td>{{ sector.dispositivos.count }}</td>
             <td>{{ sector.routers_mikrotik.count }}</td>
             <td class="text-end">
-                <a href="{% url 'sectores:detalle_sector' sector.pk %}" class="btn btn-sm btn-outline-secondary">Ver</a>
+                <a href="{% url 'sectores:detalle' sector.pk %}" class="btn btn-sm btn-outline-secondary">Ver</a>
             </td>
         </tr>
         {% empty %}

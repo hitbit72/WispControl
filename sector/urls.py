@@ -7,8 +7,8 @@ app_name = 'sectores'
 urlpatterns = [
     # Sectores
     path('', views.lista_sectores, name='lista'),
-    path('nuevo/', views.form_sector, name='nuevo_sector'),
-    path('<int:pk>/', views.detalle_sector, name='detalle_sector'),
-    path('<int:pk>/editar/', views.form_sector, name='editar_sector'),
-    path('<int:pk>/eliminar/', views.eliminar_sector, name='eliminar_sector'),
+    path('nuevo/', views.form_sector, name='nuevo'),
+    path('<int:pk>/', views.detalle_sector, name='detalle'),
+    path('<int:pk>/editar/', views.form_sector, name='editar'),
+    path('<int:pk>/eliminar/', views.eliminar_sector, name='eliminar'),
 ]

@@ -9,10 +9,13 @@
         <div class="notification-time">{{ evento.fecha|date:"d/m/Y H:i" }} · {{ evento.modulo }}</div>
     </div>
     {% if puede_marcar_eventos and not evento.leido %}
+    <form method="post" action="{% url 'eventos:marcar_leido' evento.pk %}">
+    {% csrf_token %}
     <button type="button" class="btn btn-sm btn-outline-secondary"
             hx-post="{% url 'eventos:marcar_leido' evento.pk %}"
             hx-target="#notification-menu" hx-swap="innerHTML"
             title="Marcar como leído"><i class="bi bi-check2" aria-hidden="true"></i></button>
+    </form>
     {% endif %}
 </div>
 {% empty %}

@@ -33,8 +33,8 @@
                 {% if not evento.leido and puede_marcar_eventos %}
                 <form method="post" action="{% url 'eventos:marcar_leido' evento.pk %}" class="d-inline">
                     {% csrf_token %}
-                    <button type="submit" class="btn btn-sm btn-outline-primary" title="Marcar como leído">
-                        <i class="bi bi-check2" aria-hidden="true"></i> Marcar leído
+                    <button type="submit" style="font-size: 0.75em" class="btn btn-sm btn-outline-primary" title="Marcar como leído">
+                        <i class="bi bt-sm bi-check2" aria-hidden="true"></i> Marcar leído
                     </button>
                 </form>
                 {% endif %}

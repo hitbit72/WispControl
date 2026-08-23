@@ -5,12 +5,12 @@
     <div>
         <h2 class="mb-0">{{ dispositivo.get_marca_display }} {% if dispositivo.modelo %} · {{ dispositivo.modelo }}{% endif %} ({{ dispositivo.nombre }})</h2>
         <div class="text-muted">
-            {{ dispositivo.get_tipo_display }} · {{ dispositivo.get_rol_display }} {% if dispositivo.sector %} · <a href="{% url 'red:detalle_sector' dispositivo.sector.pk %}">{{ dispositivo.sector.nombre }}</a>{% endif %}
+            {{ dispositivo.tipo.nombre }} · {{ dispositivo.get_rol_display }} {% if dispositivo.sector %} · <a href="{% url 'sectores:detalle' dispositivo.sector.pk %}">{{ dispositivo.sector.nombre }}</a>{% endif %}
         </div>
     </div>
     <div class="d-flex gap-2">
-        <a href="{% url dispositivos:editar_dispositivo' dispositivo.pk %}" class="btn btn-primary">Editar</a>
-        <a href="{% url 'dispositivos:eliminar_dispositivo' dispositivo.pk %}" class="btn btn-outline-danger">Eliminar</a>
+        <a href="{% url 'dispositivos:editar' dispositivo.pk %}" class="btn btn-primary">Editar</a>
+        <a href="{% url 'dispositivos:eliminar' dispositivo.pk %}" class="btn btn-outline-danger">Eliminar</a>
     </div>
 </div>
 
@@ -143,14 +143,14 @@
                 {% if enlace.dispositivo_origen.pk == dispositivo.pk %}
                 <strong>{{ enlace.dispositivo_origen.nombre }}</strong> · ({{ enlace.dispositivo_origen.ip_gestion|default:"—" }})
                 {% else %}
-                <a href="{% url 'dispositivos:detalle_dispositivo' enlace.dispositivo_origen.pk %}">{{ enlace.dispositivo_origen.nombre }} · ({{ enlace.dispositivo_origen.ip_gestion|default:"—" }})</a>
+                <a href="{% url 'dispositivos:detalle' enlace.dispositivo_origen.pk %}">{{ enlace.dispositivo_origen.nombre }} · ({{ enlace.dispositivo_origen.ip_gestion|default:"—" }})</a>
                 {% endif %}
             </td>
             <td>
                 {% if enlace.dispositivo_destino.pk == dispositivo.pk %}
                 <strong>{{ enlace.dispositivo_destino.nombre }}</strong> · ({{ enlace.dispositivo_destino.ip_gestion|default:"—" }})
                 {% else %}
-                <a href="{% url 'dispositivos:detalle_dispositivo' enlace.dispositivo_destino.pk %}">{{ enlace.dispositivo_destino.nombre }} · ({{ enlace.dispositivo_destino.ip_gestion|default:"—" }})</a>
+                <a href="{% url 'dispositivos:detalle' enlace.dispositivo_destino.pk %}">{{ enlace.dispositivo_destino.nombre }} · ({{ enlace.dispositivo_destino.ip_gestion|default:"—" }})</a>
                 {% endif %}
             </td>
             <td>{{ enlace.get_tipo_display }}</td>
@@ -173,7 +173,7 @@
 <div style="margin-top: 0.5rem;">
 <a href="{% url 'dispositivos:lista' %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-box-arrow-in-left"></i> Volver</a>
 {% if dispositivo.sector %}
-| <a href="{% url 'sectores:detalle_sector' dispositivo.sector.pk %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-box-arrow-in-left"></i> Sector</a>
+| <a href="{% url 'sectores:detalle' dispositivo.sector.pk %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-box-arrow-in-left"></i> Sector</a>
 {% endif %}
 </div>
 {% endblock %}

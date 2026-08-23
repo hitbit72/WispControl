@@ -6,6 +6,9 @@ from django.shortcuts import get_object_or_404, redirect, render
 from .forms import ClienteForm, ContratoForm
 from .models import Cliente, Contrato
 
+from eventos.models import Evento
+from eventos.services import registrar_evento
+MODULO = 'clientes'
 
 @login_required
 def lista_clientes(request):
@@ -95,6 +98,13 @@ def alternar_activo_cliente(request, pk):
     if request.method == 'POST':
         cliente.activo = not cliente.activo
         cliente.save()
+        estado = "Activo" if cliente.activo else "Inactivo"
+        registrar_evento(
+	        MODULO,
+	        f'Cliente {cliente.nombre_completo} {estado}',
+	        f'Cliente #{cliente.pk} - {cliente.nombre_completo} cambia de estado a {estado}.',
+	        nivel=Evento.Nivel.INFO,
+        )
     return redirect('clientes:detalle', pk=cliente.pk)
 
 

@@ -5,7 +5,7 @@
 
 <div class="alert alert-warning" style="max-width: 640px;">
     ¿Seguro que quieres eliminar el dispositivo <strong>{{ dispositivo.nombre }}</strong>
-    ({{ dispositivo.get_tipo_display }} · {{ dispositivo.get_marca_display }})?
+    ({{ dispositivo.get_tipo_display }} · {{ dispositivo.marca.nombre }} {{ dispositivo.marca.modelo }})?
     {% if dispositivo.interfaces.count %}
     <p class="mb-0 mt-2">Tiene <strong>{{ dispositivo.interfaces.count }} interfaz(es)</strong>
     que se eliminarán en cascada. La acción no se puede deshacer.</p>
@@ -14,7 +14,17 @@
 
 <form method="post">
     {% csrf_token %}
-    <button type="submit" class="btn btn-sm btn-outline-danger">Sí, eliminar</button>
-    <a href="{% url 'red:detalle_dispositivo' dispositivo.pk %}" class="btn btn-outline-secondary">Cancelar</a>
+    <input type="hidden" name="urlanterior" value='{{url_anterior}}'>
+    <input type="hidden" name="modelopk" value='{{modelo_pk}}'>
+    <button type="submit" class="btn btn-outline-danger"><i class="bi bi-trash" aria-hidden="true"></i> Sí, eliminar</button>
+    {% if url_anterior == 'sector' %}
+        <a href="{% url 'sectores:detalle' modelo_pk %}" class="btn btn-outline-secondary"><i class="bi bi-x-circle" aria-hidden="true"></i> Cancelar</a>
+    {% endif %}
+    {% if url_anterior == 'cliente' %}
+        <a href="{% url 'clientes:detalle' modelo_pk %}" class="btn btn-outline-secondary"><i class="bi bi-x-circle" aria-hidden="true"></i> Cancelar</a>
+    {% endif %}
+    {% if url_anterior == 'dispositivo' %}
+        <a href="{% url 'dispositivos:detalle' dispositivo.pk %}" class="btn btn-outline-secondary"><i class="bi bi-x-circle" aria-hidden="true"></i> Cancelar</a>
+    {% endif %}
 </form>
 {% endblock %}

@@ -15,15 +15,16 @@
             <div class="heading-actions">
                 <a class="btn btn-outline-secondary btn-sm" href="/"><i class="bi bi-download" aria-hidden="true"></i> Exportar</a>
                 <a class="btn btn-primary btn-sm" href="{% url 'sectores:lista' %}" class="btn btn-outline-secondary">Ver sectores</a>
-                <a class="btn btn-primary btn-sm" href="{% url 'dispositivos:nuevo_dispositivo' %}"><i class="bi bi-person-plus" aria-hidden="true"></i> Nuevo Dispositivo</a>
+                <a class="btn btn-primary btn-sm" href="{% url 'dispositivos:nuevo' %}"><i class="bi bi-person-plus" aria-hidden="true"></i> Nuevo Dispositivo</a>
             </div>
           </div>
 
 		    <section class="row g-3 mt-1" style="border: 1px solid var(--admin-border); border-radius: 8px; background: var(--admin-surface); border-sahdow: var(--admin-shadow);">
-			    <div class="col-12 col-sm-6 col-xl-3"><div class="alert alert-primary" role="alert"><strong>Total:</strong> {{ totales.total }}</div></div>
-			    <div class="col-12 col-sm-6 col-xl-3"><div class="alert alert-primary" role="alert"><strong>Activos:</strong> {{ totales.activos }}</div></div>
-			    <div class="col-12 col-sm-6 col-xl-3"><div class="alert alert-primary" role="alert"><strong>Inactivos:</strong> {{ totales.inactivos }}</div></div>
-                <div class="col-12 col-sm-6 col-xl-3"><div class="alert alert-primary" role="alert"><strong>Mantenimiento:</strong> {{ totales.mantenimiento }}</div></div>
+			    <div class="mt-2 col-2 col-sm-2 col-xl-2"><div class="alert alert-primary" role="alert"><strong>Total:</strong> {{ totales.total }}</div></div>
+			    <div class="mt-2 col-2 col-sm-2 col-xl-2"><div class="alert alert-primary" role="alert"><strong>Activos:</strong> {{ totales.activos }}</div></div>
+			    <div class="mt-2 col-2 col-sm-2 col-xl-2"><div class="alert alert-primary" role="alert"><strong>Inactivos:</strong> {{ totales.inactivos }}</div></div>
+                <div class="mt-2 col-2 col-sm-2 col-xl-2"><div class="alert alert-primary" role="alert"><strong>Mantenimiento:</strong> {{ totales.mantenimiento }}</div></div>
+                <div class="mt-2 col-2 col-sm-2 col-xl-2"><div class="alert alert-primary" role="alert"><strong>Instalación:</strong> {{ totales.instalacion }}</div></div>
 		    </section>
 
 <section class="panel row g-3 mt-1">
@@ -49,7 +50,7 @@
     <div class="col-md-2">
         <select name="tipo" id="id_tipo" class="form-select">
             <option value="">Todos los tipos</option>
-            {% for clave, valor in tipos %}
+            {% for clave, valor in todos_tipos %}
             <option value="{{ clave }}" {% if valor == tipo_seleccionado %}selected{% endif %}>{{ valor }}</option>
             {% endfor %}
         </select>

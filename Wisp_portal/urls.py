@@ -6,7 +6,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('mikrotik/', include('mikrotik.urls')),
     path('sector/', include('sector.urls')),
-    path('dispositivos/', include('dispositivos.urls')),
+    path('dispositivo/', include('dispositivos.urls')),
     path('eventos/', include('eventos.urls')),
-    path('clientes/', include('clientes.urls')),
+    path('cliente/', include('clientes.urls')),
 ]

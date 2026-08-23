@@ -9,13 +9,14 @@ from .forms import DispositivoForm, EnlaceForm, InterfazForm
 from .models import Dispositivo, Enlace, Interfaz, TipoEquipo
 from clientes.models import Cliente
 from sector.models import Sector
-from eventos.models import Evento
 
 #from metricas.models import DeviceMetrics
+from eventos.models import Evento
 from eventos.services import registrar_evento
+
 from core.rutas import http_ruta
 
-MODULO = 'red'
+MODULO = 'dispositivos'
 
 
 @login_required
@@ -56,19 +57,11 @@ def lista_dispositivos(request):
     paginator = Paginator(dispositivos, 25)
     pagina = paginator.get_page(request.GET.get('page'))
 
-    # lista de tipos de dispositivos
-    tipos = (
-        TipoEquipo.objects.exclude(clave='')
-        .values_list('clave', 'nombre')
-        .distinct()
-        .order_by('nombre')
-    )
-
     contexto = {
         'pagina': pagina,
         'busqueda': busqueda,
-        'tipos': tipos,
         'tipo_seleccionado': tipo_seleccionado,
+        'todos_tipos': TipoEquipo.objects.all().values_list('pk', 'nombre').order_by('nombre'),
         'estado_seleccionado': estado_seleccionado,
         'tipos_dispositivo': Dispositivo.tipo,
         'tipos_estado': Dispositivo.Estado.choices,
@@ -90,71 +83,57 @@ def lista_dispositivos(request):
 
 
 @login_required
-def nuevo_dispositivo(request):
+def nuevo_dispositivo(request, pk=0):
 
     # Obtiene la URL anterior, o asigna una ruta por defecto si no existe
     url_anterior = request.META.get('HTTP_REFERER', 'dispositivos/')
 
+    sector = ''
+    cliente = ''
+    dispositivo = ''
+    if pk > 0:
+        if 'sector' in url_anterior:
+            sector = get_object_or_404(Sector, pk=pk)
+            url_anterior = 'sector'
+            #print('* SECTORES')
+        if 'cliente' in url_anterior:
+            cliente = get_object_or_404(Cliente, pk=pk)
+            url_anterior = 'cliente'
+            #print('* CLIENTE')
+
     if request.method == 'POST':
         form = DispositivoForm(request.POST)
+        url_anterior = request.POST.get('urlanterior')
+        pk = request.POST.get('modelopk')
         if form.is_valid():
             dispositivo = form.save()
-            return redirect('red:lista_dispositivos')
+            if url_anterior == 'sector':
+                if pk > 0:
+                    return redirect('sectores:detalle', pk=pk)
+                else:
+                    return redirect('sectores:lista')
+            if url_anterior == 'cliente':
+                if pk > 0:
+                    return redirect('clientes:detalle', pk=pk)
+                else:
+                    return redirect('clientes:lista')
+            return redirect('dispositivos:lista')
     else:
-        form = DispositivoForm()
+        if not sector:
+            if cliente:
+                form = DispositivoForm(initial={'cliente': cliente})
+            else:
+                form = DispositivoForm()
+        else:
+            form = DispositivoForm(initial={'sector': sector})
+
 
     return render(request, 'dispositivo/form_dispositivo_solo.html', {
         'form': form,
-        'sector': '',
-        'cliente': '',
-        'dispositivo': None,
-        'url_anterior': url_anterior,
-    })
-
-
-@login_required
-def nuevo_dispositivo_sector(request, sector_pk):
-    sector = get_object_or_404(Sector, pk=sector_pk)
-
-    # Obtiene la URL anterior, o asigna una ruta por defecto si no existe
-    url_anterior = request.META.get('HTTP_REFERER', 'sectores/')
-
-    if request.method == 'POST':
-        form = DispositivoForm(request.POST)
-        if form.is_valid():
-            dispositivo = form.save()
-            return redirect('sector:detalle_sector', pk=dispositivo.sector_id or sector.pk)
-    else:
-        form = DispositivoForm(initial={'sector': sector})
-
-    return render(request, 'dispositivo/form_dispositivo_sector.html', {
-        'form': form,
         'sector': sector,
-        'dispositivo': None,
-        'url_anterior': url_anterior,
-    })
-
-
-
-@login_required
-def nuevo_dispositivo_cliente(request, cliente_pk):
-    cliente = get_object_or_404(Cliente, pk=cliente_pk)
-
-    # Obtiene la URL anterior, o asigna una ruta por defecto si no existe
-    url_anterior = request.META.get('HTTP_REFERER', 'clientes/')
-
-    if request.method == 'POST':
-        form = DispositivoForm(request.POST)
-        if form.is_valid():
-            dispositivo = form.save()
-            return redirect('clientes:detalle', pk=cliente.pk)
-    else:
-        form = DispositivoForm(initial={'cliente': cliente})
-
-    return render(request, 'dispositivo/form_dispositivo_cliente.html', {
-        'form': form,
         'cliente': cliente,
-        'dispositivo': None,
+        'modelo_pk': pk,
+        'dispositivo': dispositivo,
         'url_anterior': url_anterior,
     })
 
@@ -194,80 +173,47 @@ def editar_dispositivo(request, pk):
     dispositivo = get_object_or_404(Dispositivo, pk=pk)
     sector_pk = dispositivo.sector_id
     cliente_pk = dispositivo.cliente_id
+    modelo_pk = 0
 
     # Obtiene la URL anterior, o asigna una ruta por defecto si no existe
-    url_anterior = request.META.get('HTTP_REFERER', 'dispositivos/')
-    url_anterior = http_ruta(url_anterior, 'dispositivos/')  # Cambia la ruta si es edicion
+    url_anterior = request.META.get('HTTP_REFERER', 'dispositivo')
+    url_anterior = http_ruta(url_anterior, 'dispositivo')  # Cambia la ruta si es edicion
+
+    if 'dispositivo' in url_anterior:
+        url_anterior = 'dispositivo'
+        #print('* DISPOSITIVO')
+    if 'sector' in url_anterior:
+        url_anterior = 'sector'
+        modelo_pk = sector_pk
+        #print('* SECTORES')
+    if 'cliente' in url_anterior:
+        url_anterior = 'cliente'
+        modelo_pk = cliente_pk
+        #print('* CLIENTE')
 
     if request.method == 'POST':
         form = DispositivoForm(request.POST, instance=dispositivo)
         url_anterior = request.POST.get('urlanterior')
         if form.is_valid():
             dispositivo = form.save()
-            if 'sectores' in url_anterior:
-                return redirect('sectores:detalle_sector', pk=dispositivo.sector_id or sector_pk)
-            if 'clientes' in url_anterior:
-                return redirect('clientes:detalle', pk=dispositivo.cliente_id or cliente_pk)
+            if 'sector' in url_anterior:
+                if sector_pk > 0:
+                    return redirect('sectores:detalle', pk=dispositivo.sector_id or sector_pk)
+                else:
+                    return redirect('sectores:lista')
+            if 'cliente' in url_anterior:
+                if cliente_pk > 0:
+                    return redirect('clientes:detalle', pk=dispositivo.cliente_id or cliente_pk)
+                else:
+                    return redirect('clientes:lista')
             return redirect('dispositivos:detalle_dispositivo', pk=pk)
     else:
         form = DispositivoForm(instance=dispositivo)
 
     return render(request, 'dispositivo/form_dispositivo.html', {
         'form': form,
-        'sector': dispositivo.sector,
         'dispositivo': dispositivo,
-        'url_anterior': url_anterior,
-    })
-
-
-@login_required
-def editar_dispositivo_cliente(request, pk):
-    dispositivo = get_object_or_404(Dispositivo, pk=pk)
-    cliente_pk = dispositivo.cliente_id
-
-    # Obtiene la URL anterior, o asigna una ruta por defecto si no existe
-    url_anterior = request.META.get('HTTP_REFERER', 'dispositivos/')
-    url_anterior = http_ruta(url_anterior, 'clientes/')  # Cambia la ruta si es edicion
-
-    if request.method == 'POST':
-        form = DispositivoForm(request.POST, instance=dispositivo)
-        url_anterior = request.POST.get('urlanterior')
-        if form.is_valid():
-            dispositivo = form.save()
-            return redirect('clientes:detalle', pk=dispositivo.cliente_id or cliente_pk)
-    else:
-        form = DispositivoForm(instance=dispositivo)
-
-    return render(request, 'dispositivo/form_dispositivo.html', {
-        'form': form,
-        'cliente': dispositivo.cliente,
-        'dispositivo': dispositivo,
-        'url_anterior': url_anterior,
-    })
-
-
-@login_required
-def editar_dispositivo_sector(request, pk):
-    dispositivo = get_object_or_404(Dispositivo, pk=pk)
-    sector_pk = dispositivo.sector_id
-
-    # Obtiene la URL anterior, o asigna una ruta por defecto si no existe
-    url_anterior = request.META.get('HTTP_REFERER', 'dispositivos/')
-    url_anterior = http_ruta(url_anterior, 'clientes/')  # Cambia la ruta si es edicion
-
-    if request.method == 'POST':
-        form = DispositivoForm(request.POST, instance=dispositivo)
-        url_anterior = request.POST.get('urlanterior')
-        if form.is_valid():
-            dispositivo = form.save()
-            return redirect('sectores:detalle_sector', pk=dispositivo.sector_id or sector_pk)
-    else:
-        form = DispositivoForm(instance=dispositivo)
-
-    return render(request, 'dispositivo/form_dispositivo.html', {
-        'form': form,
-        'sector': dispositivo.sector,
-        'dispositivo': dispositivo,
+        'modelo_pk': modelo_pk,
         'url_anterior': url_anterior,
     })
 
@@ -275,18 +221,53 @@ def editar_dispositivo_sector(request, pk):
 @login_required
 def eliminar_dispositivo(request, pk):
     dispositivo = get_object_or_404(Dispositivo, pk=pk)
+    sector_pk = dispositivo.sector_id
+    cliente_pk = dispositivo.cliente_id
+    modelo_pk = 0
+
+    # Obtiene la URL anterior, o asigna una ruta por defecto si no existe
+    url_anterior = request.META.get('HTTP_REFERER', 'dispositivo')
+    url_anterior = http_ruta(url_anterior, 'dispositivo')  # Cambia la ruta si es edicion
+
+    if 'dispositivo' in url_anterior:
+        url_anterior = 'dispositivo'
+        print('* DISPOSITIVO')
+    if 'sector' in url_anterior:
+        url_anterior = 'sector'
+        modelo_pk = sector_pk
+        print('* SECTORES')
+    if 'cliente' in url_anterior:
+        url_anterior = 'cliente'
+        modelo_pk = cliente_pk
+        print('* CLIENTE')
 
     if request.method == 'POST':
         registrar_evento(
 	        MODULO,
 	        f'Dipositivo {dispositivo.nombre} eliminado',
-	        f'Dispositivo #{dispositivo.pk} - {dispositivo.marca} {dispositivo.ip_gestion}.',
+	        f'Dispositivo #{dispositivo.pk} - {dispositivo.marca.nombre} {dispositivo.marca.modelo} {dispositivo.ip_gestion}.',
 	        nivel=Evento.Nivel.INFO,
         )
+        url_anterior = request.POST.get('urlanterior')
+        pk = request.POST.get('modelopk')
         dispositivo.delete()
+        if 'sector' in url_anterior:
+            if pk > 0:
+                return redirect('sectores:detalle', pk=pk)
+            else:
+                return redirect('sectores:lista')
+        if 'cliente' in url_anterior:
+            if pk > 0:
+                return redirect('clientes:detalle', pk=pk)
+            else:
+                return redirect('clientes:lista')
         return redirect('dispositivos:lista')
 
-    return render(request, 'dispositivo/confirmar_eliminar_dispositivo.html', {'dispositivo': dispositivo})
+    return render(request, 'dispositivo/confirmar_eliminar_dispositivo.html', {
+        'dispositivo': dispositivo,
+        'url_anterior': url_anterior,
+        'modelo_pk': modelo_pk,
+        })
 
 
 # --- Enlaces ----------------------------------------------------------------

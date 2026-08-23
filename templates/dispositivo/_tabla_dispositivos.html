@@ -16,8 +16,8 @@
     <tbody>
         {% for dispositivo in pagina %}
         <tr>
-            <td><a href="{% url 'dispositivos:detalle_dispositivo' dispositivo.pk %}">{{ dispositivo.nombre }}</a></td>
-            <td>{{ dispositivo.get_marca_display }} {{ dispositivo.modelo }}</td>
+            <td><a href="{% url 'dispositivos:detalle' dispositivo.pk %}">{{ dispositivo.nombre }}</a></td>
+            <td>{{ dispositivo.marca.nombre }} {{ dispositivo.marca.modelo }}</td>
             <td>{% include "dispositivo/comun/estado.html" %}</td>
             <td>{{ dispositivo.ip_gestion|default:"—" }}</td>
             <td>{% if dispositivo.cliente.nombre_completo %}
@@ -27,11 +27,11 @@
                 {% endif %}
             </td>
             <td>{{ dispositivo.get_rol_display }}</td>
-            <td>{{ dispositivo.get_tipo_display }}</td>
-            <td>{% if dispositivo.sector %}<a href="{% url 'sector:detalle_sector' dispositivo.sector.pk %}">{{ dispositivo.sector.nombre }}</a>{% else %}—{% endif %}</td>
+            <td>{{ dispositivo.tipo.nombre }}</td>
+            <td>{% if dispositivo.sector %}<a href="{% url 'sectores:detalle' dispositivo.sector.pk %}">{{ dispositivo.sector.nombre }}</a>{% else %}—{% endif %}</td>
             <td class="text-end">
-                <a href="{% url 'dispositivos:detalle_dispositivo' dispositivo.pk %}" class="btn btn-sm btn-outline-secondary">Ver</a>
-                <a href="{% url 'dispositivos:editar_dispositivo' dispositivo.pk %}" class="btn btn-sm btn-outline-primary">Editar</a>
+                <!-- <a href="{% url 'dispositivos:eliminar' dispositivo.pk %}" class="btn btn-sm btn-outline-danger">Eliminar</a> -->
+                <a href="{% url 'dispositivos:editar' dispositivo.pk %}" class="btn btn-sm btn-outline-primary">Editar</a>
             </td>
         </tr>
         {% empty %}
@@ -47,7 +47,7 @@
         <li class="page-item {% if numero == pagina.number %}active{% endif %}">
             <a class="page-link"
                href="?page={{ numero }}&q={{ busqueda }}&tipo={{ tipo_seleccionado }}&estado={{ estado_seleccionado }}"
-               hx-get="{% url 'dispositivos:lista_dispositivos' %}?page={{ numero }}&q={{ busqueda }}&tipo={{ tipo_seleccionado }}&estado={{ estado_seleccionado }}"
+               hx-get="{% url 'dispositivos:lista' %}?page={{ numero }}&q={{ busqueda }}&tipo={{ tipo_seleccionado }}&estado={{ estado_seleccionado }}"
                hx-target="#tabla-dispositivos">{{ numero }}</a>
         </li>
         {% endfor %}
