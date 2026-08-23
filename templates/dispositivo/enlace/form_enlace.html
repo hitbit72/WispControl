@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block titulo %}{% if enlace %}Editar enlace{% else %}Nuevo enlace{% endif %} · Portal WISP{% endblock %}
+{% block contenido %}
+<h2><i class="bi bi-hdd-network" aria-hidden="true"></i> 
+{% if enlace %}Editar enlace{% else %}Nuevo enlace{% endif %}</h2>
+<div class="text-muted mb-3">Origen: <strong>{{ dispositivo.nombre }}</strong> · {{ dispositivo.ip_gestion }} ({{ dispositivo.get_rol_display }} · {{ dispositivo.tipo.nombre }})</div>
+
+<section class="row">
+<form method="post" class="mt-3 panel needs-validation {% if form.errors %}was-validated{% endif %}" style="max-width: 760px;" novalidate>
+    {% csrf_token %}
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label class="form-label" for="{{ form.dispositivo_destino.id_for_label }}">Hacia (dispositivo destino)</label>
+            {{ form.dispositivo_destino }}
+            <div class="invalid-feedback">El dispositivo destino es obligatorio.</div>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label" for="{{ form.tipo.id_for_label }}">Tipo de enlace</label>
+            {{ form.tipo }}
+        </div>
+        <div class="col-md-6">
+            <label class="form-label" for="{{ form.interfaz_origen.id_for_label }}">Interfaz origen</label>
+            {{ form.interfaz_origen }}
+            <div class="invalid-feedback">Seleccione el interface origen.</div>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label" for="{{ form.interfaz_destino.id_for_label }}">Interfaz destino</label>
+            {{ form.interfaz_destino }}
+            <div class="invalid-feedback">Seleccione el interface destino.</div>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label" for="{{ form.ancho_banda_mbps.id_for_label }}">Ancho de banda (Mbps)</label>
+            {{ form.ancho_banda_mbps }}
+        </div>
+        <div class="col-md-4">
+            <label class="form-label" for="{{ form.distancia_km.id_for_label }}">Distancia (km)</label>
+            {{ form.distancia_km }}
+        </div>
+        <div class="col-md-4">
+            <label class="form-label" for="{{ form.frecuencia_ghz.id_for_label }}">Frecuencia (GHz)</label>
+            {{ form.frecuencia_ghz }}
+            <div class="form-text">Solo aplica a radioenlaces.</div>
+        </div>
+        <div class="col-12">
+            <label class="form-label" for="{{ form.notas.id_for_label }}">Notas</label>
+            {{ form.notas }}
+        </div>
+    </div>
+    {% if error_msg %}
+        <div class="alert alert-danger mt-3" role="alert"><strong>{{ error_msg }}</strong></div>
+    {% endif %}
+    <div class="mt-4 d-flex gap-2">
+        <button type="submit" class="btn btn-primary"><i class="bi bi-send" aria-hidden="true"></i> Guardar</button>
+        <a href="{% url 'dispositivos:detalle' dispositivo.pk %}" class="btn btn-outline-secondary"><i class="bi bi-x" aria-hidden="true"></i> Cancelar</a>
+    </div>
+</form>
+</section>
+{% endblock %}

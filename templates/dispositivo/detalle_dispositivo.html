@@ -3,7 +3,7 @@
 {% block contenido %}
 <div class="d-flex justify-content-between align-items-start mb-3">
     <div>
-        <h2 class="mb-0">{{ dispositivo.get_marca_display }} {% if dispositivo.modelo %} · {{ dispositivo.modelo }}{% endif %} ({{ dispositivo.nombre }})</h2>
+        <h2 class="mb-0"><i class="bi bi-layout-wtf" aria-hidden="true"></i> {{ dispositivo.marca.nombre }} {{ dispositivo.marca.modelo }} · ({{ dispositivo.nombre }})</h2>
         <div class="text-muted">
             {{ dispositivo.tipo.nombre }} · {{ dispositivo.get_rol_display }} {% if dispositivo.sector %} · <a href="{% url 'sectores:detalle' dispositivo.sector.pk %}">{{ dispositivo.sector.nombre }}</a>{% endif %}
         </div>
@@ -69,7 +69,7 @@
 
 <section class="panel mt-1">
 <div class="d-flex justify-content-between align-items-center mb-2">
-    <h4 class="mb-0">Interfaces</h4>
+    <h4 class="mb-0"><i class="bi bi-ethernet" aria-hidden="true"></i> Interfaces</h4>
     <a href="{% url 'dispositivos:nueva_interfaz' dispositivo.pk %}" class="btn btn-primary btn-sm">+ Nueva interfaz</a>
 </div>
 
@@ -119,7 +119,7 @@
 
 <section class="panel mt-1">
 <div class="d-flex justify-content-between align-items-center mb-2">
-    <h4 class="mb-0">Enlaces</h4>
+    <h4 class="mb-0"><i class="bi bi-arrows" aria-hidden="true"></i> Enlaces</h4>
     <a href="{% url 'dispositivos:nuevo_enlace' dispositivo.pk %}" class="btn btn-primary btn-sm">+ Nuevo enlace</a>
 </div>
 

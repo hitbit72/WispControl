@@ -1,0 +1,5 @@
+{% for interfaz in interfaces %}
+<option value="{{ interfaz.pk }}">{{ interfaz.nombre }}{% if interfaz.ip_address %} · {{ interfaz.ip_address }}{% endif %}</option>
+{% empty %}
+<option value="">— Selecciona un dispositivo destino —</option>
+{% endfor %}

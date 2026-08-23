@@ -119,13 +119,13 @@ def nuevo_dispositivo(request, pk=0):
                     return redirect('clientes:lista')
             return redirect('dispositivos:lista')
     else:
-        if not sector:
-            if cliente:
-                form = DispositivoForm(initial={'cliente': cliente})
-            else:
-                form = DispositivoForm()
-        else:
+        form = DispositivoForm()
+        if sector:
             form = DispositivoForm(initial={'sector': sector})
+        if cliente:
+            form = DispositivoForm(initial={'cliente': cliente})
+                
+
 
 
     return render(request, 'dispositivo/form_dispositivo_solo.html', {
@@ -270,4 +270,127 @@ def eliminar_dispositivo(request, pk):
         })
 
 
+# --- Interfaces ----------------------------------------------------------------
+
+@login_required
+def nueva_interfaz(request, dispositivo_pk):
+    dispositivo = get_object_or_404(Dispositivo, pk=dispositivo_pk)
+    error_msg = ""
+
+    if request.method == 'POST':
+        form = InterfazForm(request.POST)
+        if form.is_valid():
+            interfaz = form.save(commit=False)
+            interfaz.dispositivo = dispositivo
+            interfaz.save()
+            return redirect('dispositivos:detalle', pk=dispositivo.pk)
+        else:
+            # si el formlario no es válido.
+            error_msg = "Por favor, corrige los errores en el formulario: " + form.errors.as_text()
+    else:
+        form = InterfazForm()
+
+    return render(request, 'dispositivo/interfaz/form_interfaz.html', {
+        'form': form, 'dispositivo': dispositivo, 'interfaz': None, 'error_msg': error_msg
+    })
+
+
+
+@login_required
+def editar_interfaz(request, pk):
+    interfaz = get_object_or_404(Interfaz, pk=pk)
+    dispositivo_pk = interfaz.dispositivo_id
+
+    if request.method == 'POST':
+        form = InterfazForm(request.POST, instance=interfaz)
+        if form.is_valid():
+            form.save()
+            return redirect('dispositivos:detalle', pk=dispositivo_pk)
+    else:
+        form = InterfazForm(instance=interfaz)
+
+    return render(request, 'dispositivo/interfaz/form_interfaz.html', {
+        'form': form, 'dispositivo': interfaz.dispositivo, 'interfaz': interfaz,
+    })
+
+
+@login_required
+def eliminar_interfaz(request, pk):
+    interfaz = get_object_or_404(Interfaz, pk=pk)
+    dispositivo_pk = interfaz.dispositivo_id
+
+    if request.method == 'POST':
+        interfaz.delete()
+        return redirect('dispositivos:detalle_dispositivo', pk=dispositivo_pk)
+
+    return render(request, 'dispositivo/interfaz/confirmar_eliminar_interfaz.html', {'interfaz': interfaz})
+
+
 # --- Enlaces ----------------------------------------------------------------
+
+@login_required
+def opciones_interfaces_dispositivo(request):
+    """Fragmento HTMX con las opciones de interfaz_destino del dispositivo
+    elegido en el formulario de enlaces."""
+    destino_id = request.GET.get('dispositivo_destino', '').strip()
+    if destino_id.isdigit():
+        interfaces = Interfaz.objects.filter(
+            dispositivo_id=destino_id
+        ).order_by('nombre')
+    else:
+        interfaces = Interfaz.objects.none()
+    return render(request, 'dispositivo/enlace/_opciones_interfaz.html', {'interfaces': interfaces})
+
+
+@login_required
+def nuevo_enlace(request, dispositivo_pk):
+    """Crea un enlace cuyo origen es el dispositivo actual."""
+    dispositivo = get_object_or_404(Dispositivo, pk=dispositivo_pk)
+
+    if request.method == 'POST':
+        form = EnlaceForm(request.POST, dispositivo_origen=dispositivo)
+        if form.is_valid():
+            enlace = form.save(commit=False)
+            enlace.dispositivo_origen = dispositivo
+            enlace.save()
+            return redirect('dispositivos:detalle', pk=dispositivo.pk)
+    else:
+        form = EnlaceForm(dispositivo_origen=dispositivo)
+
+    return render(request, 'dispositivo/enlace/form_enlace.html', {
+        'form': form, 'dispositivo': dispositivo, 'enlace': None,
+    })
+
+
+@login_required
+def editar_enlace(request, pk):
+    enlace = get_object_or_404(Enlace, pk=pk)
+    dispositivo_pk = enlace.dispositivo_origen_id
+    error_msg = ""
+
+    if request.method == 'POST':
+        form = EnlaceForm(request.POST, instance=enlace, dispositivo_origen=enlace.dispositivo_origen)
+        if form.is_valid():
+            form.save()
+            return redirect('dispositivos:detalle', pk=dispositivo_pk)
+        else:
+            # si el formlario no es válido.
+            error_msg = "Por favor, corrige los errores en el formulario: " + form.errors.as_text()
+    else:
+        form = EnlaceForm(instance=enlace, dispositivo_origen=enlace.dispositivo_origen)
+
+    return render(request, 'dispositivo/enlace/form_enlace.html', {
+        'form': form, 'dispositivo': enlace.dispositivo_origen, 'enlace': enlace, 'error_msg': error_msg,
+    })
+
+
+@login_required
+def eliminar_enlace(request, pk):
+    enlace = get_object_or_404(Enlace, pk=pk)
+    dispositivo_pk = enlace.dispositivo_origen_id
+
+    if request.method == 'POST':
+        enlace.delete()
+        return redirect('dispositivos:detalle', pk=dispositivo_pk)
+
+    return render(request, 'dispositivo/enlace/confirmar_eliminar_enlace.html', {'enlace': enlace})

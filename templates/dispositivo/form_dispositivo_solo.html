@@ -3,7 +3,7 @@
 {% block contenido %}
 <h2><i class="bi bi-router" aria-hidden="true"></i> Nuevo dispositivo</h2>
 {% if sector %}
-<div class="text-muted mb-3">Sector: <strong>{{ sector.nombre }}</strong> {% if sector.poblacion %}· {{ sector.poblacion }}{% endif %}</div>
+<div class="text-muted mb-3">Sector: <strong>{{ sector.nombre }}</strong> {% if sector.poblacion %} · {{ sector.poblacion }}{% endif %}</div>
 {% endif %}
 {% if cliente %}
 <div class="text-muted mb-3">Cliente: <strong>{{ cliente.nombre_completo }}</strong> {% if cliente.apodo %} · {{ cliente.apodo }}{% endif %} {% if cliente.poblacion %} · {{ cliente.poblacion }}{% endif %}</div>

@@ -10,7 +10,7 @@ def _etiqueta_dispositivo(obj):
     """Etiqueta del selector de dispositivo destino: 'nombre (tipo · IP · sector)'."""
     ip = obj.ip_gestion or 'sin IP'
     sector = obj.sector.nombre if obj.sector_id else 'Sin sector'
-    return f'{obj.nombre} ({obj.get_tipo_display()} · {ip} · {sector})'
+    return f'{obj.nombre} ({obj.tipo.nombre} · {ip} · {sector})'
 
 
 def _etiqueta_interfaz(obj):
@@ -98,7 +98,7 @@ class EnlaceForm(BootstrapFormMixin, forms.ModelForm):
         destino = self.fields['dispositivo_destino']
         destino.label_from_instance = _etiqueta_dispositivo
         destino.widget.attrs.update({
-            'hx-get': reverse('red:opciones_interfaces_dispositivo'),
+            'hx-get': reverse('dispositivos:opciones_interfaces_dispositivo'),
             'hx-trigger': 'change',
             'hx-target': '#id_interfaz_destino',
             'hx-swap': 'innerHTML',

@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block titulo %}{% if interfaz %}Editar interfaz{% else %}Nueva interfaz{% endif %} · Portal WISP{% endblock %}
+{% block contenido %}
+<h2><i class="bi bi-ethernet" aria-hidden="true"></i> 
+{% if interfaz %}Editar interfaz{% else %}Nueva interfaz{% endif %}</h2>
+<div class="text-muted mb-3">Dispositivo: <strong>{{ dispositivo.nombre }}</strong>
+({{dispositivo.marca.nombre}} {{dispositivo.marca.modelo}} · {{ dispositivo.tipo.nombre }})</div>
+
+<section class="row">
+<form method="post" class="mt-3 panel needs-validation {% if form.errors %}was-validated{% endif %}" style="max-width: 760px;" novalidate>
+    {% csrf_token %}
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label class="form-label" for="{{ form.nombre.id_for_label }}">Nombre</label>
+            {{ form.nombre }}
+            <div class="form-text">Ej. 'ether1', 'wlan0', 'vlan100'.</div>
+            <div class="invalid-feedback">El nombre es obligatorio.</div>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label" for="{{ form.tipo.id_for_label }}">Tipo</label>
+            {{ form.tipo }}
+        </div>
+        <div class="col-md-6">
+            <label class="form-label" for="{{ form.estado.id_for_label }}">Estado</label>
+            {{ form.estado }}
+        </div>
+        <div class="col-md-6">
+            <label class="form-label" for="{{ form.ip_address.id_for_label }}">IP</label>
+            {{ form.ip_address }}
+        </div>
+        <div class="col-md-6">
+            <label class="form-label" for="{{ form.mac_address.id_for_label }}">Dirección MAC</label>
+            {{ form.mac_address }}
+        </div>
+        <div class="col-md-3">
+            <label class="form-label" for="{{ form.velocidad_mbps.id_for_label }}">Velocidad (Mbps)</label>
+            {{ form.velocidad_mbps }}
+        </div>
+    </div>
+    {% if error_msg %}
+    <div class="alert alert-danger mt-3" role="alert"><strong>{{ error_msg }}</strong></div>
+    {% endif %}
+    <div class="mt-4 d-flex gap-2">
+        <button type="submit" class="btn btn-primary"><i class="bi bi-send" aria-hidden="true"></i> Guardar</button>
+        <a href="{% url 'dispositivos:detalle' dispositivo.pk %}" class="btn btn-outline-secondary"><i class="bi bi-x" aria-hidden="true"></i> Cancelar</a>
+    </div>
+</form>
+</section>
+{% endblock %}
