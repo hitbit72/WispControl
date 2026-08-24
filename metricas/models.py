@@ -127,7 +127,7 @@ class OIDmetric(models.Model):
     codigos = models.JSONField(
         default=dict, blank=True, null=True,
         verbose_name='Códigos OID',
-        help_text='Códigos OID en formato JSon: {"uptime": "1.3.6.1.2.1.1.3.0",}.',
+        help_text='Códigos OID en formato JSon: {"uptime": "1.3.6.1.2.1.1.3.0",}',
     )
 
     class Meta:

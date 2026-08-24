@@ -21,9 +21,8 @@ MODULO = 'dispositivos'
 
 @login_required
 def lista_dispositivos(request):
-    """Listado global de dispositivos (sin pasar por sectores), con búsqueda
-    y filtros. Es una segunda vía de acceso: los dispositivos también se ven
-    desde el detalle de su sector."""
+    """ Listado global de dispositivos con búsqueda y filtros. """
+
     dispositivos = Dispositivo.objects.select_related('sector', 'cliente')
     
     busqueda = request.GET.get('q', '').strip()
@@ -150,8 +149,9 @@ def detalle_dispositivo(request, pk):
     url_anterior = http_ruta(url_anterior, 'dispositivos/')  # Cambia la ruta si es edicion
     #print('detalle_dispositivo url_anterior: {url_anterior}')
 
-    #metricas = []
-    metricas = get_object_or_404(DeviceMetrics, device = pk)
+    # cargar las metrcias del dispositivo
+    metricas = DeviceMetrics.objects.filter(device=dispositivo).first()
+   
     # procesar los datos tipo json antes de enviarlos a la platilla
     #if isinstance(metricas.puertos, str):
     #    metricas.puertos = json.loads(metricas.puertos)
