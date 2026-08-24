@@ -33,12 +33,12 @@ REGLA_INACTIVO = ('sin_respuesta', 'onu_offline', 'olt_sin_respuesta')
 
 def _conectar_por_tipo(dispositivo):
     """Devuelve la regla de conectividad según el tipo de dispositivo."""
-    if dispositivo.tipo == Dispositivo.Tipo.OLT:
-        return 'olt_sin_respuesta'
-    if dispositivo.tipo == Dispositivo.Tipo.ONU:
-        return 'onu_offline'
-    return 'sin_respuesta'
 
+    if dispositivo.tipo.clave == 'olt':
+        return 'olt_sin_respuesta'
+    if dispositivo.tipo.clave == 'onu':
+        return 'onu_sin_respuesta'
+    return 'sin_respuesta'
 
 def evaluar(dispositivo, metrica, anterior, config):
     """
@@ -70,7 +70,7 @@ def evaluar(dispositivo, metrica, anterior, config):
                 reglas.append({'regla': 'puerto_caido', 'titulo': f'Puerto caído {dispositivo.ip_gestion}',
                                'texto': f'Interfaz(es) caída(s): {", ".join(caidos)}.'})
             
-    if config.get('sin_clientes_ap') and dispositivo.tipo in (Dispositivo.Tipo.AP,) \
+    if config.get('sin_clientes_ap') and dispositivo.tipo.clave in ('ap','accesp','apoint') \
             and metrica.clients is not None and metrica.clients == 0:
         reglas.append({'regla': 'sin_clientes_ap', 'titulo': f'AP sin clientes {dispositivo.ip_gestion}',
                        'texto': 'Ningún cliente asociado al AP.'})

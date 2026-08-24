@@ -147,5 +147,5 @@ def oids_dispositivo(dispositivo):
     if metric and metric.codigos:
         oids.update(metric.codigos)  # metric.codigos ya es un dict de Python
 
-    print(oids)
+    #print(oids)
     return oids

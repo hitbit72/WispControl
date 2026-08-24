@@ -10,7 +10,7 @@ from .models import Dispositivo, Enlace, Interfaz, TipoEquipo
 from clientes.models import Cliente
 from sector.models import Sector
 
-#from metricas.models import DeviceMetrics
+from metricas.models import DeviceMetrics
 from eventos.models import Evento
 from eventos.services import registrar_evento
 
@@ -150,8 +150,8 @@ def detalle_dispositivo(request, pk):
     url_anterior = http_ruta(url_anterior, 'dispositivos/')  # Cambia la ruta si es edicion
     #print('detalle_dispositivo url_anterior: {url_anterior}')
 
-    metricas = []
-    # metricas = get_object_or_404(DeviceMetrics, device = pk)
+    #metricas = []
+    metricas = get_object_or_404(DeviceMetrics, device = pk)
     # procesar los datos tipo json antes de enviarlos a la platilla
     #if isinstance(metricas.puertos, str):
     #    metricas.puertos = json.loads(metricas.puertos)

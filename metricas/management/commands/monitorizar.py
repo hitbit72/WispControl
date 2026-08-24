@@ -128,7 +128,7 @@ class Command(BaseCommand):
                 continue
             if metrica == 'uptime':
                 # sysUpTime está en centésimas; MTIK en segundos.
-                valor = numero / 100 if dispositivo.marca != Dispositivo.Marcas.MIKROTIK else numero
+                #valor = numero / 100 if dispositivo.marca != Dispositivo.Marcas.MIKROTIK else numero
                 #datos['uptime'] = int(valor)
                 datos['uptime'] = numero or 0
             elif campo == 'channel':
