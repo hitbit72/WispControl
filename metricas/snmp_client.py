@@ -24,17 +24,6 @@ from pysnmp.hlapi import (
     nextCmd,
 )
 
-"""
-from pysnmp.hlapi.asyncio import (
-    CommunityData,
-    ContextData,
-    ObjectIdentity,
-    ObjectType,
-    SnmpEngine,
-    UdpTransportTarget,
-    getCmd,
-    )
-"""
 
 MODO_IPV4 = 0  # CommunityData(mpModel=0) mpModel=0 para SNMPv1, 1 para SNMPv2c
 
@@ -107,7 +96,7 @@ def _es_falta_oid(error_st):
         nombre = str(error_st).lower()
     return nombre in _FALTA_OID
 
-def consultar_escalares2(dispositivo, oids):
+def consultar_escalares(dispositivo, oids):
     """GET múltiple: dict métrica -> OID. Devuelve dict métrica ->
     (valor_numero, valor_texto). Los OIDs sin soporte se omiten. Lanza
     SnmpError si el equipo no responde o da error de protocolo."""
@@ -143,44 +132,6 @@ def consultar_escalares2(dispositivo, oids):
         for key, varBind in zip(oids.keys(), varBinds):
             resultados[key] = varBind[1].prettyPrint()
         return resultados
-
-def consultar_escalares(dispositivo, oids):
-    """GET múltiple: dict métrica -> OID. Devuelve dict métrica ->
-    (valor_numero, valor_texto). Los OIDs sin soporte se omiten. Lanza
-    SnmpError si el equipo no responde o da error de protocolo."""
-    #print(oids)
-    if not oids:
-        return {}
-    conf = _conf_snmp(dispositivo)
-    comunidad = dispositivo.snmp_community or 'public'
-    engine = SnmpEngine()
-    transporte = _trasporte(dispositivo.ip_gestion, conf)
-    contexto = ContextData()
-
-    error_ind, error_st, error_idx, var_binds = next(
-        getCmd(
-            engine, _auth(comunidad), transporte, contexto,
-            *[_objetos(oid) for oid in oids.values()],
-        )
-    )
-    if error_ind:
-        raise SnmpError(str(error_ind))
-
-    # Un agente SNMPv1 devuelve noSuchName para TODO el GET si un solo OID
-    # no existe. En ese caso se reintenta cada OID por separado.
-    if error_st:
-        if _es_falta_oid(error_st):
-            return _escalares_uno_a_uno(engine, _auth(comunidad), transporte,
-                                        contexto, oids)
-        raise SnmpError(error_st.prettyPrint())
-
-    resultado = {}
-    for (oid, valor), metrica in zip(var_binds, oids):
-        texto = _valor_texto(valor)
-        if not texto:
-            continue
-        resultado[metrica] = (_valor_numero(valor), texto)
-    return resultado
 
 
 def _escalares_uno_a_uno(engine, auth, transporte, contexto, oids):
