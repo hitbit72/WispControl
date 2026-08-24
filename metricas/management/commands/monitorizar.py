@@ -26,7 +26,7 @@ from dispositivos.models import Dispositivo
 
 from metricas import snmp_client
 from metricas.models import DeviceMetrics
-from metricas.oids import oids_dispositivo
+from metricas.oids import oids_dispositivo, oids_puertos
 from metricas.services import evaluar_y_aplicar, guardar_metrica
 
 # metrica OID -> campo del modelo (clave 'mem_total'/'mem_libre' -> ram).
@@ -81,9 +81,10 @@ class Command(BaseCommand):
         }
         """
         escalares = oids_dispositivo(dispositivo)
+        escalares_puerto = oids_puertos(dispositivo)
         try:
             resultado = snmp_client.consultar_escalares(dispositivo, escalares)
-            puertos = snmp_client.consultar_if_table(dispositivo, escalares)
+            puertos = snmp_client.consultar_if_table(dispositivo, escalares_puerto)
             status = DeviceMetrics.Status.OK
         except snmp_client.SnmpError as exc:
             self.stdout.write(

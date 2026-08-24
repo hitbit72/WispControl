@@ -140,7 +140,6 @@ def consultar_escalares(dispositivo, oids):
     """GET múltiple: dict métrica -> OID. Devuelve dict métrica ->
     (valor_numero, valor_texto). Los OIDs sin soporte se omiten. Lanza
     SnmpError si el equipo no responde o da error de protocolo."""
-    #print(oids)
     if not oids:
         return {}
     conf = _conf_snmp(dispositivo)
@@ -148,6 +147,11 @@ def consultar_escalares(dispositivo, oids):
     engine = SnmpEngine()
     transporte = _trasporte(dispositivo.ip_gestion, conf)
     contexto = ContextData()
+
+    # debug
+    #print(transporte)
+    #print(comunidad)
+    #print(oids)
 
     error_ind, error_st, error_idx, var_binds = next(
         getCmd(
@@ -162,6 +166,9 @@ def consultar_escalares(dispositivo, oids):
     # no existe. En ese caso se reintenta cada OID por separado.
     if error_st:
         if _es_falta_oid(error_st):
+            # debug
+            print('* --- Escalares uno a uno ---')
+            print(oids)
             return _escalares_uno_a_uno(engine, _auth(comunidad), transporte,
                                         contexto, oids)
         raise SnmpError(error_st.prettyPrint())

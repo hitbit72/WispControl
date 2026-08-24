@@ -97,9 +97,12 @@ OIDS_GENERICO = {
     'uptime': '1.3.6.1.2.1.1.3.0',           # sysUpTime (hundredths de segundo)
     'sys_name': '1.3.6.1.2.1.1.5.0',         #sysName
     'sys_descr': '1.3.6.1.2.1.1.1.0',        #sysDescription
-    'mem_total': '1.3.6.1.4.1.2021.4.5.0',   # memTotalReal (bytes) - UCD
-    'mem_libre': '1.3.6.1.4.1.2021.4.6.0',   # memAvailReal (bytes) - UCD
-    'cpu': '1.3.6.1.4.1.2021.10.1.3.2',      # 5min load average. UCD-SNMP-MIB
+    #'cpu': '1.3.6.1.4.1.2021.10.1.3.2',      # 5min load average. UCD-SNMP-MIB
+    #'mem_total': '1.3.6.1.4.1.2021.4.5.0',   # memTotalReal (bytes) - UCD
+    #'mem_libre': '1.3.6.1.4.1.2021.4.6.0',   # memAvailReal (bytes) - UCD
+}
+
+OIDS_PUERTOS_GENERICO = {
     'if_descr': '1.3.6.1.2.1.2.2.1.2',       # ifTable/ifDescr (walk). MIB-II (RFC1213-MIB / IF-MIB)
     'if_oper': '1.3.6.1.2.1.2.2.1.8',        # ifTable/ifOperStatus (walk). MIB-II (RFC1213-MIB / IF-MIB) current state (1 = up, 2 = down)
     'if_speed': '1.3.6.1.2.1.2.2.1.5',       # ifSpeed (walk). (RFC1213-MIB / IF-MIB) Estimated bandwidth in bits per second.
@@ -142,7 +145,23 @@ def oids_dispositivo(dispositivo):
     oids = OIDS_GENERICO.copy()
 
     # Obtenemos directamente la instancia o None
-    metric = OIDmetric.objects.filter(marca=dispositivo.marca).first()
+    metric = OIDmetric.objects.filter(marca=dispositivo.marca, tipo='general').first()
+
+    if metric and metric.codigos:
+        oids.update(metric.codigos)  # metric.codigos ya es un dict de Python
+
+    #print(oids)
+    return oids
+
+def oids_puertos(dispositivo):
+    """
+    Devuelve los códigos de consulta de los interfaces de red
+    """
+    # copia limpia del diccionario genérico
+    oids = OIDS_PUERTOS_GENERICO.copy()
+
+    # Obtenemos directamente la instancia o None
+    metric = OIDmetric.objects.filter(marca=dispositivo.marca, tipo='puertos').first()
 
     if metric and metric.codigos:
         oids.update(metric.codigos)  # metric.codigos ya es un dict de Python

@@ -112,8 +112,17 @@ class Alarma(models.Model):
 class OIDmetric(models.Model):
     """ Lista de todos los OID para una marca """
 
+    class Tipo(models.TextChoices):
+        GENERAL = 'general', 'General'
+        PUERTOS = 'puertos', 'Puertos'
+
     marca = models.ForeignKey('dispositivos.Marca', on_delete=models.CASCADE, related_name='oid')
     descripcion = models.CharField(max_length=255, verbose_name='Descripción')
+
+    tipo = models.CharField(
+        max_length=20, choices=Tipo.choices, default=Tipo.GENERAL, verbose_name='Tipo',
+    )
+
     codigos = models.JSONField(
         default=dict, blank=True, null=True,
         verbose_name='Códigos OID',
