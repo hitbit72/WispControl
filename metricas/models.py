@@ -115,6 +115,7 @@ class OIDmetric(models.Model):
     class Tipo(models.TextChoices):
         GENERAL = 'general', 'General'
         PUERTOS = 'puertos', 'Puertos'
+        CLIENTES = 'clientes', 'Clientes'
 
     marca = models.ForeignKey('dispositivos.Marca', on_delete=models.CASCADE, related_name='oid')
     descripcion = models.CharField(max_length=255, verbose_name='Descripción')
