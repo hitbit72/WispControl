@@ -71,9 +71,14 @@ def lista_clientes(request):
 @login_required
 def detalle_cliente(request, pk):
     cliente = get_object_or_404(Cliente, pk=pk)
-    # Obtiene la URL anterior, o asigna una ruta por defecto si no existe
-    url_anterior = request.META.get('HTTP_REFERER', 'clientes:lista')
-    return render(request, 'clientes/detalle.html', {'cliente': cliente, 'url_anterior': url_anterior})
+
+    # Capturamos la URL de redirección (si viene en el GET o en el POST)
+    url_anterior = request.POST.get('next') or request.GET.get('next')
+
+    return render(request, 'clientes/detalle.html', {
+        'cliente': cliente, 
+        'url_anterior': url_anterior,
+        })
 
 
 @login_required

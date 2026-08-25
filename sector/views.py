@@ -33,7 +33,15 @@ def lista_sectores(request):
 def detalle_sector(request, pk):
     sector = get_object_or_404(Sector, pk=pk)
     router_total = sector.routers_mikrotik.count()
-    return render(request, 'sector/detalle_sector.html', {'sector': sector, 'routers': router_total})
+
+    # Capturamos la URL de redirección (si viene en el GET o en el POST)
+    url_anterior = request.POST.get('next') or request.GET.get('next')
+
+    return render(request, 'sector/detalle_sector.html', {
+        'sector': sector, 
+        'routers': router_total,
+        'url_anterior': url_anterior,
+        })
 
 
 @login_required

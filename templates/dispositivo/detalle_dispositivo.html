@@ -5,7 +5,7 @@
     <div>
         <h2 class="mb-0"><i class="bi bi-layout-wtf" aria-hidden="true"></i> {{ dispositivo.marca.nombre }} {{ dispositivo.marca.modelo }} · ({{ dispositivo.nombre }})</h2>
         <div class="text-muted">
-            {{ dispositivo.tipo.nombre }} · {{ dispositivo.get_rol_display }} {% if dispositivo.sector %} · <a href="{% url 'sectores:detalle' dispositivo.sector.pk %}">{{ dispositivo.sector.nombre }}</a>{% endif %}
+            {{ dispositivo.tipo.nombre }} · {{ dispositivo.get_rol_display }} {% if dispositivo.sector %} · <a href="{% url 'sectores:detalle' dispositivo.sector.pk %}?next={{ request.path }}">{{ dispositivo.sector.nombre }}</a>{% endif %}
         </div>
     </div>
     <div class="d-flex gap-2">
@@ -48,7 +48,7 @@
                 <p class="mb-0"><strong>Longitud:</strong> {{ dispositivo.longitud|default:"—" }}</p>
                 {% if dispositivo.cliente %}
                 <p class="mb-1"><strong>Cliente:</strong> 
-                <a href="{% url 'clientes:detalle' dispositivo.cliente.pk %}">{{ dispositivo.cliente.nombre_completo }}</a></p>
+                <a href="{% url 'clientes:detalle' dispositivo.cliente.pk %}?next={{ request.path }}">{{ dispositivo.cliente.nombre_completo }}</a></p>
                 {% endif %}
             </div>
         </div>
