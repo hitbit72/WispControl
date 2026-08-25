@@ -270,6 +270,25 @@ def eliminar_dispositivo(request, pk):
         })
 
 
+
+@login_required
+def alternar_escaneo_dispositivo(request, pk):
+    dispositivo = get_object_or_404(Dispositivo, pk=pk)
+
+    if request.method == 'POST':
+        metodo = request.POST.get('id_scanear')
+        if metodo == '1':
+            dispositivo.escanear = not dispositivo.escanear
+            if not dispositivo.escanear:
+                dispositivo.alarma = False    
+        if metodo == '2':
+            dispositivo.alarma = not dispositivo.alarma
+            if dispositivo.alarma:
+                dispositivo.escanear = True
+        dispositivo.save()
+    return redirect('dispositivos:detalle', pk=dispositivo.pk)
+
+
 # --- Interfaces ----------------------------------------------------------------
 
 @login_required

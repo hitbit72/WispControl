@@ -42,7 +42,9 @@ def evaluar_y_aplicar(dispositivo, metrica):
     activas = evaluar(dispositivo, metrica, anterior, settings.METRICAS_ALARMAS)
     if dispositivo.alarma:
         resultados = _sincronizar_alarmas(dispositivo, activas)
-    _actualizar_estado(dispositivo, activas)
+    # _actualizar_estado desactivado: activar y desactivar dispositivos lo administra el modulo ping
+    # aquí solo se muetra la alerta
+    #_actualizar_estado(dispositivo, activas)
     return resultados
 
 

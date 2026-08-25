@@ -26,7 +26,16 @@
                 <p class="mb-1"><strong>Modo:</strong> {{ dispositivo.get_rol_display|default:"—" }}</p>
                 <p class="mb-1"><strong>IP de gestión:</strong> {{ dispositivo.ip_gestion|default:"—" }}</p>
                 <p class="mb-1"><strong>MAC:</strong> {{ dispositivo.mac_address|default:"—" }}</p>
-                <p class="mb-0"><strong>Firmware:</strong> {{ dispositivo.firmware_version|default:"—" }}</p>
+                <p class="mb-2"><strong>Firmware:</strong> {{ dispositivo.firmware_version|default:"—" }}</p>
+                <form method="post" action="{% url 'dispositivos:alternar_escaneo' dispositivo.pk %}" 
+                    hx-trigger="change"> 
+                {% csrf_token %}
+                    <div x-data="{ metodo: '0'}">
+                    <input type="hidden" id="id_scanear" name="id_scanear" x-model="metodo">
+                    <p class="mb-0"><strong>Escanear:</strong> <button class="badge {% if dispositivo.escanear %}bg-success{% else %}bg-danger{% endif %}" type="submit" @click="metodo = '1'">{% if dispositivo.escanear %} Si {% else %} No {% endif %}</button> · 
+                    <strong>Alarmas:</strong> <button class="badge {% if dispositivo.alarma %}bg-success{% else %}bg-danger{% endif %}" type="submit" @click="metodo = '2'">{% if dispositivo.alarma %} Si {% else %} No {% endif %}</button></p>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

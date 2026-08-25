@@ -28,7 +28,7 @@ REGLA_NIVEL = {
 }
 
 # Reglas que, al cumplirse, marcan el dispositivo como 'inactivo'.
-REGLA_INACTIVO = ('sin_respuesta', 'onu_offline', 'olt_sin_respuesta')
+REGLA_INACTIVO = ('sin_respuesta', 'onu_offline', 'olt_sin_respuesta', 'ap_sin_respuesta')
 
 
 def _conectar_por_tipo(dispositivo):
@@ -36,6 +36,8 @@ def _conectar_por_tipo(dispositivo):
 
     if dispositivo.tipo.clave == 'olt':
         return 'olt_sin_respuesta'
+    if dispositivo.tipo.clave == 'ap':
+        return 'ap_sin_respuesta'
     if dispositivo.tipo.clave == 'onu':
         return 'onu_sin_respuesta'
     return 'sin_respuesta'
@@ -103,7 +105,8 @@ def evaluar(dispositivo, metrica, anterior, config):
 
 def _titulo_conectividad(regla):
     return {
-        'sin_respuesta': 'sin respuesta',
-        'onu_offline': 'ONU offline',
-        'olt_sin_respuesta': 'OLT sin respuesta',
-    }.get(regla, 'Fallo de conectividad')
+        'sin_respuesta': 'sin respuesta SNMP',
+        'onu_offline': 'ONU offline SNMP',
+        'olt_sin_respuesta': 'OLT sin respuesta SNMP',
+        'ap_sin_respuesta': 'Acces Point sin respuesta SNMP',
+    }.get(regla, 'Fallo de conectividad SNMP')
