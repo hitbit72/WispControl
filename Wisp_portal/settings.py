@@ -188,9 +188,6 @@ METRICAS_SNMP = {
     'reintentos': 2,
 }
 
-# OIDs extra por marca (se suman a los genéricos y a los de la marca base
-# definidos en metricas/oids.py). Util para marcas sin mapa base.
-METRICAS_OIDS_POR_MARCA = {}
 
 # Umbrales de las reglas de alarma (ver metricas/reglas.py).
 METRICAS_ALARMAS = {

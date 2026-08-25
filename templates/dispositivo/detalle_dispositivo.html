@@ -49,11 +49,11 @@
             <div class="card-body">
                 <h5 class="card-title">Métricas</h5>
                 {% if metricas %}
-                <p class="mb-1"><strong>Nombre:</strong> {{ metricas.sys_name|default:"—" }}</p>
-                <p class="mb-1"><strong>SSID:</strong> {{ metricas.ssid|default:"—" }}</p>
-                <p class="mb-1"><strong>Frecuencia:</strong> {{ metricas.frequency|default:"—" }} MHz</p>
-                <p class="mb-1"><strong>Señal:</strong> {{ metricas.signal|default:"—" }} dbm</p>
-                <p class="mb-0"><strong>CCQ:</strong> {{ metricas.ccq|default:"—" }}%</p>
+                    {% if metricas.sys_name %}<p class="mb-1"><strong>Nombre:</strong> {{ metricas.sys_name|default:"—" }}</p>{% endif %}
+                    {% if metricas.ssid %}<p class="mb-1"><strong>SSID:</strong> {{ metricas.ssid|default:"—" }}</p>{% endif %}
+                    {% if metricas.frequency %}<p class="mb-1"><strong>Frecuencia:</strong> {{ metricas.frequency|default:"—" }} MHz</p>{% endif %}
+                    {% if metricas.signal %}<p class="mb-1"><strong>Señal:</strong> {{ metricas.signal|default:"—" }} dbm</p>{% endif %}
+                    {% if metricas.ccq %}<p class="mb-0"><strong>CCQ:</strong> {{ metricas.ccq|default:"—" }}%</p>{% endif %}
                 {% endif %}
             </div>
         </div>

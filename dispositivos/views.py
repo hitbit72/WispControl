@@ -103,7 +103,7 @@ def nuevo_dispositivo(request, pk=0):
     if request.method == 'POST':
         form = DispositivoForm(request.POST)
         url_anterior = request.POST.get('urlanterior')
-        pk = request.POST.get('modelopk')
+        pk = int(request.POST.get('modelopk'))
         if form.is_valid():
             dispositivo = form.save()
             if url_anterior == 'sector':
