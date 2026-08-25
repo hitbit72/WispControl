@@ -146,9 +146,13 @@ def detalle_dispositivo(request, pk):
     )
 
     # Obtiene la URL anterior, o asigna una ruta por defecto si no existe
-    url_anterior = request.META.get('HTTP_REFERER', 'dispositivos/')
-    url_anterior = http_ruta(url_anterior, 'dispositivos/')  # Cambia la ruta si es edicion
-    #print('detalle_dispositivo url_anterior: {url_anterior}')
+    #url_anterior = request.META.get('HTTP_REFERER', 'dispositivos/')
+    #url_anterior = http_ruta(url_anterior, 'dispositivos/')  # Cambia la ruta si es edicion
+
+    # 1. Capturamos la URL de redirección (si viene en el GET o en el POST)
+    url_anterior = request.POST.get('next') or request.GET.get('next')
+    if not url_anterior:
+        url_anterior = '/dispositivo/'
 
     # cargar las metrcias del dispositivo
     metricas = DeviceMetrics.objects.filter(device=dispositivo).first()
@@ -161,6 +165,7 @@ def detalle_dispositivo(request, pk):
         (*dispositivo.enlaces_origen.all(), *dispositivo.enlaces_destino.all()),
         key=lambda e: e.pk,
     )
+
     return render(request, 'dispositivo/detalle_dispositivo.html', {
         'dispositivo': dispositivo,
         'enlaces': enlaces,
@@ -171,48 +176,24 @@ def detalle_dispositivo(request, pk):
 @login_required
 def editar_dispositivo(request, pk):
     dispositivo = get_object_or_404(Dispositivo, pk=pk)
-    sector_pk = dispositivo.sector_id
-    cliente_pk = dispositivo.cliente_id
-    modelo_pk = 0
-    url_cancel= 'dispositivos:lista'
 
-    # Obtiene la URL anterior, o asigna una ruta por defecto si no existe
-    url_anterior = request.META.get('HTTP_REFERER', 'dispositivo')
-    url_anterior = http_ruta(url_anterior, 'dispositivo')  # Cambia la ruta si es edicion
-
-    if 'sector' in url_anterior:
-        url_anterior = 'sectores:detalle'
-        url_error = 'sectores:lista'
-        modelo_pk = sector_pk
-        #print('* SECTORES')
-    elif 'cliente' in url_anterior:
-        url_anterior = 'clientes:detalle'
-        url_error = 'clientes:lista'
-        modelo_pk = cliente_pk
-        #print('* CLIENTE')
-    else:
-        url_anterior = 'dispositivos:detalle'
-        url_error = 'dispositivos:lista'
-        modelo_pk = pk
-        #print('* DISPOSITIVO')
+    # 1. Capturamos la URL de redirección (si viene en el GET o en el POST)
+    url_siguiente = request.POST.get('next') or request.GET.get('next')
 
     if request.method == 'POST':
         form = DispositivoForm(request.POST, instance=dispositivo)
         if form.is_valid():
             dispositivo = form.save()
-            url_anterior = form.cleaned_data.get('urlanterior')
-            url_error = form.cleaned_data.get('urlerror')
-            modelo_pk = form.cleaned_data.get('modelopk')
-            return redirect(url_anterior, pk=modelo_pk) if sector_pk > 0 else redirect(url_error)
+            if url_siguiente:
+                return redirect(url_siguiente)
+            return redirect('dispositivos:lista')
     else:
         form = DispositivoForm(instance=dispositivo)
 
     return render(request, 'dispositivo/form_dispositivo.html', {
         'form': form,
         'dispositivo': dispositivo,
-        'modelo_pk': modelo_pk,
-        'url_anterior': url_anterior,
-        'url_error': url_error,
+        'url_anterior': url_siguiente,
     })
 
 
@@ -226,7 +207,7 @@ def eliminar_dispositivo(request, pk):
     # Obtiene la URL anterior, o asigna una ruta por defecto si no existe
     url_anterior = request.META.get('HTTP_REFERER', 'dispositivo')
     url_anterior = http_ruta(url_anterior, 'dispositivo')  # Cambia la ruta si es edicion
-
+    
     if 'dispositivo' in url_anterior:
         url_anterior = 'dispositivo'
         #print('* DISPOSITIVO')
