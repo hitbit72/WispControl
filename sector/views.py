@@ -44,7 +44,7 @@ def form_sector(request, pk=None):
         form = SectorForm(request.POST, instance=sector)
         if form.is_valid():
             sector = form.save()
-            return redirect('sectores:detalle_sector', pk=sector.pk)
+            return redirect('sectores:detalle', pk=sector.pk)
     else:
         form = SectorForm(instance=sector)
 
