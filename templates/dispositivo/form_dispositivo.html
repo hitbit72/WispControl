@@ -16,7 +16,11 @@
     {% include "dispositivo/comun/_form.html" %}
     <div class="mt-4 d-flex gap-2">
         <button type="submit" class="btn btn-primary"><i class="bi bi-send" aria-hidden="true"></i> Guardar</button>
+        {% if url_anterior %}
         <a href="{{ url_anterior }}" class="btn btn-outline-secondary"><i class="bi bi-x" aria-hidden="true"></i> Cancelar</a>
+        {% else %}
+        <a href="{% url 'dispositivos:detalle' dispositivo.pk %}" class="btn btn-outline-secondary"><i class="bi bi-x" aria-hidden="true"></i> Cancelar</a>
+        {% endif %}
     </div>
 </form>
 </section>

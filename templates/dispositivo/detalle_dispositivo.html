@@ -182,9 +182,10 @@
 </section>
 
 <div style="margin-top: 0.5rem;">
-<a href="{{ url_anterior }}" class="btn btn-sm btn-outline-primary"><i class="bi bi-box-arrow-in-left"></i> Volver</a>
-{% if dispositivo.sector %}
-| <a href="{% url 'sectores:detalle' dispositivo.sector.pk %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-box-arrow-in-left"></i> Sector</a>
+{% if url_anterior %}
+    <a href="{{ url_anterior }}" class="btn btn-sm btn-outline-primary"><i class="bi bi-box-arrow-in-left"></i> Volver</a>
+{% else %}
+    <a href="{% url 'dispositivos:lista' %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-box-arrow-in-left"></i> Volver</a>
 {% endif %}
 </div>
 {% endblock %}

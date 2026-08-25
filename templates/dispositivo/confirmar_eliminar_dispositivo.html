@@ -17,14 +17,11 @@
     <input type="hidden" name="urlanterior" value='{{url_anterior}}'>
     <input type="hidden" name="modelopk" value='{{modelo_pk}}'>
     <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash" aria-hidden="true"></i> Sí, eliminar</button>
-    {% if url_anterior == 'sector' %}
-        <a href="{% url 'sectores:detalle' modelo_pk %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-x-circle" aria-hidden="true"></i> Cancelar</a>
-    {% endif %}
-    {% if url_anterior == 'cliente' %}
-        <a href="{% url 'clientes:detalle' modelo_pk %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-x-circle" aria-hidden="true"></i> Cancelar</a>
-    {% endif %}
-    {% if url_anterior == 'dispositivo' %}
+    {% if url_anterior %}
+        <a href="{{ url_anterior }}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-x-circle" aria-hidden="true"></i> Cancelar</a>
+    {% else %}
         <a href="{% url 'dispositivos:detalle' dispositivo.pk %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-x-circle" aria-hidden="true"></i> Cancelar</a>
     {% endif %}
+  
 </form>
 {% endblock %}
