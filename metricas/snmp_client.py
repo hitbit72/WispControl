@@ -144,12 +144,8 @@ def consultar_escalares(dispositivo, oids):
     conf = _conf_snmp(dispositivo)
     comunidad = dispositivo.snmp_community or 'public'
     engine = SnmpEngine()
-    if dispositivo.ip_publica:
-        transporte = _trasporte(dispositivo.ip_publica, conf)
-        print(f'Escaneando {dispositivo.ip_publica}')
-    else:
-        transporte = _trasporte(dispositivo.ip_gestion, conf)
-        print(f'Escaneando {dispositivo.ip_gestion}')
+    transporte = _trasporte(dispositivo.ip_gestion, conf)
+    print(f'Escaneando {dispositivo.ip_gestion}')
     contexto = ContextData()
 
     # debug
