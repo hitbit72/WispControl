@@ -215,12 +215,21 @@ def alternar_escaneo_dispositivo(request, pk):
         metodo = request.POST.get('id_scanear')
         if metodo == '1':
             dispositivo.escanear = not dispositivo.escanear
-            if not dispositivo.escanear:
-                dispositivo.alarma = False    
+
         if metodo == '2':
             dispositivo.alarma = not dispositivo.alarma
-            if dispositivo.alarma:
-                dispositivo.escanear = True
+
+        if metodo == '3':
+            dispositivo.alarma_puerto = not dispositivo.alarma_puerto
+
+        # Si no hay escaneo, se desactivan las alarmas
+        if dispositivo.escanear == False:
+            #dispositivo.alarma = False    
+            dispositivo.alarma_puerto = False
+
+        if dispositivo.alarma == False:
+            dispositivo.alarma_puerto = False
+
         dispositivo.save()
     return redirect('dispositivos:detalle', pk=dispositivo.pk)
 
@@ -276,7 +285,7 @@ def eliminar_interfaz(request, pk):
 
     if request.method == 'POST':
         interfaz.delete()
-        return redirect('dispositivos:detalle_dispositivo', pk=dispositivo_pk)
+        return redirect('dispositivos:detalle', pk=dispositivo_pk)
 
     return render(request, 'dispositivo/interfaz/confirmar_eliminar_interfaz.html', {'interfaz': interfaz})
 

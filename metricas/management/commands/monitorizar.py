@@ -13,7 +13,10 @@ Uso manual:
 
     uv run manage.py monitorizar
     python manage.py monitorizar
-    
+
+    -- Para una solo IP: (con o sin el igual, funciona los dos)
+    python manage.py monitorizar --ip=192.168.25.50 // python manage.py monitorizar --ip 192.168.25.50
+
 Si quieres confirmar qué hay realmente en esa columna:
 
     uv run manage.py shell -c "from red.models import Dispositivo; [print(d.nombre, repr(d.snmp_community)) for d in Dispositivo.objects.all()]"
@@ -27,7 +30,7 @@ from dispositivos.models import Dispositivo
 from metricas import snmp_client
 from metricas.models import DeviceMetrics
 from metricas.oids import oids_dispositivo, oids_puertos
-from metricas.services import evaluar_y_aplicar, guardar_metrica
+from metricas.services import evaluar_y_aplicar, guardar_metrica, guardar_puertos
 
 # metrica OID -> campo del modelo (clave 'mem_total'/'mem_libre' -> ram).
 # modelo DeviceMetrics
@@ -59,14 +62,32 @@ CAMPO = {
 class Command(BaseCommand):
     help = 'Consulta SNMP a cada dispositivo y guarda métricas + alarmas.'
 
+    def add_arguments(self, parser):
+        # Añadimos un argumento opcional '--ip'
+        parser.add_argument(
+            '--ip',
+            type=str,
+            help='Filtrar y procesar únicamente un dispositivo por su IP de gestión.',
+        )
+
     def handle(self, *args, **options):
+        # Recuperamos el valor del argumento --ip si fue proporcionado
+        ip_filtro = options.get('ip')
+
         dispositivos = (
             Dispositivo.objects
             .filter(ip_gestion__isnull=False)
             .exclude(snmp_community__isnull=True)
             .exclude(escanear=False)
         )
-        total, ok = len(dispositivos), 0
+
+        # Si se pasó una IP, filtramos el queryset para que solo devuelva ese registro
+        if ip_filtro:
+            dispositivos = dispositivos.filter(ip_gestion=ip_filtro)
+
+        total = dispositivos.count()
+        ok=0
+
         if not total:
             self.stdout.write(self.style.WARNING(
                 'No hay dispositivos con IP de gestión.'))
@@ -85,10 +106,13 @@ class Command(BaseCommand):
         """
         escalares = oids_dispositivo(dispositivo)
         escalares_puerto = oids_puertos(dispositivo)
+        #print(escalares_puerto)
+
         try:
             resultado = snmp_client.consultar_escalares(dispositivo, escalares)
             puertos = snmp_client.consultar_if_table(dispositivo, escalares_puerto)
             status = DeviceMetrics.Status.OK
+            # print(puertos)
         except snmp_client.SnmpError as exc:
             self.stdout.write(
                 self.style.ERROR(f'[{dispositivo.nombre}] {exc}'))
@@ -111,6 +135,8 @@ class Command(BaseCommand):
 
         # guarda los datos en DeviceMetrics
         metrica = guardar_metrica(dispositivo, **datos)
+        # Actualiza modelo de interfaz (puertos)
+        guardar_puertos(dispositivo, **datos)
         # evalua la alerta/alarma
         evaluar_y_aplicar(dispositivo, metrica)
         self.stdout.write(self.style.SUCCESS(

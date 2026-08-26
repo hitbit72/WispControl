@@ -27,14 +27,31 @@
                 <p class="mb-1"><strong>IP de gestión:</strong> {{ dispositivo.ip_gestion|default:"—" }}</p>
                 {% if dispositivo.ip_publica %}<p class="mb-1"><strong>IP pública:</strong> {{ dispositivo.ip_publica }}</p>{% endif %}
                 <p class="mb-1"><strong>MAC:</strong> {{ dispositivo.mac_address|default:"—" }}</p>
-                <p class="mb-2"><strong>Firmware:</strong> {{ dispositivo.firmware_version|default:"—" }}</p>
-                <form method="post" action="{% url 'dispositivos:alternar_escaneo' dispositivo.pk %}" 
-                    hx-trigger="change"> 
+                <p class="mb-3"><strong>Firmware:</strong> {{ dispositivo.firmware_version|default:"—" }}</p>
+                <form method="post" 
+                    id="form_alarmas" 
+                    action="{% url 'dispositivos:alternar_escaneo' dispositivo.pk %}" 
+                    hx-trigger="input changed from:#id_scanear, change from:#id_alarmas" 
+                    hx-push-url="true">
                 {% csrf_token %}
                     <div x-data="{ metodo: '0'}">
                     <input type="hidden" id="id_scanear" name="id_scanear" x-model="metodo">
-                    <p class="mb-0"><strong>Escanear:</strong> <button class="btn btn-primary badge {% if dispositivo.escanear %}bg-success{% else %}bg-danger{% endif %}" type="submit" @click="metodo = '1'">{% if dispositivo.escanear %} Desactiva {% else %} Activar {% endif %}</button> · 
-                    <strong>Alarmas:</strong> <button class="btn btn-primary badge {% if dispositivo.alarma %}bg-success{% else %}bg-danger{% endif %}" type="submit" @click="metodo = '2'">{% if dispositivo.alarma %} Desactivar {% else %} Activar {% endif %}</button></p>
+                    <div class="card h-100">
+                        <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <strong>Escanear:</strong> <button class="btn btn-primary badge {% if dispositivo.escanear %}bg-success{% else %}bg-danger{% endif %}" type="submit" @click="metodo = '1'">{% if dispositivo.escanear %} On {% else %} Off {% endif %}</button>
+                            </div>
+                            <div class="col">
+                                <strong>Alarmas:</strong> <button class="btn btn-primary badge {% if dispositivo.alarma %}bg-success{% else %}bg-danger{% endif %}" type="submit" @click="metodo = '2'">{% if dispositivo.alarma %} On {% else %} Off {% endif %}</button>
+                            </div>
+                            <div class="col">
+                                <strong>Puertos:</strong> <button class="btn btn-primary badge {% if dispositivo.alarma_puerto %}bg-success{% else %}bg-danger{% endif %}" type="submit" @click="metodo = '3'">{% if dispositivo.alarma_puerto %} On {% else %} Off {% endif %}</button>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+
                     </div>
                 </form>
             </div>
@@ -57,10 +74,20 @@
     <div class="col-md-4">
         <div class="card h-100">
             <div class="card-body">
-                <h5 class="card-title">Métricas</h5>
+                <div class="container" style="padding-left:0;">
+                    <div class="row">
+                        <div class="col text-start">
+                            <h5 class="card-title">Métricas</h5>
+                        </div>
+                        <div class="col text-end">
+                            <button class="btn btn-sm btn-outline-primary"> Actualizar </button>
+                        </div>
+                    </div>
+                </div>
                 {% if metricas %}
-                    <p class="mb-1"><strong>CPU:</strong> {{ metricas.cpu|default:'0' }}%</p>
-                    <p class="mb-2"><strong>RAM:</strong> {{ metricas.ram|default:'0' }}%</p>
+                  <div id="metricas">
+                    <p class="mb-2"><strong>CPU:</strong> {{ metricas.cpu|default:'0' }}%  ─  
+                    <strong>RAM:</strong> {{ metricas.ram|default:'0' }}%</p>
                     {% if metricas.sys_name %}<p class="mb-1"><strong>Nombre:</strong> {{ metricas.sys_name }}</p>{% endif %}
                     {% if metricas.ssid %}<p class="mb-1"><strong>SSID:</strong> {{ metricas.ssid }}</p>{% endif %}
                     {% if metricas.frequency %}<p class="mb-1"><strong>Frecuencia:</strong> {{ metricas.frequency }} MHz</p>{% endif %}
@@ -68,6 +95,7 @@
                     {% if metricas.power %}<p class="mb-1"><strong>Potencia:</strong> {{ metricas.power}} dbm</p>{% endif %}
                     {% if metricas.ccq %}<p class="mb-1"><strong>CCQ:</strong> {{ metricas.ccq }}%</p>{% endif %}
                     {% if metricas.antena %}<p class="mb-0"><strong>Antena:</strong> {{ metricas.antena }}%</p>{% endif %}
+                  </div>
                 {% endif %}
             </div>
         </div>
@@ -98,34 +126,32 @@
             <th>Estado</th>
             <th>IP</th>
             <th>MAC</th>
-            <th>VLAN</th>
             <th>Velocidad</th>
             <th></th>
         </tr>
     </thead>
-    <tbody>
-        {% for interfaz in metricas.puertos %}
+        {% for interfaz in dispositivo.interfaces.all %}
         <tr>
             <td>{{ interfaz.nombre }}</td>
-            <td></td>
+            <td>{{ interfaz.get_tipo_display }}</td>
             <td>
                 <span class="badge
-                    {% if interfaz.estado == 'arriba' or interfaz.estado == 'up' %}bg-success
-                    {% elif interfaz.estado == 'abajo' or interfaz.estado == 'down' %}bg-danger
+                    {% if interfaz.estado == 'up' %}bg-success
+                    {% elif interfaz.estado == 'down' %}bg-danger
                     {% else %}bg-secondary{% endif %}">
-                    {{ interfaz.estado }}
+                    {{ interfaz.get_estado_display }}
                 </span>
             </td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td>{% firstof interfaz.speed "—" %} {% if interfaz.speed %}Mbps{% endif %}</td>
+            <td>{{ interfaz.ip_address|default:"—" }}</td>
+            <td>{{ interfaz.mac_address|default:"—" }}</td>
+            <td>{% firstof interfaz.velocidad_mbps "—" %} {% if interfaz.velocidad_mbps %}Mbps{% endif %}</td>
             <td class="text-end">
-
+                <a href="{% url 'dispositivos:editar_interfaz' interfaz.pk %}" class="btn btn-sm btn-outline-primary">Editar</a>
+                <a href="{% url 'dispositivos:eliminar_interfaz' interfaz.pk %}" class="btn btn-sm btn-outline-danger">Eliminar</a>
             </td>
         </tr>
         {% empty %}
-        <tr><td colspan="8" class="text-center text-muted py-3">Este dispositivo no tiene interfaces.</td></tr>
+        <tr><td colspan="7" class="text-center text-muted py-3">Este dispositivo no tiene interfaces.</td></tr>
         {% endfor %}
     </tbody>
 </table>

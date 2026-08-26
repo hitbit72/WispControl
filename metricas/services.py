@@ -9,7 +9,7 @@ from django.utils import timezone
 from eventos.models import Evento
 from eventos.services import registrar_evento
 
-from dispositivos.models import Dispositivo
+from dispositivos.models import Dispositivo, Interfaz
 
 from .models import Alarma, DeviceMetrics
 from .reglas import REGLA_INACTIVO, REGLA_NIVEL, evaluar
@@ -30,6 +30,33 @@ def guardar_metrica(dispositivo, **datos):
         device=dispositivo,
         defaults=datos
     )[0]
+
+
+def guardar_puertos(dispositivo, **datos):
+    """Guarda o actualiza las interfaces/puertos recibidos en el diccionario de métricas.
+    :param dispositivo: Instancia del modelo Dispositivo (o su objeto/ID)
+    :param datos: Diccionario con los datos recopilados por SNMP
+    """
+    # Extraer la lista de puertos del diccionario (si no existe, usa lista vacía)
+    puertos = datos.get("puertos", [])
+
+    for puerto in puertos:
+        # update_or_create busca por los kwargs principales (dispositivo + nombre)
+        # y actualiza o establece los campos definidos en defaults.
+        uData = {
+            "estado": puerto["estado"],
+            "velocidad_mbps": puerto["speed"],
+        }
+        if not puerto["speed"]:
+            uData = {
+                "estado": puerto["estado"],
+            }
+        #print(f' {puerto["nombre"]}: {uData}')
+        interfaz, created = Interfaz.objects.update_or_create(
+            dispositivo=dispositivo,
+            nombre=puerto["nombre"],
+            defaults=uData,
+        )
 
 def evaluar_y_aplicar(dispositivo, metrica):
     """Evalúa las reglas sobre la métrica recién creada y aplica alarmas y

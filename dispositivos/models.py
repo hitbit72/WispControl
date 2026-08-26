@@ -120,8 +120,8 @@ class Interfaz(models.Model):
         OTRO = 'otro', 'Otro'
 
     class Estado(models.TextChoices):
-        ARRIBA = 'arriba', 'Arriba'
-        ABAJO = 'abajo', 'Abajo'
+        ARRIBA = 'up', 'Conectado'
+        ABAJO = 'down', 'Off line'
         DESCONOCIDO = 'desconocido', 'Desconocido'
 
     dispositivo = models.ForeignKey(Dispositivo, on_delete=models.CASCADE, related_name='interfaces')

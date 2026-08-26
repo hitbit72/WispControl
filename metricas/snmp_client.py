@@ -31,7 +31,7 @@ OID_IF_OPER = '1.3.6.1.2.1.2.2.1.8'
 OID_IF_SPEED = '1.3.6.1.2.1.2.2.1.5'
 OID_IF_TYPE = '1.3.6.1.2.1.2.2.1.3' 
 
-EXCLUDE_PORT = ('lo','ubond')
+EXCLUDE_PORT = ('lo','ubond','lag')
 
 # IF_TYPE
 # 6 (ethernetCsmacd): Redes Ethernet estándar.
@@ -109,9 +109,9 @@ def consultar_escalares2(dispositivo, oids):
     transporte = _trasporte(dispositivo.ip_gestion, conf)
     contexto = ContextData()
 
-    print(transporte)
-    print(comunidad)
-    print(oids)
+    #print(transporte)
+    #print(comunidad)
+    #print(oids)
 
     # 1. Convertir los valores OID del diccionario en una lista de ObjectType
     var_binds_query = [ObjectType(ObjectIdentity(oid)) for oid in oids.values()]
@@ -258,7 +258,7 @@ def consultar_if_table(dispositivo, oids):
             interface_name = str(varBinds[0][1])
             speed_bps = int(varBinds[1][1])
             status_code = int(varBinds[2][1])
-
+            
             # Formatear el estado y la velocidad
             status_str = "up" if status_code == 1 else "down"
             speed_mbps = speed_bps // 1_000_000 if speed_bps > 0 else 0
