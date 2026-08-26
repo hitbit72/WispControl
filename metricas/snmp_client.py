@@ -152,7 +152,8 @@ def consultar_escalares(dispositivo, oids):
     #print(transporte)
     #print(comunidad)
     #print(oids)
-
+    print(f'Escaneando {dispositivo.ip_gestion}')
+    
     error_ind, error_st, error_idx, var_binds = next(
         getCmd(
             engine, _auth(comunidad), transporte, contexto,
@@ -167,7 +168,7 @@ def consultar_escalares(dispositivo, oids):
     if error_st:
         if _es_falta_oid(error_st):
             # debug
-            print('* --- Escalares uno a uno ---')
+            print('* --- Escalares uno a uno (error_st)---')
             print(oids)
             return _escalares_uno_a_uno(engine, _auth(comunidad), transporte,
                                         contexto, oids)
@@ -182,6 +183,7 @@ def consultar_escalares(dispositivo, oids):
     return resultado
 
 def _escalares_uno_a_uno(engine, auth, transporte, contexto, oids):
+    print('escalares_uno_a_uno')
     resultado = {}
     for metrica, oid in oids.items():
         error_ind, error_st, _, var_binds = next(

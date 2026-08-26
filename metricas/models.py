@@ -24,7 +24,8 @@ class DeviceMetrics(models.Model):
 
     sys_name = models.CharField(max_length=255, null=True, blank=True, verbose_name='Nombre sistema')
     sys_descr = models.CharField(max_length=255, null=True, blank=True, verbose_name='Descripción')
-    
+    version = models.CharField(max_length=255, null=True, blank=True, verbose_name='Versión')
+
     cpu = models.FloatField(null=True, blank=True, verbose_name='CPU (%)')
     ram = models.FloatField(null=True, blank=True, verbose_name='RAM (%)')
     temperature = models.FloatField(null=True, blank=True, verbose_name='Temperatura (°C)')
@@ -32,8 +33,8 @@ class DeviceMetrics(models.Model):
     power = models.FloatField(null=True, blank=True, verbose_name='Potencia (W)')
     rx_dbm = models.FloatField(null=True, blank=True, verbose_name='Rx (dBm)')
     tx_dbm = models.FloatField(null=True, blank=True, verbose_name='Tx (dBm)')
-    rx = models.BigIntegerField(null=True, blank=True, verbose_name='Tráfico Rx (bps)')
-    tx = models.BigIntegerField(null=True, blank=True, verbose_name='Tráfico Tx (bps)')
+    rx = models.BigIntegerField(null=True, blank=True, verbose_name='Velocidad Rx (bps)')
+    tx = models.BigIntegerField(null=True, blank=True, verbose_name='Velocidad Tx (bps)')
     uptime = models.PositiveBigIntegerField(
         null=True, blank=True,
         verbose_name='Uptime (segundos)',
@@ -127,7 +128,7 @@ class OIDmetric(models.Model):
     codigos = models.JSONField(
         default=dict, blank=True, null=True,
         verbose_name='Códigos OID',
-        help_text='Códigos OID en formato JSon: {"uptime": "1.3.6.1.2.1.1.3.0",}',
+        help_text='Códigos OID en formato JSon: {"uptime": "1.3.6.1.2.1.1.3.0",}<br>sys_name, sys_descr, cpu, ram, temperature, power, rx_dbm, tx_dbm, rx, tx, uptime, ssid, snr, ccq, signal, frequency, channel, noise, w_channel,antena, clients, puertos, status',
     )
 
     class Meta:

@@ -30,8 +30,10 @@ from metricas.oids import oids_dispositivo, oids_puertos
 from metricas.services import evaluar_y_aplicar, guardar_metrica
 
 # metrica OID -> campo del modelo (clave 'mem_total'/'mem_libre' -> ram).
+# modelo DeviceMetrics
 CAMPO = {
     'cpu': 'cpu',
+    'ram': 'ram',
     'temperature': 'temperature',
     'power': 'power',
     'rx_dbm': 'rx_dbm',
@@ -51,6 +53,7 @@ CAMPO = {
     'noise': 'noise',
     'sys_name': 'sys_name',
     'sys_descr': 'sys_descr',
+    'version': 'version',
 }
 
 class Command(BaseCommand):
@@ -114,7 +117,7 @@ class Command(BaseCommand):
             f'[{dispositivo.nombre}] {status}'))
         return status == DeviceMetrics.Status.OK
 
-    def _construir_datos(self, dispositivo, resultado):
+    def _construir_datos2(self, dispositivo, resultado):
         datos = {}
         if 'mem_total' in resultado and 'mem_libre' in resultado:
             total, _ = resultado['mem_total']
@@ -125,6 +128,7 @@ class Command(BaseCommand):
             #debug
             #print(f'numero: {numero}, texto: {texto}')
             campo = CAMPO.get(metrica)
+            #print(f'{campo} - {metrica}: {numero} - {texto} ')
             if not campo:
                 continue
             if metrica == 'uptime':
@@ -147,4 +151,38 @@ class Command(BaseCommand):
                     datos['temperature'] = numero / 1000
             elif numero is not None:
                 datos[campo] = numero
+        return datos
+
+    def _construir_datos(self, dispositivo, resultado):
+        datos = {}
+        if 'mem_total' in resultado and 'mem_libre' in resultado:
+            total, _ = resultado['mem_total']
+            libre, _ = resultado['mem_libre']
+            if total:
+                datos['ram'] = round((1 - libre / total) * 100, 2)
+
+        for metrica, (numero, texto) in resultado.items():
+            
+            campo = CAMPO.get(metrica)
+            #debug
+            print(f'{campo} - {metrica}: {numero} - {texto} ')
+
+            if not campo:
+                continue
+            if metrica == 'uptime':
+                # sysUpTime está en centésimas; MTIK en segundos.
+                #valor = numero / 100 if dispositivo.marca != Dispositivo.Marcas.MIKROTIK else numero
+                #datos['uptime'] = int(valor)
+                datos['uptime'] = numero or 0
+            elif campo == 'channel':
+                datos['channel'] = numero or ''
+            elif campo == 'temperature':
+                if numero > 1000:
+                    datos['temperature'] = numero / 1000
+            elif numero is not None:
+                datos[campo] = numero
+                print(f'es numero: {campo}: {numero}')
+            elif texto is not None:
+                datos[campo] = texto
+                print(f'es texto: {campo}: {texto}')
         return datos

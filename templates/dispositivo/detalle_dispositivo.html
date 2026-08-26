@@ -58,11 +58,15 @@
             <div class="card-body">
                 <h5 class="card-title">Métricas</h5>
                 {% if metricas %}
-                    {% if metricas.sys_name %}<p class="mb-1"><strong>Nombre:</strong> {{ metricas.sys_name|default:"—" }}</p>{% endif %}
-                    {% if metricas.ssid %}<p class="mb-1"><strong>SSID:</strong> {{ metricas.ssid|default:"—" }}</p>{% endif %}
-                    {% if metricas.frequency %}<p class="mb-1"><strong>Frecuencia:</strong> {{ metricas.frequency|default:"—" }} MHz</p>{% endif %}
-                    {% if metricas.signal %}<p class="mb-1"><strong>Señal:</strong> {{ metricas.signal|default:"—" }} dbm</p>{% endif %}
-                    {% if metricas.ccq %}<p class="mb-0"><strong>CCQ:</strong> {{ metricas.ccq|default:"—" }}%</p>{% endif %}
+                    <p class="mb-1"><strong>CPU:</strong> {{ metricas.cpu|default:'0' }}%</p>
+                    <p class="mb-2"><strong>RAM:</strong> {{ metricas.ram|default:'0' }}%</p>
+                    {% if metricas.sys_name %}<p class="mb-1"><strong>Nombre:</strong> {{ metricas.sys_name }}</p>{% endif %}
+                    {% if metricas.ssid %}<p class="mb-1"><strong>SSID:</strong> {{ metricas.ssid }}</p>{% endif %}
+                    {% if metricas.frequency %}<p class="mb-1"><strong>Frecuencia:</strong> {{ metricas.frequency }} MHz</p>{% endif %}
+                    {% if metricas.signal %}<p class="mb-1"><strong>Señal:</strong> {{ metricas.signal }} dbm</p>{% endif %}
+                    {% if metricas.power %}<p class="mb-1"><strong>Potencia:</strong> {{ metricas.power}} dbm</p>{% endif %}
+                    {% if metricas.ccq %}<p class="mb-1"><strong>CCQ:</strong> {{ metricas.ccq }}%</p>{% endif %}
+                    {% if metricas.antena %}<p class="mb-0"><strong>Antena:</strong> {{ metricas.antena }}%</p>{% endif %}
                 {% endif %}
             </div>
         </div>

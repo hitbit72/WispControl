@@ -355,6 +355,10 @@ a {
   font-size: 0.82rem;
 }
 
+.notification-danger {
+  color: var(--admin-danger);
+}
+
 .profile-button {
   display: flex;
   align-items: center;
