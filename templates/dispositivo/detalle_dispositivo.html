@@ -90,7 +90,7 @@
 </div>
 
 <div id="tabla-iface" class="table-responsive">
-<table class="table table-hover align-middle" id="ifaceTable" data-searchable-table>
+<table class="table table-hover align-middle" id="ifaceTable">
     <thead>
         <tr>
             <th>Nombre</th>
@@ -104,7 +104,6 @@
         </tr>
     </thead>
     <tbody>
-        <p>{{ metricas }}
         {% for interfaz in metricas.puertos %}
         <tr>
             <td>{{ interfaz.nombre }}</td>
@@ -140,7 +139,7 @@
 </div>
 
 <div id="tabla-enlace" class="table-responsive">
-<table class="table table-hover align-middle" id="enlaceTable" data-searchable-table>
+<table class="table table-hover align-middle" id="enlaceTable">
     <thead>
         <tr>
             <th>Desde</th>
