@@ -117,42 +117,6 @@ class Command(BaseCommand):
             f'[{dispositivo.nombre}] {status}'))
         return status == DeviceMetrics.Status.OK
 
-    def _construir_datos2(self, dispositivo, resultado):
-        datos = {}
-        if 'mem_total' in resultado and 'mem_libre' in resultado:
-            total, _ = resultado['mem_total']
-            libre, _ = resultado['mem_libre']
-            if total:
-                datos['ram'] = round((1 - libre / total) * 100, 2)
-        for metrica, (numero, texto) in resultado.items():
-            #debug
-            #print(f'numero: {numero}, texto: {texto}')
-            campo = CAMPO.get(metrica)
-            #print(f'{campo} - {metrica}: {numero} - {texto} ')
-            if not campo:
-                continue
-            if metrica == 'uptime':
-                # sysUpTime está en centésimas; MTIK en segundos.
-                #valor = numero / 100 if dispositivo.marca != Dispositivo.Marcas.MIKROTIK else numero
-                #datos['uptime'] = int(valor)
-                datos['uptime'] = numero or 0
-            elif campo == 'channel':
-                datos['channel'] = numero or ''
-            elif campo == 'ssid':
-                datos['ssid'] = texto or ''
-            elif campo == 'antena':
-                datos['antena'] = texto or ''
-            elif campo == 'sys_name':
-                datos['sys_name'] = texto or ''
-            elif campo == 'sys_descr':
-                datos['sys_descr'] = texto or ''
-            elif campo == 'temperature':
-                if numero > 1000:
-                    datos['temperature'] = numero / 1000
-            elif numero is not None:
-                datos[campo] = numero
-        return datos
-
     def _construir_datos(self, dispositivo, resultado):
         datos = {}
         if 'mem_total' in resultado and 'mem_libre' in resultado:
@@ -165,7 +129,7 @@ class Command(BaseCommand):
             
             campo = CAMPO.get(metrica)
             #debug
-            print(f'{campo} - {metrica}: {numero} - {texto} ')
+            #print(f'{campo} - {metrica}: {numero} - {texto} ')
 
             if not campo:
                 continue
@@ -181,8 +145,8 @@ class Command(BaseCommand):
                     datos['temperature'] = numero / 1000
             elif numero is not None:
                 datos[campo] = numero
-                print(f'es numero: {campo}: {numero}')
+                #print(f'es numero: {campo}: {numero}')
             elif texto is not None:
                 datos[campo] = texto
-                print(f'es texto: {campo}: {texto}')
+                #print(f'es texto: {campo}: {texto}')
         return datos

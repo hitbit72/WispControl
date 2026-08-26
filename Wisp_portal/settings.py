@@ -184,8 +184,8 @@ MK_MAX_INTENTOS = int(os.environ.get('MK_MAX_INTENTOS', '3'))
 # sobrescribirlos en Dispositivo.atributos_extra['snmp'].
 METRICAS_SNMP = {
     'puerto': 161,
-    'timeout': 3.0,
-    'reintentos': 2,
+    'timeout': 2.0,
+    'reintentos': 1,
 }
 
 

@@ -41,7 +41,6 @@ EXCLUDE_PORT = ('lo','ubond')
 # ErrorStatus que significan "el OID no existe" (no fallo de comunicaciones).
 _FALTA_OID = ('nosuchname', 'nosuchobject', 'nosuchinstance')
 
-
 class SnmpError(Exception):
     """Error de consulta SNMP (sin respuesta, protocolo, etc.)."""
 
@@ -145,14 +144,18 @@ def consultar_escalares(dispositivo, oids):
     conf = _conf_snmp(dispositivo)
     comunidad = dispositivo.snmp_community or 'public'
     engine = SnmpEngine()
-    transporte = _trasporte(dispositivo.ip_gestion, conf)
+    if dispositivo.ip_publica:
+        transporte = _trasporte(dispositivo.ip_publica, conf)
+        print(f'Escaneando {dispositivo.ip_publica}')
+    else:
+        transporte = _trasporte(dispositivo.ip_gestion, conf)
+        print(f'Escaneando {dispositivo.ip_gestion}')
     contexto = ContextData()
 
     # debug
     #print(transporte)
     #print(comunidad)
     #print(oids)
-    print(f'Escaneando {dispositivo.ip_gestion}')
     
     error_ind, error_st, error_idx, var_binds = next(
         getCmd(
@@ -168,10 +171,9 @@ def consultar_escalares(dispositivo, oids):
     if error_st:
         if _es_falta_oid(error_st):
             # debug
-            print('* --- Escalares uno a uno (error_st)---')
-            print(oids)
-            return _escalares_uno_a_uno(engine, _auth(comunidad), transporte,
-                                        contexto, oids)
+            print(f'* --- Escalares uno a uno ({error_st})---')
+            #print(oids)
+            return _escalares_uno_a_uno(engine, _auth(comunidad), transporte, contexto, oids)
         raise SnmpError(error_st.prettyPrint())
 
     resultado = {}
@@ -201,6 +203,7 @@ def _escalares_uno_a_uno(engine, auth, transporte, contexto, oids):
                 continue
             resultado[metrica] = (_valor_numero(valor), texto)
     return resultado
+
 
 def consultar_if_table(dispositivo, oids):
     """Walk de ifTable (descr + oper status). Devuelve lista de

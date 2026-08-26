@@ -25,6 +25,7 @@
                 </p>
                 <p class="mb-1"><strong>Modo:</strong> {{ dispositivo.get_rol_display|default:"—" }}</p>
                 <p class="mb-1"><strong>IP de gestión:</strong> {{ dispositivo.ip_gestion|default:"—" }}</p>
+                {% if dispositivo.ip_publica %}<p class="mb-1"><strong>IP pública:</strong> {{ dispositivo.ip_publica }}</p>{% endif %}
                 <p class="mb-1"><strong>MAC:</strong> {{ dispositivo.mac_address|default:"—" }}</p>
                 <p class="mb-2"><strong>Firmware:</strong> {{ dispositivo.firmware_version|default:"—" }}</p>
                 <form method="post" action="{% url 'dispositivos:alternar_escaneo' dispositivo.pk %}" 

@@ -1,6 +1,6 @@
     <div class="row g-3">
-        <div class="col-md-12">
-            <label class="form-label" for="{{ form.nombre.id_for_label }}">Nombre</label>
+        <div class="col-md-6">
+            <label class="form-label" for="{{ form.nombre.id_for_label }}">Nombre del dipositivo</label>
             {{ form.nombre }}
             <div class="invalid-feedback">El nombre es obligatorio.</div>
         </div>
@@ -9,22 +9,22 @@
             {{ form.marca }}
             <div class="invalid-feedback">Seleccione una marca</div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
             <label class="form-label" for="{{ form.tipo.id_for_label }}">Tipo</label>
             {{ form.tipo }}
             <div class="invalid-feedback">Seleccione un tipo</div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
             <label class="form-label" for="{{ form.rol.id_for_label }}">Modo de operación</label>
             {{ form.rol }}
             <div class="invalid-feedback">Seleccione el modo de operación.</div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
             <label class="form-label" for="{{ form.estado.id_for_label }}">Estado</label>
             {{ form.estado }}
             <div class="invalid-feedback">Seleccione el estado</div>
         </div>
-        
+        <hr>
         <div class="col-md-6">
             <label class="form-label" for="{{ form.sector.id_for_label }}">Sector</label>
             {{ form.sector }}
@@ -43,12 +43,16 @@
             {{ form.snmp_community }}
             <div class="form-text">Solo aplica a dispositivos que soporten SNMP. Ej. "public"</div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
             <label class="form-label" for="{{ form.ip_gestion.id_for_label }}">IP de gestión</label>
             {{ form.ip_gestion }}
             <div class="invalid-feedback">La IP de gestión es obligatoria.</div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
+            <label class="form-label" for="{{ form.ip_publica.id_for_label }}">IP pública</label>
+            {{ form.ip_publica }}
+        </div>
+        <div class="col-md-4">
             <label class="form-label" for="{{ form.mac_address.id_for_label }}">Dirección MAC</label>
             {{ form.mac_address }}
         </div>
