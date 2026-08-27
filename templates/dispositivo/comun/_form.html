@@ -1,28 +1,39 @@
     <div class="row g-3">
         <div class="col-md-6">
-            <label class="form-label" for="{{ form.nombre.id_for_label }}">Nombre del dipositivo</label>
+            <label class="form-label" for="{{ form.nombre.id_for_label }}">Nombre referencia</label>
             {{ form.nombre }}
             <div class="invalid-feedback">El nombre es obligatorio.</div>
         </div>
+
+        <div class="col-md-6">
+            <label class="form-label" for="{{ form.nombre_host.id_for_label }}">Nombre Host</label>
+            {{ form.nombre_host }}
+            <div class="invalid-feedback">El nombre de host es obligatorio.</div>
+        </div>
+
         <div class="col-md-6">
             <label class="form-label" for="{{ form.marca.id_for_label }}">Marca</label>
             {{ form.marca }}
             <div class="invalid-feedback">Seleccione una marca</div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-6">
             <label class="form-label" for="{{ form.tipo.id_for_label }}">Tipo</label>
             {{ form.tipo }}
             <div class="invalid-feedback">Seleccione un tipo</div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <label class="form-label" for="{{ form.rol.id_for_label }}">Modo de operación</label>
             {{ form.rol }}
             <div class="invalid-feedback">Seleccione el modo de operación.</div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <label class="form-label" for="{{ form.estado.id_for_label }}">Estado</label>
             {{ form.estado }}
             <div class="invalid-feedback">Seleccione el estado</div>
+        </div>
+        <div class="col-3">
+            <label class="form-label" for="{{ form.onu_ref.id_for_label }}">Nº Ref. de la ONU</label>
+            {{ form.onu_ref }}
         </div>
         <hr>
         <div class="col-md-6">
@@ -37,6 +48,7 @@
         <div class="col-md-6">
             <label class="form-label" for="{{ form.fecha_instalacion.id_for_label }}">Fecha de instalación</label>
             {{ form.fecha_instalacion }}
+            <div class="invalid-feedback">Anote una fecha de instalación válida.</div>
         </div>
         <div class="col-md-6">
             <label class="form-label" for="{{ form.snmp_community.id_for_label }}">Comunidad SNMP</label>

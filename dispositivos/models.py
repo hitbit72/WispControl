@@ -56,25 +56,23 @@ class Dispositivo(models.Model):
         MASTER = 'master', 'Master'
         SLAVE = 'slave', 'Esclavo'
         OTRO = 'otro', 'Otro'
-    
-    nombre = models.CharField(max_length=100, null=False, blank=False,
-                              help_text='Nombre identificativo del eqipo',)
+
+    # nombre es unico, permite buscar
+    nombre = models.CharField(max_length=100, null=False, blank=False, help_text='Nombre identificativo del eqipo',)
+    # nombre host unico
+    nombre_host = models.CharField(unique=True, max_length=100, null=False, blank=False, verbose_name='Nombre Host')
     marca = models.ForeignKey(Marca, null=False, blank=False, on_delete=models.PROTECT, 
                               verbose_name='Merca y modelo', related_name='dispositivos')
     tipo = models.ForeignKey(TipoEquipo, null=False, blank=False, on_delete=models.PROTECT, 
                              verbose_name='Tipo de equipo', related_name='dispositivos')
-
-    #tipo = models.CharField(max_length=20, choices=Tipo.choices)
-    #marca = models.CharField(max_length=20, choices=Marcas.choices)
-    #modelo = models.CharField(max_length=100, blank=True)
-    
     rol = models.CharField(max_length=20, choices=Rol.choices, default=Rol.OTRO, verbose_name='Modo operación')
 
     sector = models.ForeignKey('sector.Sector', on_delete=models.SET_NULL, null=True, blank=True, 
                                related_name='dispositivos')
     cliente = models.ForeignKey('clientes.Cliente', on_delete=models.SET_NULL, null=True, blank=True, 
                                 related_name='dispositivos',)
-
+    onu_ref = models.CharField(max_length=100, null=True, blank=True, verbose_name='Referencia ONU', 
+                               help_text='Identificado del equipo ONU',)
     ip_gestion = models.GenericIPAddressField(null=True, blank=True, verbose_name='IP de gestión')
     ip_publica = models.GenericIPAddressField(null=True, blank=True, verbose_name='IP pública')
     mac_address = models.CharField(max_length=17, blank=True, verbose_name='Dirección MAC')

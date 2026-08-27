@@ -47,6 +47,7 @@ class DispositivoForm(BootstrapFormMixin, forms.ModelForm):
         super().__init__(*args, **kwargs)
         # Esto añade el atributo 'required' en el HTML y fuerza la validación en el servidor
         self.fields['ip_gestion'].required = True
+        self.fields['fecha_instalacion'].required = True
 
     atributos_extra = JSONTextoOpcional(
         required=False,
@@ -58,7 +59,7 @@ class DispositivoForm(BootstrapFormMixin, forms.ModelForm):
     class Meta:
         model = Dispositivo
         fields = [
-            'nombre', 'rol', 'tipo', 'marca', 'sector', 'cliente',
+            'nombre', 'nombre_host', 'rol', 'tipo', 'marca', 'onu_ref', 'sector', 'cliente',
             'ip_gestion', 'ip_publica', 'mac_address', 'firmware_version', 'snmp_community', 'escanear', 'alarma', 'alarma_puerto',
             'estado', 'fecha_instalacion', 'latitud', 'longitud', 'atributos_extra', 'notas',
         ]

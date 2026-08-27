@@ -55,6 +55,16 @@ class DeviceMetrics(models.Model):
         verbose_name='Interfaces',
         help_text='Lista JSON de {nombre, estado} de cada interfaz (estado: up/down).',
     )
+    estaciones = models.JSONField(
+        default=list, blank=True, null=True,
+        verbose_name='Estaciones',
+        help_text='Lista JSON de {host, señal, ccq, noise, uptime} de cada estación.',
+    )
+    onus = models.JSONField(
+        default=list, blank=True, null=True,
+        verbose_name='Onus',
+        help_text='Lista JSON de {ref, señal, pon, port_speed, uptime} de cada ONU fibra.',
+    )
 
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.OK, verbose_name='Estado SNMP',)
 
@@ -116,7 +126,8 @@ class OIDmetric(models.Model):
     class Tipo(models.TextChoices):
         GENERAL = 'general', 'General'
         PUERTOS = 'puertos', 'Puertos'
-        CLIENTES = 'clientes', 'Clientes'
+        WIFI = 'wifi', 'Estaciones WIFI'
+        ONUS = 'onus', 'Estaciones ONU'
 
     marca = models.ForeignKey('dispositivos.Marca', on_delete=models.CASCADE, related_name='oid')
     descripcion = models.CharField(max_length=255, verbose_name='Descripción')
