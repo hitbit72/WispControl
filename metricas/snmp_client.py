@@ -31,7 +31,7 @@ OID_IF_OPER = '1.3.6.1.2.1.2.2.1.8'
 OID_IF_SPEED = '1.3.6.1.2.1.2.2.1.5'
 OID_IF_TYPE = '1.3.6.1.2.1.2.2.1.3' 
 
-EXCLUDE_PORT = ('lo','ubond','lag')
+EXCLUDE_PORT = ('lo','ubond','lag1','lag2')
 
 # IF_TYPE
 # 6 (ethernetCsmacd): Redes Ethernet estándar.
@@ -71,8 +71,8 @@ def _valor_texto(valor):
 
 def _conf_snmp(dispositivo):
     conf = dict(_conf.settings.METRICAS_SNMP)
-    #snmp = (dispositivo.atributos_extra or {}).get('snmp') or {}
-    #conf.update(snmp)
+    snmp = (dispositivo.atributos_extra or {}).get('snmp') or {}
+    conf.update(snmp)
     return conf
 
 
@@ -93,47 +93,6 @@ def _es_falta_oid(error_st):
     except AttributeError:
         nombre = str(error_st).lower()
     return nombre in _FALTA_OID
-
-def consultar_escalares2(dispositivo, oids):
-    """GET múltiple: dict métrica -> OID. Devuelve dict métrica ->
-    (valor_numero, valor_texto). Los OIDs sin soporte se omiten. Lanza
-    SnmpError si el equipo no responde o da error de protocolo."""
-    #print(oids)
-    if not oids:
-        return {}
-
-    conf = _conf_snmp(dispositivo)
-    comunidad = dispositivo.snmp_community or 'public'
-    community = _auth(comunidad)
-    engine = SnmpEngine()
-    transporte = _trasporte(dispositivo.ip_gestion, conf)
-    contexto = ContextData()
-
-    #print(transporte)
-    #print(comunidad)
-    #print(oids)
-
-    # 1. Convertir los valores OID del diccionario en una lista de ObjectType
-    var_binds_query = [ObjectType(ObjectIdentity(oid)) for oid in oids.values()]
-
-    # 2. Enviar la consulta pasando la lista desempaquetada con *
-    errorIndication, errorStatus, errorIndex, varBinds = next(
-        getCmd(engine, community, transporte, contexto, *var_binds_query)
-    )
-
-    # 3. Mapear los resultados de vuelta a las claves del diccionario
-    if errorIndication:
-        print(f"Error de red/transporte: {errorIndication}")
-        raise SnmpError(str(errorIndication))
-    elif errorStatus:
-        print(f"Error SNMP: {errorStatus.prettyPrint()}")
-        raise SnmpError(errorStatus.prettyPrint())
-    else:
-        # Como la respuesta respeta exactamente el orden de consulta:
-        resultados = {}
-        for key, varBind in zip(oids.keys(), varBinds):
-            resultados[key] = varBind[1].prettyPrint()
-        return resultados
 
 def consultar_escalares(dispositivo, oids):
     """GET múltiple: dict métrica -> OID. Devuelve dict métrica ->
@@ -201,9 +160,12 @@ def _escalares_uno_a_uno(engine, auth, transporte, contexto, oids):
     return resultado
 
 
-def consultar_if_table(dispositivo, oids):
+def consultar_if_table2(dispositivo, oids):
     """Walk de ifTable (descr + oper status). Devuelve lista de
     {nombre, estado} con estado 'up'/'down'."""
+    if not oids:
+        return []
+    
     conf = _conf_snmp(dispositivo)
     comunidad = dispositivo.snmp_community or 'public'
     comunity = _auth(comunidad)
@@ -213,24 +175,16 @@ def consultar_if_table(dispositivo, oids):
     puertos = []
 
     """
-    print(f'conf: {conf}')
-    print(f'comunity: {comunity}')
-    print(f'transporte: {transporte}')
-
     OIDs base a consultar en IF-MIB
     1.3.6.1.2.1.2.2.1.2 = ifDescr (Nombre del puerto)
     1.3.6.1.2.1.2.2.1.5 = ifSpeed (Velocidad en bps)
     1.3.6.1.2.1.2.2.1.8 = ifOperStatus (Estado operativo: 1=Up, 2=Down)
-    
-    oid_descr = ObjectType(ObjectIdentity(OID_IF_DESCR))
-    oid_speed = ObjectType(ObjectIdentity(OID_IF_SPEED))
-    oid_status = ObjectType(ObjectIdentity(OID_IF_OPER))
     """
 
     # Toma el OID del diccionario o usa la constante por defecto si no existe en 'oids'
-    oid_descr = ObjectType(ObjectIdentity(oids.get('if_descr', OID_IF_DESCR)))
-    oid_status = ObjectType(ObjectIdentity(oids.get('if_oper', OID_IF_OPER)))
-    oid_speed = ObjectType(ObjectIdentity(oids.get('if_speed', OID_IF_SPEED)))
+    oid_descr = ObjectType(ObjectIdentity(oids.get('nombre', OID_IF_DESCR)))
+    oid_status = ObjectType(ObjectIdentity(oids.get('estado', OID_IF_OPER)))
+    oid_speed = ObjectType(ObjectIdentity(oids.get('speed', OID_IF_SPEED)))
 
     # Usamos nextCmd para hacer un walk sobre las 3 columnas simultáneamente
     for errorIndication, errorStatus, errorIndex, varBinds in nextCmd(
@@ -269,3 +223,52 @@ def consultar_if_table(dispositivo, oids):
                 })
     return puertos
 
+
+def consultar_if_table(dispositivo, oids):
+
+    if not oids:
+        return []
+    #print(f"Total OIDs a consultar: {len(oids)}")
+    #print(oids)
+
+    # Consulta las staciones conectadas a un AP o una OLT
+    conf = _conf_snmp(dispositivo)
+    comunidad = dispositivo.snmp_community or 'public'
+    comunity = _auth(comunidad)
+    engine = SnmpEngine()
+    transporte = _trasporte(dispositivo.ip_gestion, conf)
+    contexto = ContextData()
+    estaciones = []
+
+    # 1. Separar claves ("host", "signal"...) y valores OID ("1.3.6.1...")
+    nombres_metricas = list(oids.keys())
+    objetos_snmp = [ObjectType(ObjectIdentity(oid)) for oid in oids.values()]
+
+    # Usamos nextCmd para hacer un walk sobre las 3 columnas simultáneamente
+    for errorIndication, errorStatus, errorIndex, varBinds in nextCmd(
+        engine,
+        comunity,
+        transporte,
+        contexto,
+        *objetos_snmp,  # <-- Pasa todas las columnas juntas
+        lexicographicMode=False,
+    ):
+        if errorIndication:
+            print(f"Error de conexión: {errorIndication}")
+            break
+        elif errorStatus:
+            print(f"Error SNMP: {errorStatus.prettyPrint()}")
+            break
+        else:
+            fila = {}
+            # varBinds coincide 1 a 1 en orden con nombres_metricas
+            for i, varBind in enumerate(varBinds):
+                oid_respuesta, valor = varBind
+                nombre_clave = nombres_metricas[i]
+                
+                # Convertimos el valor a string limpia
+                fila[nombre_clave] = valor.prettyPrint()
+
+            estaciones.append(fila)
+
+    return estaciones

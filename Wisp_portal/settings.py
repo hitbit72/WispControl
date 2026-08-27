@@ -178,6 +178,8 @@ MK_OPTIONS = {
 # definitiva (a partir de ahí, solo se reintenta a mano desde el admin).
 MK_MAX_INTENTOS = int(os.environ.get('MK_MAX_INTENTOS', '3'))
 
+
+
 # --- Servicio de monitorización (metricas) ----------------------------------
 #
 # SNMP: valores por defecto del transporte. Cada dispositivo puede

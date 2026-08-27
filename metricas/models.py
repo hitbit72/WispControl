@@ -58,7 +58,7 @@ class DeviceMetrics(models.Model):
     estaciones = models.JSONField(
         default=list, blank=True, null=True,
         verbose_name='Estaciones',
-        help_text='Lista JSON de {host, señal, ccq, noise, uptime} de cada estación.',
+        help_text='Lista JSON de {ip, host, señal, ccq, noise, uptime} de cada estación.',
     )
     onus = models.JSONField(
         default=list, blank=True, null=True,

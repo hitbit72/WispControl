@@ -29,7 +29,7 @@ from dispositivos.models import Dispositivo
 
 from metricas import snmp_client
 from metricas.models import DeviceMetrics
-from metricas.oids import oids_dispositivo, oids_puertos
+from metricas.oids import oids_dispositivo
 from metricas.services import evaluar_y_aplicar, guardar_metrica, guardar_puertos
 
 # metrica OID -> campo del modelo (clave 'mem_total'/'mem_libre' -> ram).
@@ -74,16 +74,23 @@ class Command(BaseCommand):
         # Recuperamos el valor del argumento --ip si fue proporcionado
         ip_filtro = options.get('ip')
 
-        dispositivos = (
-            Dispositivo.objects
-            .filter(ip_gestion__isnull=False)
-            .exclude(snmp_community__isnull=True)
-            .exclude(escanear=False)
-        )
+        if ip_filtro:
+            dispositivos = (
+                Dispositivo.objects
+                .filter(ip_gestion=ip_filtro)
+                .exclude(snmp_community__isnull=True)
+            )
+        else:
+            dispositivos = (
+                Dispositivo.objects
+                .filter(ip_gestion__isnull=False)
+                .exclude(snmp_community__isnull=True)
+                .exclude(escanear=False)
+            )
 
         # Si se pasó una IP, filtramos el queryset para que solo devuelva ese registro
-        if ip_filtro:
-            dispositivos = dispositivos.filter(ip_gestion=ip_filtro)
+        # if ip_filtro:
+        #    dispositivos = dispositivos.filter(ip_gestion=ip_filtro)
 
         total = dispositivos.count()
         ok=0
@@ -98,25 +105,27 @@ class Command(BaseCommand):
             f'Monitorizados {ok} de {total} dispositivos.'))
 
     def _procesar(self, dispositivo):
-        """
-        escalares = {
-            k: v for k, v in oids_para_dispositivo(dispositivo).items()
-            if k not in ('if_descr', 'if_oper')
-        }
-        """
-        escalares = oids_dispositivo(dispositivo)
-        escalares_puerto = oids_puertos(dispositivo)
-        #print(escalares_puerto)
 
+        # Cargar los códigos OID para cada tipo de escaneo
+        escalares = oids_dispositivo(dispositivo, 'general')
+        escalares_puerto = oids_dispositivo(dispositivo, 'puertos')
+        #if dispositivo.tipo.nombre == 'ap':
+        escalares_st = oids_dispositivo(dispositivo, 'wifi')
+        escalares_onu = oids_dispositivo(dispositivo, 'onus')
+        
         try:
             resultado = snmp_client.consultar_escalares(dispositivo, escalares)
+            #puertos = snmp_client.consultar_if_table2(dispositivo, escalares_puerto)
             puertos = snmp_client.consultar_if_table(dispositivo, escalares_puerto)
+            estaciones = snmp_client.consultar_if_table(dispositivo, escalares_st)
+            onus = snmp_client.consultar_if_table(dispositivo, escalares_onu)
             status = DeviceMetrics.Status.OK
             # print(puertos)
         except snmp_client.SnmpError as exc:
             self.stdout.write(
                 self.style.ERROR(f'[{dispositivo.nombre}] {exc}'))
             resultado, puertos = {}, []
+            estaciones, onus = [], []
             mensaje = str(exc).lower()
             status = (
                 DeviceMetrics.Status.TIMEOUT
@@ -128,6 +137,8 @@ class Command(BaseCommand):
         #print(resultado)
         datos = self._construir_datos(dispositivo, resultado)
         datos['puertos'] = puertos
+        datos['estaciones'] = estaciones
+        datos['onus'] = onus
         datos['status'] = status
 
         #print(' DATOS --------------------')

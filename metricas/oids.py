@@ -30,9 +30,9 @@ OIDS_GENERICO = {
 }
 
 OIDS_PUERTOS_GENERICO = {
-    'if_descr': '1.3.6.1.2.1.2.2.1.2',       # ifTable/ifDescr (walk). MIB-II (RFC1213-MIB / IF-MIB)
-    'if_oper': '1.3.6.1.2.1.2.2.1.8',        # ifTable/ifOperStatus (walk). MIB-II (RFC1213-MIB / IF-MIB) current state (1 = up, 2 = down)
-    'if_speed': '1.3.6.1.2.1.2.2.1.5',       # ifSpeed (walk). (RFC1213-MIB / IF-MIB) Estimated bandwidth in bits per second.
+    'nombre': '1.3.6.1.2.1.2.2.1.2',       # ifTable/ifDescr (walk). MIB-II (RFC1213-MIB / IF-MIB)
+    'estado': '1.3.6.1.2.1.2.2.1.8',        # ifTable/ifOperStatus (walk). MIB-II (RFC1213-MIB / IF-MIB) current state (1 = up, 2 = down)
+    'speed': '1.3.6.1.2.1.2.2.1.5',       # ifSpeed (walk). (RFC1213-MIB / IF-MIB) Estimated bandwidth in bits per second.
     #'if_rx': '1.3.6.1.2.1.2.2.1.10',
     #'if_tx': '1.3.6.1.2.1.2.2.1.11',
     #'if_typw': '1.3.6.1.2.1.2.2.1.3',        # ifType (walk) Type of network protocol. 1=other, 2=regular1822, 3=ethernet-card, 24=loopback, 32=frame-relay
@@ -41,34 +41,31 @@ OIDS_PUERTOS_GENERICO = {
     #'if_outerrors': '1.3.6.1.2.1.2.2.1.20'   # ifOutErrors (walk) Outbound packets failing to send.
 }
 
-def oids_dispositivo(dispositivo):
+def oids_dispositivo(dispositivo, tipos='general'):
     """
     Devuelve el mapa de OIDs combinado para un dispositivo: genéricos + los de su marca.
     """
-    # copia limpia del diccionario genérico
-    oids = OIDS_GENERICO.copy()
 
-    # Obtenemos directamente la instancia o None
-    metric = OIDmetric.objects.filter(marca=dispositivo.marca, tipo='general').first()
+    # Obtenemos directamente la instancia
+    metric = OIDmetric.objects.filter(marca=dispositivo.marca, tipo=tipos).first()
 
-    if metric and metric.codigos:
-        oids.update(metric.codigos)  # metric.codigos ya es un dict de Python
-
+    # 'general' y 'puertos' tienen codigos genericos
+    if tipos == 'general':
+        # copia limpia del diccionario genérico
+        oids = OIDS_GENERICO.copy()
+        if metric and metric.codigos:
+            oids.update(metric.codigos)  # metric.codigos ya es un dict de Python
+        return oids
+    elif tipos == 'puertos':
+        oids = OIDS_PUERTOS_GENERICO.copy()
+        if metric and metric.codigos:
+            oids.update(metric.codigos)
+        return oids
+    
     #print(oids)
-    return oids
-
-def oids_puertos(dispositivo):
-    """
-    Devuelve los códigos de consulta de los interfaces de red
-    """
-    # copia limpia del diccionario genérico
-    oids = OIDS_PUERTOS_GENERICO.copy()
-
-    # Obtenemos directamente la instancia o None
-    metric = OIDmetric.objects.filter(marca=dispositivo.marca, tipo='puertos').first()
-
     if metric and metric.codigos:
-        oids.update(metric.codigos)  # metric.codigos ya es un dict de Python
+        return metric.codigos
+    else:
+        return {}
 
-    #print(oids)
-    return oids
+    
