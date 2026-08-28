@@ -1,0 +1,39 @@
+<div id="tabla-iface" class="table-responsive">
+<table class="table table-hover align-middle" id="ifaceTable">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Tipo</th>
+            <th>Estado</th>
+            <th>IP</th>
+            <th>MAC</th>
+            <th>Velocidad</th>
+            <th></th>
+        </tr>
+    </thead>
+        {% for interfaz in dispositivo.interfaces.all %}
+        <tr>
+            <td>{{ interfaz.nombre }}</td>
+            <td>{{ interfaz.get_tipo_display }}</td>
+            <td>
+                <span class="badge
+                    {% if interfaz.estado == 'up' %}bg-success
+                    {% elif interfaz.estado == 'down' %}bg-danger
+                    {% else %}bg-secondary{% endif %}">
+                    {{ interfaz.get_estado_display }}
+                </span>
+            </td>
+            <td>{{ interfaz.ip_address|default:"—" }}</td>
+            <td>{{ interfaz.mac_address|default:"—" }}</td>
+            <td>{% firstof interfaz.velocidad_mbps "—" %} {% if interfaz.velocidad_mbps %}Mbps{% endif %}</td>
+            <td class="text-end">
+                <a href="{% url 'dispositivos:editar_interfaz' interfaz.pk %}" class="btn btn-sm btn-outline-primary">Editar</a>
+                <a href="{% url 'dispositivos:eliminar_interfaz' interfaz.pk %}" class="btn btn-sm btn-outline-danger">Eliminar</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7" class="text-center text-muted py-3">Este dispositivo no tiene interfaces.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>

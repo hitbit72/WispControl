@@ -31,7 +31,7 @@ OID_IF_OPER = '1.3.6.1.2.1.2.2.1.8'
 OID_IF_SPEED = '1.3.6.1.2.1.2.2.1.5'
 OID_IF_TYPE = '1.3.6.1.2.1.2.2.1.3' 
 
-EXCLUDE_PORT = ('lo','ubond','lag1','lag2')
+EXCLUDE_PORT = ('lo','ubond','ubond0','lag','lag1')
 
 # IF_TYPE
 # 6 (ethernetCsmacd): Redes Ethernet estándar.
@@ -224,7 +224,7 @@ def consultar_if_table2(dispositivo, oids):
     return puertos
 
 
-def consultar_if_table(dispositivo, oids):
+def consultar_if_table(dispositivo, oids, modo='general'):
 
     if not oids:
         return []
@@ -270,11 +270,25 @@ def consultar_if_table(dispositivo, oids):
                 valor_str = valor.prettyPrint()
 
                 # formatear el estado del interfaz
-                if nombre_clave == 'estado':
-                    print(f'{nombre_clave}: {valor_str} ')
-                    valor_str = 'up' if valor_str == '1' else 'down'
-                
+                """
+                if modo == 'puertos':
+                    if nombre_clave == 'estado':
+                        print(f'{nombre_clave}: {valor_str} ')
+                        valor_str = 'up' if valor_str == '1' else 'down'
+                """
                 fila[nombre_clave] = valor_str
-            estaciones.append(fila)
+
+            if modo == 'puertos':
+                #print(fila)
+                fila['estado'] = 'up' if fila['estado'] == '1' else 'down'
+                if int(fila['speed']) > 100:
+                    fila['speed'] = int(fila['speed']) * 0.000001
+                else:
+                    fila['speed'] = 0
+                if fila['nombre'] in EXCLUDE_PORT:
+                    fila = {}
+
+            if fila:
+                estaciones.append(fila)
 
     return estaciones

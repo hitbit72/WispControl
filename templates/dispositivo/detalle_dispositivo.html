@@ -116,46 +116,7 @@
     <h4 class="mb-0"><i class="bi bi-ethernet" aria-hidden="true"></i> Interfaces</h4>
     <a href="{% url 'dispositivos:nueva_interfaz' dispositivo.pk %}" class="btn btn-primary btn-sm">+ Nueva interfaz</a>
 </div>
-
-<div id="tabla-iface" class="table-responsive">
-<table class="table table-hover align-middle" id="ifaceTable">
-    <thead>
-        <tr>
-            <th>Nombre</th>
-            <th>Tipo</th>
-            <th>Estado</th>
-            <th>IP</th>
-            <th>MAC</th>
-            <th>Velocidad</th>
-            <th></th>
-        </tr>
-    </thead>
-        {% for interfaz in dispositivo.interfaces.all %}
-        <tr>
-            <td>{{ interfaz.nombre }}</td>
-            <td>{{ interfaz.get_tipo_display }}</td>
-            <td>
-                <span class="badge
-                    {% if interfaz.estado == 'up' %}bg-success
-                    {% elif interfaz.estado == 'down' %}bg-danger
-                    {% else %}bg-secondary{% endif %}">
-                    {{ interfaz.get_estado_display }}
-                </span>
-            </td>
-            <td>{{ interfaz.ip_address|default:"—" }}</td>
-            <td>{{ interfaz.mac_address|default:"—" }}</td>
-            <td>{% firstof interfaz.velocidad_mbps "—" %} {% if interfaz.velocidad_mbps %}Mbps{% endif %}</td>
-            <td class="text-end">
-                <a href="{% url 'dispositivos:editar_interfaz' interfaz.pk %}" class="btn btn-sm btn-outline-primary">Editar</a>
-                <a href="{% url 'dispositivos:eliminar_interfaz' interfaz.pk %}" class="btn btn-sm btn-outline-danger">Eliminar</a>
-            </td>
-        </tr>
-        {% empty %}
-        <tr><td colspan="7" class="text-center text-muted py-3">Este dispositivo no tiene interfaces.</td></tr>
-        {% endfor %}
-    </tbody>
-</table>
-</div>
+{% include "dispositivo/interfaz/_tabla_interfaz.html" %}
 </section>
 
 <section class="panel mt-1">
@@ -163,52 +124,7 @@
     <h4 class="mb-0"><i class="bi bi-arrows" aria-hidden="true"></i> Enlaces</h4>
     <a href="{% url 'dispositivos:nuevo_enlace' dispositivo.pk %}" class="btn btn-primary btn-sm">+ Nuevo enlace</a>
 </div>
-
-<div id="tabla-enlace" class="table-responsive">
-<table class="table table-hover align-middle" id="enlaceTable">
-    <thead>
-        <tr>
-            <th>Desde</th>
-            <th>Hacia</th>
-            <th>Tipo</th>
-            <th>Ancho de banda</th>
-            <th>Distancia</th>
-            <th>Frecuencia</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for enlace in enlaces %}
-        <tr>
-            <td>
-                {% if enlace.dispositivo_origen.pk == dispositivo.pk %}
-                <strong>{{ enlace.dispositivo_origen.nombre }}</strong> · ({{ enlace.dispositivo_origen.ip_gestion|default:"—" }})
-                {% else %}
-                <a href="{% url 'dispositivos:detalle' enlace.dispositivo_origen.pk %}">{{ enlace.dispositivo_origen.nombre }} · ({{ enlace.dispositivo_origen.ip_gestion|default:"—" }})</a>
-                {% endif %}
-            </td>
-            <td>
-                {% if enlace.dispositivo_destino.pk == dispositivo.pk %}
-                <strong>{{ enlace.dispositivo_destino.nombre }}</strong> · ({{ enlace.dispositivo_destino.ip_gestion|default:"—" }})
-                {% else %}
-                <a href="{% url 'dispositivos:detalle' enlace.dispositivo_destino.pk %}">{{ enlace.dispositivo_destino.nombre }} · ({{ enlace.dispositivo_destino.ip_gestion|default:"—" }})</a>
-                {% endif %}
-            </td>
-            <td>{{ enlace.get_tipo_display }}</td>
-            <td>{% if enlace.ancho_banda_mbps %}{{ enlace.ancho_banda_mbps }} Mbps{% else %}—{% endif %}</td>
-            <td>{% if enlace.distancia_km %}{{ enlace.distancia_km }} km{% else %}—{% endif %}</td>
-            <td>{% if enlace.frecuencia_ghz %}{{ enlace.frecuencia_ghz }} GHz{% else %}—{% endif %}</td>
-            <td class="text-end">
-                <a href="{% url 'dispositivos:editar_enlace' enlace.pk %}" class="btn btn-sm btn-outline-primary">Editar</a>
-                <a href="{% url 'dispositivos:eliminar_enlace' enlace.pk %}" class="btn btn-sm btn-outline-danger">Eliminar</a>
-            </td>
-        </tr>
-        {% empty %}
-        <tr><td colspan="7" class="text-center text-muted py-3">Este dispositivo no tiene enlaces.</td></tr>
-        {% endfor %}
-    </tbody>
-</table>
-</div>
+{% include "dispositivo/enlace/_tabla_enlaces.html" %}
 </section>
 
 <div style="margin-top: 0.5rem;">

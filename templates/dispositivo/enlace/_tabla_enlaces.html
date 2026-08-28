@@ -1,0 +1,45 @@
+<div id="tabla-enlace" class="table-responsive">
+<table class="table table-hover align-middle" id="enlaceTable">
+    <thead>
+        <tr>
+            <th>Desde</th>
+            <th>Hacia</th>
+            <th>Tipo</th>
+            <th>Ancho de banda</th>
+            <th>Distancia</th>
+            <th>Frecuencia</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for enlace in enlaces %}
+        <tr>
+            <td>
+                {% if enlace.dispositivo_origen.pk == dispositivo.pk %}
+                <strong>{{ enlace.dispositivo_origen.nombre }}</strong> · ({{ enlace.dispositivo_origen.ip_gestion|default:"—" }})
+                {% else %}
+                <a href="{% url 'dispositivos:detalle' enlace.dispositivo_origen.pk %}">{{ enlace.dispositivo_origen.nombre }} · ({{ enlace.dispositivo_origen.ip_gestion|default:"—" }})</a>
+                {% endif %}
+            </td>
+            <td>
+                {% if enlace.dispositivo_destino.pk == dispositivo.pk %}
+                <strong>{{ enlace.dispositivo_destino.nombre }}</strong> · ({{ enlace.dispositivo_destino.ip_gestion|default:"—" }})
+                {% else %}
+                <a href="{% url 'dispositivos:detalle' enlace.dispositivo_destino.pk %}">{{ enlace.dispositivo_destino.nombre }} · ({{ enlace.dispositivo_destino.ip_gestion|default:"—" }})</a>
+                {% endif %}
+            </td>
+            <td>{{ enlace.get_tipo_display }}</td>
+            <td>{% if enlace.ancho_banda_mbps %}{{ enlace.ancho_banda_mbps }} Mbps{% else %}—{% endif %}</td>
+            <td>{% if enlace.distancia_km %}{{ enlace.distancia_km }} km{% else %}—{% endif %}</td>
+            <td>{% if enlace.frecuencia_ghz %}{{ enlace.frecuencia_ghz }} GHz{% else %}—{% endif %}</td>
+            <td class="text-end">
+                <a href="{% url 'dispositivos:editar_enlace' enlace.pk %}" class="btn btn-sm btn-outline-primary">Editar</a>
+                <a href="{% url 'dispositivos:eliminar_enlace' enlace.pk %}" class="btn btn-sm btn-outline-danger">Eliminar</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7" class="text-center text-muted py-3">Este dispositivo no tiene enlaces.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>

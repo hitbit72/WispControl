@@ -116,9 +116,9 @@ class Command(BaseCommand):
         try:
             resultado = snmp_client.consultar_escalares(dispositivo, escalares)
             #puertos = snmp_client.consultar_if_table2(dispositivo, escalares_puerto)
-            puertos = snmp_client.consultar_if_table(dispositivo, escalares_puerto)
-            estaciones = snmp_client.consultar_if_table(dispositivo, escalares_st)
-            onus = snmp_client.consultar_if_table(dispositivo, escalares_onu)
+            puertos = snmp_client.consultar_if_table(dispositivo, escalares_puerto, 'puertos')
+            estaciones = snmp_client.consultar_if_table(dispositivo, escalares_st, 'wifi')
+            onus = snmp_client.consultar_if_table(dispositivo, escalares_onu, 'onus')
             status = DeviceMetrics.Status.OK
             # print(puertos)
         except snmp_client.SnmpError as exc:

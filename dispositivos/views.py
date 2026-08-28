@@ -235,6 +235,7 @@ def alternar_escaneo_dispositivo(request, pk):
 
 
 # --- Interfaces ----------------------------------------------------------------
+# 1bsp = 0,000001 mbps
 
 @login_required
 def nueva_interfaz(request, dispositivo_pk):
