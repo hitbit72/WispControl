@@ -80,32 +80,27 @@
             <label class="form-label" for="{{ form.firmware_version.id_for_label }}">Versión de firmware</label>
             {{ form.firmware_version }}
         </div>
-        <!--
-        <div class="col-md-6">
-            <label class="form-label" for="{{ form.oid.id_for_label }}">Metrica OID</label>
-            {{ form.oid }}
-            <div class="invalid-feedback">Seleccione una marca para los códigos OID</div>
+        <div class="card h-100">
+            <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-md-4">
+                    <label class="form-label" for="{{ form.escanear.id_for_label }}">Escanear</label>
+                    {{ form.escanear }}
+                    <div class="form-text">Comprobar periodicamente el estado del dispositivo"</div>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label" for="{{ form.alarma.id_for_label }}">Alarma</label>
+                    {{ form.alarma }}
+                    <div class="form-text">Mostrar alarmas de estdo</div>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label" for="{{ form.alarma_puerto.id_for_label }}">Alarma de Puerto</label>
+                    {{ form.alarma_puerto }}
+                    <div class="form-text">Mostrar alarma de puerto desconectado</div>
+                </div>
+            </div>
+            </div>
         </div>
-        -->
-        <section class="panel">
-        <div class="row">
-        <div class="col-md-4">
-            <label class="form-label" for="{{ form.escanear.id_for_label }}">Escanear</label>
-            {{ form.escanear }}
-            <div class="form-text">Comprobar periodicamente el estado del dispositivo"</div>
-        </div>
-        <div class="col-md-4">
-            <label class="form-label" for="{{ form.alarma.id_for_label }}">Alarma</label>
-            {{ form.alarma }}
-            <div class="form-text">Mostrar alarmas de estdo</div>
-        </div>
-        <div class="col-md-4">
-            <label class="form-label" for="{{ form.alarma_puerto.id_for_label }}">Alarma de Puerto</label>
-            {{ form.alarma_puerto }}
-            <div class="form-text">Mostrar alarma de puerto desconectado</div>
-        </div>
-        </div>
-        </section>
         <div class="col-12">
             <label class="form-label" for="{{ form.atributos_extra.id_for_label }}">Atributos del dispositivo</label>
             {{ form.atributos_extra }}

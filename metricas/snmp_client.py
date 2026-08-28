@@ -265,10 +265,16 @@ def consultar_if_table(dispositivo, oids):
             for i, varBind in enumerate(varBinds):
                 oid_respuesta, valor = varBind
                 nombre_clave = nombres_metricas[i]
-                
-                # Convertimos el valor a string limpia
-                fila[nombre_clave] = valor.prettyPrint()
 
+                # Convertimos el valor a string limpia
+                valor_str = valor.prettyPrint()
+
+                # formatear el estado del interfaz
+                if nombre_clave == 'estado':
+                    print(f'{nombre_clave}: {valor_str} ')
+                    valor_str = 'up' if valor_str == '1' else 'down'
+                
+                fila[nombre_clave] = valor_str
             estaciones.append(fila)
 
     return estaciones

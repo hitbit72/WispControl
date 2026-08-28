@@ -19,7 +19,7 @@ Uso manual:
 
 Si quieres confirmar qué hay realmente en esa columna:
 
-    uv run manage.py shell -c "from red.models import Dispositivo; [print(d.nombre, repr(d.snmp_community)) for d in Dispositivo.objects.all()]"
+    uv run manage.py shell -c "from dispositivos.models import Dispositivo; [print(d.nombre, repr(d.snmp_community)) for d in Dispositivo.objects.all()]"
 
 """
 

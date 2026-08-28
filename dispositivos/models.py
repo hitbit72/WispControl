@@ -53,8 +53,8 @@ class Dispositivo(models.Model):
     class Rol(models.TextChoices):
         MAIN = 'main', 'Principal'
         STATION = 'station', 'Estación'
-        MASTER = 'master', 'Master'
-        SLAVE = 'slave', 'Esclavo'
+        MASTER = 'master', 'PtP Master'
+        SLAVE = 'slave', 'PtP Esclavo'
         OTRO = 'otro', 'Otro'
 
     # nombre es unico, permite buscar
