@@ -67,6 +67,7 @@
         <div class="col-md-4">
             <label class="form-label" for="{{ form.mac_address.id_for_label }}">Dirección MAC</label>
             {{ form.mac_address }}
+            <div class="invalid-feedback">La dirección MAC es obligatoria.</div>
         </div>
         <div class="col-md-6">
             <label class="form-label" for="{{ form.latitud.id_for_label }}">Latitud</label>

@@ -267,17 +267,21 @@ def consultar_if_table(dispositivo, oids, modo='general'):
                 nombre_clave = nombres_metricas[i]
 
                 # Convertimos el valor a string limpia
-                valor_str = valor.prettyPrint()
+                fila[nombre_clave] = valor.prettyPrint()
 
-                # formatear el estado del interfaz
-                """
-                if modo == 'puertos':
-                    if nombre_clave == 'estado':
-                        print(f'{nombre_clave}: {valor_str} ')
-                        valor_str = 'up' if valor_str == '1' else 'down'
-                """
-                fila[nombre_clave] = valor_str
+            if modo == 'wifi':
+                if fila['signal']:
+                    fila['signal'] = int(fila['signal'])
+                if fila['ccq']:
+                    fila['ccq'] = int(fila['ccq'])
+                if fila['noise']:
+                    fila['noise'] = int(fila['noise'])
+                if fila['rx_rate']:
+                    fila['rx_rate'] = int(fila['rx_rate'])
+                if fila['tx_rate']:
+                    fila['tx_rate'] = int(fila['tx_rate'])
 
+            # formatear el estado del interfaz
             if modo == 'puertos':
                 #print(fila)
                 fila['estado'] = 'up' if fila['estado'] == '1' else 'down'
