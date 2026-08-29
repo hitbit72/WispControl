@@ -104,10 +104,10 @@ def consultar_escalares(dispositivo, oids):
     comunidad = dispositivo.snmp_community or 'public'
     engine = SnmpEngine()
     transporte = _trasporte(dispositivo.ip_gestion, conf)
-    print(f'Escaneando {dispositivo.ip_gestion}')
     contexto = ContextData()
 
     # debug
+    print(f'Escaneando {dispositivo.ip_gestion}')
     #print(transporte)
     #print(comunidad)
     #print(oids)
@@ -140,7 +140,7 @@ def consultar_escalares(dispositivo, oids):
     return resultado
 
 def _escalares_uno_a_uno(engine, auth, transporte, contexto, oids):
-    print('escalares_uno_a_uno')
+    #print('escalares_uno_a_uno')
     resultado = {}
     for metrica, oid in oids.items():
         error_ind, error_st, _, var_binds = next(
@@ -240,6 +240,8 @@ def consultar_if_table(dispositivo, oids, modo='general'):
     contexto = ContextData()
     estaciones = []
 
+    print(f'consultar_if_table: {modo}')
+    
     # 1. Separar claves ("host", "signal"...) y valores OID ("1.3.6.1...")
     nombres_metricas = list(oids.keys())
     objetos_snmp = [ObjectType(ObjectIdentity(oid)) for oid in oids.values()]

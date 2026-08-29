@@ -187,7 +187,7 @@ MK_MAX_INTENTOS = int(os.environ.get('MK_MAX_INTENTOS', '3'))
 METRICAS_SNMP = {
     'puerto': 161,
     'timeout': 2.0,
-    'reintentos': 1,
+    'reintentos': 2,
 }
 
 

@@ -36,20 +36,23 @@
                     action="{% url 'dispositivos:alternar_escaneo' dispositivo.pk %}" 
                     hx-trigger="input changed from:#id_scanear, change from:#id_alarmas" 
                     hx-push-url="true">
-                {% csrf_token %}
+                    {% csrf_token %}
                     <div x-data="{ metodo: '0'}">
                     <input type="hidden" id="id_scanear" name="id_scanear" x-model="metodo">
                     <div class="card h-100">
                         <div class="card-body">
-                        <div class="row align-items-center">
+                        <div class="row align-items-center" style="font-size: 0.75rem">
                             <div class="col">
-                                <strong>Escanear:</strong> <button class="btn btn-primary badge {% if dispositivo.escanear %}bg-success{% else %}bg-danger{% endif %}" type="submit" @click="metodo = '1'">{% if dispositivo.escanear %} On {% else %} Off {% endif %}</button>
+                                <strong>Escanear:</strong> <button class="btn btn-primary badge {% if dispositivo.escanear %}bg-success{% else %}bg-danger{% endif %}" style="padding: 0.15rem 0.40rem;" type="submit" @click="metodo = '1'">{% if dispositivo.escanear %} On {% else %} Off {% endif %}</button>
                             </div>
                             <div class="col">
-                                <strong>Alarmas:</strong> <button class="btn btn-primary badge {% if dispositivo.alarma %}bg-success{% else %}bg-danger{% endif %}" type="submit" @click="metodo = '2'">{% if dispositivo.alarma %} On {% else %} Off {% endif %}</button>
+                                <strong>Alarmas:</strong> <button class="btn btn-primary badge {% if dispositivo.alarma %}bg-success{% else %}bg-danger{% endif %}" style="padding: 0.15rem 0.40rem;" type="submit" @click="metodo = '2'">{% if dispositivo.alarma %} On {% else %} Off {% endif %}</button>
                             </div>
                             <div class="col">
-                                <strong>Puertos:</strong> <button class="btn btn-primary badge {% if dispositivo.alarma_puerto %}bg-success{% else %}bg-danger{% endif %}" type="submit" @click="metodo = '3'">{% if dispositivo.alarma_puerto %} On {% else %} Off {% endif %}</button>
+                                <strong>Puertos:</strong> <button class="btn btn-primary badge {% if dispositivo.alarma_puerto %}bg-success{% else %}bg-danger{% endif %}" style="padding: 0.15rem 0.40rem;" type="submit" @click="metodo = '3'">{% if dispositivo.alarma_puerto %} On {% else %} Off {% endif %}</button>
+                            </div>
+                            <div class="col">
+                                <strong>Ping:</strong> <button class="btn btn-primary badge {% if dispositivo.ping %}bg-success{% else %}bg-danger{% endif %}" style="padding: 0.15rem 0.40rem;" type="submit" @click="metodo = '4'">{% if dispositivo.ping %} On {% else %} Off {% endif %}</button>
                             </div>
                         </div>
                         </div>
@@ -97,7 +100,8 @@
                     {% if metricas.signal %}<p class="mb-1"><strong>Señal:</strong> {{ metricas.signal }} dbm</p>{% endif %}
                     {% if metricas.power %}<p class="mb-1"><strong>Potencia:</strong> {{ metricas.power}} dbm</p>{% endif %}
                     {% if metricas.ccq %}<p class="mb-1"><strong>CCQ:</strong> {{ metricas.ccq }}%</p>{% endif %}
-                    {% if metricas.antena %}<p class="mb-0"><strong>Antena:</strong> {{ metricas.antena }}%</p>{% endif %}
+                    {% if metricas.antena %}<p class="mb-1"><strong>Antena:</strong> {{ metricas.antena }}%</p>{% endif %}
+                    {% if metricas.timescan %}<p class="mb-0"><strong>Actualizado:</strong> {{ metricas.timescan }}</p>{% endif %}
                   </div>
                 {% endif %}
             </div>
@@ -122,10 +126,12 @@
 {% include "dispositivo/interfaz/_tabla_interfaz.html" %}
 </section>
 
+
+{% load dispositivo_tags %}
 {% if metricas.estaciones %}
 <section class="panel mt-1">
 <div class="d-flex justify-content-between align-items-center mb-2">
-    <h4 class="mb-0"><i class="bi bi-arrows" aria-hidden="true"></i> Estaciones</h4>
+    <h4 class="mb-0"><i class="bi bi-wifi" aria-hidden="true"></i> Estaciones</h4>
     <!-- <a href="{% url 'dispositivos:nuevo_enlace' dispositivo.pk %}" class="btn btn-primary btn-sm">+ Nuevo enlace</a> -->
 </div>
 
@@ -134,6 +140,7 @@
     <thead>
         <tr>
             <th>IP</th>
+            <th>cliente</th>
             <th>Host</th>
             <th>Señal</th>
             <th>Ruido</th>
@@ -145,7 +152,7 @@
     <tbody>
     {% for estacion in metricas.estaciones %}
     <tr>
-        <td>{{ estacion.ip }}</td>
+        {{ estacion.ip|find_client:request.path }}
         <td>{{ estacion.host }}</td>
         <td><span class="badge 
         {% if estacion.signal <= -70 %}bg-danger
@@ -155,8 +162,8 @@
         {{ estacion.signal }}</span></td>
         <td>{{ estacion.noise }}</td>
         <td>{{ estacion.ccq }}</td>
-        <td>{{ estacion.tx_rate }}</td>
-        <td>{{ estacion.rx_rate }}</td>
+        <td>{{ estacion.tx_rate|bps_a_mbps }} Mbps</td>
+        <td>{{ estacion.rx_rate|bps_a_mbps }} Mbps</td>
     </tr>
     {% empty %}
         <tr><td colspan="7" class="text-center text-muted py-3">Este dispositivo no tiene estaciones.</td></tr>

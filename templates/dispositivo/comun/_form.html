@@ -21,17 +21,17 @@
             {{ form.tipo }}
             <div class="invalid-feedback">Seleccione un tipo</div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
             <label class="form-label" for="{{ form.rol.id_for_label }}">Modo de operación</label>
             {{ form.rol }}
             <div class="invalid-feedback">Seleccione el modo de operación.</div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
             <label class="form-label" for="{{ form.estado.id_for_label }}">Estado</label>
             {{ form.estado }}
             <div class="invalid-feedback">Seleccione el estado</div>
         </div>
-        <div class="col-3">
+        <div class="col-4">
             <label class="form-label" for="{{ form.onu_ref.id_for_label }}">Nº Ref. de la ONU</label>
             {{ form.onu_ref }}
         </div>
@@ -84,20 +84,25 @@
         <div class="card h-100">
             <div class="card-body">
             <div class="row align-items-center">
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <label class="form-label" for="{{ form.escanear.id_for_label }}">Escanear</label>
                     {{ form.escanear }}
                     <div class="form-text">Comprobar periodicamente el estado del dispositivo"</div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <label class="form-label" for="{{ form.alarma.id_for_label }}">Alarma</label>
                     {{ form.alarma }}
                     <div class="form-text">Mostrar alarmas de estdo</div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <label class="form-label" for="{{ form.alarma_puerto.id_for_label }}">Alarma de Puerto</label>
                     {{ form.alarma_puerto }}
                     <div class="form-text">Mostrar alarma de puerto desconectado</div>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label" for="{{ form.ping.id_for_label }}">Ping</label>
+                    {{ form.ping }}
+                    <div class="form-text">Dispositivo online</div>
                 </div>
             </div>
             </div>

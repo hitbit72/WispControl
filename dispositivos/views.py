@@ -14,7 +14,7 @@ from metricas.models import DeviceMetrics
 from eventos.models import Evento
 from eventos.services import registrar_evento
 
-from core.rutas import http_ruta
+#from core.rutas import http_ruta
 
 MODULO = 'dispositivos'
 
@@ -221,6 +221,9 @@ def alternar_escaneo_dispositivo(request, pk):
 
         if metodo == '3':
             dispositivo.alarma_puerto = not dispositivo.alarma_puerto
+
+        if metodo == '4':
+            dispositivo.ping = not dispositivo.ping
 
         # Si no hay escaneo, se desactivan las alarmas
         if dispositivo.escanear == False:

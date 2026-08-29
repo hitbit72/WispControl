@@ -82,7 +82,8 @@ class Dispositivo(models.Model):
     escanear = models.BooleanField(default=False, null=True, blank=True)
     alarma = models.BooleanField(default=False, null=True, blank=True)
     alarma_puerto = models.BooleanField(default=False, null=True, blank=True, verbose_name='Alarma puertos')
-    
+    ping = models.BooleanField(default=True, null=True, blank=True)
+
     latitud = models.DecimalField(max_digits=10, decimal_places=7, null=True, blank=True)
     longitud = models.DecimalField(max_digits=10, decimal_places=7, null=True, blank=True)
 

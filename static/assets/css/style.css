@@ -1296,12 +1296,22 @@ html[data-theme="dark"] .auth-body {
   color: var(--admin-text);
 }
 
+/*
 .form-control,
 .form-select {
   border-color: var(--admin-border);
   background-color: var(--admin-surface);
   color: var(--admin-text);
 }
+*/
+
+.form-control,
+.form-select {
+  border-color: #9dc9ff;
+  background-color: #f3f2f2;
+  color: var(--admin-text);
+}
+
 
 .form-control:focus,
 .form-select:focus {
