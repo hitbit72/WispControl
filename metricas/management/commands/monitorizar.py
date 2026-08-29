@@ -112,6 +112,8 @@ class Command(BaseCommand):
 
         escalares = oids_dispositivo(dispositivo, 'general')
         escalares_puerto = oids_dispositivo(dispositivo, 'puertos')
+
+        # Solo los dispositivos AP y OLT
         if dispositivo.tipo.clave == 'ap':
             escalares_st = oids_dispositivo(dispositivo, 'wifi')
         if dispositivo.tipo.clave == 'olt':
