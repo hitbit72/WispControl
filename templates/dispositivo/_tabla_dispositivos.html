@@ -2,9 +2,9 @@
 <table class="table table-hover align-middle mb-0" id="ordersTable" data-searchable-table>
     <thead>
         <tr>
+            <th>Estado</th>
             <th>Dispositivo</th>
             <th>Marca</th>
-            <th>Estado</th>
             <th>IP gestión</th>
             <th>Cliente</td>
             <th>Modo</th>
@@ -16,9 +16,9 @@
     <tbody>
         {% for dispositivo in pagina %}
         <tr>
+            <td style="width: 40px;">{% include "dispositivo/comun/estado.html" %}</td>
             <td><a href="{% url 'dispositivos:detalle' dispositivo.pk %}">{{ dispositivo.nombre }}</a></td>
             <td>{{ dispositivo.marca.nombre }} {{ dispositivo.marca.modelo }}</td>
-            <td>{% include "dispositivo/comun/estado.html" %}</td>
             <td>{{ dispositivo.ip_gestion|default:"—" }}</td>
             <td>{% if dispositivo.cliente.nombre_completo %}
                 <a href="{% url 'clientes:detalle' dispositivo.cliente.pk %}">{{ dispositivo.cliente.nombre_completo }}</a>

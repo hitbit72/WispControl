@@ -3,30 +3,30 @@
 <table class="table table-hover align-middle" id="ordersTable" data-searchable-table>
     <thead>
         <tr>
+            <th>Estado</th>
             <th>Nombre</th>
             <th>Apodo</th>
-            <th>Estado</th>
-            <th>Población</th>
             <th>Teléfono</th>
-            <th>eMail</th>
+            <th>Población</th>
+            <th>Dirección</th>
             <th></th>
         </tr>
     </thead>
     <tbody>
         {% for cliente in pagina %}
         <tr>
-            <td><a href="{% url 'clientes:detalle' cliente.pk %}">{{ cliente.nombre_completo }}</a></td>
-            <td>{{ cliente.apodo|default:"—" }}</td>
-            <td>
+            <td style="width: 40px;">
                 {% if cliente.activo %}
                 <span class="badge bg-success">Activo</span>
                 {% else %}
                 <span class="badge bg-danger">Inactivo</span>
                 {% endif %}
             </td>
-            <td>{{ cliente.poblacion|default:"—" }}</td>
+            <td><a href="{% url 'clientes:detalle' cliente.pk %}">{{ cliente.nombre_completo }}</a></td>
+            <td>{{ cliente.apodo|default:"—" }}</td>
             <td>{{ cliente.telefono|default:"—" }}</td>
-            <td>{{ cliente.email|default:"—" }}</td>
+            <td>{{ cliente.poblacion|default:"—" }}</td>
+            <td>{{ cliente.direccion|default:"—" }}</td>
             <td class="text-end">
                 <a href="{% url 'clientes:detalle' cliente.pk %}" class="btn btn-sm btn-outline-secondary">Ver</a>
                 <a href="{% url 'clientes:editar' cliente.pk %}" class="btn btn-sm btn-outline-primary">Editar</a>

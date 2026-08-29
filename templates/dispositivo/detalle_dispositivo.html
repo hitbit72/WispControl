@@ -118,19 +118,10 @@
 {% endif %}
 </section>
 
-<section class="panel mt-1">
-<div class="d-flex justify-content-between align-items-center mb-2">
-    <h4 class="mb-0"><i class="bi bi-ethernet" aria-hidden="true"></i> Interfaces</h4>
-    <a href="{% url 'dispositivos:nueva_interfaz' dispositivo.pk %}" class="btn btn-primary btn-sm">+ Nueva interfaz</a>
-</div>
-{% include "dispositivo/interfaz/_tabla_interfaz.html" %}
-</section>
-
-
 {% if metricas.estaciones %}
 <section class="panel mt-1">
 <div class="d-flex justify-content-between align-items-center mb-2">
-    <h4 class="mb-0"><i class="bi bi-wifi" aria-hidden="true"></i> Estaciones</h4>
+    <h4 class="mb-0"><i class="bi bi-wifi" aria-hidden="true"></i> Estaciones ({{ metricas.clients }})</h4>
 </div>
 {% include "dispositivo/_tabla_estaciones.html" %}
 </section>
@@ -139,11 +130,19 @@
 {% if metricas.onus %}
 <section class="panel mt-1">
 <div class="d-flex justify-content-between align-items-center mb-2">
-    <h4 class="mb-0"><i class="bi bi-hdd-network" aria-hidden="true"></i> ONUs</h4>
+    <h4 class="mb-0"><i class="bi bi-hdd-network" aria-hidden="true"></i> ONUs ({{ metricas.clients }})</h4>
 </div>
 {% include "dispositivo/_tabla_onus.html" %}
 </section>
 {% endif %}
+
+<section class="panel mt-1">
+<div class="d-flex justify-content-between align-items-center mb-2">
+    <h4 class="mb-0"><i class="bi bi-ethernet" aria-hidden="true"></i> Interfaces</h4>
+    <a href="{% url 'dispositivos:nueva_interfaz' dispositivo.pk %}" class="btn btn-primary btn-sm">+ Nueva interfaz</a>
+</div>
+{% include "dispositivo/interfaz/_tabla_interfaz.html" %}
+</section>
 
 <div style="margin-top: 0.5rem;">
 {% if url_anterior %}
