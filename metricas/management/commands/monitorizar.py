@@ -107,11 +107,15 @@ class Command(BaseCommand):
     def _procesar(self, dispositivo):
 
         # Cargar los códigos OID para cada tipo de escaneo
+        escalares_st = ''
+        escalares_onu = ''
+
         escalares = oids_dispositivo(dispositivo, 'general')
         escalares_puerto = oids_dispositivo(dispositivo, 'puertos')
-        #if dispositivo.tipo.nombre == 'ap':
-        escalares_st = oids_dispositivo(dispositivo, 'wifi')
-        escalares_onu = oids_dispositivo(dispositivo, 'onus')
+        if dispositivo.tipo.clave == 'ap':
+            escalares_st = oids_dispositivo(dispositivo, 'wifi')
+        if dispositivo.tipo.clave == 'onu':
+            escalares_onu = oids_dispositivo(dispositivo, 'onus')
         
         try:
             resultado = snmp_client.consultar_escalares(dispositivo, escalares)
