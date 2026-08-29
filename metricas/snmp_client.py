@@ -272,6 +272,7 @@ def consultar_if_table(dispositivo, oids, modo='general'):
                 fila[nombre_clave] = valor.prettyPrint()
 
             if modo == 'wifi':
+                print(f'scan wifi {dispositivo.ip_gestion}')
                 if fila['signal']:
                     fila['signal'] = int(fila['signal'])
                 if fila['ccq']:
