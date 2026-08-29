@@ -29,7 +29,6 @@ def lista_dispositivos(request):
     if busqueda:
         dispositivos = dispositivos.filter(
             Q(nombre__icontains=busqueda)
-            | Q(modelo__icontains=busqueda)
             | Q(ip_gestion__icontains=busqueda)
             | Q(mac_address__icontains=busqueda)
         )
