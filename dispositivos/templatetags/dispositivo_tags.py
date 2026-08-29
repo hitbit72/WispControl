@@ -40,12 +40,12 @@ def bps_a_mbps(value):
 
 
 @register.filter
-def find_client(ip, current_path=None):
+def find_station(ip, current_path=None):
     # Busca una estacion a partir de su ip
 
     if not ip:
         return mark_safe('<td>—</td><td>—</td>')
-    
+
     dispositivo = Dispositivo.objects.filter(ip_gestion=ip).first()
     if dispositivo:
         url_cliente = reverse('clientes:detalle', args=[dispositivo.cliente.pk])
@@ -63,4 +63,4 @@ def find_client(ip, current_path=None):
 
     html = f'<td>{ip}</td><td>—</td>'
     return mark_safe(html)
-    
+

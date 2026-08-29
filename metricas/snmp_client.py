@@ -283,6 +283,12 @@ def consultar_if_table(dispositivo, oids, modo='general'):
                 if fila['tx_rate']:
                     fila['tx_rate'] = int(fila['tx_rate'])
 
+            if modo == 'onus':
+                if fila['signal']:
+                    fila['signal'] = int(fila['signal'])
+                    if fila['signal'] < 0:
+                        fila['signal']=fila['signal']/100
+
             # formatear el estado del interfaz
             if modo == 'puertos':
                 #print(fila)

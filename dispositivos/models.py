@@ -71,8 +71,8 @@ class Dispositivo(models.Model):
                                related_name='dispositivos')
     cliente = models.ForeignKey('clientes.Cliente', on_delete=models.SET_NULL, null=True, blank=True, 
                                 related_name='dispositivos',)
-    onu_ref = models.CharField(max_length=100, null=True, blank=True, verbose_name='Referencia ONU', 
-                               help_text='Identificado del equipo ONU',)
+    onu_ref = models.CharField(max_length=100, unique=True, null=True, blank=True, verbose_name='Numero de Serie ONU', 
+                               help_text='Identificador del equipo ONU',)
     ip_gestion = models.GenericIPAddressField(null=True, blank=True, verbose_name='IP de gestión')
     ip_publica = models.GenericIPAddressField(null=True, blank=True, verbose_name='IP pública')
     mac_address = models.CharField(max_length=17, blank=True, verbose_name='Dirección MAC')

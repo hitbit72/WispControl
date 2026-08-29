@@ -1,0 +1,36 @@
+{% load dispositivo_tags %}
+<div id="tabla-estaciones" class="table-responsive">
+<table class="table table-hover align-middle" id="estacionesTable">
+    <thead>
+        <tr>
+            <th>IP</th>
+            <th>Cliente</th>
+            <th>Host</th>
+            <th>Señal</th>
+            <th>Ruido</th>
+            <th>CCQ</th>
+            <th>TX rate</th>
+            <th>RX rate</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for estacion in metricas.estaciones %}
+    <tr>
+        {{ estacion.ip|find_station:request.path }}
+        <td>{{ estacion.host }}</td>
+        <td><span class="badge 
+        {% if estacion.signal <= -70 %}bg-danger
+        {% elif estacion.signal > -50 %}bg-warning
+        {% elif estacion.signal > -70 and estacion.signal <= -50 %}bg-success
+        {% else %}bg-secondary{% endif %}">
+        {{ estacion.signal }}</span></td>
+        <td>{{ estacion.noise }}</td>
+        <td>{{ estacion.ccq }}</td>
+        <td>{{ estacion.tx_rate|bps_a_mbps }} Mbps</td>
+        <td>{{ estacion.rx_rate|bps_a_mbps }} Mbps</td>
+    </tr>
+    {% empty %}
+        <tr><td colspan="7" class="text-center text-muted py-3">Este dispositivo no tiene estaciones.</td></tr>
+    {% endfor %}
+    </tbody>
+    </table>
