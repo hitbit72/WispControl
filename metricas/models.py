@@ -51,6 +51,7 @@ class DeviceMetrics(models.Model):
     antena = models.CharField(max_length=100, null=True, blank=True, verbose_name='Tipo Antena')
     distancia = models.PositiveIntegerField(null=True, blank=True, verbose_name='Distnacia')
     clients = models.PositiveIntegerField(null=True, blank=True, verbose_name='Clientes conectados')
+    latencia = models.FloatField(null=True, blank=True, verbose_name='Latencia')
     puertos = models.JSONField(
         default=list, blank=True,
         verbose_name='Interfaces',
