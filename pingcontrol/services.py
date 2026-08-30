@@ -25,7 +25,6 @@ DEFAULT_PING_CONFIG = {
     'interval': 0.2,
 }
 
-
 def get_ping_config():
     """Obtiene la configuración de ping desde settings o usa defaults."""
     return getattr(settings, 'PING_CONTROL', DEFAULT_PING_CONFIG)
@@ -44,25 +43,27 @@ def ping_dispositivo(dispositivo):
     if ping is None:
         return False, None, "pythonping no está instalado"
 
+    """
     if dispositivo.ip_gestion:
         ip_dispositivo = dispositivo.ip_gestion
     elif dispositivo.ip_publica:
         ip_dispositivo = dispositivo.ip_publica
     else:
         return False, None, "Sin IP de gestión"
-    
-    #if not dispositivo.ip_gestion:
-    #    return False, None, "Sin IP de gestión"
+    """
+
+    if not dispositivo.ip_gestion:
+        return False, None, "Sin IP de gestión"
     
     config = get_ping_config()
     count = config.get('count', DEFAULT_PING_CONFIG['count'])
     timeout = config.get('timeout', DEFAULT_PING_CONFIG['timeout'])
     interval = config.get('interval', DEFAULT_PING_CONFIG['interval'])
-    print(f'Ping a {ip_dispositivo}')
-    
+    print(f'Ping a {dispositivo.ip_gestion}')
+
     try:
         result = ping(
-            str(ip_dispositivo),
+            str(dispositivo.ip_gestion),
             count=count,
             timeout=timeout,
             interval=interval,
@@ -89,9 +90,9 @@ def guardar_metrica_ping(dispositivo, exitoso, latencia, error_msg=None):
     from metricas.services import guardar_metrica
     
     datos = {
-        'status': DeviceMetrics.Status.OK if exitoso else DeviceMetrics.Status.TIMEOUT,
+        'status_ping': DeviceMetrics.Status.OK if exitoso else DeviceMetrics.Status.TIMEOUT,
         'latencia': latencia,
-        'timescan': timezone.now(),
+        'timeping': timezone.now(),
     }
     
     if error_msg:
@@ -108,10 +109,10 @@ def evaluar_ping(dispositivo, metrica, anterior):
     reglas = []
     
     # Regla: sin respuesta a ping
-    if metrica.status != DeviceMetrics.Status.OK:
+    if metrica.status_ping != DeviceMetrics.Status.OK:
         texto = f'{dispositivo.ip_gestion} ({dispositivo.nombre}) no responde a ping.'
-        if metrica.sys_descr:
-            texto += f' ({metrica.sys_descr})'
+        if metrica.sys_name:
+            texto += f' ({metrica.sys_name})'
         reglas.append({
             'regla': 'ping_sin_respuesta',
             'titulo': f'Ping sin respuesta {dispositivo.ip_gestion}',
@@ -119,7 +120,7 @@ def evaluar_ping(dispositivo, metrica, anterior):
         })
     
     # Regla: recuperado (estaba inactivo y ahora responde)
-    elif anterior and anterior.status != DeviceMetrics.Status.OK:
+    elif anterior and anterior.status_ping != DeviceMetrics.Status.OK:
         reglas.append({
             'regla': 'ping_recuperado',
             'titulo': f'Ping recuperado {dispositivo.ip_gestion}',
@@ -201,12 +202,52 @@ def actualizar_estado_dispositivo(dispositivo, detectadas):
     
     # Verificar si hay alarma de ping sin respuesta activa
     ping_caido = any(a['regla'] == 'ping_sin_respuesta' for a in detectadas)
+    #ping_recuperado = any(a['regla'] == 'ping_recuperado' for a in detectadas)
+    
+    if ping_caido and dispositivo.estado == Dispositivo.Estado.ACTIVO:
+        dispositivo.estado = Dispositivo.Estado.INACTIVO
+        dispositivo.save(update_fields=['estado'])
+
+        # Solo se dan alarmar de tipo=['ap','olt']
+        if dispositivo.alarma:
+            registrar_evento(
+                MODULO,
+                f'Dispositivo inactivo por ping: {dispositivo.ip_gestion}',
+                f'{dispositivo.nombre} marcado como inactivo por no responder a ping.',
+                nivel=Evento.Nivel.CRITICAL,
+            )
+    
+    elif not ping_caido and dispositivo.estado == Dispositivo.Estado.INACTIVO:
+        dispositivo.estado = Dispositivo.Estado.ACTIVO
+        dispositivo.save(update_fields=['estado'])
+
+        # Solo se dan alarmar de tipo=['ap','olt']
+        if dispositivo.alarma:
+            registrar_evento(
+                MODULO,
+                f'Dispositivo recuperado por ping: {dispositivo.ip_gestion}',
+                f'{dispositivo.nombre} vuelve a responder a ping, marcado como activo.',
+                nivel=Evento.Nivel.NOTICE,
+            )
+
+
+def actualizar_estado_dispositivo_original(dispositivo, detectadas):
+    """
+    Actualiza el estado del dispositivo según las alarmas de ping.
+    Solo toca estados 'activo'/'inactivo'.
+    """
+    if dispositivo.estado not in (Dispositivo.Estado.ACTIVO, Dispositivo.Estado.INACTIVO):
+        return
+    
+    # Verificar si hay alarma de ping sin respuesta activa
+    ping_caido = any(a['regla'] == 'ping_sin_respuesta' for a in detectadas)
     ping_recuperado = any(a['regla'] == 'ping_recuperado' for a in detectadas)
     
     if ping_caido and dispositivo.estado == Dispositivo.Estado.ACTIVO:
         dispositivo.estado = Dispositivo.Estado.INACTIVO
         dispositivo.save(update_fields=['estado'])
-        
+
+        # Solo se dan alarmar de tipo=['ap','olt']
         if dispositivo.alarma:
             registrar_evento(
                 MODULO,
@@ -218,7 +259,8 @@ def actualizar_estado_dispositivo(dispositivo, detectadas):
     elif ping_recuperado and dispositivo.estado == Dispositivo.Estado.INACTIVO:
         dispositivo.estado = Dispositivo.Estado.ACTIVO
         dispositivo.save(update_fields=['estado'])
-        
+
+        # Solo se dan alarmar de tipo=['ap','olt']
         if dispositivo.alarma:
             registrar_evento(
                 MODULO,

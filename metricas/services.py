@@ -22,10 +22,10 @@ def guardar_metrica(dispositivo, **datos):
     """ Crea la fila DeviceMetrics.
         Se actualiza siempre el mismo registro, ya que se refiere siempre al
         mismo dispositivo y no necesitamos datos a lo largo del tiempo.
-        Usamos timescan solo para saber cuando se actualizó.
+        Usamos timescan y timeping solo para saber cuando se actualizó.
     """
-    datos.setdefault('status', DeviceMetrics.Status.OK)
-    datos.setdefault('timescan', timezone.now())
+    #datos.setdefault('status', DeviceMetrics.Status.OK)
+    #datos.setdefault('timescan', timezone.now())
     #print(f'Datos despues: {datos}')
     return DeviceMetrics.objects.update_or_create(
         device=dispositivo,
@@ -160,6 +160,8 @@ def _sincronizar_alarmas(dispositivo, detectadas):
     for regla, pk in reglas_activas.items():
         if regla in detectadas:
             continue
+        if regla not in REGLA_INACTIVO:
+            continue
         alarma = Alarma.objects.get(pk=pk)
         alarma.estado = Alarma.Estado.RESUELTA
         alarma.resuelta_en = timezone.now()
@@ -173,6 +175,8 @@ def _sincronizar_alarmas(dispositivo, detectadas):
         resultados['resueltas'].append(alarma)
 
     for regla, datos in detectadas.items():
+        if regla not in REGLA_INACTIVO:
+            continue
         if regla in reglas_activas:
             continue
         alarma, creada = Alarma.objects.get_or_create(

@@ -15,6 +15,7 @@ from .models import DeviceMetrics
 # Nivel Evento asociado a cada regla (fijo, no configurable).
 REGLA_NIVEL = {
     'sin_respuesta': Evento.Nivel.CRITICAL,
+    'sin_respuesta_snmp': Evento.Nivel.CRITICAL,
     'onu_offline': Evento.Nivel.CRITICAL,
     'olt_sin_respuesta': Evento.Nivel.CRITICAL,
     'cpu_alta': Evento.Nivel.ERROR,
@@ -30,7 +31,7 @@ REGLA_NIVEL = {
 }
 
 # Reglas que, al cumplirse, marcan el dispositivo como 'inactivo'.
-REGLA_INACTIVO = ('sin_respuesta', 'onu_offline', 'olt_sin_respuesta', 'ap_sin_respuesta', 'ping_sin_respuesta')
+REGLA_INACTIVO = ('sin_respuesta_snmp', 'sin_respuesta', 'onu_offline', 'olt_sin_respuesta', 'ap_sin_respuesta', 'ping_sin_respuesta')
 
 
 def _conectar_por_tipo(dispositivo):
@@ -42,7 +43,7 @@ def _conectar_por_tipo(dispositivo):
         return 'ap_sin_respuesta'
     if dispositivo.tipo.clave == 'onu':
         return 'onu_sin_respuesta'
-    return 'sin_respuesta'
+    return 'sin_respuesta_snmp'
 
 def evaluar(dispositivo, metrica, anterior, config):
     """

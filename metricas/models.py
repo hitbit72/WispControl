@@ -19,8 +19,9 @@ class DeviceMetrics(models.Model):
 
     device = models.ForeignKey('dispositivos.Dispositivo', on_delete=models.CASCADE, related_name='metricas',)
 
-    timestamp = models.DateTimeField(auto_now_add=True, verbose_name='Fecha y hora')
-    timescan = models.DateTimeField(null=True, blank=True, verbose_name='Fecha escaneo')
+    timestamp = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de registro')
+    timescan = models.DateTimeField(null=True, blank=True, verbose_name='Fecha escaneo SNMP')
+    timeping = models.DateTimeField(null=True, blank=True, verbose_name='Fecha escaneo Ping')
 
     sys_name = models.CharField(max_length=255, null=True, blank=True, verbose_name='Nombre sistema')
     sys_descr = models.CharField(max_length=255, null=True, blank=True, verbose_name='Descripción')
@@ -69,6 +70,7 @@ class DeviceMetrics(models.Model):
     )
 
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.OK, verbose_name='Estado SNMP',)
+    status_ping = models.CharField(max_length=20, choices=Status.choices, default=Status.OK, verbose_name='Estado PING',)
 
     class Meta:
         verbose_name = 'Métrica de dispositivo'

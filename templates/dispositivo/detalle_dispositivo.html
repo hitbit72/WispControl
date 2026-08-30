@@ -97,7 +97,7 @@
                 {% if metricas %}
                   <div id="metricas">
                     <!-- p class="mb-2" -->
-                    <div class="row g-2 align-items-start">
+                    <div class="row g-2 align-items-start mb-2">
                         <div class="col-auto d-flex gap-1">
                             <strong>CPU:</strong>
                             <strong class="{% if metricas.cpu > 80 %}text-danger
@@ -116,17 +116,18 @@
                     {% if metricas.ssid %}
                     <p class="mb-1"><strong>SSID:</strong> 
                     {% if not dispositivo.tipo.clave == 'ap' %}
-                        <a href="{% url 'dispositivos:buscar_dispositivo'  metricas.ssid %}?next={{ request.path }}">{{ metricas.ssid }}</a>
+                        <a href="{% url 'dispositivos:buscar_dispositivo'  metricas.ssid %}?next={{ request.path }}">{{ metricas.ssid }}
+                        {% if metricas.frequency %} ({{ metricas.frequency }} MHz){% endif %}
+                        </a>
                     {% else %}
-                        {{ metricas.ssid }}
+                        {{ metricas.ssid }}{% if metricas.frequency %} ({{ metricas.frequency }} MHz){% endif %}
                     {% endif %}
                     </p>
                     {% endif %}
-                    {% if metricas.frequency %}<p class="mb-1"><strong>Frecuencia:</strong> {{ metricas.frequency }} MHz</p>{% endif %}
                     {% if metricas.signal %}<p class="mb-1"><strong>Señal:</strong> {{ metricas.signal }} dbm</p>{% endif %}
                     {% if metricas.power %}<p class="mb-1"><strong>Potencia:</strong> {{ metricas.power}} dbm</p>{% endif %}
                     {% if metricas.ccq %}<p class="mb-1"><strong>CCQ:</strong> {{ metricas.ccq }}%</p>{% endif %}
-                    {% if metricas.antena %}<p class="mb-1"><strong>Antena:</strong> {{ metricas.antena }}%</p>{% endif %}
+                    {% if metricas.latencia %}<p class="mb-1"><strong>Latencia:</strong> {{ metricas.latencia }} ms</p>{% endif %}
                     {% if metricas.timescan %}<p class="mb-0"><strong>Actualizado:</strong> {{ metricas.timescan }}</p>{% endif %}
                   </div>
                 {% endif %}

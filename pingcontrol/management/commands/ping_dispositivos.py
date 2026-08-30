@@ -64,7 +64,7 @@ class Command(BaseCommand):
                 else:
                     errores += 1
                     self.stdout.write(self.style.ERROR(
-                        f'[{dispositivo.nombre}] Ping FALLÓ · {metrica.sys_descr or "Sin respuesta"}'))
+                        f'[{dispositivo.nombre}] Ping FALLÓ · {metrica.sys_name or "Sin respuesta"}'))
             except Exception as e:
                 errores += 1
                 self.stdout.write(self.style.ERROR(

@@ -107,7 +107,7 @@ def consultar_escalares(dispositivo, oids):
     contexto = ContextData()
 
     # debug
-    print(f'Escaneando {dispositivo.ip_gestion}')
+    #print(f'Escaneando {dispositivo.ip_gestion}')
     #print(transporte)
     #print(comunidad)
     #print(oids)
@@ -126,7 +126,7 @@ def consultar_escalares(dispositivo, oids):
     if error_st:
         if _es_falta_oid(error_st):
             # debug
-            print(f'* --- Escalares uno a uno ({error_st})---')
+            #print(f'* --- Escalares uno a uno ({error_st})---')
             #print(oids)
             return _escalares_uno_a_uno(engine, _auth(comunidad), transporte, contexto, oids)
         raise SnmpError(error_st.prettyPrint())
@@ -239,8 +239,7 @@ def consultar_if_table(dispositivo, oids, modo='general'):
     transporte = _trasporte(dispositivo.ip_gestion, conf)
     contexto = ContextData()
     estaciones = []
-
-    print(modo)
+    #print(modo)
     
     # 1. Separar claves ("host", "signal"...) y valores OID ("1.3.6.1...")
     nombres_metricas = list(oids.keys())

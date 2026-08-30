@@ -24,6 +24,7 @@ Si quieres confirmar qué hay realmente en esa columna:
 """
 
 from django.core.management.base import BaseCommand
+from django.utils import timezone
 
 from dispositivos.models import Dispositivo
 
@@ -129,7 +130,7 @@ class Command(BaseCommand):
             # print(puertos)
         except snmp_client.SnmpError as exc:
             self.stdout.write(
-                self.style.ERROR(f'[{dispositivo.nombre}] {exc}'))
+                self.style.ERROR(f'[{dispositivo.ip_gestion}] {exc}'))
             resultado, puertos = {}, []
             estaciones, onus = [], []
             mensaje = str(exc).lower()
@@ -146,6 +147,7 @@ class Command(BaseCommand):
         datos['estaciones'] = estaciones
         datos['onus'] = onus
         datos['status'] = status
+        datos['timescan'] = timezone.now()
 
         #print(' DATOS --------------------')
         #print(f'Datos: {datos}')
