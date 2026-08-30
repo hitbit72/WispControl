@@ -100,15 +100,15 @@
                     <div class="row g-2 align-items-start">
                         <div class="col-auto d-flex gap-1">
                             <strong>CPU:</strong>
-                            <span class="{% if metricas.cpu > 80 %}text-danger
+                            <strong class="{% if metricas.cpu > 80 %}text-danger
                             {% elif metricas.cpu <= 80 and metricas.cpu >= 70 %}text-warning
-                            {% else %}text-success{% endif %}">{{ metricas.cpu|default:'0' }}%</span>
+                            {% else %}text-success{% endif %}"> {{ metricas.cpu|default:'0' }}%</strong>
                         </div>
                         <div class="col-auto d-flex gap-1">
-                            <strong>RAM:</strong>
-                            <span class="{% if metricas.ram > 85 %}text-danger
+                            <strong> RAM:</strong>
+                            <strong class="{% if metricas.ram > 85 %}text-danger
                             {% elif metricas.ram <= 85 and metricas.ram >= 75 %}text-warning
-                            {% else %}text-success{% endif %}">{{ metricas.ram|default:'0' }}%</span>
+                            {% else %}text-success{% endif %}"> {{ metricas.ram|default:'0' }}%</strong>
                         </div>
                     </div>
                     <!-- /p -->

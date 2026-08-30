@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Q
+from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 
 
@@ -21,10 +22,16 @@ MODULO = 'dispositivos'
 @login_required
 def buscar_dispositivo(request, query):
     # 'query' contendrá la cadena enviada en la URL (ej: "192.168.25.50" "equipo1")
-    dispositivo = get_object_or_404(
-        Dispositivo, 
-        Q(ip_gestion__icontains=query) | Q(nombre__icontains=query)
-    )
+    dispositivo = Dispositivo.objects.filter(
+        Q(nombre__icontains=query) 
+        | Q(nombre_host__icontains=query)
+        | Q(ip_gestion__icontains=query)
+        | Q(ip_publica__icontains=query)
+    ).first()
+
+    if not dispositivo:
+        raise Http404("No se encontró ningún dispositivo.")
+    
     detalle = detalle_dispositivo(request, dispositivo.pk)
     return detalle
 
