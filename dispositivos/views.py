@@ -18,6 +18,15 @@ from eventos.services import registrar_evento
 
 MODULO = 'dispositivos'
 
+@login_required
+def buscar_dispositivo(request, query):
+    # 'query' contendrá la cadena enviada en la URL (ej: "192.168.25.50" "equipo1")
+    dispositivo = get_object_or_404(
+        Dispositivo, 
+        Q(ip_gestion__icontains=query) | Q(nombre__icontains=query)
+    )
+    detalle = detalle_dispositivo(request, dispositivo.pk)
+    return detalle
 
 @login_required
 def lista_dispositivos(request):

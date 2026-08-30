@@ -240,7 +240,7 @@ def consultar_if_table(dispositivo, oids, modo='general'):
     contexto = ContextData()
     estaciones = []
 
-    print(f'consultar_if_table: {modo}')
+    print(modo)
     
     # 1. Separar claves ("host", "signal"...) y valores OID ("1.3.6.1...")
     nombres_metricas = list(oids.keys())
@@ -272,7 +272,7 @@ def consultar_if_table(dispositivo, oids, modo='general'):
                 fila[nombre_clave] = valor.prettyPrint()
 
             if modo == 'wifi':
-                print(f'scan wifi {dispositivo.ip_gestion}')
+                #print(f'scan wifi {dispositivo.ip_gestion}')
                 if fila.get('signal'):
                     fila['signal'] = int(fila['signal'])
                 if fila['ccq']:

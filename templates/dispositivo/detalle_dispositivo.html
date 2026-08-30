@@ -113,7 +113,15 @@
                     </div>
                     <!-- /p -->
                     {% if metricas.sys_name %}<p class="mb-1"><strong>Nombre:</strong> {{ metricas.sys_name }}</p>{% endif %}
-                    {% if metricas.ssid %}<p class="mb-1"><strong>SSID:</strong> {{ metricas.ssid }}</p>{% endif %}
+                    {% if metricas.ssid %}
+                    <p class="mb-1"><strong>SSID:</strong> 
+                    {% if not dispositivo.tipo.clave == 'ap' %}
+                        <a href="{% url 'dispositivos:buscar_dispositivo'  metricas.ssid %}?next={{ request.path }}">{{ metricas.ssid }}</a>
+                    {% else %}
+                        {{ metricas.ssid }}
+                    {% endif %}
+                    </p>
+                    {% endif %}
                     {% if metricas.frequency %}<p class="mb-1"><strong>Frecuencia:</strong> {{ metricas.frequency }} MHz</p>{% endif %}
                     {% if metricas.signal %}<p class="mb-1"><strong>Señal:</strong> {{ metricas.signal }} dbm</p>{% endif %}
                     {% if metricas.power %}<p class="mb-1"><strong>Potencia:</strong> {{ metricas.power}} dbm</p>{% endif %}

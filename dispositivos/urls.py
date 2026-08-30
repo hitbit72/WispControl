@@ -10,6 +10,7 @@ urlpatterns = [
     path('nuevo/', views.nuevo_dispositivo, name='nuevo'),
     path('<int:pk>/nuevo/', views.nuevo_dispositivo, name='nuevo_dispositivo'),
     path('<int:pk>/', views.detalle_dispositivo, name='detalle'),
+    path('<str:query>/', views.buscar_dispositivo, name='buscar_dispositivo'),
     path('<int:pk>/editar/', views.editar_dispositivo, name='editar'),
     path('<int:pk>/eliminar/', views.eliminar_dispositivo, name='eliminar'),
     path('<int:pk>/escanear/', views.alternar_escaneo_dispositivo, name='alternar_escaneo'),
