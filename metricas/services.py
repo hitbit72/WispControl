@@ -58,6 +58,40 @@ def guardar_puertos(dispositivo, **datos):
             defaults=uData,
         )
 
+
+def guarda_staciones_wifi(dispositivo, **datos):
+    """ Guarda los datos básicos de los dispositivos 'Antena de cliente' """
+
+    # Extraer la lista de estaciones del diccionario (si no existe, usa lista vacía)
+    estaciones = datos.get("estaciones", [])
+    ssid = datos.get('ssid')
+    frequency = datos.get('frequency')
+
+    for estacion in estaciones:
+        # update datos de las estaciones
+        ip = estacion.get('ip')
+        if not ip:
+            continue
+
+        uData = {
+            'ccq': estacion.get('ccq'),
+            'noise': estacion.get('noise'),
+            'signal': estacion.get('signal'),
+            'rx': estacion.get('rx_rate'),
+            'tx': estacion.get('tx_rate'),
+            'ssid': ssid,
+            'frequency': frequency,
+        }
+
+        # Obtenemos la INSTANCIA única del dispositivo por su IP de gestión
+        estacion_dev = Dispositivo.objects.filter(ip_gestion=ip).first()
+        if estacion_dev:
+            st, created = DeviceMetrics.objects.update_or_create(
+                device=estacion_dev,
+                defaults=uData,
+            )
+
+
 def evaluar_y_aplicar(dispositivo, metrica):
     """Evalúa las reglas sobre la métrica recién creada y aplica alarmas y
     estado. Devuelve dict {nuevas, resueltas} con las alarmas tocadas."""

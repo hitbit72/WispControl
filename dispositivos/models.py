@@ -57,7 +57,7 @@ class Dispositivo(models.Model):
         SLAVE = 'slave', 'PtP Esclavo'
         OTRO = 'otro', 'Otro'
 
-    # nombre es unico, permite buscar
+    # nombre o SSID es unico
     nombre = models.CharField(max_length=100, null=False, blank=False, help_text='Nombre identificativo del eqipo',)
     # nombre host unico
     nombre_host = models.CharField(unique=True, max_length=100, null=False, blank=False, verbose_name='Nombre Host')
