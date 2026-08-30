@@ -25,10 +25,12 @@ REGLA_NIVEL = {
     'cambio_canal': Evento.Nivel.NOTICE,
     'caida_potencia': Evento.Nivel.WARNING,
     'caida_signal': Evento.Nivel.WARNING,
+    'ping_sin_respuesta': Evento.Nivel.CRITICAL,
+    'ping_recuperado': Evento.Nivel.NOTICE,
 }
 
 # Reglas que, al cumplirse, marcan el dispositivo como 'inactivo'.
-REGLA_INACTIVO = ('sin_respuesta', 'onu_offline', 'olt_sin_respuesta', 'ap_sin_respuesta')
+REGLA_INACTIVO = ('sin_respuesta', 'onu_offline', 'olt_sin_respuesta', 'ap_sin_respuesta', 'ping_sin_respuesta')
 
 
 def _conectar_por_tipo(dispositivo):

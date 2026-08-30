@@ -11,6 +11,7 @@ dependencies = [
     "librouteros>=3.2,<4.0",
     "pysnmp-lextudio>=5.0.6,<6.0.0",
     "pyasn1==0.6.0",
+    "pythonping>=1.1.4",
 ]
 
 [tool.uv]

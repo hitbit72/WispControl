@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'dispositivos',
     'clientes',
     'metricas',
+    'pingcontrol',
 ]
 
 MIDDLEWARE = [
@@ -201,4 +202,13 @@ METRICAS_ALARMAS = {
     'cambio_canal': True,         # avisar si cambia el canal
     'caida_potencia_dbm': 20.0,   # dBm de bajada de Rx que dispara la alarma
     'caida_signal_dbm': 20.0,     # dBm de bajada de señal que dispara la alarma
+}
+
+
+# --- Control de Ping (pingcontrol) -------------------------------------------
+# Configuración para el ping ICMP a dispositivos.
+PING_CONTROL = {
+    'count': 3,        # número de pings por dispositivo
+    'timeout': 2,      # timeout en segundos por ping
+    'interval': 0.2,   # intervalo entre pings en segundos
 }
