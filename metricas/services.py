@@ -5,6 +5,7 @@ alarmas con las reglas detectadas y actualiza el estado del dispositivo.
 
 from django.conf import settings
 from django.utils import timezone
+from django.db.models import Q
 
 from eventos.models import Evento
 from eventos.services import registrar_evento
@@ -68,23 +69,59 @@ def guarda_staciones_wifi(dispositivo, **datos):
     frequency = datos.get('frequency')
 
     for estacion in estaciones:
-        # update datos de las estaciones
+        # buscamos la IP de la estación
         ip = estacion.get('ip')
         if not ip:
             continue
 
+        # Se tiene que usar las keys de OID
         uData = {
             'ccq': estacion.get('ccq'),
             'noise': estacion.get('noise'),
             'signal': estacion.get('signal'),
             'rx': estacion.get('rx_rate'),
             'tx': estacion.get('tx_rate'),
+            'distancia': estacion.get('distancia'),
             'ssid': ssid,
             'frequency': frequency,
         }
 
         # Obtenemos la INSTANCIA única del dispositivo por su IP de gestión
-        estacion_dev = Dispositivo.objects.filter(ip_gestion=ip).first()
+        # estacion_dev = Dispositivo.objects.filter(ip_gestion=ip).first()
+
+        # Realiza la consulta a las ips
+        estacion_dev = Dispositivo.objects.filter(
+            Q(ip_gestion=ip) | Q(ip_publica=ip)
+        ).first()
+        
+        if estacion_dev:
+            st, created = DeviceMetrics.objects.update_or_create(
+                device=estacion_dev,
+                defaults=uData,
+            )
+
+
+def guarda_estaciones_onu(dispositivo, **datos):
+    """ Guarda los datos básicos de los dispositivos 'onu' """
+
+    # Extraer la lista de estaciones del diccionario (si no existe, usa lista vacía)
+    onus = datos.get("onus", [])
+    ssid = datos.get('sys_name')
+
+    for onu in onus:
+        # buscamos el serial de al ONU, ya que no disponemos de la IP
+        serial = onu.get('serial')
+        if not serial:
+            continue
+
+        # Se tiene que usar las keys de OID
+        uData = {
+            'signal': onu.get('signal'),
+            'ssid': ssid,
+        }
+
+        # Obtenemos la INSTANCIA única del dispositivo por su serial
+        estacion_dev = Dispositivo.objects.filter(onu_ref=serial).first()
         if estacion_dev:
             st, created = DeviceMetrics.objects.update_or_create(
                 device=estacion_dev,
@@ -103,9 +140,12 @@ def evaluar_y_aplicar(dispositivo, metrica):
     activas = evaluar(dispositivo, metrica, anterior, settings.METRICAS_ALARMAS)
     if dispositivo.alarma:
         resultados = _sincronizar_alarmas(dispositivo, activas)
-    # _actualizar_estado desactivado: activar y desactivar dispositivos lo administra el modulo ping
-    # aquí solo se muetra la alerta
-    #_actualizar_estado(dispositivo, activas)
+
+    # ATENCION: 
+    # _actualizar_estado esta desactivado
+    # Activar y desactivar dispositivos lo administra el modulo ping, aquí solo se muetra la alerta
+    #_actualizar_estado(dispositivo, activas)  <----
+
     return resultados
 
 

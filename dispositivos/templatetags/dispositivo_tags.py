@@ -28,17 +28,36 @@ def timestamp_a_transcurrido(value):
 
 @register.filter
 def bps_a_mbps(value):
+    bps = "—"
+
     try:
-        # Convierte bps a mbps (# 1bsp = 0,000001 mbps)
-        if value < 1000:
-            return value
-        bps = int(value) * 0.000001
+        if value:
+            value = int(value)
+            # Convierte bps a mbps (# 1bsp = 0,000001 mbps)
+            if value < 1000:
+                return value
+            bps = int(value) * 0.000001
         return bps
     
     except (ValueError, TypeError):
-        return "Error"
+        return "—"
 
+@register.filter
+def metros_a_km(value):
+    km="—"
 
+    try:
+        if value:
+            value = float(value)
+            # Convierte metros a km
+            if value < 0:
+                return 0
+            km = float(value) / 1000
+        return km
+    
+    except (ValueError, TypeError):
+        return "—"
+    
 @register.filter
 def find_station(ip, current_path=None):
     # Busca una estacion a partir de su ip

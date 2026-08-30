@@ -40,19 +40,23 @@
                     <div x-data="{ metodo: '0'}">
                     <input type="hidden" id="id_scanear" name="id_scanear" x-model="metodo">
                     <div class="card h-100">
-                        <div class="card-body">
-                        <div class="row align-items-center" style="font-size: 0.75rem">
-                            <div class="col">
-                                <strong>Escanear:</strong> <button class="btn btn-primary badge {% if dispositivo.escanear %}bg-success{% else %}bg-danger{% endif %}" style="padding: 0.15rem 0.40rem;" type="submit" @click="metodo = '1'">{% if dispositivo.escanear %} On {% else %} Off {% endif %}</button>
+                        <div class="card">
+                        <div class="row align-items-center mb-2 mt-2" style="font-size: 0.75rem">
+                            <div class="col text-center">
+                                <div><label>Escanear</label></div>
+                                <button class="btn btn-primary badge {% if dispositivo.escanear %}bg-success{% else %}bg-danger{% endif %}" style="padding: 0.15rem 0.40rem;" type="submit" @click="metodo = '1'">{% if dispositivo.escanear %} On {% else %} Off {% endif %}</button>
                             </div>
-                            <div class="col">
-                                <strong>Alarmas:</strong> <button class="btn btn-primary badge {% if dispositivo.alarma %}bg-success{% else %}bg-danger{% endif %}" style="padding: 0.15rem 0.40rem;" type="submit" @click="metodo = '2'">{% if dispositivo.alarma %} On {% else %} Off {% endif %}</button>
+                            <div class="col text-center">
+                                <div><label>Alarmas</label></div>
+                                <button class="btn btn-primary badge {% if dispositivo.alarma %}bg-success{% else %}bg-danger{% endif %}" style="padding: 0.15rem 0.40rem;" type="submit" @click="metodo = '2'">{% if dispositivo.alarma %} On {% else %} Off {% endif %}</button>
                             </div>
-                            <div class="col">
-                                <strong>Puertos:</strong> <button class="btn btn-primary badge {% if dispositivo.alarma_puerto %}bg-success{% else %}bg-danger{% endif %}" style="padding: 0.15rem 0.40rem;" type="submit" @click="metodo = '3'">{% if dispositivo.alarma_puerto %} On {% else %} Off {% endif %}</button>
+                            <div class="col text-center">
+                                <div><label>Puertos</label></div>
+                                <button class="btn btn-primary badge {% if dispositivo.alarma_puerto %}bg-success{% else %}bg-danger{% endif %}" style="padding: 0.15rem 0.40rem;" type="submit" @click="metodo = '3'">{% if dispositivo.alarma_puerto %} On {% else %} Off {% endif %}</button>
                             </div>
-                            <div class="col">
-                                <strong>Ping:</strong> <button class="btn btn-primary badge {% if dispositivo.ping %}bg-success{% else %}bg-danger{% endif %}" style="padding: 0.15rem 0.40rem;" type="submit" @click="metodo = '4'">{% if dispositivo.ping %} On {% else %} Off {% endif %}</button>
+                            <div class="col text-center">
+                                <div><label>Ping</label></div>
+                                <button class="btn btn-primary badge {% if dispositivo.ping %}bg-success{% else %}bg-danger{% endif %}" style="padding: 0.15rem 0.40rem;" type="submit" @click="metodo = '4'">{% if dispositivo.ping %} On {% else %} Off {% endif %}</button>
                             </div>
                         </div>
                         </div>
@@ -92,8 +96,22 @@
                 </div>
                 {% if metricas %}
                   <div id="metricas">
-                    <p class="mb-2"><strong>CPU:</strong> {{ metricas.cpu|default:'0' }}%  ─  
-                    <strong>RAM:</strong> {{ metricas.ram|default:'0' }}%</p>
+                    <!-- p class="mb-2" -->
+                    <div class="row g-2 align-items-start">
+                        <div class="col-auto d-flex gap-1">
+                            <strong>CPU:</strong>
+                            <span class="{% if metricas.cpu > 80 %}text-danger
+                            {% elif metricas.cpu <= 80 and metricas.cpu >= 70 %}text-warning
+                            {% else %}text-success{% endif %}">{{ metricas.cpu|default:'0' }}%</span>
+                        </div>
+                        <div class="col-auto d-flex gap-1">
+                            <strong>RAM:</strong>
+                            <span class="{% if metricas.ram > 85 %}text-danger
+                            {% elif metricas.ram <= 85 and metricas.ram >= 75 %}text-warning
+                            {% else %}text-success{% endif %}">{{ metricas.ram|default:'0' }}%</span>
+                        </div>
+                    </div>
+                    <!-- /p -->
                     {% if metricas.sys_name %}<p class="mb-1"><strong>Nombre:</strong> {{ metricas.sys_name }}</p>{% endif %}
                     {% if metricas.ssid %}<p class="mb-1"><strong>SSID:</strong> {{ metricas.ssid }}</p>{% endif %}
                     {% if metricas.frequency %}<p class="mb-1"><strong>Frecuencia:</strong> {{ metricas.frequency }} MHz</p>{% endif %}

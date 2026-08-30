@@ -49,6 +49,7 @@ class DeviceMetrics(models.Model):
     noise = models.FloatField(null=True,blank=True, verbose_name='Noise floor')
     w_channel = models.FloatField(null=True,blank=True, verbose_name='Ancho canal')
     antena = models.CharField(max_length=100, null=True, blank=True, verbose_name='Tipo Antena')
+    distancia = models.PositiveIntegerField(null=True, blank=True, verbose_name='Distnacia')
     clients = models.PositiveIntegerField(null=True, blank=True, verbose_name='Clientes conectados')
     puertos = models.JSONField(
         default=list, blank=True,

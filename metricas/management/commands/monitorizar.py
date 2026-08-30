@@ -30,7 +30,7 @@ from dispositivos.models import Dispositivo
 from metricas import snmp_client
 from metricas.models import DeviceMetrics
 from metricas.oids import oids_dispositivo
-from metricas.services import evaluar_y_aplicar, guardar_metrica, guardar_puertos, guarda_staciones_wifi
+from metricas.services import evaluar_y_aplicar, guardar_metrica, guardar_puertos, guarda_staciones_wifi, guarda_estaciones_onu
 
 # metrica OID -> campo del modelo (clave 'mem_total'/'mem_libre' -> ram).
 # modelo DeviceMetrics
@@ -154,8 +154,9 @@ class Command(BaseCommand):
         metrica = guardar_metrica(dispositivo, **datos)
         # Actualiza modelo de interfaz (puertos)
         guardar_puertos(dispositivo, **datos)
-        # Actizalizar datos estaciones wifi
+        # Actizalizar datos estaciones wifi y onus
         guarda_staciones_wifi(dispositivo, **datos)
+        guarda_estaciones_onu(dispositivo, **datos)
         # evalua la alerta/alarma
         evaluar_y_aplicar(dispositivo, metrica)
         self.stdout.write(self.style.SUCCESS(

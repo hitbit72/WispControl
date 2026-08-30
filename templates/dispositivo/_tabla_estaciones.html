@@ -9,6 +9,7 @@
             <th>Señal</th>
             <th>Ruido</th>
             <th>CCQ</th>
+            <th>Distancia</th>
             <th>TX rate</th>
             <th>RX rate</th>
         </tr>
@@ -20,12 +21,13 @@
         <td>{{ estacion.host }}</td>
         <td><span class="badge 
         {% if estacion.signal <= -70 %}bg-danger
-        {% elif estacion.signal > -50 %}bg-warning
+        {% elif estacion.signal > -50 %}bg-warning text-dark
         {% elif estacion.signal > -70 and estacion.signal <= -50 %}bg-success
         {% else %}bg-secondary{% endif %}">
         {{ estacion.signal }}</span></td>
         <td>{{ estacion.noise }}</td>
-        <td>{{ estacion.ccq }}</td>
+        <td>{{ estacion.ccq }}%</td>
+        <td>{{ estacion.distancia|metros_a_km }} Km</td>
         <td>{{ estacion.tx_rate|bps_a_mbps }} Mbps</td>
         <td>{{ estacion.rx_rate|bps_a_mbps }} Mbps</td>
     </tr>

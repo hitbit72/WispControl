@@ -31,7 +31,7 @@ OID_IF_OPER = '1.3.6.1.2.1.2.2.1.8'
 OID_IF_SPEED = '1.3.6.1.2.1.2.2.1.5'
 OID_IF_TYPE = '1.3.6.1.2.1.2.2.1.3' 
 
-EXCLUDE_PORT = ('lo','ubond','ubond0','lag','lag1')
+EXCLUDE_PORT = ('lo','ubond','ubond0','lag','lag1','teql0','gre0','airview1')
 
 # IF_TYPE
 # 6 (ethernetCsmacd): Redes Ethernet estándar.
@@ -273,7 +273,7 @@ def consultar_if_table(dispositivo, oids, modo='general'):
 
             if modo == 'wifi':
                 print(f'scan wifi {dispositivo.ip_gestion}')
-                if fila['signal']:
+                if fila.get('signal'):
                     fila['signal'] = int(fila['signal'])
                 if fila['ccq']:
                     fila['ccq'] = int(fila['ccq'])
@@ -283,6 +283,8 @@ def consultar_if_table(dispositivo, oids, modo='general'):
                     fila['rx_rate'] = int(fila['rx_rate'])
                 if fila['tx_rate']:
                     fila['tx_rate'] = int(fila['tx_rate'])
+                if fila['distancia']:
+                    fila['distancia'] = int(fila['distancia'])
 
             if modo == 'onus':
                 if fila['signal']:
