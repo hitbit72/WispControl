@@ -276,10 +276,12 @@ def consultar_if_table(dispositivo, oids, modo='general'):
                     fila['signal'] = int(fila['signal'])
                 if fila.get('ccq'):
                     fila['ccq'] = int(fila['ccq'])
+                    if fila['ccq'] == 333:                  # error de los LiteAP AC, mustra siempre 333 = 33,3
+                        fila['ccq'] = fila['ccq'] / 10
                 if fila.get('noise'):
                     fila['noise'] = int(fila['noise'])
                 if fila.get('rx_rate'):
-                    fila.get('rx_rate') = int(fila['rx_rate'])
+                    fila['rx_rate'] = int(fila['rx_rate'])
                 if fila.get('tx_rate'):
                     fila['tx_rate'] = int(fila['tx_rate'])
                 if fila.get('distancia'):

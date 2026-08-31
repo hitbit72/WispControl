@@ -5,8 +5,8 @@ from .models import Alarma, DeviceMetrics, OIDmetric
 
 @admin.register(DeviceMetrics)
 class DeviceMetricsAdmin(admin.ModelAdmin):
-    list_display = ('device', 'timescan', 'status', 'status_ping', 'cpu', 'ram', 'frequency', 'clients',)
-    list_filter = ('status', 'device__tipo', 'device__marca')
+    list_display = ('device', 'status', 'status_ping', 'cpu', 'ram', 'frequency', 'clients', 'timeping')
+    list_filter = ('status', 'status_ping', 'device__tipo', 'device__marca')
     date_hierarchy = 'timestamp'
     search_fields = ('device__nombre',)
     readonly_fields = ('device', 'timestamp', 'timescan', 'timeping')
