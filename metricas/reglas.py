@@ -55,10 +55,12 @@ def evaluar(dispositivo, metrica, anterior, config):
     - config: dict `settings.METRICAS_ALARMAS`.
     """
     reglas = []
-    conect = _conectar_por_tipo(dispositivo)
+    #conect = _conectar_por_tipo(dispositivo)
+    conect = 'sin_respuesta_snmp'
+
     if metrica.status != DeviceMetrics.Status.OK:
         texto = f'{dispositivo.ip_gestion} ({dispositivo.nombre}) no responde a SNMP ({metrica.get_status_display()}).'
-        return [{'regla': conect, 'titulo': f'{dispositivo.ip_gestion} {_titulo_conectividad(conect)}', 'texto': texto}]
+        return [{'regla': conect, 'titulo': f'{dispositivo.ip_gestion} sin respuesta SNMP', 'texto': texto}]
 
     if metrica.cpu is not None and metrica.cpu > config['cpu_max']:
         reglas.append({'regla': 'cpu_alta', 'titulo': f'CPU alta {dispositivo.ip_gestion}',

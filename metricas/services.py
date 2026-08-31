@@ -151,8 +151,13 @@ def evaluar_y_aplicar(dispositivo, metrica):
 
 
 def _sincronizar_alarmas(dispositivo, detectadas):
-    """Alta de las reglas nuevas, resolución de las que ya no se cumplen."""
-    activas = Alarma.objects.filter(device=dispositivo, estado=Alarma.Estado.ACTIVA)
+    """ Alta de las reglas nuevas, resolución de las que ya no se cumplen. regla='sin_respuesta_snmp' """
+    
+    activas = Alarma.objects.filter(
+        device=dispositivo, 
+        regla='sin_respuesta_snmp',
+        estado=Alarma.Estado.ACTIVA
+    )
     reglas_activas = dict(activas.values_list('regla', 'pk'))
     detectadas = {a['regla']: a for a in detectadas}
 

@@ -133,8 +133,13 @@ def evaluar_ping(dispositivo, metrica, anterior):
 def sincronizar_alarmas_ping(dispositivo, detectadas):
     """
     Sincroniza alarmas de ping: crea nuevas, resuelve las que ya no aplican.
+    regla='ping_sin_respuesta'
     """
-    activas = Alarma.objects.filter(device=dispositivo, estado=Alarma.Estado.ACTIVA)
+    
+    activas = Alarma.objects.filter(
+        device=dispositivo, 
+        regla='ping_sin_respuesta',
+        estado=Alarma.Estado.ACTIVA)
     reglas_activas = dict(activas.values_list('regla', 'pk'))
     detectadas_dict = {a['regla']: a for a in detectadas}
     
