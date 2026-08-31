@@ -1,4 +1,4 @@
-:root {
+swi:root {
   --sidebar-width: 280px;
   --sidebar-mini-width: 84px;
   --admin-bg: #f5f7fb;
@@ -1126,7 +1126,7 @@ html[data-theme="dark"] {
   --admin-surface: #182235;
   --admin-surface-soft: #111827;
   --admin-border: #2f3b52;
-  --admin-text: #e5edf7;
+  --admin-text: #1f2937;
   --admin-muted: #9aa8bd;
   --admin-primary: #60a5fa;
   --admin-primary-dark: #3b82f6;
