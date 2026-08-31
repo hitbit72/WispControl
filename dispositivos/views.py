@@ -32,8 +32,9 @@ def buscar_dispositivo(request, query):
     if not dispositivo:
         raise Http404("No se encontró ningún dispositivo.")
     
-    detalle = detalle_dispositivo(request, dispositivo.pk)
-    return detalle
+    return detalle_dispositivo(request, dispositivo.pk)
+
+
 
 @login_required
 def lista_dispositivos(request):
@@ -230,23 +231,26 @@ def alternar_escaneo_dispositivo(request, pk):
         metodo = request.POST.get('id_scanear')
         if metodo == '1':
             dispositivo.escanear = not dispositivo.escanear
-
         if metodo == '2':
             dispositivo.alarma = not dispositivo.alarma
-
         if metodo == '3':
             dispositivo.alarma_puerto = not dispositivo.alarma_puerto
 
         if metodo == '4':
             dispositivo.ping = not dispositivo.ping
+        if metodo == '5':
+            dispositivo.alarma_ping = not dispositivo.alarma_ping
 
         # Si no hay escaneo, se desactivan las alarmas
-        if dispositivo.escanear == False:
+        if not dispositivo.escanear:
             #dispositivo.alarma = False    
             dispositivo.alarma_puerto = False
 
-        if dispositivo.alarma == False:
+        if not dispositivo.alarma:
             dispositivo.alarma_puerto = False
+
+        if not dispositivo.ping:
+            dispositivo.alarma_ping = False
 
         dispositivo.save()
     return redirect('dispositivos:detalle', pk=dispositivo.pk)

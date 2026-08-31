@@ -108,7 +108,7 @@ def evaluar(dispositivo, metrica, anterior, config):
 
 def _titulo_conectividad(regla):
     return {
-        'sin_respuesta': 'sin respuesta SNMP',
+        'sin_respuesta': 'SNMP sin respuesta',
         'onu_offline': 'ONU offline SNMP',
         'olt_sin_respuesta': 'OLT sin respuesta SNMP',
         'ap_sin_respuesta': 'Acces Point sin respuesta SNMP',

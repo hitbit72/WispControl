@@ -151,7 +151,7 @@ def sincronizar_alarmas_ping(dispositivo, detectadas):
         alarma.estado = Alarma.Estado.RESUELTA
         alarma.resuelta_en = timezone.now()
         alarma.save(update_fields=['estado', 'resuelta_en'])
-        
+
         registrar_evento(
             MODULO,
             f'Alarma resuelta: {alarma.titulo}',
@@ -180,7 +180,7 @@ def sincronizar_alarmas_ping(dispositivo, detectadas):
         
         if not creada:
             continue
-            
+
         registrar_evento(
             MODULO,
             alarma.titulo,
@@ -208,8 +208,7 @@ def actualizar_estado_dispositivo(dispositivo, detectadas):
         dispositivo.estado = Dispositivo.Estado.INACTIVO
         dispositivo.save(update_fields=['estado'])
 
-        # Solo se dan alarmar de tipo=['ap','olt']
-        if dispositivo.alarma:
+        if dispositivo.alarma_ping:
             registrar_evento(
                 MODULO,
                 f'Dispositivo inactivo por ping: {dispositivo.ip_gestion}',
@@ -221,8 +220,7 @@ def actualizar_estado_dispositivo(dispositivo, detectadas):
         dispositivo.estado = Dispositivo.Estado.ACTIVO
         dispositivo.save(update_fields=['estado'])
 
-        # Solo se dan alarmar de tipo=['ap','olt']
-        if dispositivo.alarma:
+        if dispositivo.alarma_ping:
             registrar_evento(
                 MODULO,
                 f'Dispositivo recuperado por ping: {dispositivo.ip_gestion}',
@@ -247,8 +245,7 @@ def actualizar_estado_dispositivo_original(dispositivo, detectadas):
         dispositivo.estado = Dispositivo.Estado.INACTIVO
         dispositivo.save(update_fields=['estado'])
 
-        # Solo se dan alarmar de tipo=['ap','olt']
-        if dispositivo.alarma:
+        if dispositivo.alarma_ping:
             registrar_evento(
                 MODULO,
                 f'Dispositivo inactivo por ping: {dispositivo.ip_gestion}',
@@ -260,8 +257,7 @@ def actualizar_estado_dispositivo_original(dispositivo, detectadas):
         dispositivo.estado = Dispositivo.Estado.ACTIVO
         dispositivo.save(update_fields=['estado'])
 
-        # Solo se dan alarmar de tipo=['ap','olt']
-        if dispositivo.alarma:
+        if dispositivo.alarma_ping:
             registrar_evento(
                 MODULO,
                 f'Dispositivo recuperado por ping: {dispositivo.ip_gestion}',
@@ -289,7 +285,7 @@ def procesar_dispositivo(dispositivo):
     detectadas = evaluar_ping(dispositivo, metrica, anterior)
     
     # Sincronizar alarmas
-    if dispositivo.alarma:
+    if dispositivo.alarma_ping:
         sincronizar_alarmas_ping(dispositivo, detectadas)
     
     # Actualizar estado del dispositivo

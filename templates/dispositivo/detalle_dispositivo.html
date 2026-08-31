@@ -41,22 +41,26 @@
                     <input type="hidden" id="id_scanear" name="id_scanear" x-model="metodo">
                     <div class="card h-100">
                         <div class="card">
-                        <div class="row align-items-center mb-2 mt-2" style="font-size: 0.75rem">
-                            <div class="col text-center">
+                        <div class="row text-center mb-2 mt-2" style="font-size: 0.75rem">
+                            <div class="col">
                                 <div><label>Escanear</label></div>
                                 <button class="btn btn-primary badge {% if dispositivo.escanear %}bg-success{% else %}bg-danger{% endif %}" style="padding: 0.15rem 0.40rem;" type="submit" @click="metodo = '1'">{% if dispositivo.escanear %} On {% else %} Off {% endif %}</button>
                             </div>
-                            <div class="col text-center">
+                            <div class="col">
                                 <div><label>Alarmas</label></div>
                                 <button class="btn btn-primary badge {% if dispositivo.alarma %}bg-success{% else %}bg-danger{% endif %}" style="padding: 0.15rem 0.40rem;" type="submit" @click="metodo = '2'">{% if dispositivo.alarma %} On {% else %} Off {% endif %}</button>
                             </div>
-                            <div class="col text-center">
+                            <div class="col">
                                 <div><label>Puertos</label></div>
                                 <button class="btn btn-primary badge {% if dispositivo.alarma_puerto %}bg-success{% else %}bg-danger{% endif %}" style="padding: 0.15rem 0.40rem;" type="submit" @click="metodo = '3'">{% if dispositivo.alarma_puerto %} On {% else %} Off {% endif %}</button>
                             </div>
-                            <div class="col text-center">
+                            <div class="col">
                                 <div><label>Ping</label></div>
                                 <button class="btn btn-primary badge {% if dispositivo.ping %}bg-success{% else %}bg-danger{% endif %}" style="padding: 0.15rem 0.40rem;" type="submit" @click="metodo = '4'">{% if dispositivo.ping %} On {% else %} Off {% endif %}</button>
+                            </div>
+                            <div class="col">
+                                <div><label>Alarma Ping</label></div>
+                                <button class="btn btn-primary badge {% if dispositivo.alarma_ping %}bg-success{% else %}bg-danger{% endif %}" style="padding: 0.15rem 0.40rem;" type="submit" @click="metodo = '5'">{% if dispositivo.alarma_ping %} On {% else %} Off {% endif %}</button>
                             </div>
                         </div>
                         </div>

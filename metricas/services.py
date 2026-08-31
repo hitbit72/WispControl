@@ -89,7 +89,7 @@ def guarda_staciones_wifi(dispositivo, **datos):
         # Obtenemos la INSTANCIA única del dispositivo por su IP de gestión
         # estacion_dev = Dispositivo.objects.filter(ip_gestion=ip).first()
 
-        # Realiza la consulta a las ips
+        # Guarda las metricas en cada estacion wifi
         estacion_dev = Dispositivo.objects.filter(
             Q(ip_gestion=ip) | Q(ip_publica=ip)
         ).first()
@@ -120,7 +120,8 @@ def guarda_estaciones_onu(dispositivo, **datos):
             'ssid': ssid,
         }
 
-        # Obtenemos la INSTANCIA única del dispositivo por su serial
+        # Guarda las metricas en cada estacion ONU, los dispotivos Ubiquiti no tienen SNMP
+        # Obtenemos la INSTANCIA única del dispositivo por su serial, ya que la OLT no da las IPs
         estacion_dev = Dispositivo.objects.filter(onu_ref=serial).first()
         if estacion_dev:
             st, created = DeviceMetrics.objects.update_or_create(

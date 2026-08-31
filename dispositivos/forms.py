@@ -62,7 +62,7 @@ class DispositivoForm(BootstrapFormMixin, forms.ModelForm):
         fields = [
             'nombre', 'nombre_host', 'rol', 'tipo', 'marca', 'onu_ref', 'sector', 'cliente',
             'ip_gestion', 'ip_publica', 'mac_address', 'firmware_version', 'snmp_community', 'escanear', 'alarma', 
-            'alarma_puerto', 'ping', 'estado', 'fecha_instalacion', 'latitud', 'longitud', 'atributos_extra', 'notas',
+            'alarma_puerto', 'ping', 'alarma_ping', 'estado', 'fecha_instalacion', 'latitud', 'longitud', 'atributos_extra', 'notas',
         ]
         widgets = {
             'fecha_instalacion': forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date'}),
@@ -71,6 +71,7 @@ class DispositivoForm(BootstrapFormMixin, forms.ModelForm):
             'alarma': forms.CheckboxInput(),
             'alarma_puerto': forms.CheckboxInput(),
             'ping': forms.CheckboxInput(),
+            'alarma_ping': forms.CheckboxInput(),
         }
 
 

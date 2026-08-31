@@ -79,11 +79,12 @@ class Dispositivo(models.Model):
     firmware_version = models.CharField(max_length=50, blank=True)
     snmp_community = models.CharField(max_length=100, default='public', blank=True, null=True, verbose_name='Comunidad SNMP', help_text='Solo aplica a dispositivos que soporten SNMP. Ej. "public"')
 
-    escanear = models.BooleanField(default=False, null=True, blank=True)
-    alarma = models.BooleanField(default=False, null=True, blank=True)
-    alarma_puerto = models.BooleanField(default=False, null=True, blank=True, verbose_name='Alarma puertos')
-    ping = models.BooleanField(default=True, null=True, blank=True)
-
+    escanear = models.BooleanField(default=False, null=True, blank=True, verbose_name='Escanear SNMP')
+    alarma = models.BooleanField(default=False, null=True, blank=True, verbose_name='Alarma SNMP')
+    alarma_puerto = models.BooleanField(default=False, null=True, blank=True, verbose_name='Alarma puertos SNMP')
+    ping = models.BooleanField(default=True, null=True, blank=True, verbose_name='Escanear PING')
+    alarma_ping = models.BooleanField(default=True, null=True, blank=True, verbose_name='Alarma PING')
+    
     latitud = models.DecimalField(max_digits=10, decimal_places=7, null=True, blank=True)
     longitud = models.DecimalField(max_digits=10, decimal_places=7, null=True, blank=True)
 

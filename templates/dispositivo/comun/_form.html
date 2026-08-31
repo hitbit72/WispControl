@@ -83,26 +83,41 @@
         </div>
         <div class="card h-100">
             <div class="card-body">
-            <div class="row align-items-center">
-                <div class="col-md-3">
-                    <label class="form-label" for="{{ form.escanear.id_for_label }}">Escanear</label>
-                    {{ form.escanear }}
-                    <div class="form-text">Comprobar periodicamente el estado del dispositivo"</div>
+            <div class="row text-center">
+                <div class="col-md-2">
+                    <div class="row">
+                        <label class="form-label" for="{{ form.escanear.id_for_label }}">Escanear SNMP</label>
+                        <span>{{ form.escanear }}</span>
+                        <!-- div class="form-text">Escaneo SNMP del dispositivo</div -->
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="row">
+                        <label class="form-label" for="{{ form.alarma.id_for_label }}">Alarma SNMP</label>
+                        <span>{{ form.alarma }}</span>
+                        <!-- div class="form-text">Alarmas de estado</div -->
+                    </div>
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label" for="{{ form.alarma.id_for_label }}">Alarma</label>
-                    {{ form.alarma }}
-                    <div class="form-text">Mostrar alarmas de estdo</div>
+                    <div class="row">
+                        <label class="form-label" for="{{ form.alarma_puerto.id_for_label }}">Alarma Puertos SNMP</label>
+                        <span>{{ form.alarma_puerto }}</span>
+                        <!-- div class="form-text">Alarma puertos desconectado</div -->
+                    </div>
                 </div>
-                <div class="col-md-3">
-                    <label class="form-label" for="{{ form.alarma_puerto.id_for_label }}">Alarma de Puerto</label>
-                    {{ form.alarma_puerto }}
-                    <div class="form-text">Mostrar alarma de puerto desconectado</div>
+                <div class="col-md-2">
+                    <div class="row">
+                        <label class="form-label" for="{{ form.ping.id_for_label }}">Ping</label>
+                        <span>{{ form.ping }}</span>
+                    <!-- div class="form-text">Dispositivo online</div -->
+                    </div>
                 </div>
-                <div class="col-md-3">
-                    <label class="form-label" for="{{ form.ping.id_for_label }}">Ping</label>
-                    {{ form.ping }}
-                    <div class="form-text">Dispositivo online</div>
+                <div class="col-md-2">
+                    <div class="row">
+                        <label class="form-label" for="{{ form.alarma_ping.id_for_label }}">Alarma Ping</label>
+                        <span>{{ form.alarma_ping }}</span>
+                        <!-- div class="form-text">Alarma dispositivo offline</div -->
+                    </div>
                 </div>
             </div>
             </div>
