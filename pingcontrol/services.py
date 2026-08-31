@@ -135,7 +135,7 @@ def sincronizar_alarmas_ping(dispositivo, detectadas):
     Sincroniza alarmas de ping: crea nuevas, resuelve las que ya no aplican.
     regla='ping_sin_respuesta'
     """
-    
+
     activas = Alarma.objects.filter(
         device=dispositivo, 
         regla='ping_sin_respuesta',
@@ -234,6 +234,7 @@ def actualizar_estado_dispositivo(dispositivo, detectadas):
             )
 
 
+# Funcion original que no funciona correctamente (desabilitada)
 def actualizar_estado_dispositivo_original(dispositivo, detectadas):
     """
     Actualiza el estado del dispositivo según las alarmas de ping.
