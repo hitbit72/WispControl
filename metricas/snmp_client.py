@@ -274,19 +274,19 @@ def consultar_if_table(dispositivo, oids, modo='general'):
                 #print(f'scan wifi {dispositivo.ip_gestion}')
                 if fila.get('signal'):
                     fila['signal'] = int(fila['signal'])
-                if fila['ccq']:
+                if fila.get('ccq'):
                     fila['ccq'] = int(fila['ccq'])
-                if fila['noise']:
+                if fila.get('noise'):
                     fila['noise'] = int(fila['noise'])
-                if fila['rx_rate']:
-                    fila['rx_rate'] = int(fila['rx_rate'])
-                if fila['tx_rate']:
+                if fila.get('rx_rate'):
+                    fila.get('rx_rate') = int(fila['rx_rate'])
+                if fila.get('tx_rate'):
                     fila['tx_rate'] = int(fila['tx_rate'])
-                if fila['distancia']:
+                if fila.get('distancia'):
                     fila['distancia'] = int(fila['distancia'])
 
             if modo == 'onus':
-                if fila['signal']:
+                if fila.get('signal'):
                     fila['signal'] = int(fila['signal'])
                     if fila['signal'] < 0:
                         fila['signal']=fila['signal']/100
@@ -295,8 +295,11 @@ def consultar_if_table(dispositivo, oids, modo='general'):
             if modo == 'puertos':
                 #print(fila)
                 fila['estado'] = 'up' if fila['estado'] == '1' else 'down'
-                if int(fila['speed']) > 100:
-                    fila['speed'] = int(fila['speed']) * 0.000001
+                if fila.get('speed'):
+                    if int(fila['speed']) > 100:
+                        fila['speed'] = int(fila['speed']) * 0.000001   # bps a Mbps
+                    else:
+                        fila['speed'] = 0
                 else:
                     fila['speed'] = 0
                 if fila['nombre'] in EXCLUDE_PORT:
