@@ -95,9 +95,6 @@ def guardar_metrica_ping(dispositivo, exitoso, latencia, error_msg=None):
         'timeping': timezone.now(),
     }
     
-    #if error_msg:
-    #    datos['sys_descr'] = error_msg
-    
     return guardar_metrica(dispositivo, **datos)
 
 
@@ -111,8 +108,6 @@ def evaluar_ping(dispositivo, metrica, anterior):
     # Regla: sin respuesta a ping
     if metrica.status_ping != DeviceMetrics.Status.OK:
         texto = f'{dispositivo.ip_gestion} ({dispositivo.nombre}) no responde a ping.'
-        if metrica.sys_name:
-            texto += f' ({metrica.sys_name})'
         reglas.append({
             'regla': 'ping_sin_respuesta',
             'titulo': f'Ping sin respuesta {dispositivo.ip_gestion}',
