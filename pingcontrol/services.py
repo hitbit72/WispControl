@@ -95,8 +95,8 @@ def guardar_metrica_ping(dispositivo, exitoso, latencia, error_msg=None):
         'timeping': timezone.now(),
     }
     
-    if error_msg:
-        datos['sys_descr'] = error_msg
+    #if error_msg:
+    #    datos['sys_descr'] = error_msg
     
     return guardar_metrica(dispositivo, **datos)
 
@@ -130,7 +130,7 @@ def evaluar_ping(dispositivo, metrica, anterior):
     return reglas
 
 
-def sincronizar_alarmas_ping(dispositivo, detectadas):
+def sincronizar_alarmas_ping(dispositivo, detectadas, error_msg):
     """
     Sincroniza alarmas de ping: crea nuevas, resuelve las que ya no aplican.
     regla='ping_sin_respuesta'
@@ -157,12 +157,13 @@ def sincronizar_alarmas_ping(dispositivo, detectadas):
         alarma.resuelta_en = timezone.now()
         alarma.save(update_fields=['estado', 'resuelta_en'])
 
-        registrar_evento(
-            MODULO,
-            f'Alarma resuelta: {alarma.titulo}',
-            f'{dispositivo.nombre} · {alarma.texto}',
-            nivel=Evento.Nivel.NOTICE,
-        )
+        if dispositivo.alarma_ping:
+            registrar_evento(
+                MODULO,
+                f'Alarma resuelta: {alarma.titulo}',
+                f'{dispositivo.nombre} · {alarma.texto}',
+                nivel=Evento.Nivel.NOTICE,
+            )
         resultados['resueltas'].append(alarma)
     
     # Crear nuevas alarmas
@@ -181,18 +182,20 @@ def sincronizar_alarmas_ping(dispositivo, detectadas):
             regla=regla,
             estado=Alarma.Estado.ACTIVA,
             tipo=Alarma.Tipo.PING,
+            sys_error=error_msg,
             defaults={'titulo': datos['titulo'], 'texto': datos['texto']},
         )
         
         if not creada:
             continue
 
-        registrar_evento(
-            MODULO,
-            alarma.titulo,
-            f'{dispositivo.nombre} · {alarma.texto}',
-            nivel=nivel,
-        )
+        if dispositivo.alarma_ping:
+            registrar_evento(
+                MODULO,
+                alarma.titulo,
+                f'{dispositivo.nombre} · {alarma.texto}',
+                nivel=nivel,
+            )
         resultados['nuevas'].append(alarma)
     
     return resultados
@@ -300,8 +303,8 @@ def procesar_dispositivo(dispositivo):
     detectadas = evaluar_ping(dispositivo, metrica, anterior)
     
     # Sincronizar alarmas
-    if dispositivo.alarma_ping:
-        sincronizar_alarmas_ping(dispositivo, detectadas)
+    #if dispositivo.alarma_ping:
+    sincronizar_alarmas_ping(dispositivo, detectadas, error_msg)
     
     # Actualizar estado del dispositivo
     actualizar_estado_dispositivo(dispositivo, detectadas)

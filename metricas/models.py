@@ -103,13 +103,14 @@ class Alarma(models.Model):
 
     device = models.ForeignKey('dispositivos.Dispositivo', on_delete=models.CASCADE, related_name='alarmas',)
 
-    tipo = models.CharField(max_length=20, choices=Tipo.choices, default=Tipo.SNMP, verbose_name='Tipo de alarma')
+    tipo = models.CharField(max_length=20, choices=Tipo.choices, default=Tipo.SNMP, blank=True, null=True, verbose_name='Tipo de alarma')
     regla = models.CharField(max_length=50, verbose_name='Regla')
     titulo = models.CharField(max_length=255, blank=True, verbose_name='Título')
     texto = models.TextField(blank=True, verbose_name='Detalle')
     estado = models.CharField(
         max_length=20, choices=Estado.choices, default=Estado.ACTIVA, verbose_name='Estado',
     )
+    sys_error = models.CharField(max_length=255, blank=True, null=True, verbose_name='Error sistema')
     creada_en = models.DateTimeField(auto_now_add=True, verbose_name='Detectada')
     resuelta_en = models.DateTimeField(null=True, blank=True, verbose_name='Resuelta')
 

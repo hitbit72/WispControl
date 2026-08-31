@@ -19,7 +19,7 @@ class AlarmaAdmin(admin.ModelAdmin):
     list_filter = ('estado', 'tipo', 'regla', 'device__tipo')
     search_fields = ('device__nombre', 'titulo', 'texto')
     list_select_related = ('device',)
-    readonly_fields = ('device', 'regla', 'titulo', 'texto', 'creada_en', 'resuelta_en')
+    readonly_fields = ('device', 'regla', 'sys_error', 'creada_en', 'resuelta_en')
 
 
 @admin.register(OIDmetric)
