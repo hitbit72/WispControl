@@ -14,6 +14,6 @@ urlpatterns = [
 
 # Manejo de archivos estáticos media en modo de desarrollo
 # En un entorno de producción no es necesario, ya que se manejan de forma diferente.
-if  settings.DEBUG:
+if settings.DEBUG:
     from django.conf.urls.static import static
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.MEDIA_ROOT)  # Manejo de archivos media en modo de desarrollo
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS[0])
