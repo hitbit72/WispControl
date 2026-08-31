@@ -102,7 +102,7 @@ def guarda_staciones_wifi(dispositivo, **datos):
 
 
 def guarda_estaciones_onu(dispositivo, **datos):
-    """ Guarda los datos básicos de los dispositivos 'onu' """
+    """ Guarda los datos básicos de los dispositivos 'onu' de ubiquiti """
 
     # Extraer la lista de estaciones del diccionario (si no existe, usa lista vacía)
     onus = datos.get("onus", [])
