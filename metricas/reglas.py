@@ -60,7 +60,7 @@ def evaluar(dispositivo, metrica, anterior, config):
 
     if metrica.status != DeviceMetrics.Status.OK:
         texto = f'{dispositivo.ip_gestion} ({dispositivo.nombre}) no responde a SNMP ({metrica.get_status_display()}).'
-        return [{'regla': conect, 'titulo': f'{dispositivo.ip_gestion} sin respuesta SNMP', 'texto': texto}]
+        return [{'regla': conect, 'titulo': f'SNMP sin respuesta {dispositivo.ip_gestion}', 'texto': texto}]
 
     if metrica.cpu is not None and metrica.cpu > config['cpu_max']:
         reglas.append({'regla': 'cpu_alta', 'titulo': f'CPU alta {dispositivo.ip_gestion}',
@@ -77,7 +77,7 @@ def evaluar(dispositivo, metrica, anterior, config):
                 reglas.append({'regla': 'puerto_caido', 'titulo': f'Puerto caído {dispositivo.ip_gestion}',
                                'texto': f'Interfaz(es) caída(s): {", ".join(caidos)}.'})
             
-    if config.get('sin_clientes_ap') and dispositivo.tipo.clave in ('ap','accesp','apoint') \
+    if config.get('sin_clientes_ap') and dispositivo.tipo.clave in ('ap','accesp','apoint','olt') \
             and metrica.clients is not None and metrica.clients == 0:
         reglas.append({'regla': 'sin_clientes_ap', 'titulo': f'AP sin clientes {dispositivo.ip_gestion}',
                        'texto': 'Ningún cliente asociado al AP.'})

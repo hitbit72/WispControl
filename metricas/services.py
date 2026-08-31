@@ -155,9 +155,10 @@ def _sincronizar_alarmas(dispositivo, detectadas):
     
     activas = Alarma.objects.filter(
         device=dispositivo, 
-        regla='sin_respuesta_snmp',
+        tipo=Alarma.Tipo.SNMP,
         estado=Alarma.Estado.ACTIVA
     )
+
     reglas_activas = dict(activas.values_list('regla', 'pk'))
     detectadas = {a['regla']: a for a in detectadas}
 
@@ -188,6 +189,7 @@ def _sincronizar_alarmas(dispositivo, detectadas):
         alarma, creada = Alarma.objects.get_or_create(
             device=dispositivo,
             regla=regla,
+            tipo=Alarma.Tipo.SNMP,
             estado=Alarma.Estado.ACTIVA,
             defaults={'titulo': datos['titulo'], 'texto': datos['texto']},
         )

@@ -15,8 +15,8 @@ class DeviceMetricsAdmin(admin.ModelAdmin):
 
 @admin.register(Alarma)
 class AlarmaAdmin(admin.ModelAdmin):
-    list_display = ('device', 'titulo', 'regla', 'estado', 'creada_en', 'resuelta_en')
-    list_filter = ('estado', 'regla', 'device__tipo')
+    list_display = ('device', 'titulo', 'tipo', 'regla', 'estado', 'creada_en', 'resuelta_en')
+    list_filter = ('estado', 'tipo', 'regla', 'device__tipo')
     search_fields = ('device__nombre', 'titulo', 'texto')
     list_select_related = ('device',)
     readonly_fields = ('device', 'regla', 'titulo', 'texto', 'creada_en', 'resuelta_en')

@@ -93,13 +93,17 @@ class Alarma(models.Model):
     cumplirse. La integración con Telegram/WhatsApp está prevista para el
     futuro, leyendo las alarmas 'activas'.
     """
+    class Tipo(models.TextChoices):
+        SNMP = 'snmp', 'SNMP'
+        PING = 'ping', 'PING'
 
     class Estado(models.TextChoices):
         ACTIVA = 'activa', 'Activa'
         RESUELTA = 'resuelta', 'Resuelta'
 
     device = models.ForeignKey('dispositivos.Dispositivo', on_delete=models.CASCADE, related_name='alarmas',)
-    
+
+    tipo = models.CharField(max_length=20, choices=Tipo.choices, default=Tipo.SNMP, verbose_name='Tipo de alarma')
     regla = models.CharField(max_length=50, verbose_name='Regla')
     titulo = models.CharField(max_length=255, blank=True, verbose_name='Título')
     texto = models.TextField(blank=True, verbose_name='Detalle')

@@ -138,7 +138,7 @@ def sincronizar_alarmas_ping(dispositivo, detectadas):
 
     activas = Alarma.objects.filter(
         device=dispositivo, 
-        regla='ping_sin_respuesta',
+        tipo=Alarma.Tipo.PING,
         estado=Alarma.Estado.ACTIVA)
     reglas_activas = dict(activas.values_list('regla', 'pk'))
     detectadas_dict = {a['regla']: a for a in detectadas}
@@ -180,6 +180,7 @@ def sincronizar_alarmas_ping(dispositivo, detectadas):
             device=dispositivo,
             regla=regla,
             estado=Alarma.Estado.ACTIVA,
+            tipo=Alarma.Tipo.PING,
             defaults={'titulo': datos['titulo'], 'texto': datos['texto']},
         )
         
@@ -213,18 +214,23 @@ def actualizar_estado_dispositivo(dispositivo, detectadas):
         dispositivo.estado = Dispositivo.Estado.INACTIVO
         dispositivo.save(update_fields=['estado'])
 
+        """
+        ya se genera un aviso en sincronizar_alarmas_ping
+
         if dispositivo.alarma_ping:
             registrar_evento(
                 MODULO,
                 f'Dispositivo inactivo por ping: {dispositivo.ip_gestion}',
                 f'{dispositivo.nombre} marcado como inactivo por no responder a ping.',
-                nivel=Evento.Nivel.CRITICAL,
+                nivel=Evento.Nivel.NOTICE,
             )
+        """
     
     elif not ping_caido and dispositivo.estado == Dispositivo.Estado.INACTIVO:
         dispositivo.estado = Dispositivo.Estado.ACTIVO
         dispositivo.save(update_fields=['estado'])
 
+        """
         if dispositivo.alarma_ping:
             registrar_evento(
                 MODULO,
@@ -232,6 +238,7 @@ def actualizar_estado_dispositivo(dispositivo, detectadas):
                 f'{dispositivo.nombre} vuelve a responder a ping, marcado como activo.',
                 nivel=Evento.Nivel.NOTICE,
             )
+        """
 
 
 # Funcion original que no funciona correctamente (desabilitada)
@@ -278,7 +285,9 @@ def procesar_dispositivo(dispositivo):
     """
     # Hacer ping
     exitoso, latencia, error_msg = ping_dispositivo(dispositivo)
-    
+    if error_msg:
+        print(error_msg)
+
     # Guardar métrica
     metrica = guardar_metrica_ping(dispositivo, exitoso, latencia, error_msg)
     

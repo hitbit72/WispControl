@@ -37,7 +37,6 @@ class Command(BaseCommand):
         if ip_filtro:
             dispositivos = Dispositivo.objects.filter(
                 ip_gestion=ip_filtro,
-                ping=True,
             )
         else:
             dispositivos = Dispositivo.objects.filter(
@@ -54,6 +53,7 @@ class Command(BaseCommand):
                 'No hay dispositivos con ping=True e IP de gestión.'))
             return
 
+        # Bucle por los dispositivos
         for dispositivo in dispositivos:
             try:
                 metrica, detectadas = procesar_dispositivo(dispositivo)

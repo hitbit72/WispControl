@@ -104,7 +104,7 @@ class Dispositivo(models.Model):
         ordering = ['nombre']
 
     def __str__(self):
-        return f'{self.nombre} ({self.get_rol_display()} · {self.tipo.nombre} · {self.marca.nombre} {self.marca.modelo})'
+        return f'{self.nombre} · {self.ip_gestion} ({self.get_rol_display()} · {self.tipo.nombre})'
 
 
 
