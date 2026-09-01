@@ -157,8 +157,8 @@ class Command(BaseCommand):
         # Actualiza modelo de interfaz (puertos)
         guardar_puertos(dispositivo, **datos)
         # Actizalizar datos estaciones wifi y onus
-        guarda_staciones_wifi(dispositivo, **datos)
-        guarda_estaciones_onu(dispositivo, **datos)
+        guarda_staciones_wifi(dispositivo, **datos)     # <-- Datos wifi de ubiquiti
+        guarda_estaciones_onu(dispositivo, **datos)     # <-- Datos de ONU de OLT ubiquiti
         # evalua la alerta/alarma
         evaluar_y_aplicar(dispositivo, metrica)
         self.stdout.write(self.style.SUCCESS(
