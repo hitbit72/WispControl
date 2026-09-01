@@ -127,7 +127,8 @@ class Command(BaseCommand):
             estaciones = snmp_client.consultar_if_table(dispositivo, escalares_st, 'wifi')
             onus = snmp_client.consultar_if_table(dispositivo, escalares_onu, 'onus')
             status = DeviceMetrics.Status.OK
-            # print(puertos)
+            #print(escalares_st)
+
         except snmp_client.SnmpError as exc:
             self.stdout.write(
                 self.style.ERROR(f'[{dispositivo.ip_gestion}] {exc}'))
@@ -151,6 +152,7 @@ class Command(BaseCommand):
 
         #print(' DATOS --------------------')
         #print(f'Datos: {datos}')
+        #print(f'Estaciones: {estaciones}')
 
         # guarda los datos en DeviceMetrics
         metrica = guardar_metrica(dispositivo, **datos)

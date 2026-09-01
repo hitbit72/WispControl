@@ -117,6 +117,7 @@ def guarda_estaciones_onu(dispositivo, **datos):
         # Se tiene que usar las keys de OID
         uData = {
             'signal': onu.get('signal'),
+            'power': onu.get('power'),
             'ssid': ssid,
         }
 
@@ -128,7 +129,7 @@ def guarda_estaciones_onu(dispositivo, **datos):
                 device=estacion_dev,
                 defaults=uData,
             )
-
+        
 
 def evaluar_y_aplicar(dispositivo, metrica):
     """Evalúa las reglas sobre la métrica recién creada y aplica alarmas y

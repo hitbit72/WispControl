@@ -260,13 +260,16 @@ def consultar_if_table(dispositivo, oids, modo='general'):
         elif errorStatus:
             print(f"Error SNMP: {errorStatus.prettyPrint()}")
             break
+        elif errorIndex:
+            print(f"Error SNMP index: {errorIndex}")
+            break
         else:
             fila = {}
             # varBinds coincide 1 a 1 en orden con nombres_metricas
             for i, varBind in enumerate(varBinds):
                 oid_respuesta, valor = varBind
-                nombre_clave = nombres_metricas[i]
 
+                nombre_clave = nombres_metricas[i]
                 # Convertimos el valor a string limpia
                 fila[nombre_clave] = valor.prettyPrint()
 

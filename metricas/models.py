@@ -159,22 +159,3 @@ class OIDmetric(models.Model):
     def __str__(self):
         return f'{self.marca.nombre} {self.marca.modelo} {self.descripcion}'
 
-
-
-# Modelo para almacenar métricas de tráfico de interfaces de red
-# Guarda siempre los contadores acumulados de bytes
-class TraficoInterfaz(models.Model):
-    interfaz = models.ForeignKey(
-        'dispositivos.Interfaz', 
-        on_delete=models.CASCADE, 
-        related_name='metricas_trafico'
-    )
-    timestamp = models.DateTimeField(db_index=True)
-    bytes_rx = models.BigIntegerField()  # ifInOctets (64-bit counter)
-    bytes_tx = models.BigIntegerField()  # ifOutOctets (64-bit counter)
-
-    class Meta:
-        indexes = [
-            # Índice compuesto clave para gráficos de series temporales
-            models.Index(fields=['interfaz', 'timestamp']),
-        ]
