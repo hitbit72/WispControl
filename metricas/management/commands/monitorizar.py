@@ -60,6 +60,7 @@ CAMPO = {
     'version': 'version',
 }
 
+
 class Command(BaseCommand):
     help = 'Consulta SNMP a cada dispositivo y guarda métricas + alarmas.'
 
@@ -105,11 +106,12 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS(
             f'Monitorizados {ok} de {total} dispositivos.'))
 
+
     def _procesar(self, dispositivo):
 
         # Cargar los códigos OID para cada tipo de escaneo
-        escalares_st = ''
-        escalares_onu = ''
+        escalares_st = {}
+        escalares_onu = {}
 
         escalares = oids_dispositivo(dispositivo, 'general')
         escalares_puerto = oids_dispositivo(dispositivo, 'puertos')
@@ -122,7 +124,6 @@ class Command(BaseCommand):
         
         try:
             resultado = snmp_client.consultar_escalares(dispositivo, escalares)
-            #puertos = snmp_client.consultar_if_table2(dispositivo, escalares_puerto)
             puertos = snmp_client.consultar_if_table(dispositivo, escalares_puerto, 'puertos')
             estaciones = snmp_client.consultar_if_table(dispositivo, escalares_st, 'wifi')
             onus = snmp_client.consultar_if_table(dispositivo, escalares_onu, 'onus')

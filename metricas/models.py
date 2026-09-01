@@ -137,6 +137,7 @@ class OIDmetric(models.Model):
         PUERTOS = 'puertos', 'Puertos'
         WIFI = 'wifi', 'Estaciones WIFI'
         ONUS = 'onus', 'Estaciones ONU'
+        COUNTER_WIFI = 'count_wifi', 'Contadores Estaciones'
 
     marca = models.ForeignKey('dispositivos.Marca', on_delete=models.CASCADE, related_name='oid')
     descripcion = models.CharField(max_length=255, verbose_name='Descripción')

@@ -160,69 +160,6 @@ def _escalares_uno_a_uno(engine, auth, transporte, contexto, oids):
     return resultado
 
 
-def consultar_if_table2(dispositivo, oids):
-    """Walk de ifTable (descr + oper status). Devuelve lista de
-    {nombre, estado} con estado 'up'/'down'."""
-    if not oids:
-        return []
-    
-    conf = _conf_snmp(dispositivo)
-    comunidad = dispositivo.snmp_community or 'public'
-    comunity = _auth(comunidad)
-    engine = SnmpEngine()
-    transporte = _trasporte(dispositivo.ip_gestion, conf)
-    contexto = ContextData()
-    puertos = []
-
-    """
-    OIDs base a consultar en IF-MIB
-    1.3.6.1.2.1.2.2.1.2 = ifDescr (Nombre del puerto)
-    1.3.6.1.2.1.2.2.1.5 = ifSpeed (Velocidad en bps)
-    1.3.6.1.2.1.2.2.1.8 = ifOperStatus (Estado operativo: 1=Up, 2=Down)
-    """
-
-    # Toma el OID del diccionario o usa la constante por defecto si no existe en 'oids'
-    oid_descr = ObjectType(ObjectIdentity(oids.get('nombre', OID_IF_DESCR)))
-    oid_status = ObjectType(ObjectIdentity(oids.get('estado', OID_IF_OPER)))
-    oid_speed = ObjectType(ObjectIdentity(oids.get('speed', OID_IF_SPEED)))
-
-    # Usamos nextCmd para hacer un walk sobre las 3 columnas simultáneamente
-    for errorIndication, errorStatus, errorIndex, varBinds in nextCmd(
-        engine,
-        comunity,
-        transporte,
-        contexto,
-        oid_descr,
-        oid_speed,
-        oid_status,
-        lexicographicMode=False,
-    ):
-        if errorIndication:
-            print(f"Error de conexión: {errorIndication}")
-            break
-        elif errorStatus:
-            print(f"Error SNMP: {errorStatus.prettyPrint()}")
-            break
-        else:
-            # Extraer los datos de la fila actual
-            interface_name = str(varBinds[0][1])
-            speed_bps = int(varBinds[1][1])
-            status_code = int(varBinds[2][1])
-            
-            # Formatear el estado y la velocidad
-            status_str = "up" if status_code == 1 else "down"
-            speed_mbps = speed_bps // 1_000_000 if speed_bps > 0 else 0
-
-            #print(f"Interfaz: {interface_name:<10} | Estado: {status_str:<18} | Velocidad: {speed_mbps} Mbps")
-            # Comprueba si NINGUNO de los patrones en EXCLUDE_PORT está contenido en interface_name
-            if not any(excluir in interface_name for excluir in EXCLUDE_PORT):
-                puertos.append({
-                    'nombre': interface_name,
-                    'estado': status_str,
-                    'speed': speed_mbps,
-                })
-    return puertos
-
 
 def consultar_if_table(dispositivo, oids, modo='general'):
 
@@ -244,6 +181,9 @@ def consultar_if_table(dispositivo, oids, modo='general'):
     # 1. Separar claves ("host", "signal"...) y valores OID ("1.3.6.1...")
     nombres_metricas = list(oids.keys())
     objetos_snmp = [ObjectType(ObjectIdentity(oid)) for oid in oids.values()]
+    #if modo == 'wifi':
+    #    print('WIFI:')
+    #    print(objetos_snmp)
 
     # Usamos nextCmd para hacer un walk sobre las 3 columnas simultáneamente
     for errorIndication, errorStatus, errorIndex, varBinds in nextCmd(
@@ -255,13 +195,14 @@ def consultar_if_table(dispositivo, oids, modo='general'):
         lexicographicMode=False,
     ):
         if errorIndication:
-            print(f"Error de conexión: {errorIndication}")
+            print(f"Error de conexión (Modo: {modo}): {errorIndication}")
+            print(f'ip: {dispositivo.ip_gestion}')
             break
         elif errorStatus:
-            print(f"Error SNMP: {errorStatus.prettyPrint()}")
+            print(f"Error SNMP (Modo: {modo}): {errorStatus.prettyPrint()}")
             break
         elif errorIndex:
-            print(f"Error SNMP index: {errorIndex}")
+            print(f"Error SNMP index (Modo: {modo}): {errorIndex}")
             break
         else:
             fila = {}
