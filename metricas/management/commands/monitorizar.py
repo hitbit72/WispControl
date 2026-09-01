@@ -133,8 +133,8 @@ class Command(BaseCommand):
         except snmp_client.SnmpError as exc:
             self.stdout.write(
                 self.style.ERROR(f'[{dispositivo.ip_gestion}] {exc}'))
-            resultado, puertos = {}, []
-            estaciones, onus = [], []
+            resultado = {}
+            puertos, estaciones, onus = [], [], []
             mensaje = str(exc).lower()
             status = (
                 DeviceMetrics.Status.TIMEOUT
