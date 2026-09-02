@@ -1,0 +1,13 @@
+<span class="badge 
+{% if dispositivo.tipo.clave == 'olt' or dispositivo.tipo.clave == 'onu' %}
+    {% if dispositivo.metricas.all.0.signal <= -20 %}bg-danger
+    {% elif dispositivo.metricas.all.0.signal <= -18 %}bg-warning
+    {% elif dispositivo.metricas.all.0.signal > -18 and dispositivo.metricas.all.0.signal < 0 %}bg-success
+    {% else %}bg-secondary{% endif %}
+{% else %}
+    {% if dispositivo.metricas.all.0.signal <= -70 %}bg-danger
+    {% elif dispositivo.metricas.all.0.signal > -50 %}bg-warning text-dark
+    {% elif dispositivo.metricas.all.0.signal > -70 and dispositivo.metricas.all.0.signal <= -50 %}bg-success
+    {% else %}bg-secondary{% endif %}
+{% endif %}
+"> {{ dispositivo.metricas.all.0.signal|default:"—"}} </span>

@@ -1,15 +1,13 @@
 {% extends "base.html" %}
 {% block titulo %}{{ dispositivo.nombre }} · Portal WISP{% endblock %}
 {% block contenido %}
-<div class="d-flex justify-content-between align-items-start mb-3">
+<div class="d-flex justify-content-between align-items-start mb-2">
     <div class="row align-items-left">
-        <div class="col">
+        <div class="col-md-12">
             <h2 class="mb-1"><i class="bi bi-layout-wtf" aria-hidden="true"></i> ·  {{ dispositivo.nombre }}</h2>
         </div>
         <div class="col"><h5>({{ dispositivo.marca.nombre }} {{ dispositivo.marca.modelo }})</h5></div>
-        <div class="text-muted">
-            {{ dispositivo.tipo.nombre }} · {{ dispositivo.get_rol_display }} {% if dispositivo.sector %} · <a href="{% url 'sectores:detalle' dispositivo.sector.pk %}?next={{ request.path }}">{{ dispositivo.sector.nombre }}</a>{% endif %}
-        </div>
+        <div class="text-muted"></div>
     </div>
     <div class="d-flex gap-2">
         <a href="{% url 'dispositivos:editar' dispositivo.pk %}" class="btn btn-primary">Editar</a>
@@ -22,11 +20,11 @@
     <div class="col-md-4">
         <div class="card h-100">
             <div class="card-body">
-                <h5 class="card-title">Datos del equipo</h5>
+                <!-- h5 class="card-title">Datos del equipo</h5 -->
                 <p class="mb-1"><strong>Estado:</strong>
                     {% include "dispositivo/comun/estado.html" %}
                 </p>
-                <p class="mb-1"><strong>Modo:</strong> {{ dispositivo.get_rol_display|default:"—" }}</p>
+                <p class="mb-1"><strong>Modo:</strong> {{ dispositivo.tipo.nombre }} · {{ dispositivo.get_rol_display|default:"—" }}</p>
                 <p class="mb-1"><strong>IP de gestión:</strong> {{ dispositivo.ip_gestion|default:"—" }}</p>
                 {% if dispositivo.ip_publica %}<p class="mb-1"><strong>IP pública:</strong> {{ dispositivo.ip_publica }}</p>{% endif %}
                 <p class="mb-1"><strong>MAC:</strong> {{ dispositivo.mac_address|default:"—" }}</p>
@@ -74,13 +72,17 @@
     <div class="col-md-4">
         <div class="card h-100">
             <div class="card-body">
-                <h5 class="card-title">Ubicación</h5>
+                <!-- h5 class="card-title">Ubicación</h5 -->
                 <p class="mb-1"><strong>Fecha de instalación:</strong> {{ dispositivo.fecha_instalacion|default:"—" }}</p>
-                <p class="mb-1"><strong>Latitud:</strong> {{ dispositivo.latitud|default:"—" }}</p>
-                <p class="mb-0"><strong>Longitud:</strong> {{ dispositivo.longitud|default:"—" }}</p>
+                <p class="mb-1"><strong>Localización (lat/lon):</strong> {{ dispositivo.latitud|default:"—" }} / {{ dispositivo.longitud|default:"—" }}</p>
+                {% if dispositivo.sector %}
+                <p class="mb-1"><strong>Sector:</strong>
+                <a href="{% url 'sectores:detalle' dispositivo.sector.pk %}?next={{ request.path }}">{{ dispositivo.sector.nombre }}</a>{% endif %}</p>
                 {% if dispositivo.cliente %}
                 <p class="mb-1"><strong>Cliente:</strong> 
-                <a href="{% url 'clientes:detalle' dispositivo.cliente.pk %}?next={{ request.path }}">{{ dispositivo.cliente.nombre_completo }}</a></p>
+                <a href="{% url 'clientes:detalle' dispositivo.cliente.pk %}?next={{ request.path }}">{{ dispositivo.cliente.nombre_completo }}</a><br>
+                {{ dispositivo.cliente.direccion|default:"" }}
+                </p>
                 {% endif %}
             </div>
         </div>
@@ -88,6 +90,7 @@
     <div class="col-md-4">
         <div class="card h-100">
             <div class="card-body">
+                <!--
                 <div class="container" style="padding-left:0;">
                     <div class="row">
                         <div class="col text-start">
@@ -98,6 +101,7 @@
                         </div>
                     </div>
                 </div>
+                -->
                 {% if metricas %}
                   <div id="metricas">
                     <!-- p class="mb-2" -->
@@ -121,8 +125,8 @@
                     <p class="mb-1"><strong>SSID:</strong> 
                     {% if not dispositivo.tipo.clave == 'ap' %}
                         <a href="{% url 'dispositivos:buscar_dispositivo'  metricas.ssid %}?next={{ request.path }}">{{ metricas.ssid }}
-                        {% if metricas.frequency %} ({{ metricas.frequency }} MHz){% endif %}
-                        </a>
+                        {% if metricas.frequency %}{% endif %}
+                        </a> ({{ metricas.frequency }} MHz)
                     {% else %}
                         {{ metricas.ssid }}{% if metricas.frequency %} ({{ metricas.frequency }} MHz){% endif %}
                     {% endif %}
@@ -152,7 +156,7 @@
 {% if metricas.estaciones %}
 <section class="panel mt-1">
 <div class="d-flex justify-content-between align-items-center mb-2">
-    <h4 class="mb-0"><i class="bi bi-wifi" aria-hidden="true"></i> Estaciones ({{ metricas.clients }})</h4>
+    <h4 class="mb-0"><i class="bi bi-wifi" aria-hidden="true"></i> Estaciones conectadas ({{ metricas.clients }})</h4>
 </div>
 {% include "dispositivo/_tabla_estaciones.html" %}
 </section>

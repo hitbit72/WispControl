@@ -20,7 +20,7 @@
         {% if onu.signal <= -20 %}bg-danger
         {% elif onu.signal <= -18 %}bg-warning
         {% elif onu.signal > -18 and onu.signal < 0 %}bg-success
-        {% else %}bg-secondary{% endif %}">{{ onu.signal }}</span></td>
+        {% else %}bg-secondary{% endif %}"> {{ onu.signal }} </span></td>
     </tr>
     {% empty %}
         <tr><td colspan="7" class="text-center text-muted py-3">Este dispositivo no tiene ONUs.</td></tr>

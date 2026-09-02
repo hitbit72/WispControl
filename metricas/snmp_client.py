@@ -243,7 +243,7 @@ def consultar_if_table(dispositivo, oids, modo='general'):
 
             # formatear el estado del interfaz
             if modo == 'puertos':
-                print(fila)
+                #print(fila)
                 fila['estado'] = 'up' if fila['estado'] == '1' else 'down'
                 if fila.get('speed'):
                     if int(fila['speed']) > 100:

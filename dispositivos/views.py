@@ -40,7 +40,11 @@ def buscar_dispositivo(request, query):
 def lista_dispositivos(request):
     """ Listado global de dispositivos con búsqueda y filtros. """
 
-    dispositivos = Dispositivo.objects.select_related('sector', 'cliente')
+    dispositivos = Dispositivo.objects.select_related(
+        'sector', 'cliente'
+        ).prefetch_related(
+            'metricas'
+        ).all()
     
     busqueda = request.GET.get('q', '').strip()
     if busqueda:
