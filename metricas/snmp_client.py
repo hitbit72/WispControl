@@ -237,7 +237,7 @@ def consultar_if_table(dispositivo, oids, modo='general'):
                 #print(fila)
                 fila['estado'] = 'up' if fila['estado'] == '1' else 'down'
                 if fila.get('speed'):
-                    if int(fila['speed']) > 100:
+                    if int(fila['speed']) > 1000:
                         #fila['speed'] = int(fila['speed']) * 0.000001   # bps a Mbps
                         fila['speed'] = int(fila['speed']) / 1_000_000   # bps a Mbps
                     else:
