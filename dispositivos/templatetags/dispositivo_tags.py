@@ -27,23 +27,24 @@ def timestamp_a_transcurrido(value):
 
 
 @register.filter
-def bps_a_mbps(value):
+def format_bitrate(value):
     try:
         if not value:
             return "—"
 
         value = int(value)
 
-        if value < 1_000_000:
+        if value < 1_000:
             return f"{value} bps"
 
+        elif value < 1_000_000:
+            return f"{value / 1_000:.2f} Kbps"
+
         elif value < 1_000_000_000:
-            mbps = value / 1_000_000
-            return f"{mbps:.2f} Mbps"
+            return f"{value / 1_000_000:.2f} Mbps"
 
         else:
-            gbps = value / 1_000_000_000
-            return f"{gbps:.2f} Gbps"
+            return f"{value / 1_000_000_000:.2f} Gbps"
 
     except (ValueError, TypeError):
         return "—"

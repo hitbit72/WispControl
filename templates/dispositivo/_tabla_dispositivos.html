@@ -34,8 +34,8 @@
             <td>{{ dispositivo.tipo.nombre }}</td>
             <td>{% if dispositivo.sector %}<a href="{% url 'sectores:detalle' dispositivo.sector.pk %}">{{ dispositivo.sector.nombre }}</a>{% else %}—{% endif %}</td>
             <td>{% include "dispositivo/comun/_signal.html" %}</td>
-            <td>{{ dispositivo.metricas.all.0.tx|bps_a_mbps }} </td>
-            <td>{{ dispositivo.metricas.all.0.rx|bps_a_mbps }} </td>
+            <td>{{ dispositivo.metricas.all.0.tx|format_bitrate }} </td>
+            <td>{{ dispositivo.metricas.all.0.rx|format_bitrate }} </td>
             <td class="text-end">
                 <!-- <a href="{% url 'dispositivos:eliminar' dispositivo.pk %}" class="btn btn-sm btn-outline-danger">Eliminar</a> -->
                 <a href="{% url 'dispositivos:editar' dispositivo.pk %}" class="btn btn-sm btn-outline-primary">Editar</a>

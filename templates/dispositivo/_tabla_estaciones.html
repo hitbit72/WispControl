@@ -28,8 +28,8 @@
         <td>{{ estacion.noise }}</td>
         <td>{{ estacion.ccq }}%</td>
         <td>{{ estacion.distancia|metros_a_km }} </td>
-        <td>{{ estacion.tx_rate|bps_a_mbps }} </td>
-        <td>{{ estacion.rx_rate|bps_a_mbps }} </td>
+        <td>{{ estacion.tx_rate|format_bitrate }} </td>
+        <td>{{ estacion.rx_rate|format_bitrate }} </td>
     </tr>
     {% empty %}
         <tr><td colspan="7" class="text-center text-muted py-3">Este dispositivo no tiene estaciones.</td></tr>
