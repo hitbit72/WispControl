@@ -41,17 +41,43 @@ OIDS_GENERICO = {
     #'mem_libre': '1.3.6.1.4.1.2021.4.6.0',   # memAvailReal (bytes) - UCD
 }
 
+
+# IF_TYPE
+# 6 (ethernetCsmacd): Redes Ethernet estándar.
+# 24 (softwareLoopback): Interfaz virtual de bucle local (loopback).
+# 71 (ieee80211): Interfaces inalámbricas (Wi-Fi) en equipos D-Link antiguos o puntos
+
 OIDS_PUERTOS_GENERICO = {
     'nombre': '1.3.6.1.2.1.2.2.1.2',       # ifTable/ifDescr (walk). MIB-II (RFC1213-MIB / IF-MIB)
     'estado': '1.3.6.1.2.1.2.2.1.8',        # ifTable/ifOperStatus (walk). MIB-II (RFC1213-MIB / IF-MIB) current state (1 = up, 2 = down)
     'speed': '1.3.6.1.2.1.2.2.1.5',       # ifSpeed (walk). (RFC1213-MIB / IF-MIB) Estimated bandwidth in bits per second.
-    #'if_rx': '1.3.6.1.2.1.2.2.1.10',
-    #'if_tx': '1.3.6.1.2.1.2.2.1.11',
+    #'if_rx': '1.3.6.1.2.1.2.2.1.16',
+    #'if_tx': '1.3.6.1.2.1.2.2.1.10',
     #'if_typw': '1.3.6.1.2.1.2.2.1.3',        # ifType (walk) Type of network protocol. 1=other, 2=regular1822, 3=ethernet-card, 24=loopback, 32=frame-relay
     #'if_physadress': '1.3.6.1.2.1.2.2.1.6'   # ifPhysAddress (walk) MAC
     #'if_inerrors': '1.3.6.1.2.1.2.2.1.14'    # ifInErrors (walk) Bad packets received with errors.
     #'if_outerrors': '1.3.6.1.2.1.2.2.1.20'   # ifOutErrors (walk) Outbound packets failing to send.
 }
+
+"""
+Ejemplo de OID en el campo 'atributos_extra' de un dispositivo:
+
+{"oids": 
+    {"general": 
+        {
+        "rx": "1.3.6.1.4.1.41112.1.11.1.3.1.8", 
+        "tx": "1.3.6.1.4.1.41112.1.11.1.3.1.7"
+        }
+    },
+    {"puertos":
+        {
+        "rx": "1.3.6.1.4.1",
+        "tx": "1.3.6.1.4.2"
+        }
+    }
+}
+"""
+
 
 def oids_dispositivo(dispositivo, tipos='general'):
     """
@@ -67,14 +93,36 @@ def oids_dispositivo(dispositivo, tipos='general'):
         oids = OIDS_GENERICO.copy()
         if metric and metric.codigos:
             oids.update(metric.codigos)  # metric.codigos ya es un dict de Python
+
+        # Atributos extras del dispositivo
+        if dispositivo.atributos_extra:
+            extra = (dispositivo.atributos_extra or {}).get('oids').get('general') or {}
+            oids.update(extra)
         return oids
+    
     elif tipos == 'puertos':
         oids = OIDS_PUERTOS_GENERICO.copy()
         if metric and metric.codigos:
             oids.update(metric.codigos)
+
+        # Atributos extras del dispositivo
+        if dispositivo.atributos_extra:
+            extra = (dispositivo.atributos_extra or {}).get('oids').get('puertos') or {}
+            oids.update(extra)
+        return oids
+
+    elif tipos == 'puertos_pon':
+        oids = {}
+        if metric and metric.codigos:
+            oids.update(metric.codigos)
+
+        # Atributos extras del dispositivo
+        if dispositivo.atributos_extra:
+            extra = (dispositivo.atributos_extra or {}).get('oids').get('puertos_pon') or {}
+            oids.update(extra)
         return oids
     
-    #print(oids)
+    #Default
     if metric and metric.codigos:
         return metric.codigos
     else:

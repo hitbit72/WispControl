@@ -26,17 +26,8 @@ from pysnmp.hlapi import (
 
 MODO_IPV4 = 0  # CommunityData(mpModel=0) mpModel=0 para SNMPv1, 1 para SNMPv2c
 
-OID_IF_DESCR = '1.3.6.1.2.1.2.2.1.2'
-OID_IF_OPER = '1.3.6.1.2.1.2.2.1.8'
-OID_IF_SPEED = '1.3.6.1.2.1.2.2.1.5'
-OID_IF_TYPE = '1.3.6.1.2.1.2.2.1.3' 
-
 EXCLUDE_PORT = ('lo','ubond','ubond0','lag','lag1','teql0','gre0','airview1')
-
-# IF_TYPE
-# 6 (ethernetCsmacd): Redes Ethernet estándar.
-# 24 (softwareLoopback): Interfaz virtual de bucle local (loopback).
-# 71 (ieee80211): Interfaces inalámbricas (Wi-Fi) en equipos D-Link antiguos o puntos
+EXCLUDE_PON_PORT = ('eth0','ubond','ubond0','lag','lag1','teql0','gre0','airview1')
 
 # ErrorStatus que significan "el OID no existe" (no fallo de comunicaciones).
 _FALTA_OID = ('nosuchname', 'nosuchobject', 'nosuchinstance')
@@ -247,12 +238,26 @@ def consultar_if_table(dispositivo, oids, modo='general'):
                 fila['estado'] = 'up' if fila['estado'] == '1' else 'down'
                 if fila.get('speed'):
                     if int(fila['speed']) > 100:
-                        fila['speed'] = int(fila['speed']) * 0.000001   # bps a Mbps
+                        #fila['speed'] = int(fila['speed']) * 0.000001   # bps a Mbps
+                        fila['speed'] = int(fila['speed']) / 1_000_000   # bps a Mbps
                     else:
                         fila['speed'] = 0
                 else:
                     fila['speed'] = 0
                 if fila['nombre'] in EXCLUDE_PORT:
+                    fila = {}
+
+            if modo == 'puertos_pon':
+                fila['estado'] = 'up' if fila['estado'] == '1' else 'down'
+                if fila.get('speed'):
+                    if int(fila['speed']) > 100:
+                        fila['speed'] = int(fila['speed']) / 1_000_000   # bps a Mbps
+                    else:
+                        fila['speed'] = 0
+                else:
+                    fila['speed'] = 0
+
+                if fila['nombre'] in EXCLUDE_PON_PORT:
                     fila = {}
 
             if fila:

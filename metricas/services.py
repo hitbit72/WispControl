@@ -59,6 +59,25 @@ def guardar_puertos(dispositivo, **datos):
             defaults=uData,
         )
 
+    if datos.get("puertos_pon"):
+        puertos = datos.get("puertos", [])
+        for puerto in puertos:
+            # update_or_create busca por los kwargs principales (dispositivo + nombre)
+            # y actualiza o establece los campos definidos en defaults.
+            uData = {
+                "estado": puerto["estado"],
+                "velocidad_mbps": puerto["speed"],
+            }
+            if not puerto["speed"]:
+                uData = {
+                    "estado": puerto["estado"],
+                }
+            #print(f' {puerto["nombre"]}: {uData}')
+            interfaz, created = Interfaz.objects.update_or_create(
+                dispositivo=dispositivo,
+                nombre=puerto["nombre"],
+                defaults=uData,
+            )
 
 def guarda_staciones_wifi(dispositivo, **datos):
     """ Guarda los datos básicos de los dispositivos 'Antena de cliente' """

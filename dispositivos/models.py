@@ -94,7 +94,7 @@ class Dispositivo(models.Model):
     atributos_extra = models.JSONField(
         default=dict, blank=True, null=True,
         verbose_name='Atributos adicionales',
-        help_text='Datos específicos de la marca/modelo que no aplican a todos los dispositivos.',
+        help_text='OIDs específicos de la marca/modelo que no aplican a todos los dispositivos.',
     )
     notas = models.TextField(blank=True)
 

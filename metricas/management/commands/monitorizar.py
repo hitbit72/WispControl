@@ -31,7 +31,8 @@ from dispositivos.models import Dispositivo
 from metricas import snmp_client
 from metricas.models import DeviceMetrics
 from metricas.oids import oids_dispositivo
-from metricas.services import evaluar_y_aplicar, guardar_metrica, guardar_puertos, guarda_staciones_wifi, guarda_estaciones_onu
+#from metricas.services import evaluar_y_aplicar, guardar_metrica, guardar_puertos, guarda_staciones_wifi, guarda_estaciones_onu
+from metricas import services
 
 # metrica OID -> campo del modelo (clave 'mem_total'/'mem_libre' -> ram).
 # modelo DeviceMetrics
@@ -115,6 +116,7 @@ class Command(BaseCommand):
 
         escalares = oids_dispositivo(dispositivo, 'general')
         escalares_puerto = oids_dispositivo(dispositivo, 'puertos')
+        escalares_puerto_pon = oids_dispositivo(dispositivo, 'puertos_pon')
 
         # Solo los dispositivos AP y OLT
         if dispositivo.tipo.clave == 'ap':
@@ -125,6 +127,7 @@ class Command(BaseCommand):
         try:
             resultado = snmp_client.consultar_escalares(dispositivo, escalares)
             puertos = snmp_client.consultar_if_table(dispositivo, escalares_puerto, 'puertos')
+            puertos_pon = snmp_client.consultar_if_table(dispositivo, escalares_puerto_pon, 'puertos')
             estaciones = snmp_client.consultar_if_table(dispositivo, escalares_st, 'wifi')
             onus = snmp_client.consultar_if_table(dispositivo, escalares_onu, 'onus')
             status = DeviceMetrics.Status.OK
@@ -134,7 +137,7 @@ class Command(BaseCommand):
             self.stdout.write(
                 self.style.ERROR(f'[{dispositivo.ip_gestion}] {exc}'))
             resultado = {}
-            puertos, estaciones, onus = [], [], []
+            puertos, puertos_pon, estaciones, onus = [], [], [], []
             mensaje = str(exc).lower()
             status = (
                 DeviceMetrics.Status.TIMEOUT
@@ -146,6 +149,7 @@ class Command(BaseCommand):
         #print(resultado)
         datos = self._construir_datos(dispositivo, resultado)
         datos['puertos'] = puertos
+        datos['puertos_pon'] = puertos_pon
         datos['estaciones'] = estaciones
         datos['onus'] = onus
         datos['status'] = status
@@ -156,16 +160,16 @@ class Command(BaseCommand):
         #print(f'Estaciones: {estaciones}')
 
         # guarda los datos en DeviceMetrics
-        metrica = guardar_metrica(dispositivo, **datos)
+        metrica = services.guardar_metrica(dispositivo, **datos)
         # Actualiza modelo de interfaz (puertos)
-        guardar_puertos(dispositivo, **datos)
+        services.guardar_puertos(dispositivo, **datos)
         # Actizalizar datos estaciones wifi y onus
-        guarda_staciones_wifi(dispositivo, **datos)     # <-- Datos wifi de ubiquiti
-        guarda_estaciones_onu(dispositivo, **datos)     # <-- Datos de ONU de OLT ubiquiti
+        services.guarda_staciones_wifi(dispositivo, **datos)     # <-- Datos wifi de ubiquiti
+        services.guarda_estaciones_onu(dispositivo, **datos)     # <-- Datos de ONU de OLT ubiquiti
         # evalua la alerta/alarma
-        evaluar_y_aplicar(dispositivo, metrica)
+        services.evaluar_y_aplicar(dispositivo, metrica)
         self.stdout.write(self.style.SUCCESS(
-            f'[{dispositivo.nombre}] {status}'))
+            f'[{dispositivo.nombre} {dispositivo.ip_gestion}] {status}'))
         return status == DeviceMetrics.Status.OK
 
     def _construir_datos(self, dispositivo, resultado):

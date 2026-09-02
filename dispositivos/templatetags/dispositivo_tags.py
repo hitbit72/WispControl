@@ -28,19 +28,26 @@ def timestamp_a_transcurrido(value):
 
 @register.filter
 def bps_a_mbps(value):
-    bps = "—"
-
     try:
-        if value:
-            value = int(value)
-            # Convierte bps a mbps (# 1bsp = 0,000001 mbps)
-            if value < 1000:
-                return value
-            bps = int(value) * 0.000001
-        return bps
-    
+        if not value:
+            return "—"
+
+        value = int(value)
+
+        if value < 1_000_000:
+            return f"{value} bps"
+
+        elif value < 1_000_000_000:
+            mbps = value / 1_000_000
+            return f"{mbps:.2f} Mbps"
+
+        else:
+            gbps = value / 1_000_000_000
+            return f"{gbps:.2f} Gbps"
+
     except (ValueError, TypeError):
         return "—"
+
 
 @register.filter
 def metros_a_km(value):
@@ -53,7 +60,7 @@ def metros_a_km(value):
             if value < 0:
                 return 0
             km = float(value) / 1000
-        return km
+        return f'{km} Km'
     
     except (ValueError, TypeError):
         return "—"

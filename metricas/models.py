@@ -34,8 +34,8 @@ class DeviceMetrics(models.Model):
     power = models.FloatField(null=True, blank=True, verbose_name='Potencia (W)')
     rx_dbm = models.FloatField(null=True, blank=True, verbose_name='Rx (dBm)')
     tx_dbm = models.FloatField(null=True, blank=True, verbose_name='Tx (dBm)')
-    rx = models.BigIntegerField(null=True, blank=True, verbose_name='Velocidad Rx (bps)')
-    tx = models.BigIntegerField(null=True, blank=True, verbose_name='Velocidad Tx (bps)')
+    rx = models.BigIntegerField(null=True, blank=True, verbose_name='Capacidad Rx (bps)')
+    tx = models.BigIntegerField(null=True, blank=True, verbose_name='Capacidad Tx (bps)')
     uptime = models.PositiveBigIntegerField(
         null=True, blank=True,
         verbose_name='Uptime (segundos)',
@@ -56,17 +56,24 @@ class DeviceMetrics(models.Model):
     puertos = models.JSONField(
         default=list, blank=True,
         verbose_name='Interfaces',
-        help_text='Lista JSON de {nombre, estado} de cada interfaz (estado: up/down).',
+        help_text='Lista JSON de de cada interfaz',
     )
+
+    puertos_pon = models.JSONField(
+        default=list, blank=True, null=True,
+        verbose_name='Puertos PON',
+        help_text='Lista JSON de interfaces PON.',
+    )
+
     estaciones = models.JSONField(
         default=list, blank=True, null=True,
         verbose_name='Estaciones',
-        help_text='Lista JSON de {ip, host, señal, ccq, noise, uptime} de cada estación.',
+        help_text='Lista JSON de {ip, host, señal, ccq, noise, uptime...} de cada estación.',
     )
     onus = models.JSONField(
         default=list, blank=True, null=True,
         verbose_name='Onus',
-        help_text='Lista JSON de {ref, señal, pon, port_speed, uptime} de cada ONU fibra.',
+        help_text='Lista JSON de {ref, señal, pon, port_speed, uptime...} de cada ONU fibra.',
     )
 
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.OK, verbose_name='Estado SNMP',)
@@ -135,6 +142,7 @@ class OIDmetric(models.Model):
     class Tipo(models.TextChoices):
         GENERAL = 'general', 'General'
         PUERTOS = 'puertos', 'Puertos'
+        PUERTOS_PON = 'puertos_pon', 'Puertos PON'
         WIFI = 'wifi', 'Estaciones WIFI'
         ONUS = 'onus', 'Estaciones ONU'
         COUNTER_WIFI = 'count_wifi', 'Contadores Estaciones'

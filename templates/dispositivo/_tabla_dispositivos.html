@@ -11,10 +11,13 @@
             <th>Tipo</th>
             <th>Sector</th>
             <th>Señal</th>
+            <th>Tx Rate</th>
+            <th>Rx Rate</th>
             <th></th>
         </tr>
     </thead>
     <tbody>
+        {% load dispositivo_tags %}
         {% for dispositivo in pagina %}
         <tr>
             <td style="width: 40px;">{% include "dispositivo/comun/estado.html" %}</td>
@@ -31,13 +34,15 @@
             <td>{{ dispositivo.tipo.nombre }}</td>
             <td>{% if dispositivo.sector %}<a href="{% url 'sectores:detalle' dispositivo.sector.pk %}">{{ dispositivo.sector.nombre }}</a>{% else %}—{% endif %}</td>
             <td>{% include "dispositivo/comun/_signal.html" %}</td>
+            <td>{{ dispositivo.metricas.all.0.tx|bps_a_mbps }} </td>
+            <td>{{ dispositivo.metricas.all.0.rx|bps_a_mbps }} </td>
             <td class="text-end">
                 <!-- <a href="{% url 'dispositivos:eliminar' dispositivo.pk %}" class="btn btn-sm btn-outline-danger">Eliminar</a> -->
                 <a href="{% url 'dispositivos:editar' dispositivo.pk %}" class="btn btn-sm btn-outline-primary">Editar</a>
             </td>
         </tr>
         {% empty %}
-        <tr><td colspan="9" class="text-center text-muted py-4">No se encontraron dispositivos.</td></tr>
+        <tr><td colspan="11" class="text-center text-muted py-4">No se encontraron dispositivos.</td></tr>
         {% endfor %}
     </tbody>
 </table>
