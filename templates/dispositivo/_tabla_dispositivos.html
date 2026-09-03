@@ -10,6 +10,7 @@
             <th>Modo</th>
             <th>Tipo</th>
             <th>Sector</th>
+            <th>SSID</th>
             <th>Señal</th>
             <th>Tx Rate</th>
             <th>Rx Rate</th>
@@ -33,6 +34,7 @@
             <td>{{ dispositivo.get_rol_display }}</td>
             <td>{{ dispositivo.tipo.nombre }}</td>
             <td>{% if dispositivo.sector %}<a href="{% url 'sectores:detalle' dispositivo.sector.pk %}">{{ dispositivo.sector.nombre }}</a>{% else %}—{% endif %}</td>
+            <td>{{ dispositivo.metricas.all.0.ssid|default:"—" }}</td>
             <td style="width: 30px; min-width:20px;">{% include "dispositivo/comun/_signal.html" %}</td>
             <td>{{ dispositivo.metricas.all.0.tx|format_bitrate }} </td>
             <td>{{ dispositivo.metricas.all.0.rx|format_bitrate }} </td>

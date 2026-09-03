@@ -151,10 +151,6 @@ def detalle_dispositivo(request, pk):
         pk=pk,
     )
 
-    # Obtiene la URL anterior, o asigna una ruta por defecto si no existe
-    #url_anterior = request.META.get('HTTP_REFERER', 'dispositivos/')
-    #url_anterior = http_ruta(url_anterior, 'dispositivos/')  # Cambia la ruta si es edicion
-
     # Capturamos la URL de redirección (si viene en el GET o en el POST)
     url_anterior = request.POST.get('next') or request.GET.get('next')
     

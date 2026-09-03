@@ -101,6 +101,7 @@ def guarda_staciones_wifi(dispositivo, **datos):
             'rx': estacion.get('rx_rate'),
             'tx': estacion.get('tx_rate'),
             'distancia': estacion.get('distancia'),
+            'uptime': estacion.get('uptime'),
             'ssid': ssid,
             'frequency': frequency,
         }

@@ -221,6 +221,8 @@ def consultar_if_table(dispositivo, oids, modo='general'):
                     fila['tx_rate'] = int(fila['tx_rate'])
                 if fila.get('distancia'):
                     fila['distancia'] = int(fila['distancia'])
+                if fila.get('uptime'):
+                    fila['uptime'] = int(fila['uptime'])
 
             if modo == 'onus':
                 if fila.get('signal'):

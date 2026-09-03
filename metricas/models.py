@@ -56,24 +56,24 @@ class DeviceMetrics(models.Model):
     puertos = models.JSONField(
         default=list, blank=True,
         verbose_name='Interfaces',
-        help_text='Lista JSON de de cada interfaz',
+        help_text='JSON de interfaz: {speed, estado, nombre, rx_counter, tx_counter}',
     )
 
     puertos_pon = models.JSONField(
         default=list, blank=True, null=True,
         verbose_name='Puertos PON',
-        help_text='Lista JSON de interfaces PON.',
+        help_text='JSON de interfaces PON: {speed, estado, nombre, rx_counter, tx_counter}',
     )
 
     estaciones = models.JSONField(
         default=list, blank=True, null=True,
         verbose_name='Estaciones',
-        help_text='Lista JSON de {ip, host, señal, ccq, noise, uptime...} de cada estación.',
+        help_text='JSON de estaciones: {ip, host, noise, signal, uptime, rx_rate, tx_rate, distancia}',
     )
     onus = models.JSONField(
         default=list, blank=True, null=True,
         verbose_name='Onus',
-        help_text='Lista JSON de {ref, señal, pon, port_speed, uptime...} de cada ONU fibra.',
+        help_text='JSON de ONUs: {pon, name, model, power, serial, signal}',
     )
 
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.OK, verbose_name='Estado SNMP',)
@@ -157,7 +157,7 @@ class OIDmetric(models.Model):
     codigos = models.JSONField(
         default=dict, blank=True, null=True,
         verbose_name='Códigos OID',
-        help_text='Códigos OID en formato JSon: {"uptime": "1.3.6.1.2.1.1.3.0",}<br>sys_name, sys_descr, cpu, ram, temperature, power, rx_dbm, tx_dbm, rx, tx, uptime, ssid, snr, ccq, signal, frequency, channel, noise, w_channel,antena, clients, puertos, status',
+        help_text='Códigos OID en formato JSon: {"uptime": "1.3.6.1.2.1.1.3.0",}<br>Consulte el modelo DeviceMetrics para los campos disponibles.',
     )
 
     class Meta:
