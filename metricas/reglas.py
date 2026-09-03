@@ -14,10 +14,11 @@ from .models import DeviceMetrics
 
 # Nivel Evento asociado a cada regla (fijo, no configurable).
 REGLA_NIVEL = {
-    'sin_respuesta': Evento.Nivel.CRITICAL,
-    'sin_respuesta_snmp': Evento.Nivel.CRITICAL,
+    'sin_respuesta': Evento.Nivel.WARNING,
+    'sin_respuesta_snmp': Evento.Nivel.WARNING,
     'onu_offline': Evento.Nivel.CRITICAL,
     'olt_sin_respuesta': Evento.Nivel.CRITICAL,
+    'ap_sin_respuesta': Evento.Nivel.CRITICAL,
     'cpu_alta': Evento.Nivel.ERROR,
     'temp_alta': Evento.Nivel.WARNING,
     'puerto_caido': Evento.Nivel.WARNING,

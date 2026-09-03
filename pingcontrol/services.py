@@ -135,6 +135,7 @@ def sincronizar_alarmas_ping(dispositivo, detectadas, error_msg):
         device=dispositivo, 
         tipo=Alarma.Tipo.PING,
         estado=Alarma.Estado.ACTIVA)
+    
     reglas_activas = dict(activas.values_list('regla', 'pk'))
     detectadas_dict = {a['regla']: a for a in detectadas}
     
@@ -171,7 +172,7 @@ def sincronizar_alarmas_ping(dispositivo, detectadas, error_msg):
             
         # Determinar nivel según la regla
         nivel = Evento.Nivel.CRITICAL if regla == 'ping_sin_respuesta' else Evento.Nivel.NOTICE
-        
+
         alarma, creada = Alarma.objects.get_or_create(
             device=dispositivo,
             regla=regla,

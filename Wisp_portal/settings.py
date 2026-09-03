@@ -201,7 +201,7 @@ METRICAS_ALARMAS = {
     'cambio_frecuencia': True,    # avisar si cambia la frecuencia del enlace
     'cambio_canal': True,         # avisar si cambia el canal
     'caida_potencia_dbm': 20.0,   # dBm de bajada de Rx que dispara la alarma
-    'caida_signal_dbm': 20.0,     # dBm de bajada de señal que dispara la alarma
+    'caida_signal_dbm': 10.0,     # dBm de bajada de señal que dispara la alarma
 }
 
 
