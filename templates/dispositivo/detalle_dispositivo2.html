@@ -1,12 +1,14 @@
 {% extends "base.html" %}
 {% block titulo %}{{ dispositivo.nombre }} · Portal WISP{% endblock %}
 {% block contenido %}
-<div class="d-flex justify-content-between align-items-start mb-3">
-    <div>
-        <h2 class="mb-0"><i class="bi bi-layout-wtf" aria-hidden="true"></i> {{ dispositivo.marca.nombre }} {{ dispositivo.marca.modelo }} · ({{ dispositivo.nombre }})</h2>
-        <div class="text-muted">
-            {{ dispositivo.tipo.nombre }} · {{ dispositivo.get_rol_display }} {% if dispositivo.sector %} · <a href="{% url 'sectores:detalle' dispositivo.sector.pk %}?next={{ request.path }}">{{ dispositivo.sector.nombre }}</a>{% endif %}
+{% load dispositivo_tags %}
+<div class="d-flex justify-content-between align-items-start mb-2">
+    <div class="row align-items-left">
+        <div class="col-md-12">
+            <h2 class="mb-1"><i class="bi bi-layout-wtf" aria-hidden="true"></i> ·  {{ dispositivo.nombre }}</h2>
         </div>
+        <div class="col"><h5>({{ dispositivo.marca.nombre }} {{ dispositivo.marca.modelo }})</h5></div>
+        <div class="text-muted"></div>
     </div>
     <div class="d-flex gap-2">
         <a href="{% url 'dispositivos:editar' dispositivo.pk %}" class="btn btn-primary">Editar</a>
@@ -19,12 +21,12 @@
     <div class="col-md-4">
         <div class="card h-100">
             <div class="card-body">
-                <h5 class="card-title">Datos del equipo</h5>
+                <!-- h5 class="card-title">Datos del equipo</h5 -->
                 <p class="mb-1"><strong>Estado:</strong>
                     {% include "dispositivo/comun/estado.html" %}
                 </p>
-                <p class="mb-1"><strong>Modo:</strong> {{ dispositivo.get_rol_display|default:"—" }}</p>
-                <p class="mb-1"><strong>IP de gestión:</strong> {{ dispositivo.ip_gestion|default:"—" }}</p>
+                <p class="mb-1"><strong>Modo:</strong> {{ dispositivo.tipo.nombre }} · {{ dispositivo.get_rol_display|default:"—" }}</p>
+                <p class="mb-1"><strong>IP de gestión:</strong> <a href="http://{{ dispositivo.ip_gestion|default:"—" }}" target="_blank">{{ dispositivo.ip_gestion|default:"—" }}</a></p>
                 {% if dispositivo.ip_publica %}<p class="mb-1"><strong>IP pública:</strong> {{ dispositivo.ip_publica }}</p>{% endif %}
                 <p class="mb-1"><strong>MAC:</strong> {{ dispositivo.mac_address|default:"—" }}</p>
                 <p class="mb-3"><strong>Firmware:</strong> {{ dispositivo.firmware_version|default:"—" }}</p>
@@ -33,20 +35,31 @@
                     action="{% url 'dispositivos:alternar_escaneo' dispositivo.pk %}" 
                     hx-trigger="input changed from:#id_scanear, change from:#id_alarmas" 
                     hx-push-url="true">
-                {% csrf_token %}
+                    {% csrf_token %}
                     <div x-data="{ metodo: '0'}">
                     <input type="hidden" id="id_scanear" name="id_scanear" x-model="metodo">
                     <div class="card h-100">
-                        <div class="card-body">
-                        <div class="row align-items-center">
+                        <div class="card">
+                        <div class="row text-center mb-2 mt-2" style="font-size: 0.75rem">
                             <div class="col">
-                                <strong>Escanear:</strong> <button class="btn btn-primary badge {% if dispositivo.escanear %}bg-success{% else %}bg-danger{% endif %}" type="submit" @click="metodo = '1'">{% if dispositivo.escanear %} On {% else %} Off {% endif %}</button>
+                                <div><label>Escanear</label></div>
+                                <button class="btn btn-primary badge {% if dispositivo.escanear %}bg-success{% else %}bg-danger{% endif %}" style="padding: 0.15rem 0.40rem;" type="submit" @click="metodo = '1'">{% if dispositivo.escanear %} On {% else %} Off {% endif %}</button>
                             </div>
                             <div class="col">
-                                <strong>Alarmas:</strong> <button class="btn btn-primary badge {% if dispositivo.alarma %}bg-success{% else %}bg-danger{% endif %}" type="submit" @click="metodo = '2'">{% if dispositivo.alarma %} On {% else %} Off {% endif %}</button>
+                                <div><label>Alarmas</label></div>
+                                <button class="btn btn-primary badge {% if dispositivo.alarma %}bg-success{% else %}bg-danger{% endif %}" style="padding: 0.15rem 0.40rem;" type="submit" @click="metodo = '2'">{% if dispositivo.alarma %} On {% else %} Off {% endif %}</button>
                             </div>
                             <div class="col">
-                                <strong>Puertos:</strong> <button class="btn btn-primary badge {% if dispositivo.alarma_puerto %}bg-success{% else %}bg-danger{% endif %}" type="submit" @click="metodo = '3'">{% if dispositivo.alarma_puerto %} On {% else %} Off {% endif %}</button>
+                                <div><label>Puertos</label></div>
+                                <button class="btn btn-primary badge {% if dispositivo.alarma_puerto %}bg-success{% else %}bg-danger{% endif %}" style="padding: 0.15rem 0.40rem;" type="submit" @click="metodo = '3'">{% if dispositivo.alarma_puerto %} On {% else %} Off {% endif %}</button>
+                            </div>
+                            <div class="col">
+                                <div><label>Ping</label></div>
+                                <button class="btn btn-primary badge {% if dispositivo.ping %}bg-success{% else %}bg-danger{% endif %}" style="padding: 0.15rem 0.40rem;" type="submit" @click="metodo = '4'">{% if dispositivo.ping %} On {% else %} Off {% endif %}</button>
+                            </div>
+                            <div class="col">
+                                <div><label>Alarma Ping</label></div>
+                                <button class="btn btn-primary badge {% if dispositivo.alarma_ping %}bg-success{% else %}bg-danger{% endif %}" style="padding: 0.15rem 0.40rem;" type="submit" @click="metodo = '5'">{% if dispositivo.alarma_ping %} On {% else %} Off {% endif %}</button>
                             </div>
                         </div>
                         </div>
@@ -60,13 +73,17 @@
     <div class="col-md-4">
         <div class="card h-100">
             <div class="card-body">
-                <h5 class="card-title">Ubicación</h5>
+                <!-- h5 class="card-title">Ubicación</h5 -->
                 <p class="mb-1"><strong>Fecha de instalación:</strong> {{ dispositivo.fecha_instalacion|default:"—" }}</p>
-                <p class="mb-1"><strong>Latitud:</strong> {{ dispositivo.latitud|default:"—" }}</p>
-                <p class="mb-0"><strong>Longitud:</strong> {{ dispositivo.longitud|default:"—" }}</p>
+                <p class="mb-1"><strong>Localización (lat/lon):</strong> {{ dispositivo.latitud|default:"—" }} / {{ dispositivo.longitud|default:"—" }}</p>
+                {% if dispositivo.sector %}
+                <p class="mb-1"><strong>Sector:</strong>
+                <a href="{% url 'sectores:detalle' dispositivo.sector.pk %}?next={{ request.path }}">{{ dispositivo.sector.nombre }}</a>{% endif %}</p>
                 {% if dispositivo.cliente %}
                 <p class="mb-1"><strong>Cliente:</strong> 
-                <a href="{% url 'clientes:detalle' dispositivo.cliente.pk %}?next={{ request.path }}">{{ dispositivo.cliente.nombre_completo }}</a></p>
+                <a href="{% url 'clientes:detalle' dispositivo.cliente.pk %}?next={{ request.path }}">{{ dispositivo.cliente.nombre_completo }}</a><br>
+                {{ dispositivo.cliente.direccion|default:"" }}
+                </p>
                 {% endif %}
             </div>
         </div>
@@ -74,6 +91,7 @@
     <div class="col-md-4">
         <div class="card h-100">
             <div class="card-body">
+                <!--
                 <div class="container" style="padding-left:0;">
                     <div class="row">
                         <div class="col text-start">
@@ -84,17 +102,58 @@
                         </div>
                     </div>
                 </div>
+                -->
                 {% if metricas %}
                   <div id="metricas">
-                    <p class="mb-2"><strong>CPU:</strong> {{ metricas.cpu|default:'0' }}%  ─  
-                    <strong>RAM:</strong> {{ metricas.ram|default:'0' }}%</p>
+                    <!-- p class="mb-2" -->
+                    <div class="row g-2 align-items-start mb-2">
+                        <div class="col-auto d-flex gap-1">
+                            <strong>CPU:</strong>
+                            <strong class="{% if metricas.cpu > 80 %}text-danger
+                            {% elif metricas.cpu <= 80 and metricas.cpu >= 70 %}text-warning
+                            {% else %}text-success{% endif %}"> {{ metricas.cpu|default:'0' }}%</strong>
+                        </div>
+                        <div class="col-auto d-flex gap-1">
+                            <strong> RAM:</strong>
+                            <strong class="{% if metricas.ram > 85 %}text-danger
+                            {% elif metricas.ram <= 85 and metricas.ram >= 75 %}text-warning
+                            {% else %}text-success{% endif %}"> {{ metricas.ram|default:'0' }}%</strong>
+                        </div>
+                    </div>
+                    <!-- /p -->
                     {% if metricas.sys_name %}<p class="mb-1"><strong>Nombre:</strong> {{ metricas.sys_name }}</p>{% endif %}
-                    {% if metricas.ssid %}<p class="mb-1"><strong>SSID:</strong> {{ metricas.ssid }}</p>{% endif %}
-                    {% if metricas.frequency %}<p class="mb-1"><strong>Frecuencia:</strong> {{ metricas.frequency }} MHz</p>{% endif %}
-                    {% if metricas.signal %}<p class="mb-1"><strong>Señal:</strong> {{ metricas.signal }} dbm</p>{% endif %}
-                    {% if metricas.power %}<p class="mb-1"><strong>Potencia:</strong> {{ metricas.power}} dbm</p>{% endif %}
-                    {% if metricas.ccq %}<p class="mb-1"><strong>CCQ:</strong> {{ metricas.ccq }}%</p>{% endif %}
-                    {% if metricas.antena %}<p class="mb-0"><strong>Antena:</strong> {{ metricas.antena }}%</p>{% endif %}
+                    {% if metricas.ssid %}
+                    <p class="mb-1"><strong>SSID:</strong> 
+                    {% if not dispositivo.tipo.clave == 'ap' %}
+                        <a href="{% url 'dispositivos:buscar_dispositivo'  metricas.ssid %}?next={{ request.path }}">{{ metricas.ssid }}
+                        {% if metricas.frequency %}{% endif %}
+                        </a> ({{ metricas.frequency }} MHz)
+                    {% else %}
+                        {{ metricas.ssid }}{% if metricas.frequency %} ({{ metricas.frequency }} MHz){% endif %}
+                    {% endif %}
+                    </p>
+                    {% endif %}
+                    <div class="row g-2 align-items-start mb-1">
+                        <div class="col-auto d-flex gap-1">
+                            <p class="mb-0"><strong>Señal:</strong> {{ metricas.signal|default:'0' }} dbm</p> · 
+                        </div>
+                        <div class="col-auto d-flex gap-1">
+                            <p class="mb-0"><strong>Potencia:</strong> {{ metricas.power|default:'0' }} dbm</p>
+                        </div>
+                    </div>
+                    <div class="row g-2 align-items-start mb-1">
+                        <div class="col-auto d-flex gap-1">
+                            <p class="mb-0"><strong>CCQ:</strong> {{ metricas.ccq|default:'0' }} %</p> · 
+                        </div>
+                        <div class="col-auto d-flex gap-1">
+                            <p class="mb-0"><strong>Latencia:</strong> {{ metricas.latencia|default:'0' }} ms</p>
+                        </div>  
+                    </div>
+                    {% if metricas.rx %}
+                    <p class="mb-1"><strong>Capacidad rx/tx:</strong> {{ metricas.rx|format_bitrate }} / {{ metricas.tx|format_bitrate }} </p>
+                    {% endif %}
+                    {% if metricas.uptime %}<p class="mb-1"><strong>Funcionando:</strong> {{ metricas.uptime|formatear_uptime }}</p>{% endif %}
+                    {% if metricas.timescan %}<p class="mb-0"><strong>Actualizado:</strong> {{ metricas.timescan }}</p>{% endif %}
                   </div>
                 {% endif %}
             </div>
@@ -102,113 +161,28 @@
     </div>
 </div>
 
-{% if dispositivo.atributos_extra %}
-<div class="alert alert-light border mb-2">{{ dispositivo.atributos_extra|linebreaks }}</div>
-{% endif %}
-
 {% if dispositivo.notas %}
 <div class="alert alert-light border mb-2">{{ dispositivo.notas|linebreaks }}</div>
 {% endif %}
 </section>
+
+{% if metricas.estaciones %}
+<section class="panel mt-1">
+<div class="d-flex justify-content-between align-items-center mb-2">
+    <h4 class="mb-0"><i class="bi bi-wifi" aria-hidden="true"></i> Estaciones conectadas ({{ metricas.clients }})</h4>
+</div>
+{% include "dispositivo/_tabla_estaciones2.html" %}
+</section>
+{% endif %}
+
+
 
 <section class="panel mt-1">
 <div class="d-flex justify-content-between align-items-center mb-2">
     <h4 class="mb-0"><i class="bi bi-ethernet" aria-hidden="true"></i> Interfaces</h4>
     <a href="{% url 'dispositivos:nueva_interfaz' dispositivo.pk %}" class="btn btn-primary btn-sm">+ Nueva interfaz</a>
 </div>
-
-<div id="tabla-iface" class="table-responsive">
-<table class="table table-hover align-middle" id="ifaceTable">
-    <thead>
-        <tr>
-            <th>Nombre</th>
-            <th>Tipo</th>
-            <th>Estado</th>
-            <th>IP</th>
-            <th>MAC</th>
-            <th>Velocidad</th>
-            <th></th>
-        </tr>
-    </thead>
-        {% for interfaz in dispositivo.interfaces.all %}
-        <tr>
-            <td>{{ interfaz.nombre }}</td>
-            <td>{{ interfaz.get_tipo_display }}</td>
-            <td>
-                <span class="badge
-                    {% if interfaz.estado == 'up' %}bg-success
-                    {% elif interfaz.estado == 'down' %}bg-danger
-                    {% else %}bg-secondary{% endif %}">
-                    {{ interfaz.get_estado_display }}
-                </span>
-            </td>
-            <td>{{ interfaz.ip_address|default:"—" }}</td>
-            <td>{{ interfaz.mac_address|default:"—" }}</td>
-            <td>{% firstof interfaz.velocidad_mbps "—" %} {% if interfaz.velocidad_mbps %}Mbps{% endif %}</td>
-            <td class="text-end">
-                <a href="{% url 'dispositivos:editar_interfaz' interfaz.pk %}" class="btn btn-sm btn-outline-primary">Editar</a>
-                <a href="{% url 'dispositivos:eliminar_interfaz' interfaz.pk %}" class="btn btn-sm btn-outline-danger">Eliminar</a>
-            </td>
-        </tr>
-        {% empty %}
-        <tr><td colspan="7" class="text-center text-muted py-3">Este dispositivo no tiene interfaces.</td></tr>
-        {% endfor %}
-    </tbody>
-</table>
-</div>
-</section>
-
-<section class="panel mt-1">
-<div class="d-flex justify-content-between align-items-center mb-2">
-    <h4 class="mb-0"><i class="bi bi-arrows" aria-hidden="true"></i> Enlaces</h4>
-    <a href="{% url 'dispositivos:nuevo_enlace' dispositivo.pk %}" class="btn btn-primary btn-sm">+ Nuevo enlace</a>
-</div>
-
-<div id="tabla-enlace" class="table-responsive">
-<table class="table table-hover align-middle" id="enlaceTable">
-    <thead>
-        <tr>
-            <th>Desde</th>
-            <th>Hacia</th>
-            <th>Tipo</th>
-            <th>Ancho de banda</th>
-            <th>Distancia</th>
-            <th>Frecuencia</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for enlace in enlaces %}
-        <tr>
-            <td>
-                {% if enlace.dispositivo_origen.pk == dispositivo.pk %}
-                <strong>{{ enlace.dispositivo_origen.nombre }}</strong> · ({{ enlace.dispositivo_origen.ip_gestion|default:"—" }})
-                {% else %}
-                <a href="{% url 'dispositivos:detalle' enlace.dispositivo_origen.pk %}">{{ enlace.dispositivo_origen.nombre }} · ({{ enlace.dispositivo_origen.ip_gestion|default:"—" }})</a>
-                {% endif %}
-            </td>
-            <td>
-                {% if enlace.dispositivo_destino.pk == dispositivo.pk %}
-                <strong>{{ enlace.dispositivo_destino.nombre }}</strong> · ({{ enlace.dispositivo_destino.ip_gestion|default:"—" }})
-                {% else %}
-                <a href="{% url 'dispositivos:detalle' enlace.dispositivo_destino.pk %}">{{ enlace.dispositivo_destino.nombre }} · ({{ enlace.dispositivo_destino.ip_gestion|default:"—" }})</a>
-                {% endif %}
-            </td>
-            <td>{{ enlace.get_tipo_display }}</td>
-            <td>{% if enlace.ancho_banda_mbps %}{{ enlace.ancho_banda_mbps }} Mbps{% else %}—{% endif %}</td>
-            <td>{% if enlace.distancia_km %}{{ enlace.distancia_km }} km{% else %}—{% endif %}</td>
-            <td>{% if enlace.frecuencia_ghz %}{{ enlace.frecuencia_ghz }} GHz{% else %}—{% endif %}</td>
-            <td class="text-end">
-                <a href="{% url 'dispositivos:editar_enlace' enlace.pk %}" class="btn btn-sm btn-outline-primary">Editar</a>
-                <a href="{% url 'dispositivos:eliminar_enlace' enlace.pk %}" class="btn btn-sm btn-outline-danger">Eliminar</a>
-            </td>
-        </tr>
-        {% empty %}
-        <tr><td colspan="7" class="text-center text-muted py-3">Este dispositivo no tiene enlaces.</td></tr>
-        {% endfor %}
-    </tbody>
-</table>
-</div>
+{% include "dispositivo/interfaz/_tabla_interfaz.html" %}
 </section>
 
 <div style="margin-top: 0.5rem;">

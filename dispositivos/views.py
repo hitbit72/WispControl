@@ -147,7 +147,7 @@ def nuevo_dispositivo(request, pk=0):
 @login_required
 def detalle_dispositivo(request, pk):
     dispositivo = get_object_or_404(
-        Dispositivo.objects.prefetch_related('interfaces', 'enlaces_origen', 'enlaces_destino'),
+        Dispositivo.objects.prefetch_related('interfaces', 'enlaces_origen', 'enlaces_destino', 'metricas'),
         pk=pk,
     )
 
@@ -155,11 +155,8 @@ def detalle_dispositivo(request, pk):
     url_anterior = request.POST.get('next') or request.GET.get('next')
     
     # cargar las metrcias del dispositivo
-    metricas = DeviceMetrics.objects.filter(device=dispositivo).first()
-   
-    # procesar los datos tipo json antes de enviarlos a la platilla
-    #if isinstance(metricas.puertos, str):
-    #    metricas.puertos = json.loads(metricas.puertos)
+    #metricas = DeviceMetrics.objects.filter(device=dispositivo).first()
+    metricas = dispositivo.metricas.first()  # Obtener la primera métrica asociada al dispositivo
 
     enlaces = sorted(
         (*dispositivo.enlaces_origen.all(), *dispositivo.enlaces_destino.all()),
@@ -167,6 +164,33 @@ def detalle_dispositivo(request, pk):
     )
 
     return render(request, 'dispositivo/detalle_dispositivo.html', {
+        'dispositivo': dispositivo,
+        'enlaces': enlaces,
+        'metricas': metricas,
+        'url_anterior': url_anterior,
+    })
+
+
+@login_required
+def detalle_dispositivo2(request, pk):
+    dispositivo = get_object_or_404(
+        Dispositivo.objects.prefetch_related('interfaces', 'enlaces_origen', 'enlaces_destino', 'metricas'),
+        pk=pk,
+    )
+
+    # Capturamos la URL de redirección (si viene en el GET o en el POST)
+    url_anterior = request.POST.get('next') or request.GET.get('next')
+    
+    # cargar las metrcias del dispositivo
+    #metricas = DeviceMetrics.objects.filter(device=dispositivo).first()
+    metricas = dispositivo.metricas.first()  # Obtener la primera métrica asociada al dispositivo
+
+    enlaces = sorted(
+        (*dispositivo.enlaces_origen.all(), *dispositivo.enlaces_destino.all()),
+        key=lambda e: e.pk,
+    )
+
+    return render(request, 'dispositivo/detalle_dispositivo2.html', {
         'dispositivo': dispositivo,
         'enlaces': enlaces,
         'metricas': metricas,

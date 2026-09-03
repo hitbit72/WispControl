@@ -26,8 +26,8 @@ from pysnmp.hlapi import (
 
 MODO_IPV4 = 0  # CommunityData(mpModel=0) mpModel=0 para SNMPv1, 1 para SNMPv2c
 
-EXCLUDE_PORT = ('lo','ubond','ubond0','lag','lag1','teql0','gre0','airview1')
-EXCLUDE_PON_PORT = ('eth0','ubond','ubond0','lag','lag1','teql0','gre0','airview1')
+EXCLUDE_PORT = ('lo','ubond','lag','teql','gre','airview','rif','802.1Q','system','encapsulation')
+EXCLUDE_PON_PORT = ('eth0','ubond','lag','teql','gre','airview')
 
 # ErrorStatus que significan "el OID no existe" (no fallo de comunicaciones).
 _FALTA_OID = ('nosuchname', 'nosuchobject', 'nosuchinstance')
@@ -151,118 +151,123 @@ def _escalares_uno_a_uno(engine, auth, transporte, contexto, oids):
     return resultado
 
 
-
 def consultar_if_table(dispositivo, oids, modo='general'):
 
-    if not oids:
-        return []
-    #print(f"Total OIDs a consultar: {len(oids)}")
-    #print(oids)
+    try:
+        if not oids:
+            return []
+        #print(f"Total OIDs a consultar: {len(oids)}")
+        #print(oids)
 
-    # Consulta las staciones conectadas a un AP o una OLT
-    conf = _conf_snmp(dispositivo)
-    comunidad = dispositivo.snmp_community or 'public'
-    comunity = _auth(comunidad)
-    engine = SnmpEngine()
-    transporte = _trasporte(dispositivo.ip_gestion, conf)
-    contexto = ContextData()
-    estaciones = []
-    #print(modo)
-    
-    # 1. Separar claves ("host", "signal"...) y valores OID ("1.3.6.1...")
-    nombres_metricas = list(oids.keys())
-    objetos_snmp = [ObjectType(ObjectIdentity(oid)) for oid in oids.values()]
-    #if modo == 'wifi':
-    #    print('WIFI:')
-    #    print(objetos_snmp)
+        # Consulta las staciones conectadas a un AP o una OLT
+        conf = _conf_snmp(dispositivo)
+        comunidad = dispositivo.snmp_community or 'public'
+        comunity = _auth(comunidad)
+        engine = SnmpEngine()
+        transporte = _trasporte(dispositivo.ip_gestion, conf)
+        contexto = ContextData()
+        estaciones = []
+        #print(f'{modo} - {dispositivo.ip_gestion}')
+        
+        # 1. Separar claves ("host", "signal"...) y valores OID ("1.3.6.1...")
+        nombres_metricas = list(oids.keys())
+        objetos_snmp = [ObjectType(ObjectIdentity(oid)) for oid in oids.values()]
+        #if modo == 'puertos' and dispositivo.ip_gestion == '192.168.25.150':
+        #    print(oids)
+        #    print('----------------------')
+        #    print(objetos_snmp)
 
-    # Usamos nextCmd para hacer un walk sobre las 3 columnas simultáneamente
-    for errorIndication, errorStatus, errorIndex, varBinds in nextCmd(
-        engine,
-        comunity,
-        transporte,
-        contexto,
-        *objetos_snmp,  # <-- Pasa todas las columnas juntas
-        lexicographicMode=False,
-    ):
-        if errorIndication:
-            print(f"Error de conexión (Modo: {modo}): {errorIndication}")
-            print(f'ip: {dispositivo.ip_gestion}')
-            break
-        elif errorStatus:
-            print(f"Error SNMP (Modo: {modo}): {errorStatus.prettyPrint()}")
-            break
-        elif errorIndex:
-            print(f"Error SNMP index (Modo: {modo}): {errorIndex}")
-            break
-        else:
-            fila = {}
-            # varBinds coincide 1 a 1 en orden con nombres_metricas
-            for i, varBind in enumerate(varBinds):
-                oid_respuesta, valor = varBind
+        # Usamos nextCmd para hacer un walk sobre las 3 columnas simultáneamente
+        for errorIndication, errorStatus, errorIndex, varBinds in nextCmd(
+            engine,
+            comunity,
+            transporte,
+            contexto,
+            *objetos_snmp,  # <-- Pasa todas las columnas juntas
+            lexicographicMode=False,
+        ):
+            if errorIndication:
+                print(f"Error de conexión (Modo: {modo}): {errorIndication}")
+                #print(f'ip: {dispositivo.ip_gestion}')
+                break
+            elif errorStatus:
+                print(f"Error SNMP (Modo: {modo}): {errorStatus.prettyPrint()}")
+                break
+            elif errorIndex:
+                print(f"Error SNMP index (Modo: {modo}): {errorIndex}")
+                break
+            else:
+                fila = {}
+                # varBinds coincide 1 a 1 en orden con nombres_metricas
+                for i, varBind in enumerate(varBinds):
+                    oid_respuesta, valor = varBind
 
-                nombre_clave = nombres_metricas[i]
-                # Convertimos el valor a string limpia
-                fila[nombre_clave] = valor.prettyPrint()
+                    nombre_clave = nombres_metricas[i]
+                    # Convertimos el valor a string limpia
+                    fila[nombre_clave] = valor.prettyPrint()
 
-            if modo == 'wifi':
-                #print(f'scan wifi {dispositivo.ip_gestion}')
-                if fila.get('signal'):
-                    fila['signal'] = int(fila['signal'])
-                if fila.get('ccq'):
-                    fila['ccq'] = int(fila['ccq'])
-                    if fila['ccq'] > 0:                  # error de los LiteAP AC, mustra siempre 333 = 33,3
-                        fila['ccq'] = fila['ccq'] / 10
-                if fila.get('noise'):
-                    fila['noise'] = int(fila['noise'])
-                if fila.get('rx_rate'):
-                    fila['rx_rate'] = int(fila['rx_rate'])
-                if fila.get('tx_rate'):
-                    fila['tx_rate'] = int(fila['tx_rate'])
-                if fila.get('distancia'):
-                    fila['distancia'] = int(fila['distancia'])
-                if fila.get('uptime'):
-                    fila['uptime'] = int(fila['uptime'])
+                if modo == 'wifi':
+                    #print(f'scan wifi {dispositivo.ip_gestion}')
+                    if fila.get('signal'):
+                        fila['signal'] = int(fila['signal'])
+                    if fila.get('ccq'):
+                        fila['ccq'] = int(fila['ccq'])
+                        if fila['ccq'] > 100:                  # error de los LiteAP AC, mustra siempre 333 = 33,3
+                            fila['ccq'] = fila['ccq'] / 10
+                    if fila.get('noise'):
+                        fila['noise'] = int(fila['noise'])
+                    if fila.get('rx_rate'):
+                        fila['rx_rate'] = int(fila['rx_rate'])
+                    if fila.get('tx_rate'):
+                        fila['tx_rate'] = int(fila['tx_rate'])
+                    if fila.get('distancia'):
+                        fila['distancia'] = int(fila['distancia'])
+                    if fila.get('uptime'):
+                        fila['uptime'] = int(fila['uptime'])
 
-            if modo == 'onus':
-                if fila.get('signal'):
-                    fila['signal'] = int(fila['signal'])
-                    if fila['signal'] < 0:
-                        fila['signal']=fila['signal']/100
-                if fila.get('power'):
-                    fila['power'] = int(fila['power'])
-                    if fila['power'] > 0:
-                        fila['power']=fila['power']/100
+                if modo == 'onus':
+                    if fila.get('signal'):
+                        fila['signal'] = int(fila['signal'])
+                        if fila['signal'] < 0:
+                            fila['signal']=fila['signal']/100
+                    if fila.get('power'):
+                        fila['power'] = int(fila['power'])
+                        if fila['power'] > 0:
+                            fila['power']=fila['power']/100
 
-            # formatear el estado del interfaz
-            if modo == 'puertos':
-                #print(fila)
-                fila['estado'] = 'up' if fila['estado'] == '1' else 'down'
-                if fila.get('speed'):
-                    if int(fila['speed']) > 1000:
-                        #fila['speed'] = int(fila['speed']) * 0.000001   # bps a Mbps
-                        fila['speed'] = int(fila['speed']) / 1_000_000   # bps a Mbps
+                # formatear el estado del interfaz
+                if modo == 'puertos':
+                    #print(fila)
+                    fila['estado'] = 'up' if fila['estado'] == '1' else 'down'
+                    if fila.get('speed'):
+                        if int(fila['speed']) > 1000:
+                            #fila['speed'] = int(fila['speed']) * 0.000001   # bps a Mbps
+                            fila['speed'] = int(fila['speed']) / 1_000_000   # bps a Mbps
+                        else:
+                            fila['speed'] = 0
                     else:
                         fila['speed'] = 0
-                else:
-                    fila['speed'] = 0
-                if fila['nombre'] in EXCLUDE_PORT:
-                    fila = {}
+                    #if fila['nombre'] in EXCLUDE_PORT:
+                    if any(exclude.lower() in fila['nombre'].lower() for exclude in EXCLUDE_PORT):
+                        fila = {}
 
-            if modo == 'puertos_pon':
-                fila['estado'] = 'up' if fila['estado'] == '1' else 'down'
-                if fila.get('speed'):
-                    if int(fila['speed']) > 100:
-                        fila['speed'] = int(fila['speed']) / 1_000_000   # bps a Mbps
+                if modo == 'puertos_pon':
+                    fila['estado'] = 'up' if fila['estado'] == '1' else 'down'
+                    if fila.get('speed'):
+                        if int(fila['speed']) > 100:
+                            fila['speed'] = int(fila['speed']) / 1_000_000   # bps a Mbps
+                        else:
+                            fila['speed'] = 0
                     else:
                         fila['speed'] = 0
-                else:
-                    fila['speed'] = 0
 
-                if fila['nombre'] in EXCLUDE_PON_PORT:
-                    fila = {}
+                    #if fila['nombre'] in EXCLUDE_PON_PORT:
+                    if any(exclude.lower() in fila['nombre'].lower() for exclude in EXCLUDE_PORT):
+                        fila = {}
 
-            if fila:
-                estaciones.append(fila)
-
+                if fila:
+                    estaciones.append(fila)
+    except Exception as e:
+        print(f"Error al consultar {dispositivo.ip_gestion} (Modo: {modo}): {e}")
+ 
     return estaciones

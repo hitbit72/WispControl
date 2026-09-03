@@ -113,23 +113,30 @@ class Command(BaseCommand):
         # Cargar los códigos OID para cada tipo de escaneo
         escalares_st = {}
         escalares_onu = {}
+        escalares_puerto_pon = {}
+        puertos, puertos_pon, estaciones, onus = [], [], [], []
 
         escalares = oids_dispositivo(dispositivo, 'general')
         escalares_puerto = oids_dispositivo(dispositivo, 'puertos')
-        escalares_puerto_pon = oids_dispositivo(dispositivo, 'puertos_pon')
 
         # Solo los dispositivos AP y OLT
         if dispositivo.tipo.clave == 'ap':
             escalares_st = oids_dispositivo(dispositivo, 'wifi')
         if dispositivo.tipo.clave == 'olt':
+            escalares_puerto_pon = oids_dispositivo(dispositivo, 'puertos_pon')
             escalares_onu = oids_dispositivo(dispositivo, 'onus')
         
         try:
             resultado = snmp_client.consultar_escalares(dispositivo, escalares)
             puertos = snmp_client.consultar_if_table(dispositivo, escalares_puerto, 'puertos')
-            puertos_pon = snmp_client.consultar_if_table(dispositivo, escalares_puerto_pon, 'puertos')
-            estaciones = snmp_client.consultar_if_table(dispositivo, escalares_st, 'wifi')
-            onus = snmp_client.consultar_if_table(dispositivo, escalares_onu, 'onus')
+            #print('Puertos Ok')
+            if escalares_st:
+                estaciones = snmp_client.consultar_if_table(dispositivo, escalares_st, 'wifi')
+                #print('Estaciones Ok')
+            if escalares_puerto_pon:
+                puertos_pon = snmp_client.consultar_if_table(dispositivo, escalares_puerto_pon, 'puertos')
+            if escalares_onu:
+                onus = snmp_client.consultar_if_table(dispositivo, escalares_onu, 'onus')
             status = DeviceMetrics.Status.OK
             #print(escalares_st)
 
