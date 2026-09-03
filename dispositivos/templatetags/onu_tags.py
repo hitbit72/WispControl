@@ -14,8 +14,9 @@ def find_onu(serial, cliente, current_path=None):
     # Se podria usar la función 'find_station', cambiandola a @register.simple_tag,
     # y añadiendo un parametro más como tipo='wifi o onu'
 
+    html = f'<td>—</td><td>{cliente}</td>'
     if not serial:
-        return mark_safe('<td>—</td><td>—</td>')
+        return mark_safe(html)
 
     ip=serial
     dispositivo = Dispositivo.objects.filter(onu_ref=serial).first()

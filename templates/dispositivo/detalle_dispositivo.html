@@ -152,6 +152,7 @@
                     {% if metricas.rx %}
                     <p class="mb-1"><strong>Capacidad rx/tx:</strong> {{ metricas.rx|format_bitrate }} / {{ metricas.tx|format_bitrate }} </p>
                     {% endif %}
+                    {% if metricas.uptime %}<p class="mb-1"><strong>Funcionando:</strong> {{ metricas.uptime|formatear_uptime }}</p>{% endif %}
                     {% if metricas.timescan %}<p class="mb-0"><strong>Actualizado:</strong> {{ metricas.timescan }}</p>{% endif %}
                   </div>
                 {% endif %}

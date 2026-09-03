@@ -1,6 +1,6 @@
 from django import template
 from django.utils import timezone
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.urls import reverse
 from django.utils.safestring import mark_safe  # <-- Importa esto
 from urllib.parse import urlencode # Para formatear correctamente la URL
@@ -24,6 +24,40 @@ def timestamp_a_transcurrido(value):
         return f"{dias} días, {horas} horas y {minutos} minutos"
     except (ValueError, TypeError):
         return "Fecha no válida"
+
+
+@register.filter
+def formatear_uptime(uptime_val):
+    """
+    Convierte timeticks de SNMP (centésimas de segundo)
+    a formato ejecutable HH:MM:SS o días HH:MM:SS.
+    """
+    if not uptime_val:
+        return "00:00:00"
+
+    horas = 0
+    minutos = 0
+    segundos = 0
+
+    # Convertir a entero y a segundos reales
+    total_segundos = int(uptime_val) // 100
+
+    # timedelta calcula días, horas, minutos y segundos automáticamente
+    tiempo = timedelta(seconds=total_segundos)
+
+    # Extraer componentes
+    dias = tiempo.days
+    horas, rem = divmod(tiempo.seconds, 3600)
+
+    #minutos, segundos = divmod(rem, 3600 % 60)
+    # CORRECCIÓN: Dividir 'rem' entre 60 directamente
+    minutos, segundos = divmod(rem, 60)
+
+    # Formato corto si tiene días: "175d 15:33:00" | Formato largo si no: "15:33:00"
+    if dias > 0:
+        return f"{dias}d {horas:02d}:{minutos:02d}:{segundos:02d}"
+    
+    return f"{horas:02d}:{minutos:02d}:{segundos:02d}"
 
 
 @register.filter
