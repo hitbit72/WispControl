@@ -155,30 +155,30 @@ def _escalares_uno_a_uno(engine, auth, transporte, contexto, oids):
 
 def consultar_if_table(dispositivo, oids, modo='general'):
 
+    if not oids:
+        return []
+    #print(f"Total OIDs a consultar: {len(oids)}")
+    #print(oids)
+
+    # Consulta las staciones conectadas a un AP o una OLT
+    conf = _conf_snmp(dispositivo)
+    comunidad = dispositivo.snmp_community or 'public'
+    comunity = _auth(comunidad)
+    engine = SnmpEngine()
+    transporte = _trasporte(dispositivo.ip_gestion, conf)
+    contexto = ContextData()
+    estaciones = []
+    #print(f'{modo} - {dispositivo.ip_gestion}')
+    
+    # 1. Separar claves ("host", "signal"...) y valores OID ("1.3.6.1...")
+    nombres_metricas = list(oids.keys())
+    objetos_snmp = [ObjectType(ObjectIdentity(oid)) for oid in oids.values()]
+    #if modo == 'puertos' and dispositivo.ip_gestion == '192.168.25.150':
+    #    print(oids)
+    #    print('----------------------')
+    #    print(objetos_snmp)
+
     try:
-        if not oids:
-            return []
-        #print(f"Total OIDs a consultar: {len(oids)}")
-        #print(oids)
-
-        # Consulta las staciones conectadas a un AP o una OLT
-        conf = _conf_snmp(dispositivo)
-        comunidad = dispositivo.snmp_community or 'public'
-        comunity = _auth(comunidad)
-        engine = SnmpEngine()
-        transporte = _trasporte(dispositivo.ip_gestion, conf)
-        contexto = ContextData()
-        estaciones = []
-        #print(f'{modo} - {dispositivo.ip_gestion}')
-        
-        # 1. Separar claves ("host", "signal"...) y valores OID ("1.3.6.1...")
-        nombres_metricas = list(oids.keys())
-        objetos_snmp = [ObjectType(ObjectIdentity(oid)) for oid in oids.values()]
-        #if modo == 'puertos' and dispositivo.ip_gestion == '192.168.25.150':
-        #    print(oids)
-        #    print('----------------------')
-        #    print(objetos_snmp)
-
         # Usamos nextCmd para hacer un walk sobre las 3 columnas simultáneamente
         for errorIndication, errorStatus, errorIndex, varBinds in nextCmd(
             engine,
