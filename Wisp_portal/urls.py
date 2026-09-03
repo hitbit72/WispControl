@@ -2,8 +2,15 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 
+
+admin.site.site_header = "InforCEM"
+admin.site.index_title = "Panel de administrador"
+admin.site.site_title = "InforCEM"
+
 urlpatterns = [
     path('', include('accounts.urls')),
+    # path de auth
+    path('accounts/', include('django.contrib.auth.urls')),  # Manejo de autenticación
     path('admin/', admin.site.urls),
     path('mikrotik/', include('mikrotik.urls')),
     path('sectores/', include('sector.urls')),
@@ -12,7 +19,7 @@ urlpatterns = [
     path('clientes/', include('clientes.urls')),
 ]
 
-# Manejo de archivos estáticos media en modo de desarrollo
+# Manejo de archivos estáticos en modo de desarrollo
 # En un entorno de producción no es necesario, ya que se manejan de forma diferente.
 if settings.DEBUG:
     from django.conf.urls.static import static

@@ -11,18 +11,6 @@ from django.conf import settings
 from dispositivos.models import Marca
 from metricas.models import OIDmetric
 
-"""
-
-Clientes del AP AirMax (M5/Rocket)
-{"ip": "1.3.6.1.4.1.41112.1.4.7.1.10.1", 
-"ccq": "1.3.6.1.4.1.41112.1.4.7.1.6.1", 
-"host": "1.3.6.1.4.1.41112.1.4.7.1.2.1", 
-"noise": "1.3.6.1.4.1.41112.1.4.7.1.4.1", 
-"signal": "1.3.6.1.4.1.41112.1.4.7.1.3.1", 
-"mac": "1.3.6.1.4.1.41112.1.4.7.1.1.1", 
-"rx_rate": "1.3.6.1.4.1.41112.1.4.7.1.11.1", 
-"tx_rate": "1.3.6.1.4.1.41112.1.4.7.1.12.1"}
-"""
 
 OIDS_MIKROTIK = {
     'cpu': '1.3.6.1.4.1.14988.1.1.1.2.1.1.0',      # mtikSystemCpu (%)

@@ -674,6 +674,10 @@ html[data-theme="dark"] .profile-button .avatar-sm {
   --bs-table-bg: transparent;
 }
 
+.table>:not(caption)>*>* {
+  padding: .4rem .4rem;
+}
+
 .table thead th {
   color: var(--admin-muted);
   font-size: 0.78rem;
