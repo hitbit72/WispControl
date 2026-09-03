@@ -102,7 +102,7 @@ def consultar_escalares(dispositivo, oids):
     #print(transporte)
     #print(comunidad)
     #print(oids)
-    
+
     error_ind, error_st, error_idx, var_binds = next(
         getCmd(
             engine, _auth(comunidad), transporte, contexto,
@@ -129,6 +129,8 @@ def consultar_escalares(dispositivo, oids):
             continue
         resultado[metrica] = (_valor_numero(valor), texto)
     return resultado
+
+
 
 def _escalares_uno_a_uno(engine, auth, transporte, contexto, oids):
     #print('escalares_uno_a_uno')
