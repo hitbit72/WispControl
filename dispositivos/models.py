@@ -73,6 +73,8 @@ class Dispositivo(models.Model):
                                 related_name='dispositivos',)
     onu_ref = models.CharField(max_length=100, unique=True, null=True, blank=True, verbose_name='Numero de Serie ONU', 
                                help_text='Identificador del equipo ONU',)
+
+    frequency = models.FloatField(null=True, blank=True, verbose_name='Frecuencia (MHz)')
     ip_gestion = models.GenericIPAddressField(null=True, blank=True, verbose_name='IP de gestión')
     ip_publica = models.GenericIPAddressField(null=True, blank=True, verbose_name='IP pública')
     mac_address = models.CharField(max_length=17, blank=True, verbose_name='Dirección MAC')

@@ -166,12 +166,6 @@ def evaluar_y_aplicar(dispositivo, metrica, anterior):
         #print('Proccesando activas')
         #print(activas)
         resultados = _sincronizar_alarmas(dispositivo, activas)
-
-    # ATENCION: 
-    # _actualizar_estado esta desactivado
-    # Activar y desactivar dispositivos lo administra el modulo ping, aquí solo se muetra la alerta
-    #_actualizar_estado(dispositivo, activas) 
-
     return resultados
 
 
@@ -229,34 +223,3 @@ def _sincronizar_alarmas(dispositivo, detectadas):
         )
         resultados['nuevas'].append(alarma)
     return resultados
-
-
-# ATENCION: 
-# _actualizar_estado esta desactivado
-def _actualizar_estado(dispositivo, detectadas):
-    """ Pasa a 'inactivo' cuando hay una regla que marca el dispositivo y
-    vuelve a 'activo' cuando las reglas se normalizan. Solo se tocan los
-    estados operativos 'activo'/'inactivo' (mantenimiento, instalación,
-    retirado quedan intactos). """
-    if dispositivo.estado not in (Dispositivo.Estado.ACTIVO, Dispositivo.Estado.INACTIVO):
-        return
-    inactivo = any(a['regla'] in REGLA_INACTIVO for a in detectadas)
-
-    if inactivo and dispositivo.estado == Dispositivo.Estado.ACTIVO:
-        dispositivo.estado = Dispositivo.Estado.INACTIVO
-        dispositivo.save(update_fields=['estado'])
-        if dispositivo.alarma:
-            registrar_evento(
-                MODULO, f'Dispositivo sin conectividad: {dispositivo.ip_gestion}',
-                'Se marcó como inactivo por falta de respuesta SNMP.',
-                nivel=Evento.Nivel.CRITICAL,
-            )
-    elif not inactivo and dispositivo.estado == Dispositivo.Estado.INACTIVO:
-        dispositivo.estado = Dispositivo.Estado.ACTIVO
-        dispositivo.save(update_fields=['estado'])
-        if dispositivo.alarma:
-            registrar_evento(
-                MODULO, f'Dispositivo recuperado: {dispositivo.ip_gestion}',
-                'Vuelve a responder correctamente a SNMP.',
-                nivel=Evento.Nivel.NOTICE,
-            )

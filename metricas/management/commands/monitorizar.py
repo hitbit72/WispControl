@@ -183,8 +183,10 @@ class Command(BaseCommand):
         # Actualiza modelo de interfaz (puertos)
         services.guardar_puertos(dispositivo, **datos)
         # Actizalizar datos estaciones wifi y onus
-        services.guarda_staciones_wifi(dispositivo, **datos)     # <-- Datos wifi de ubiquiti
-        services.guarda_estaciones_onu(dispositivo, **datos)     # <-- Datos de ONU de OLT ubiquiti
+        if estaciones:
+            services.guarda_staciones_wifi(dispositivo, **datos)     # <-- Datos wifi de ubiquiti
+        if onus:
+            services.guarda_estaciones_onu(dispositivo, **datos)     # <-- Datos de ONU de OLT ubiquiti
 
         # evalua la alerta/alarma
         services.evaluar_y_aplicar(dispositivo, metrica, metrica_anterior)

@@ -21,17 +21,21 @@
             {{ form.tipo }}
             <div class="invalid-feedback">Seleccione un tipo</div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <label class="form-label" for="{{ form.rol.id_for_label }}">Modo de operación</label>
             {{ form.rol }}
             <div class="invalid-feedback">Seleccione el modo de operación.</div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <label class="form-label" for="{{ form.estado.id_for_label }}">Estado</label>
             {{ form.estado }}
             <div class="invalid-feedback">Seleccione el estado</div>
         </div>
-        <div class="col-4">
+        <div class="col-3">
+            <label class="form-label" for="{{ form.frequency.id_for_label }}">Frecuencia (MHz)</label>
+            {{ form.frequency }}
+        </div>
+        <div class="col-3">
             <label class="form-label" for="{{ form.onu_ref.id_for_label }}">Nº Serie. ONU</label>
             {{ form.onu_ref }}
         </div>

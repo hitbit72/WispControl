@@ -26,9 +26,9 @@ REGLA_NIVEL = {
     'sin_clientes_ap': Evento.Nivel.NOTICE,
     'cambio_frecuencia': Evento.Nivel.ERROR,
     'cambio_canal': Evento.Nivel.ERROR,
-    'caida_potencia': Evento.Nivel.WARNING,
+    'caida_potencia_rx': Evento.Nivel.WARNING,
+    'caida_potencia_tx': Evento.Nivel.WARNING,
     'caida_signal': Evento.Nivel.WARNING,
-    'caida_power': Evento.Nivel.WARNING,
     'ping_sin_respuesta': Evento.Nivel.CRITICAL,
     'ping_recuperado': Evento.Nivel.NOTICE,
 }
@@ -79,9 +79,9 @@ def evaluar(dispositivo, metrica, anterior, config):
 
     if anterior is not None:
         if config.get('cambio_frecuencia') and metrica.frequency is not None \
-                and anterior.frequency is not None and metrica.frequency != anterior.frequency:
+                and dispositivo.frequency is not None and metrica.frequency != dispositivo.frequency:
             reglas.append({'regla': 'cambio_frecuencia', 'titulo': f'Cambio de frecuencia {dispositivo.ip_gestion}',
-                           'texto': f'Frecuencia {anterior.frequency:.0f} → {metrica.frequency:.0f} MHz.'})
+                           'texto': f'Frecuencia {dispositivo.frequency:.0f} → {metrica.frequency:.0f} MHz.'})
             
         if config.get('cambio_canal') and metrica.channel and anterior.channel \
                 and metrica.channel != anterior.channel:
@@ -89,9 +89,9 @@ def evaluar(dispositivo, metrica, anterior, config):
                            'texto': f'Canal {anterior.channel} → {metrica.channel}.'})
             
         for metrica_campo, regla, titulo, umbral in (
-            ('rx_dbm', 'caida_potencia', 'Caída de potencia rx', config.get('caida_potencia_dbm')),
+            ('rx_dbm', 'caida_potencia_rx', 'Caída de potencia RX', config.get('caida_potencia_rx')),
             ('signal', 'caida_signal', 'Caída de señal', config.get('caida_signal_dbm')),
-            ('power', 'caida_power', 'Caída potencia de salida', config.get('caida_power_tx')),
+            ('power', 'caida_potencia_tx', 'Caída de potencia TX', config.get('caida_potencia_tx')),
         ):
             if not umbral:
                 continue
@@ -99,7 +99,7 @@ def evaluar(dispositivo, metrica, anterior, config):
             if actual is not None and previo is not None:
                 caida = previo - actual
                 if caida >= umbral:
-                    reglas.append({'regla': regla, 'titulo': f'{titulo} {dispositivo.ip_gestion}',
+                    reglas.append({'regla': regla, 'titulo': f'{titulo} {dispositivo.ip_gestion} ({actual:.0f})',
                                    'texto': f'{titulo} de {previo:.0f} a {actual:.0f} dBm.'})
     return reglas
 
