@@ -26,9 +26,9 @@
 <table class="table table-hover align-middle" id="dispositivosTable" data-searchable-table>
     <thead>
         <tr>
+            <th>Estado</th>
             <th>Nombre</th>
             <th>Marca</th>
-            <th>Estado</th>
             <th>IP gestión</th>
             <th>Modo</th>
             <th>Tipo</th>
@@ -38,9 +38,9 @@
     <tbody>
         {% for dispositivo in sector.dispositivos.all %}
         <tr>
-            <td><a href="{% url 'dispositivos:detalle' dispositivo.pk %}?next={{ request.path }}">{{ dispositivo.nombre }}</a></td>
-            <td>{{ dispositivo.marca.nombre }} {{ dispositivo.marca.modelo|default:"" }}</td>
             <td>{% include "dispositivo/comun/estado.html" %}</td>
+            <td><a href="{% url 'dispositivos:detalle' dispositivo.pk %}?next={{ request.path }}">{{ dispositivo.nombre }}</a></td>
+            <td>{{ dispositivo.marca.nombre }} {{ dispositivo.marca.modelo }}</td>
             <td>{{ dispositivo.ip_gestion|default:"—" }}</td>
             <td>{{ dispositivo.get_rol_display }}</td>
             <td>{{ dispositivo.tipo.nombre }}</td>
