@@ -162,9 +162,21 @@ class Command(BaseCommand):
         datos['status'] = status
         datos['timescan'] = timezone.now()
 
+        # test de alarmas
+        #if dispositivo.ip_gestion == '192.168.25.150':
+            #datos['cpu'] = 95
+            #datos['ram'] = 97
+            #datos['frequency'] = 5200
+
         #print(' DATOS --------------------')
         #print(f'Datos: {datos}')
         #print(f'Estaciones: {estaciones}')
+
+        # recuperar el estado anterio para evalua la alerta/alarma
+        metrica_anterior = (
+            DeviceMetrics.objects.filter(device=dispositivo)
+            .order_by('-pk').first()
+            )
 
         # guarda los datos en DeviceMetrics
         metrica = services.guardar_metrica(dispositivo, **datos)
@@ -173,8 +185,10 @@ class Command(BaseCommand):
         # Actizalizar datos estaciones wifi y onus
         services.guarda_staciones_wifi(dispositivo, **datos)     # <-- Datos wifi de ubiquiti
         services.guarda_estaciones_onu(dispositivo, **datos)     # <-- Datos de ONU de OLT ubiquiti
+
         # evalua la alerta/alarma
-        services.evaluar_y_aplicar(dispositivo, metrica)
+        services.evaluar_y_aplicar(dispositivo, metrica, metrica_anterior)
+
         self.stdout.write(self.style.SUCCESS(
             f'[{dispositivo.nombre} {dispositivo.ip_gestion}] {status}'))
         return status == DeviceMetrics.Status.OK

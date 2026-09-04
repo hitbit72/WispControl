@@ -194,14 +194,16 @@ METRICAS_SNMP = {
 
 # Umbrales de las reglas de alarma (ver metricas/reglas.py).
 METRICAS_ALARMAS = {
-    'cpu_max': 90.0,              # % CPU a partir del cual la CPU es alta
-    'temp_max': 70.0,             # °C a partir del cual la temperatura es alta
+    'cpu_max': 90,              # % CPU a partir del cual la CPU es alta
+    'ram_max': 95,              # % RAM a partir del cual la RAM es alta
+    'temp_max': 70,             # °C a partir del cual la temperatura es alta
     'puerto_caido': True,         # avisar con interfaz(es) abajo
     'sin_clientes_ap': True,      # avisar de AP sin clientes
     'cambio_frecuencia': True,    # avisar si cambia la frecuencia del enlace
     'cambio_canal': True,         # avisar si cambia el canal
-    'caida_potencia_dbm': 20.0,   # dBm de bajada de Rx que dispara la alarma
-    'caida_signal_dbm': 10.0,     # dBm de bajada de señal que dispara la alarma
+    'caida_potencia_dbm': 20,   # dBm de bajada de Rx que dispara la alarma
+    'caida_signal_dbm': 10,     # dBm de bajada de señal que dispara la alarma
+    'caida_power_tx': 10,          # bajada de potencia de trasmision que dispara la alarma
 }
 
 

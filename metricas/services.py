@@ -13,7 +13,7 @@ from eventos.services import registrar_evento
 from dispositivos.models import Dispositivo, Interfaz
 
 from .models import Alarma, DeviceMetrics
-from .reglas import REGLA_INACTIVO, REGLA_NIVEL, evaluar
+from .reglas import REGLA_NIVEL, evaluar
 
 MODULO = 'metricas'
 
@@ -151,22 +151,26 @@ def guarda_estaciones_onu(dispositivo, **datos):
             )
         
 
-def evaluar_y_aplicar(dispositivo, metrica):
+def evaluar_y_aplicar(dispositivo, metrica, anterior):
     """Evalúa las reglas sobre la métrica recién creada y aplica alarmas y
     estado. Devuelve dict {nuevas, resueltas} con las alarmas tocadas."""
     resultados =[]
+    """
     anterior = (
         DeviceMetrics.objects.filter(device=dispositivo, pk__lt=metrica.pk)
         .order_by('-pk').first()
-    )
+        )
+    """
     activas = evaluar(dispositivo, metrica, anterior, settings.METRICAS_ALARMAS)
     if dispositivo.alarma:
+        #print('Proccesando activas')
+        #print(activas)
         resultados = _sincronizar_alarmas(dispositivo, activas)
 
     # ATENCION: 
     # _actualizar_estado esta desactivado
     # Activar y desactivar dispositivos lo administra el modulo ping, aquí solo se muetra la alerta
-    #_actualizar_estado(dispositivo, activas)  <----
+    #_actualizar_estado(dispositivo, activas) 
 
     return resultados
 
@@ -185,10 +189,14 @@ def _sincronizar_alarmas(dispositivo, detectadas):
 
     resultados = {'nuevas': [], 'resueltas': []}
 
+    #print(f'Reglas activas: {reglas_activas}')
+    #print(f'Detectadas: {detectadas}')
+    #print('---------------------')
+
     for regla, pk in reglas_activas.items():
+        #print(f'{regla} - {pk}')
         if regla in detectadas:
-            continue
-        if regla not in REGLA_INACTIVO:
+            #print('regla sigue activa')
             continue
         alarma = Alarma.objects.get(pk=pk)
         alarma.estado = Alarma.Estado.RESUELTA
@@ -203,8 +211,6 @@ def _sincronizar_alarmas(dispositivo, detectadas):
         resultados['resueltas'].append(alarma)
 
     for regla, datos in detectadas.items():
-        if regla not in REGLA_INACTIVO:
-            continue
         if regla in reglas_activas:
             continue
         alarma, creada = Alarma.objects.get_or_create(
@@ -225,6 +231,8 @@ def _sincronizar_alarmas(dispositivo, detectadas):
     return resultados
 
 
+# ATENCION: 
+# _actualizar_estado esta desactivado
 def _actualizar_estado(dispositivo, detectadas):
     """ Pasa a 'inactivo' cuando hay una regla que marca el dispositivo y
     vuelve a 'activo' cuando las reglas se normalizan. Solo se tocan los

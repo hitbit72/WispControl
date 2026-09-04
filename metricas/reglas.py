@@ -20,31 +20,21 @@ REGLA_NIVEL = {
     'olt_sin_respuesta': Evento.Nivel.CRITICAL,
     'ap_sin_respuesta': Evento.Nivel.CRITICAL,
     'cpu_alta': Evento.Nivel.ERROR,
+    'ram_alta': Evento.Nivel.WARNING,
     'temp_alta': Evento.Nivel.WARNING,
     'puerto_caido': Evento.Nivel.WARNING,
-    'sin_clientes_ap': Evento.Nivel.WARNING,
-    'cambio_frecuencia': Evento.Nivel.NOTICE,
-    'cambio_canal': Evento.Nivel.NOTICE,
+    'sin_clientes_ap': Evento.Nivel.NOTICE,
+    'cambio_frecuencia': Evento.Nivel.ERROR,
+    'cambio_canal': Evento.Nivel.ERROR,
     'caida_potencia': Evento.Nivel.WARNING,
     'caida_signal': Evento.Nivel.WARNING,
+    'caida_power': Evento.Nivel.WARNING,
     'ping_sin_respuesta': Evento.Nivel.CRITICAL,
     'ping_recuperado': Evento.Nivel.NOTICE,
 }
 
-# Reglas que, al cumplirse, marcan el dispositivo como 'inactivo'.
-REGLA_INACTIVO = ('sin_respuesta_snmp', 'sin_respuesta', 'onu_offline', 'olt_sin_respuesta', 'ap_sin_respuesta', 'ping_sin_respuesta')
-
-
-def _conectar_por_tipo(dispositivo):
-    """Devuelve la regla de conectividad según el tipo de dispositivo."""
-
-    if dispositivo.tipo.clave == 'olt':
-        return 'olt_sin_respuesta'
-    if dispositivo.tipo.clave == 'ap':
-        return 'ap_sin_respuesta'
-    if dispositivo.tipo.clave == 'onu':
-        return 'onu_sin_respuesta'
-    return 'sin_respuesta_snmp'
+def _texto_conectividad(tipo):
+    return f'Dispositivo {tipo} sin respuesta SNMP'
 
 def evaluar(dispositivo, metrica, anterior, config):
     """
@@ -56,20 +46,24 @@ def evaluar(dispositivo, metrica, anterior, config):
     - config: dict `settings.METRICAS_ALARMAS`.
     """
     reglas = []
-    #conect = _conectar_por_tipo(dispositivo)
-    conect = 'sin_respuesta_snmp'
 
     if metrica.status != DeviceMetrics.Status.OK:
         texto = f'{dispositivo.ip_gestion} ({dispositivo.nombre}) no responde a SNMP ({metrica.get_status_display()}).'
-        return [{'regla': conect, 'titulo': f'SNMP sin respuesta {dispositivo.ip_gestion}', 'texto': texto}]
+        return [{'regla': 'sin_respuesta_snmp', 'titulo': f'{dispositivo.ip_gestion} {_texto_conectividad(dispositivo.tipo.nombre)}', 'texto': texto}]
 
     if metrica.cpu is not None and metrica.cpu > config['cpu_max']:
-        reglas.append({'regla': 'cpu_alta', 'titulo': f'CPU alta {dispositivo.ip_gestion}',
-                       'texto': f'CPU al {metrica.cpu:.0f}% (máx. {config["cpu_max"]:.0f}%).'})
+        #print(f'CPU alta {dispositivo.ip_gestion}')
+        reglas.append({'regla': 'cpu_alta', 'titulo': f'CPU alta {metrica.cpu:.0f}% · {dispositivo.ip_gestion}',
+                       'texto': f'La CPU del dispositivo esta al {metrica.cpu:.0f}% (máx. {config["cpu_max"]:.0f}%).'})
+
+    if metrica.ram is not None and metrica.ram > config['ram_max']:
+        #print(f'RAM alta {dispositivo.ip_gestion}')
+        reglas.append({'regla': 'ram_alta', 'titulo': f'RAM alta {metrica.ram:.0f}% · {dispositivo.ip_gestion}',
+                       'texto': f'La RAM del dispositivo esta al {metrica.ram:.0f}% (máx. {config["ram_max"]:.0f}%).'})
         
     if metrica.temperature is not None and metrica.temperature > config['temp_max']:
-        reglas.append({'regla': 'temp_alta', 'titulo': f'Temperatura alta {dispositivo.ip_gestion}',
-                       'texto': f'Temperatura de {metrica.temperature:.0f} °C (máx. {config["temp_max"]:.0f} °C).'})
+        reglas.append({'regla': 'temp_alta', 'titulo': f'Temperatura alta {metrica.temperature:.0f} °C · {dispositivo.ip_gestion}',
+                       'texto': f'La Temperatura del dispositivos es alta {metrica.temperature:.0f} °C (máx. {config["temp_max"]:.0f} °C).'})
 
     if dispositivo.alarma_puerto:
         if config.get('puerto_caido'):
@@ -95,8 +89,9 @@ def evaluar(dispositivo, metrica, anterior, config):
                            'texto': f'Canal {anterior.channel} → {metrica.channel}.'})
             
         for metrica_campo, regla, titulo, umbral in (
-            ('rx_dbm', 'caida_potencia', 'Caída de potencia', config.get('caida_potencia_dbm')),
+            ('rx_dbm', 'caida_potencia', 'Caída de potencia rx', config.get('caida_potencia_dbm')),
             ('signal', 'caida_signal', 'Caída de señal', config.get('caida_signal_dbm')),
+            ('power', 'caida_power', 'Caída potencia de salida', config.get('caida_power_tx')),
         ):
             if not umbral:
                 continue
@@ -104,15 +99,7 @@ def evaluar(dispositivo, metrica, anterior, config):
             if actual is not None and previo is not None:
                 caida = previo - actual
                 if caida >= umbral:
-                    reglas.append({'regla': regla, 'titulo': titulo,
+                    reglas.append({'regla': regla, 'titulo': f'{titulo} {dispositivo.ip_gestion}',
                                    'texto': f'{titulo} de {previo:.0f} a {actual:.0f} dBm.'})
     return reglas
 
-
-def _titulo_conectividad(regla):
-    return {
-        'sin_respuesta': 'SNMP sin respuesta',
-        'onu_offline': 'ONU offline SNMP',
-        'olt_sin_respuesta': 'OLT sin respuesta SNMP',
-        'ap_sin_respuesta': 'Acces Point sin respuesta SNMP',
-    }.get(regla, 'Fallo de conectividad SNMP')
