@@ -125,11 +125,10 @@
                     {% if metricas.ssid %}
                     <p class="mb-1"><strong>SSID:</strong> 
                     {% if not dispositivo.tipo.clave == 'ap' %}
-                        <a href="{% url 'dispositivos:buscar_dispositivo'  metricas.ssid %}?next={{ request.path }}">{{ metricas.ssid }}
-                        {% if metricas.frequency %}{% endif %}
-                        </a> ({{ metricas.frequency }} MHz)
+                        <a href="{% url 'dispositivos:buscar_dispositivo'  metricas.ssid %}?next={{ request.path }}">{{ metricas.ssid }}</a> 
+                        (<span class="{% if metricas.frequency != dispositivo.frequency %}text-danger fw-bold{% endif %}">{{ metricas.frequency }} MHz</span>)
                     {% else %}
-                        {{ metricas.ssid }}{% if metricas.frequency %} ({{ metricas.frequency }} MHz){% endif %}
+                        {{ metricas.ssid }}{% if metricas.frequency %} (<span class="{% if metricas.frequency != dispositivo.frequency %}text-danger fw-bold{% endif %}">{{ metricas.frequency }} MHz</span>){% endif %}
                     {% endif %}
                     </p>
                     {% endif %}
