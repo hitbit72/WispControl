@@ -1,9 +1,8 @@
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-from django.db.models import Q
+from django.db.models import Q, Prefetch
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
-
 
 from .forms import DispositivoForm, EnlaceForm, InterfazForm
 
@@ -11,7 +10,7 @@ from .models import Dispositivo, Enlace, Interfaz, TipoEquipo
 from clientes.models import Cliente
 from sector.models import Sector
 
-from metricas.models import DeviceMetrics
+from metricas.models import DeviceMetrics, Alarma
 from eventos.models import Evento
 from eventos.services import registrar_evento
 
@@ -43,7 +42,11 @@ def lista_dispositivos(request):
     dispositivos = Dispositivo.objects.select_related(
         'sector', 'cliente'
         ).prefetch_related(
-            'metricas'
+            'metricas',
+            Prefetch(
+				'alarmas',
+				queryset=Alarma.objects.filter(estado='activa', tipo='snmp')
+			)
         ).all()
     
     busqueda = request.GET.get('q', '').strip()

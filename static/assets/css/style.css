@@ -327,6 +327,10 @@ a {
   font-weight: 800;
 }
 
+.alert-dot {
+  color: var(--admin-danger);
+}
+
 .notification-dot {
   position: absolute;
   top: 8px;
@@ -720,6 +724,10 @@ html[data-theme="dark"] .profile-button .avatar-sm {
   display: flex;
   align-items: center;
   gap: 0.7rem;
+}
+
+.pagination {
+  margin-top: .5rem !important;
 }
 
 .product-thumb {
