@@ -7,7 +7,6 @@
             <th>Marca</th>
             <th>IP gestión</th>
             <th>Cliente</td>
-            <th>Modo</th>
             <th>Tipo</th>
             <th>Sector</th>
             <th>SSID</th>
@@ -31,7 +30,6 @@
                 ——
                 {% endif %}
             </td>
-            <td>{{ dispositivo.get_rol_display }}</td>
             <td>{{ dispositivo.tipo.nombre }}</td>
             <td>{% if dispositivo.sector %}<a href="{% url 'sectores:detalle' dispositivo.sector.pk %}">{{ dispositivo.sector.nombre }}</a>{% else %}—{% endif %}</td>
             <td>{{ dispositivo.metricas.all.0.ssid|default:"—" }}</td>
