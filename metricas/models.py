@@ -3,7 +3,7 @@ from django.db import models
 
 class DeviceMetrics(models.Model):
     """
-    Muestra periódica (SNMP) de un dispositivo en un instante concreto.
+    Muestra (SNMP) de un dispositivo en un instante concreto.
     Solo la escribe el servicio de monitorización (`manage.py monitorizar`),
     nunca un humano. Cada dispositivo a monitorizar tiene un unico registro
     que se actualiza periodicamente.
@@ -103,6 +103,7 @@ class Alarma(models.Model):
     class Tipo(models.TextChoices):
         SNMP = 'snmp', 'SNMP'
         PING = 'ping', 'PING'
+        MKT = 'mkt', 'MKT'
 
     class Estado(models.TextChoices):
         ACTIVA = 'activa', 'Activa'
