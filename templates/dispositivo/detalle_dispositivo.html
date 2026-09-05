@@ -106,7 +106,8 @@
                 {% if metricas %}
                   <div id="metricas">
                     <!-- p class="mb-2" -->
-                    <div class="row g-2 align-items-start mb-2">
+                    <div class="d-flex justify-content-between align-items-start">
+                    <div class="row g-2 align-items-start">
                         <div class="col-auto d-flex gap-1">
                             <strong>CPU:</strong>
                             <strong class="{% if metricas.cpu > 80 %}text-danger
@@ -120,6 +121,11 @@
                             {% else %}text-success{% endif %}"> {{ metricas.ram|default:'0' }}%</strong>
                         </div>
                     </div>
+                        <div class="d-flex gap-2">
+                            <a href="" id="actualiza_snmp" class="btn btn-sm btn-primary">Actualizar</a>
+                        </div>
+                    </div>
+                    
                     <!-- /p -->
                     {% if metricas.sys_name %}<p class="mb-1"><strong>Nombre:</strong> {{ metricas.sys_name }}</p>{% endif %}
                     {% if metricas.ssid %}
