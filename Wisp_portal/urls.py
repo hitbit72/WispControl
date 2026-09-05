@@ -17,6 +17,7 @@ urlpatterns = [
     path('dispositivos/', include('dispositivos.urls')),
     path('eventos/', include('eventos.urls')),
     path('clientes/', include('clientes.urls')),
+    path('metricas/', include('metricas.urls')),
 ]
 
 # Manejo de archivos estáticos en modo de desarrollo

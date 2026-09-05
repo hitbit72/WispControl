@@ -1,0 +1,87 @@
+{% if metricas %}
+{% load dispositivo_tags %}
+<div id="metricas">
+  <div class="d-flex justify-content-between align-items-start">
+    <div class="row g-2 align-items-start">
+      <div class="col-auto d-flex gap-1">
+        <strong>CPU:</strong>
+        <strong class="{% if metricas.cpu > 80 %}text-danger
+        {% elif metricas.cpu <= 80 and metricas.cpu >= 70 %}text-warning
+        {% else %}text-success{% endif %}"> {{ metricas.cpu|default:'0' }}%</strong>
+      </div>
+      <div class="col-auto d-flex gap-1">
+        <strong> RAM:</strong>
+        <strong class="{% if metricas.ram > 85 %}text-danger
+        {% elif metricas.ram <= 85 and metricas.ram >= 75 %}text-warning
+        {% else %}text-success{% endif %}"> {{ metricas.ram|default:'0' }}%</strong>
+      </div>
+    </div>
+    <div class="d-flex gap-2">
+      <form>
+      {% csrf_token %}
+      <button hx-post="{% url 'metricas:actualizar_snmp' dispositivo.pk %}"
+              hx-target="#metricas"
+              hx-swap="innerHTML"
+              hx-indicator="#spinner-snmp"
+              class="btn btn-sm btn-primary"
+              id="actualiza_snmp">
+        <span class="spinner-border spinner-border-sm htmx-indicator" id="spinner-snmp" role="status" aria-hidden="true"></span>
+        Actualizar 
+      </button>
+      </form>
+    </div>
+  </div>
+
+  {% if metricas.sys_name %}<p class="mb-1"><strong>Nombre:</strong> {{ metricas.sys_name }}</p>{% endif %}
+  {% if metricas.ssid %}
+  <p class="mb-1"><strong>SSID:</strong>
+    {% if dispositivo.tipo.clave == 'ap' %}
+      {{ metricas.ssid }}
+      {% if metricas.frequency %}
+        (<span class="{% if metricas.frequency != dispositivo.frequency %}
+        text-danger fw-bold{% endif %}">{{ metricas.frequency }} MHz</span>)
+      {% endif %}
+    {% else %}
+      <a href="{% url 'dispositivos:buscar_dispositivo'  metricas.ssid %}?next={{ request.path }}">{{ metricas.ssid }}</a>
+      (<span>{{ metricas.frequency }} MHz</span>)
+    {% endif %}
+  </p>
+  {% endif %}
+  <div class="row g-2 align-items-start mb-1">
+    <div class="col-auto d-flex gap-1">
+      <p class="mb-0"><strong>Señal:</strong> {{ metricas.signal|default:'0' }} dbm</p> ·
+    </div>
+    <div class="col-auto d-flex gap-1">
+      <p class="mb-0"><strong>Potencia:</strong> {{ metricas.power|default:'0' }} dbm</p>
+    </div>
+  </div>
+  <div class="row g-2 align-items-start mb-1">
+    <div class="col-auto d-flex gap-1">
+      <p class="mb-0"><strong>CCQ:</strong> {{ metricas.ccq|default:'0' }} %</p> ·
+    </div>
+    <div class="col-auto d-flex gap-1">
+      <p class="mb-0"><strong>Latencia:</strong> {{ metricas.latencia|default:'0' }} ms</p>
+    </div>
+  </div>
+  {% if metricas.rx %}
+  <p class="mb-1"><strong>Capacidad rx/tx:</strong> {{ metricas.rx|format_bitrate }} / {{ metricas.tx|format_bitrate }} </p>
+  {% endif %}
+  {% if metricas.uptime %}<p class="mb-1"><strong>Funcionando:</strong> {{ metricas.uptime|formatear_uptime }}</p>{% endif %}
+  {% if metricas.timescan %}<p class="mb-0"><strong>Actualizado:</strong> {{ metricas.timescan }}</p>{% endif %}
+</div>
+{% else %}
+<div id="metricas" class="text-muted">
+  <p class="mb-0">Sin métricas disponibles. Pulse "Actualizar" para consultar SNMP.</p>
+  <div class="d-flex gap-2">
+    <button hx-post="{% url 'metricas:actualizar_snmp' dispositivo.pk %}"
+            hx-target="#metricas"
+            hx-swap="innerHTML"
+            hx-indicator="#spinner-snmp"
+            class="btn btn-sm btn-primary"
+            id="actualiza_snmp">
+      <span class="spinner-border spinner-border-sm htmx-indicator" id="spinner-snmp" role="status" aria-hidden="true"></span>
+      Actualizar
+    </button>
+  </div>
+</div>
+{% endif %}

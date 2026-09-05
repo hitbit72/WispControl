@@ -125,7 +125,7 @@ class Command(BaseCommand):
         if dispositivo.tipo.clave == 'olt':
             escalares_puerto_pon = oids_dispositivo(dispositivo, 'puertos_pon')
             escalares_onu = oids_dispositivo(dispositivo, 'onus')
-        
+
         try:
             resultado = snmp_client.consultar_escalares(dispositivo, escalares)
             puertos = snmp_client.consultar_if_table(dispositivo, escalares_puerto, 'puertos')
@@ -138,7 +138,7 @@ class Command(BaseCommand):
             if escalares_onu:
                 onus = snmp_client.consultar_if_table(dispositivo, escalares_onu, 'onus')
             status = DeviceMetrics.Status.OK
-            #print(escalares_st)
+            #print(resultado)
 
         except snmp_client.SnmpError as exc:
             self.stdout.write(

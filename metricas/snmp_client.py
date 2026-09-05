@@ -189,14 +189,14 @@ def consultar_if_table(dispositivo, oids, modo='general'):
             lexicographicMode=False,
         ):
             if errorIndication:
-                print(f"Error de conexión (Modo: {modo}): {errorIndication}")
+                print(f"Error SNMP indication {dispositivo.ip_gestion} (Modo: {modo}): {errorIndication}")
                 #print(f'ip: {dispositivo.ip_gestion}')
                 break
             elif errorStatus:
-                print(f"Error SNMP (Modo: {modo}): {errorStatus.prettyPrint()}")
+                print(f"Error SNMP status {dispositivo.ip_gestion} (Modo: {modo}): {errorStatus.prettyPrint()}")
                 break
             elif errorIndex:
-                print(f"Error SNMP index (Modo: {modo}): {errorIndex}")
+                print(f"Error SNMP index {dispositivo.ip_gestion} (Modo: {modo}): {errorIndex}")
                 break
             else:
                 fila = {}

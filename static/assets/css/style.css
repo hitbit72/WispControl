@@ -1117,6 +1117,18 @@ html[data-theme="dark"] .profile-button .avatar-sm {
   }
 }
 
+.htmx-indicator {
+  opacity: 0;
+  display: none;
+}
+.htmx-request .htmx-indicator,
+.htmx-request.htmx-indicator {
+  opacity: 1;
+  display: block;
+  /* visibility: visible; */
+  transition: opacity 200ms ease-in;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .sidebar-nav .nav-link,
   .sidebar-toggle,
