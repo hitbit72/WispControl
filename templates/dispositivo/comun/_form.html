@@ -5,10 +5,14 @@
             <div class="invalid-feedback">El SSID es obligatorio.</div>
         </div>
 
-        <div class="col-md-6">
+        <div class="col-md-3">
             <label class="form-label" for="{{ form.nombre_host.id_for_label }}">Nombre Host</label>
             {{ form.nombre_host }}
             <div class="invalid-feedback">El nombre de host es obligatorio.</div>
+        </div>
+        <div class="col-3">
+            <label class="form-label" for="{{ form.onu_ref.id_for_label }}">Nº Serie. ONU</label>
+            {{ form.onu_ref }}
         </div>
 
         <div class="col-md-6">
@@ -16,6 +20,12 @@
             {{ form.marca }}
             <div class="invalid-feedback">Seleccione una marca</div>
         </div>
+        <div class="col-md-6">
+            <label class="form-label" for="{{ form.estado.id_for_label }}">Estado</label>
+            {{ form.estado }}
+            <div class="invalid-feedback">Seleccione el estado</div>
+        </div>
+
         <div class="col-md-6">
             <label class="form-label" for="{{ form.tipo.id_for_label }}">Tipo</label>
             {{ form.tipo }}
@@ -26,19 +36,11 @@
             {{ form.rol }}
             <div class="invalid-feedback">Seleccione el modo de operación.</div>
         </div>
-        <div class="col-md-3">
-            <label class="form-label" for="{{ form.estado.id_for_label }}">Estado</label>
-            {{ form.estado }}
-            <div class="invalid-feedback">Seleccione el estado</div>
-        </div>
         <div class="col-3">
             <label class="form-label" for="{{ form.frequency.id_for_label }}">Frecuencia (MHz)</label>
             {{ form.frequency }}
         </div>
-        <div class="col-3">
-            <label class="form-label" for="{{ form.onu_ref.id_for_label }}">Nº Serie. ONU</label>
-            {{ form.onu_ref }}
-        </div>
+
         <hr>
         <div class="col-md-6">
             <label class="form-label" for="{{ form.sector.id_for_label }}">Sector</label>

@@ -52,6 +52,14 @@ def guardar_puertos(dispositivo, **datos):
             uData = {
                 "estado": puerto["estado"],
             }
+
+        if any(exclude.lower() in puerto['nombre'].lower() for exclude in ('ath', 'wifi', 'wlan')):
+            uData.update({'tipo': Interfaz.Tipo.WIRELESS})
+        elif any(exclude.lower() in puerto['nombre'].lower() for exclude in ('eth', 'br')):
+            uData.update({'tipo': Interfaz.Tipo.ETHERNET})
+        elif any(exclude.lower() in puerto['nombre'].lower() for exclude in ('ppp',)):
+            uData.update({'tipo': Interfaz.Tipo.PPPOE})
+
         #print(f' {puerto["nombre"]}: {uData}')
         interfaz, created = Interfaz.objects.update_or_create(
             dispositivo=dispositivo,
