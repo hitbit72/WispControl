@@ -124,29 +124,3 @@ def find_station(ip, current_path=None):
 
     html = f'<td>{ip}</td><td>—</td>'
     return mark_safe(html)
-
-
-@register.filter
-def find_ap(ip, current_path=None):
-    # Busca un AP a partir de su ip
-
-    if not ip:
-        return mark_safe('<td>—</td><td>—</td>')
-
-    #dispositivo = Dispositivo.objects.filter(ip_gestion=ip).first()
-    dispositivo = Dispositivo.objects.filter(ip_gestion=ip).prefetch_related('metricas',).first()
-    
-    if dispositivo:
-        url_stacion = reverse('dispositivos:detalle', args=[dispositivo.pk])
-
-        # Si nos pasaron la ruta actual, añadimos el ?next=
-        if current_path:
-            querystring = urlencode({'next': current_path})
-            url_stacion = f"{url_stacion}?{querystring}"
-
-        # Envolvemos el string con mark_safe para renderizar como HTML real
-        html = f'<td><a href="{url_stacion}">{ip}</a></td><td>{dispositivo.metricas.ssid}</td>'
-        return mark_safe(html)
-
-    html = f'<td>{ip}</td><td>—</td>'
-    return mark_safe(html)
