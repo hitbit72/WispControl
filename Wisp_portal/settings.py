@@ -123,6 +123,11 @@ DATABASES = {
 # --- Usuario personalizado (con roles) ------------------------------------
 AUTH_USER_MODEL = 'accounts.Usuario'
 
+# --- Autenticación ---------------------------------------------------------
+LOGIN_URL = 'accounts:login'
+LOGIN_REDIRECT_URL = 'accounts:inicio'
+LOGOUT_REDIRECT_URL = 'accounts:login'
+
 # --- Cifrado de campos sensibles (ej. clave API de routers MikroTik) ------
 # Generar con: python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
 FIELD_ENCRYPTION_KEY = os.environ.get('FIELD_ENCRYPTION_KEY')

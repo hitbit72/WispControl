@@ -111,7 +111,7 @@
                 <li><a class="dropdown-item" href="{% url 'accounts:cambiar_contrasena' %}">Cambiar contraseña</a></li>
                 <li><hr class="dropdown-divider"></li>
                 <li>
-                  <form action="{% url 'logout' %}" method="post">
+                  <form action="{% url 'accounts:logout' %}" method="post">
                       {% csrf_token %}
                       <a href="">
                       <button class="dropdown-item" type="submit">Cerrar sesión</button>
