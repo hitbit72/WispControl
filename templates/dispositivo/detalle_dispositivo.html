@@ -12,7 +12,8 @@
     </div>
     <div class="d-flex gap-2">
         <a href="{% url 'dispositivos:editar' dispositivo.pk %}" class="btn btn-primary">Editar</a>
-        <a href="{% url 'dispositivos:eliminar' dispositivo.pk %}" class="btn btn-outline-danger">Eliminar</a>
+        <!-- <a href="{% url 'dispositivos:eliminar' dispositivo.pk %}" class="btn btn-outline-danger">Eliminar</a> -->
+        <button class="btn btn-outline-danger" type="button" data-bs-toggle="modal" data-bs-target="#deleteDevice">Eliminar</button>
     </div>
 </div>
 
@@ -80,7 +81,6 @@
 {% endif %}
 {% endif %}
 
-
 {% if metricas.onus %}
 <section class="panel mt-1" id="tablaOnus">
 <div class="d-flex justify-content-between align-items-center mb-2">
@@ -97,6 +97,36 @@
 </div>
 {% include "dispositivo/interfaz/_tabla_interfaz.html" %}
 </section>
+
+<div class="modal fade" 
+    id="deleteDevice" 
+    tabindex="-1" 
+    aria-labelledby="confirmModalLabel" 
+    aria-hidden="true"
+    data-bs-backdrop="true"> <!-- fondo -->
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content modal-shadow">
+            <div class="modal-header">
+                <h2 class="modal-title h5" id="confirmModalLabel">Eliminar: {{ dispositivo.nombre }}</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {{ dispositivo.tipo.nombre }} · {{ dispositivo.marca.nombre }} {{ dispositivo.marca.modelo }}<br>
+                ¿Seguro que quieres eliminar el dispositivo <strong> {{ dispositivo.ip_gestion }}</strong>?
+                {% if dispositivo.interfaces.count %}
+                <p class="mb-0 mt-2">Tiene <strong>{{ dispositivo.interfaces.count }} interfaz(es)</strong>
+                que se eliminarán en cascada. La acción no se puede deshacer.</p>
+                {% endif %}
+            </div>
+            <div class="modal-footer">
+                <button type="button" 
+                        class="btn btn-outline-secondary" 
+                        data-bs-dismiss="modal"><i class="bi bi-x-circle" aria-hidden="true"></i> Cancelar</button>
+                <a id="deleteReponse" href="{% url 'dispositivos:eliminar' dispositivo.pk %}" class="btn btn-outline-danger"><i class="bi bi-trash" aria-hidden="true"></i> Eliminar</a>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div style="margin-top: 0.5rem;">
 {% if url_anterior %}
