@@ -90,7 +90,7 @@
     tabindex="-1" 
     aria-labelledby="confirmModalLabel" 
     aria-hidden="true"
-    data-bs-backdrop="false">
+    data-bs-backdrop="false"> <!-- fondo bloqueado -->
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content modal-shadow">
             <div class="modal-header">
@@ -110,4 +110,10 @@
         </div>
     </div>
 </div>
+<script>
+// Quita todos los estilos definidos
+document.body.removeAttribute('style');
+// Borra todas las clases del elemento
+document.body.className = '';
+</script>
 </div>
