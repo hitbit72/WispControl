@@ -24,7 +24,8 @@
               hx-swap="innerHTML"
               hx-indicator="#spinner-snmp"
               class="btn btn-sm btn-primary"
-              id="actualiza_snmp">
+              id="actualiza_snmp" 
+              data-bs-toggle="modal" data-bs-target="#metricaModal">
         <span class="spinner-border spinner-border-sm htmx-indicator" id="spinner-snmp" role="status" aria-hidden="true"></span>
         Actualizar 
       </button>
@@ -68,7 +69,6 @@
   {% endif %}
   {% if metricas.uptime %}<p class="mb-1"><strong>Funcionando:</strong> {{ metricas.uptime|formatear_uptime }}</p>{% endif %}
   {% if metricas.timescan %}<p class="mb-0"><strong>Actualizado:</strong> {{ metricas.timescan }}</p>{% endif %}
-</div>
 {% else %}
 <div id="metricas" class="text-muted">
   <p class="mb-0">Sin métricas disponibles. Pulse "Actualizar" para consultar SNMP.</p>
@@ -85,3 +85,29 @@
   </div>
 </div>
 {% endif %}
+<div class="modal fade" 
+    id="metricaModal" 
+    tabindex="-1" 
+    aria-labelledby="confirmModalLabel" 
+    aria-hidden="true"
+    data-bs-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content modal-shadow">
+            <div class="modal-header">
+                <h2 class="modal-title h5" id="confirmModalLabel">Información</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">Se están actualizando los datos SNMP del dispositivo ... 
+            </div>
+            <div class="modal-footer">
+                <button type="button" 
+                        class="btn btn-primary" 
+                        data-bs-dismiss="modal">
+                  <span class="spinner-border spinner-border-sm htmx-indicator" id="spinner-snmp" role="status" aria-hidden="true"></span>
+                  Aceptar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+</div>

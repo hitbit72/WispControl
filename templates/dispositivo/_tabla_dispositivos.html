@@ -42,12 +42,11 @@
             <td>{{ dispositivo.metricas.all.0.tx|format_bitrate }} </td>
             <td>{{ dispositivo.metricas.all.0.rx|format_bitrate }} </td>
             <td class="text-end">
-                <!-- <a href="{% url 'dispositivos:eliminar' dispositivo.pk %}" class="btn btn-sm btn-outline-danger">Eliminar</a> -->
                 <a href="{% url 'dispositivos:editar' dispositivo.pk %}" class="btn btn-sm btn-outline-primary">Editar</a>
             </td>
         </tr>
         {% empty %}
-        <tr><td colspan="12" class="text-center text-muted py-4">No se encontraron dispositivos.</td></tr>
+        <tr><td colspan="13" class="text-center text-muted py-4">No se encontraron dispositivos.</td></tr>
         {% endfor %}
     </tbody>
 </table>

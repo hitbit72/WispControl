@@ -1304,6 +1304,9 @@ html[data-theme="dark"] .auth-body {
   z-index: 10;
 }
 
+.modal-shadow {
+  box-shadow: 0 20px 60px rgb(7, 7, 7);
+}
 .dropdown-menu,
 .modal-content,
 .accordion-item,

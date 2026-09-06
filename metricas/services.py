@@ -88,7 +88,10 @@ def guardar_puertos(dispositivo, **datos):
             )
 
 def guarda_staciones_wifi(dispositivo, **datos):
-    """ Guarda los datos básicos de los dispositivos 'Antena de cliente' """
+    """ 
+    Guarda los datos básicos de los dispositivos 'Antena de cliente'.
+    Pone en activo la estación
+    """
 
     # Extraer la lista de estaciones del diccionario (si no existe, usa lista vacía)
     estaciones = datos.get("estaciones", [])
@@ -117,10 +120,11 @@ def guarda_staciones_wifi(dispositivo, **datos):
         # Obtenemos la INSTANCIA única del dispositivo por su IP de gestión
         # estacion_dev = Dispositivo.objects.filter(ip_gestion=ip).first()
 
-        # Guarda las metricas en cada estacion wifi
+        # Guarda las metricas en cada estacion wifi, filtramos por sus IPs
         estacion_dev = Dispositivo.objects.filter(
             Q(ip_gestion=ip) | Q(ip_publica=ip)
         ).first()
+
         
         if estacion_dev:
             st, created = DeviceMetrics.objects.update_or_create(
