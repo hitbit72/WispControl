@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.contrib.auth.views import LogoutView
 from django.urls import path, include
 from django.conf import settings
 
@@ -9,8 +10,7 @@ admin.site.site_title = "InforCEM"
 
 urlpatterns = [
     path('', include('accounts.urls')),
-    # path de auth
-    path('accounts/', include('django.contrib.auth.urls')),  # Manejo de autenticación
+    path('logout/', LogoutView.as_view(next_page='login'), name='logout'),
     path('admin/', admin.site.urls),
     path('mikrotik/', include('mikrotik.urls')),
     path('sectores/', include('sector.urls')),
