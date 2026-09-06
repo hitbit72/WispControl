@@ -21,12 +21,12 @@
         {% load dispositivo_tags %}
         {% for dispositivo in pagina %}
         <tr>
-            <td style="width: 30px; min-width:20px;">{% include "dispositivo/comun/estado.html" %}</td>
+            <td style="width: 30px; min-width:20px;">{% include "dispositivo/comun/_estado.html" %}</td>
             <td>
             <i class="bi bi-exclamation-triangle-fill alert-dot" aria-hidden="true" {% if not dispositivo.alarmas.all.0 %}style="display:none"{% endif %} title="Alerta en el dispositivo"></i>
             <a href="{% url 'dispositivos:detalle' dispositivo.pk %}">{{ dispositivo.nombre }}</a>
             </td>
-            <td>{{ dispositivo.marca.nombre }} {{ dispositivo.marca.modelo }}</td>
+            <td>{{ dispositivo.marca.nombre }} {{ dispositivo.marca.modelo|default:'' }}</td>
             <td>{{ dispositivo.ip_gestion|default:"—" }}</td>
             <td>{% if dispositivo.cliente.nombre_completo %}
                 <a href="{% url 'clientes:detalle' dispositivo.cliente.pk %}">{{ dispositivo.cliente.nombre_completo }}</a>
@@ -35,7 +35,7 @@
                 {% endif %}
             </td>
             <td>{{ dispositivo.tipo.nombre }}</td>
-            <td>{{ dispositivo.metricas.all.0.clients|default:"0" }}</td>
+            <td>{{ dispositivo.metricas.all.0.clients|default:'0' }}</td>
             <td>{% if dispositivo.sector %}<a href="{% url 'sectores:detalle' dispositivo.sector.pk %}">{{ dispositivo.sector.nombre }}</a>{% else %}—{% endif %}</td>
             <td>{{ dispositivo.metricas.all.0.ssid|default:"—" }}</td>
             <td style="width: 30px; min-width:20px;">{% include "dispositivo/comun/_signal.html" %}</td>

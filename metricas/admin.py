@@ -26,5 +26,5 @@ class AlarmaAdmin(admin.ModelAdmin):
 class OIDmetricAdmin(admin.ModelAdmin):
     list_display = ('marca', 'tipo', 'descripcion', 'codigos')
     list_filter = ('marca__nombre', 'tipo')
-    search_fields = ('marca__nombre', 'tipo')
+    search_fields = ('marca__nombre', 'marca__modelo', 'tipo')
     list_select_related = ('marca',)

@@ -7,7 +7,8 @@ class Marca(models.Model):
     Los OID selecioanan la marca tambien aqui
     """
     nombre = models.CharField(max_length=255)
-    modelo = models.CharField(max_length=255, null=True, blank=True)
+    modelo = models.CharField(max_length=255, null=True, blank=True,
+                              help_text='Modelo / Descripción de la Marca',)
 
     class Meta:
         verbose_name = 'Marca'

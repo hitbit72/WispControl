@@ -150,25 +150,18 @@ def nuevo_dispositivo(request, pk=0):
 @login_required
 def detalle_dispositivo(request, pk):
     dispositivo = get_object_or_404(
-        Dispositivo.objects.prefetch_related('interfaces', 'enlaces_origen', 'enlaces_destino', 'metricas'),
+        Dispositivo.objects.prefetch_related('interfaces', 'metricas'),
         pk=pk,
     )
 
     # Capturamos la URL de redirección (si viene en el GET o en el POST)
     url_anterior = request.POST.get('next') or request.GET.get('next')
-    
-    # cargar las metrcias del dispositivo
-    #metricas = DeviceMetrics.objects.filter(device=dispositivo).first()
-    metricas = dispositivo.metricas.first()  # Obtener la primera métrica asociada al dispositivo
 
-    enlaces = sorted(
-        (*dispositivo.enlaces_origen.all(), *dispositivo.enlaces_destino.all()),
-        key=lambda e: e.pk,
-    )
+    # Obtener las métricas asociada al dispositivo
+    metricas = dispositivo.metricas.first()
 
     return render(request, 'dispositivo/detalle_dispositivo.html', {
         'dispositivo': dispositivo,
-        'enlaces': enlaces,
         'metricas': metricas,
         'url_anterior': url_anterior,
     })
@@ -256,6 +249,7 @@ def alternar_escaneo_dispositivo(request, pk):
 
     if request.method == 'POST':
         metodo = request.POST.get('id_scanear')
+
         if metodo == '1':
             dispositivo.escanear = not dispositivo.escanear
         if metodo == '2':
@@ -280,7 +274,10 @@ def alternar_escaneo_dispositivo(request, pk):
             dispositivo.alarma_ping = False
 
         dispositivo.save()
-    return redirect('dispositivos:detalle', pk=dispositivo.pk)
+
+    return render(request, 'dispositivo/comun/_bt_scanear.html', {
+        'dispositivo': dispositivo,
+        })
 
 
 # --- Interfaces ----------------------------------------------------------------

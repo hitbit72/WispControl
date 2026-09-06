@@ -30,7 +30,7 @@ def actualizar_metricas_snmp(request, pk):
 
     metricas = dispositivo.metricas.first()
 
-    return render(request, 'dispositivo/_metricas_partial.html', {
+    return render(request, 'dispositivo/comun/_metricas_partial.html', {
         'metricas': metricas,
         'dispositivo': dispositivo,
     })

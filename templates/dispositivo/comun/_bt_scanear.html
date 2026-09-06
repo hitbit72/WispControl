@@ -1,0 +1,78 @@
+
+<form>
+{% csrf_token %}
+<div x-data="{ metodo: '0'}">
+    <div class="card h-100" id="bt_escanear">
+        <div class="row text-center mb-2 mt-2" style="font-size: 0.65rem">
+        <input type="hidden" id="id_scanear" name="id_scanear" x-model="metodo">
+
+            <div class="col">
+                <div><label>Escanear</label></div>
+                <button hx-post="{% url 'dispositivos:alternar_escaneo' dispositivo.pk %}" 
+                id="escan_snmp" 
+                hx-target="#bt_escanear" 
+                hx-swap="innerHTML" 
+                @click="metodo = '1'" 
+                class="btn btn-primary badge {% if dispositivo.escanear %}bg-success{% else %}bg-danger{% endif %}" 
+                style="padding: 0.15rem 0.40rem;"> 
+                {% if dispositivo.escanear %} On {% else %} Off {% endif %}
+                </button>
+            </div>
+
+            <div class="col">
+                <div><label>Alarmas</label></div>
+                <button hx-post="{% url 'dispositivos:alternar_escaneo' dispositivo.pk %}" 
+                id="alarma_snmp" 
+                hx-target="#bt_escanear" 
+                hx-swap="innerHTML" 
+                @click="metodo = '2'" 
+                class="btn btn-primary badge {% if dispositivo.alarma %}bg-success{% else %}bg-danger{% endif %}" 
+                style="padding: 0.15rem 0.40rem;"> 
+                {% if dispositivo.alarma %} On {% else %} Off {% endif %}
+                </button>
+            </div>
+
+            <div class="col">
+                <div><label>Puertos</label></div>
+                <button hx-post="{% url 'dispositivos:alternar_escaneo' dispositivo.pk %}" 
+                id="alarma_puertos" 
+                hx-target="#bt_escanear" 
+                hx-swap="innerHTML" 
+                @click="metodo = '3'" 
+                class="btn btn-primary badge {% if dispositivo.alarma_puerto %}bg-success{% else %}bg-danger{% endif %}" 
+                style="padding: 0.15rem 0.40rem;"> 
+                {% if dispositivo.alarma_puerto %} On {% else %} Off {% endif %}
+                </button>
+            </div>
+
+            <div class="col">
+                <div><label>Ping</label></div>
+                <button hx-post="{% url 'dispositivos:alternar_escaneo' dispositivo.pk %}" 
+                id="ping" 
+                hx-target="#bt_escanear" 
+                hx-swap="innerHTML" 
+                @click="metodo = '4'" 
+                class="btn btn-primary badge {% if dispositivo.ping %}bg-success{% else %}bg-danger{% endif %}" 
+                style="padding: 0.15rem 0.40rem;"> 
+                {% if dispositivo.ping %} On {% else %} Off {% endif %}
+                </button>
+            </div>
+
+            <div class="col">
+                <div><label>Alarma ping</label></div>
+                <button hx-post="{% url 'dispositivos:alternar_escaneo' dispositivo.pk %}" 
+                id="alarma_ping" 
+                hx-target="#bt_escanear" 
+                hx-swap="innerHTML" 
+                @click="metodo = '5'" 
+                class="btn btn-primary badge {% if dispositivo.alarma_ping %}bg-success{% else %}bg-danger{% endif %}" 
+                style="padding: 0.15rem 0.40rem;"> 
+                {% if dispositivo.alarma_ping %} On {% else %} Off {% endif %}
+                </button>
+            </div>
+
+
+        </div> <!-- row -->
+    </div> <!-- card -->
+</div>
+</form>

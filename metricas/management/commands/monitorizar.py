@@ -114,6 +114,7 @@ class Command(BaseCommand):
         escalares_st = {}
         escalares_onu = {}
         escalares_puerto_pon = {}
+        resultado = {}
         puertos, puertos_pon, estaciones, onus = [], [], [], []
 
         escalares = oids_dispositivo(dispositivo, 'general')
@@ -154,7 +155,8 @@ class Command(BaseCommand):
 
         #print('RESULTADO --------------------')
         #print(resultado)
-        datos = self._construir_datos(dispositivo, resultado)
+        if resultado:
+            datos = self._construir_datos(dispositivo, resultado)
         datos['puertos'] = puertos
         datos['puertos_pon'] = puertos_pon
         datos['estaciones'] = estaciones
@@ -179,10 +181,12 @@ class Command(BaseCommand):
             )
 
         # guarda los datos en DeviceMetrics
-        metrica = services.guardar_metrica(dispositivo, **datos)
+        if datos:
+            metrica = services.guardar_metrica(dispositivo, **datos)
         # Actualiza modelo de interfaz (puertos)
-        services.guardar_puertos(dispositivo, **datos)
-        # Actizalizar datos estaciones wifi y onus
+        if puertos:
+            services.guardar_puertos(dispositivo, **datos)
+            # Actizalizar datos estaciones wifi y onus
         if estaciones:
             services.guarda_staciones_wifi(dispositivo, **datos)     # <-- Datos wifi de ubiquiti
         if onus:

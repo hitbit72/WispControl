@@ -91,6 +91,7 @@ def consultar_escalares(dispositivo, oids):
     SnmpError si el equipo no responde o da error de protocolo."""
     if not oids:
         return {}
+    
     conf = _conf_snmp(dispositivo)
     comunidad = dispositivo.snmp_community or 'public'
     engine = SnmpEngine()
@@ -134,6 +135,9 @@ def consultar_escalares(dispositivo, oids):
 
 def _escalares_uno_a_uno(engine, auth, transporte, contexto, oids):
     #print('escalares_uno_a_uno')
+    if not oids:
+        return {}
+    
     resultado = {}
     for metrica, oid in oids.items():
         error_ind, error_st, _, var_binds = next(
