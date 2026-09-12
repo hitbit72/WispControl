@@ -39,9 +39,8 @@ class Dispositivo(models.Model):
     """
     Cualquier equipo de la red: nodo, router, switch, AP, OLT, ONU o antena de cliente.
 
-    Los atributos específicos de cada marca o modelo (ej. modo de radio de un AP Ubiquiti, 
-    o el tipo de licencia RouterOS) se guardan en 'atributos_extra' en vez de crear una 
-    columna por cada caso.
+    Se pueden crear atributos específicos de cada marca o modelo en 'atributos_extra'
+    (ej. modo de radio de un AP Ubiquiti, o el tipo de licencia RouterOS)
     """
 
     class Estado(models.TextChoices):

@@ -104,7 +104,17 @@ def guarda_staciones_wifi(dispositivo, **datos):
         if not ip:
             continue
 
-        # Se tiene que usar las keys de OID
+        # Obtenemos la INSTANCIA única del dispositivo por su IP de gestión
+        estacion_dev = Dispositivo.objects.filter(ip_gestion=ip).first()
+
+        """
+        Se puede usar una busqueda por ip publica o ip privada:
+        estacion_dev = Dispositivo.objects.filter(
+            Q(ip_gestion=ip) | Q(ip_publica=ip)
+        ).first()
+        """
+
+        # Actualización de datos. Se tiene que usar las keys de OID
         uData = {
             'ccq': estacion.get('ccq'),
             'noise': estacion.get('noise'),
@@ -116,21 +126,14 @@ def guarda_staciones_wifi(dispositivo, **datos):
             'ssid': ssid,
             'frequency': frequency,
         }
-
-        # Obtenemos la INSTANCIA única del dispositivo por su IP de gestión
-        # estacion_dev = Dispositivo.objects.filter(ip_gestion=ip).first()
-
-        # Guarda las metricas en cada estacion wifi, filtramos por sus IPs
-        estacion_dev = Dispositivo.objects.filter(
-            Q(ip_gestion=ip) | Q(ip_publica=ip)
-        ).first()
-
         
         if estacion_dev:
             st, created = DeviceMetrics.objects.update_or_create(
                 device=estacion_dev,
                 defaults=uData,
             )
+        # Si el dispositivo no existe, se puede crear cómo Discover. (Queda peniente)
+
 
 
 def guarda_estaciones_onu(dispositivo, **datos):
