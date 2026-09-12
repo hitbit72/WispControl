@@ -111,6 +111,7 @@ class Command(BaseCommand):
     def _procesar(self, dispositivo):
 
         # Cargar los códigos OID para cada tipo de escaneo
+        datos = []
         escalares_st = {}
         escalares_onu = {}
         escalares_puerto_pon = {}

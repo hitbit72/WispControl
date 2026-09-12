@@ -48,6 +48,7 @@
     {% endif %}
   </p>
   {% endif %}
+
   <div class="row g-2 align-items-start mb-1">
     <div class="col-auto d-flex gap-1">
       <p class="mb-0"><strong>Señal:</strong> {{ metricas.signal|default:'0' }} dbm</p> ·
@@ -64,12 +65,14 @@
       <p class="mb-0"><strong>Latencia:</strong> {{ metricas.latencia|default:'0' }} ms</p>
     </div>
   </div>
+
   {% if metricas.rx %}
   <p class="mb-1"><strong>Capacidad rx/tx:</strong> {{ metricas.rx|format_bitrate }} / {{ metricas.tx|format_bitrate }} </p>
   {% endif %}
   {% if metricas.uptime %}<p class="mb-1"><strong>Funcionando:</strong> {{ metricas.uptime|formatear_uptime }}</p>{% endif %}
   {% if metricas.timescan %}<p class="mb-0"><strong>Actualizado:</strong> {{ metricas.timescan }}</p>{% endif %}
 </div>
+
 {% else %}
 <div id="metricas" class="text-muted">
   <p class="mb-0">Sin métricas disponibles. Pulse "Actualizar" para consultar SNMP.</p>
@@ -86,6 +89,7 @@
   </div>
 </div>
 {% endif %}
+
 <div class="modal fade" 
     id="metricaModal" 
     tabindex="-1" 
@@ -114,4 +118,4 @@
 document.body.removeAttribute('style');
 document.body.className = '';
 </script>
-</div>
+
