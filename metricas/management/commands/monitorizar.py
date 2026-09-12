@@ -111,7 +111,8 @@ class Command(BaseCommand):
     def _procesar(self, dispositivo):
 
         # Cargar los códigos OID para cada tipo de escaneo
-        datos = []
+        datos = {}
+        status = DeviceMetrics.Status.TIMEOUT
         escalares_st = {}
         escalares_onu = {}
         escalares_puerto_pon = {}
@@ -158,10 +159,14 @@ class Command(BaseCommand):
         #print(resultado)
         if resultado:
             datos = self._construir_datos(dispositivo, resultado)
-        datos['puertos'] = puertos
-        datos['puertos_pon'] = puertos_pon
-        datos['estaciones'] = estaciones
-        datos['onus'] = onus
+        if puertos:
+            datos['puertos'] = puertos
+        if puertos_pon:
+            datos['puertos_pon'] = puertos_pon
+        if estaciones:
+            datos['estaciones'] = estaciones
+        if onus:
+            datos['onus'] = onus
         datos['status'] = status
         datos['timescan'] = timezone.now()
 

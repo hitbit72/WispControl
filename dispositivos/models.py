@@ -50,6 +50,7 @@ class Dispositivo(models.Model):
         MANTENIMIENTO = 'mantenimiento', 'En mantenimiento',
         INSTALACION = 'instalacion', 'En instalación',
         RETIRADO = 'retirado', 'Retirado'
+        DISCOVER = 'discover', 'Descubierto'
 
     class Rol(models.TextChoices):
         MAIN = 'main', 'Principal'
