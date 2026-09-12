@@ -69,6 +69,7 @@
   {% endif %}
   {% if metricas.uptime %}<p class="mb-1"><strong>Funcionando:</strong> {{ metricas.uptime|formatear_uptime }}</p>{% endif %}
   {% if metricas.timescan %}<p class="mb-0"><strong>Actualizado:</strong> {{ metricas.timescan }}</p>{% endif %}
+</div>
 {% else %}
 <div id="metricas" class="text-muted">
   <p class="mb-0">Sin métricas disponibles. Pulse "Actualizar" para consultar SNMP.</p>
@@ -97,8 +98,7 @@
                 <h2 class="modal-title h5" id="confirmModalLabel">Información</h2>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">Se están actualizando los datos SNMP del dispositivo ... 
-            </div>
+            <div class="modal-body">Se están actualizando los datos SNMP del dispositivo ...</div>
             <div class="modal-footer">
                 <button type="button" 
                         class="btn btn-primary" 

@@ -65,9 +65,9 @@
     </div>
 </div>
 
-{% if dispositivo.notas %}
-<div class="alert alert-light border mb-2">{{ dispositivo.notas|linebreaks }}</div>
-{% endif %}
+    {% if dispositivo.notas %}
+    <div class="alert alert-light border">{{ dispositivo.notas|linebreaks }}</div>
+    {% endif %}
 </section>
 
 {% if dispositivo.tipo.clave == 'ap' %}
@@ -97,6 +97,7 @@
 </div>
 {% include "dispositivo/interfaz/_tabla_interfaz.html" %}
 </section>
+
 
 <div class="modal fade" 
     id="deleteDevice" 
