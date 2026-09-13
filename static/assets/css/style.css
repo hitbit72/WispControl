@@ -342,7 +342,8 @@ a {
   width: min(385px, calc(100vw - 2rem));
   border: 1px solid var(--admin-border);
   border-radius: 8px;
-  box-shadow: var(--admin-shadow);
+  /* box-shadow: var(--admin-shadow); */
+  box-shadow:  4px 8px 12px 11px rgba(15, 23, 42, 0.23);
 }
 
 .notification-menu .dropdown-item {
