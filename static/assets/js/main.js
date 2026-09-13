@@ -145,6 +145,15 @@
     //initTableSearch();
     initThemeToggle();
 
+    // Muestra alarma si existe en la pantalla detalle dispositivo
+    if (document.getElementById("alarmDeviceDetail")) {
+        let alertDeviceDetail = new bootstrap.Modal(
+        document.getElementById("alarmDeviceDetail"),
+        {}
+      );
+      alertDeviceDetail.show();
+    }
+
     if (!sidebarToggle) {
       return;
     }

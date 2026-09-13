@@ -150,7 +150,14 @@ def nuevo_dispositivo(request, pk=0):
 @login_required
 def detalle_dispositivo(request, pk):
     dispositivo = get_object_or_404(
-        Dispositivo.objects.prefetch_related('interfaces', 'metricas'),
+        Dispositivo.objects.prefetch_related(
+            'interfaces', 
+            'metricas',
+            Prefetch(
+				'alarmas',
+				queryset=Alarma.objects.filter(estado='activa', tipo='snmp')
+			)
+        ),
         pk=pk,
     )
 
