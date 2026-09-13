@@ -108,18 +108,25 @@ def find_station(ip, current_path=None):
         return mark_safe('<td>—</td><td>—</td>')
 
     dispositivo = Dispositivo.objects.filter(ip_gestion=ip).first()
+    url_cliente = ''
+    nombre_cliente = '—'
+    url_stacion = ''
+
     if dispositivo:
-        url_cliente = reverse('clientes:detalle', args=[dispositivo.cliente.pk])
+        if dispositivo.cliente:
+            url_cliente = reverse('clientes:detalle', args=[dispositivo.cliente.pk])
+            nombre_cliente = dispositivo.cliente.nombre_completo
         url_stacion = reverse('dispositivos:detalle', args=[dispositivo.pk])
 
         # Si nos pasaron la ruta actual, añadimos el ?next=
         if current_path:
             querystring = urlencode({'next': current_path})
-            url_cliente = f"{url_cliente}?{querystring}"
+            if url_cliente:
+                url_cliente = f"{url_cliente}?{querystring}"
             url_stacion = f"{url_stacion}?{querystring}"
 
         # Envolvemos el string con mark_safe para renderizar como HTML real
-        html = f'<td><a href="{url_stacion}">{ip}</a></td><td><a href="{url_cliente}">{dispositivo.cliente.nombre_completo}</a></td>'
+        html = f'<td><a href="{url_stacion}">{ip}</a></td><td><a href="{url_cliente}">{nombre_cliente}</a></td>'
         return mark_safe(html)
 
     html = f'<td>{ip}</td><td>—</td>'
