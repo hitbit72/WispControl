@@ -77,6 +77,8 @@
 {% else %}
   <p class="mb-0">Sin métricas disponibles. Pulse "Actualizar" para consultar SNMP.</p>
   <div class="d-flex gap-2">
+    <form>
+    {% csrf_token %}
     <button hx-post="{% url 'metricas:actualizar_snmp' dispositivo.pk %}"
             hx-target="#metricas"
             hx-swap="innerHTML"
@@ -87,6 +89,7 @@
       <span class="spinner-border spinner-border-sm htmx-indicator" id="spinner-snmp" role="status" aria-hidden="true"></span>
       Actualizar
     </button>
+    </form>
   </div>
 {% endif %}
 
