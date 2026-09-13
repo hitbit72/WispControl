@@ -64,6 +64,7 @@ CAMPO = {
 
 class Command(BaseCommand):
     help = 'Consulta SNMP a cada dispositivo y guarda métricas + alarmas.'
+    ipfiltro = ''
 
     def add_arguments(self, parser):
         # Añadimos un argumento opcional '--ip'
@@ -76,6 +77,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         # Recuperamos el valor del argumento --ip si fue proporcionado
         ip_filtro = options.get('ip')
+        self.ipfiltro = ip_filtro
 
         if ip_filtro:
             dispositivos = (
@@ -125,6 +127,10 @@ class Command(BaseCommand):
         # Solo los dispositivos AP y OLT
         if dispositivo.tipo.clave == 'ap':
             escalares_st = oids_dispositivo(dispositivo, 'wifi')
+
+        if self.ipfiltro:
+            escalares_st = oids_dispositivo(dispositivo, 'wifi')
+
         if dispositivo.tipo.clave == 'olt':
             escalares_puerto_pon = oids_dispositivo(dispositivo, 'puertos_pon')
             escalares_onu = oids_dispositivo(dispositivo, 'onus')
