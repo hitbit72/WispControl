@@ -26,7 +26,7 @@
                 <p class="mb-1"><strong>Estado:</strong>
                     {% include "dispositivo/comun/_estado.html" %}
                 </p>
-                <p class="mb-1"><strong>Modo:</strong> {{ dispositivo.tipo.nombre }} · {{ dispositivo.get_rol_display|default:"—" }}</p>
+                <p class="mb-1"><strong>Modo:</strong> {{ dispositivo.tipo.nombre }} · {{ dispositivo.get_rol_display|default:"—" }} ( <span>{{ dispositivo.frequency|default:"—" }} MHz</span> )</p>
                 <p class="mb-1"><strong>IP de gestión:</strong> <a href="http://{{ dispositivo.ip_gestion|default:"—" }}" target="_blank">{{ dispositivo.ip_gestion|default:"—" }}</a></p>
                 {% if dispositivo.ip_publica %}<p class="mb-1"><strong>IP pública:</strong> {{ dispositivo.ip_publica }}</p>{% endif %}
                 <p class="mb-1"><strong>MAC:</strong> {{ dispositivo.mac_address|default:"—" }}</p>
@@ -74,7 +74,15 @@
 {% if metricas.estaciones %}
 <section class="panel mt-1" id="seccionEstaciones">
     <div class="d-flex justify-content-between align-items-center mb-2">
-        <h4 class="mb-0"><i class="bi bi-wifi" aria-hidden="true"></i> Estaciones conectadas ({{ metricas.clients }})</h4>
+        <h4 class="mb-0"><i class="bi bi-wifi" aria-hidden="true"></i> 
+        {% if dispositivo.rol == 'slave' %}
+        AP conectado PtP 
+        {% elif dispositivo.rol == 'master' %}
+        Estación conectada PtP 
+        {% else %}
+        Estaciones conectadas 
+        {% endif %}({{ metricas.clients }})
+        </h4>
     </div>
         {% include "dispositivo/_tabla_estaciones.html" %}
 </section>

@@ -8,7 +8,7 @@
             <th>IP gestión</th>
             <th>Cliente</td>
             <th>Tipo</th>
-            <th>Estaciones</th>
+            <th>ST</th>
             <th>Sector</th>
             <th>SSID</th>
             <th>Señal</th>
@@ -34,8 +34,8 @@
                 ——
                 {% endif %}
             </td>
-            <td>{{ dispositivo.tipo.nombre }}</td>
-            <td>{{ dispositivo.metricas.all.0.clients|default:'0' }}</td>
+            <td>{{ dispositivo.tipo.nombre }} {{ dispositivo.get_rol_display }}</td>
+            <td style="max-width: 5px;">{{ dispositivo.metricas.all.0.clients|default:'0' }}</td>
             <td>{% if dispositivo.sector %}<a href="{% url 'sectores:detalle' dispositivo.sector.pk %}">{{ dispositivo.sector.nombre }}</a>{% else %}—{% endif %}</td>
             <td>{{ dispositivo.metricas.all.0.ssid|default:"—" }}</td>
             <td style="width: 30px; min-width:20px;">{% include "dispositivo/comun/_signal.html" %}</td>
