@@ -26,7 +26,8 @@
                 <p class="mb-1"><strong>Estado:</strong>
                     {% include "dispositivo/comun/_estado.html" %}
                 </p>
-                <p class="mb-1"><strong>Modo:</strong> {{ dispositivo.tipo.nombre }} · {{ dispositivo.get_rol_display|default:"—" }} ( <span>{{ dispositivo.frequency|default:"—" }} MHz</span> )</p>
+                <p class="mb-1"><strong>Modo:</strong> {{ dispositivo.tipo.nombre }} · {{ dispositivo.get_rol_display|default:"—" }} 
+                {% if dispositivo.tipo.clave == 'ap' %}( <span>{{ dispositivo.frequency|default:"—" }} MHz</span> ){% endif %}</p>
                 <p class="mb-1"><strong>IP de gestión:</strong> <a href="http://{{ dispositivo.ip_gestion|default:"—" }}" target="_blank">{{ dispositivo.ip_gestion|default:"—" }}</a></p>
                 {% if dispositivo.ip_publica %}<p class="mb-1"><strong>IP pública:</strong> {{ dispositivo.ip_publica }}</p>{% endif %}
                 <p class="mb-1"><strong>MAC:</strong> {{ dispositivo.mac_address|default:"—" }}</p>
