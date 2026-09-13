@@ -12,7 +12,7 @@ from dispositivos.models import Dispositivo
 
 from .models import DeviceMetrics
 
-# Nivel Evento asociado a cada regla (fijo, no configurable).
+# Nivel Evento asociado a cada regla (fijo, no configurable) -> service.py.
 REGLA_NIVEL = {
     'sin_respuesta': Evento.Nivel.WARNING,
     'sin_respuesta_snmp': Evento.Nivel.WARNING,
@@ -72,7 +72,7 @@ def evaluar(dispositivo, metrica, anterior, config):
                 reglas.append({'regla': 'puerto_caido', 'titulo': f'Puerto caído {dispositivo.ip_gestion}',
                                'texto': f'Interfaz(es) caída(s): {", ".join(caidos)}.'})
             
-    if config.get('sin_clientes_ap') and dispositivo.tipo.clave in ('ap','accesp','apoint','olt') \
+    if config.get('sin_clientes_ap') and dispositivo.tipo.clave in ('ap','nodo','olt') \
             and metrica.clients is not None and metrica.clients == 0:
         reglas.append({'regla': 'sin_clientes_ap', 'titulo': f'AP sin clientes {dispositivo.ip_gestion}',
                        'texto': 'Ningún cliente asociado al AP.'})
@@ -84,7 +84,7 @@ def evaluar(dispositivo, metrica, anterior, config):
                            'texto': f'Frecuencia {dispositivo.frequency:.0f} → {metrica.frequency:.0f} MHz.'})
             
         if config.get('cambio_canal') and metrica.channel and anterior.channel \
-                and metrica.channel != anterior.channel:
+                and dispositivo.tipo.clave in ('ap','nodo','olt') and metrica.channel != anterior.channel:
             reglas.append({'regla': 'cambio_canal', 'titulo': f'Cambio de canal {dispositivo.ip_gestion}',
                            'texto': f'Canal {anterior.channel} → {metrica.channel}.'})
             
