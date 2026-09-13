@@ -113,7 +113,10 @@ def find_station(ip, current_path=None):
     url_stacion = ''
 
     if dispositivo:
+        # Valore por defecto, si no existe el cliente, usamos el dispositivo ya que puede ser una estacion PtP
         nombre_cliente = dispositivo.nombre
+        url_cliente = reverse('dispositivos:detalle', args=[dispositivo.pk])
+
         if dispositivo.cliente:
             url_cliente = reverse('clientes:detalle', args=[dispositivo.cliente.pk])
             nombre_cliente = dispositivo.cliente.nombre_completo
