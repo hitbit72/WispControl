@@ -128,7 +128,8 @@ class Command(BaseCommand):
         if dispositivo.tipo.clave == 'ap':
             escalares_st = oids_dispositivo(dispositivo, 'wifi')
 
-        if self.ipfiltro:
+        if self.ipfiltro and dispositivo.tipo.clave == 'st':
+            print(f'Estacion: {self.ipfiltro}')
             escalares_st = oids_dispositivo(dispositivo, 'wifi')
 
         if dispositivo.tipo.clave == 'olt':
