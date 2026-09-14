@@ -18,13 +18,11 @@ def ping_dispositivo(request, pk):
     exitoso, latencia, resultado, error_msg = ping_detalles(dispositivo)
     if error_msg:
         print(error_msg)
-
-    print(resultado)
     
     return render(request, 'dispositivo/comun/_ping_result.html', {
         'exitoso': exitoso,
         'latencia': latencia,
-        'resultado': resultado,
+        'resultado': str(resultado),
         'error_msg': error_msg,
     })
 

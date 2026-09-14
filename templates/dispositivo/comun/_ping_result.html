@@ -5,11 +5,7 @@
     {% if exitoso == True %}
         <p>Latencia media : {{ latencia }} ms</p>
         {% if resultado %}
-        <p>
-        {% for r in resultado %}
-            {{ r }}<br>
-        {% endfor %}
-        </p>
+        <p>{{ resultado|linebreaksbr }}</p>
         {% endif %}
     {% else %}
     <p class="text-danger">Error al ejecutar el ping<br>{{ error_msg }}</p>
