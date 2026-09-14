@@ -1,10 +1,16 @@
     <div class="modal-header">
         <h2 class="modal-title h5" id="confirmModalLabel">Resultado del Ping </h2>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
     </div>
     <div class="modal-body">
     {% if exitoso == True %}
-    <p>Latencia del dispositivo tras ejecutar el ping: {{ latencia }} ms</p>
+        <p>Latencia media : {{ latencia }} ms</p>
+        {% if resultado %}
+        <p>
+        {% for r in resultado %}
+            {{ r }}<br>
+        {% endfor %}
+        </p>
+        {% endif %}
     {% else %}
     <p class="text-danger">Error al ejecutar el ping<br>{{ error_msg }}</p>
     {% endif %}
@@ -12,7 +18,9 @@
     <div class="modal-footer">
         <button type="button" 
                 class="btn btn-primary" 
-                data-bs-dismiss="modal">
+                data-bs-dismiss="modal"
+                id="cerrarPingModal"
+                onclick="mensajeModalPing()">
                 Aceptar
         </button>
     </div>

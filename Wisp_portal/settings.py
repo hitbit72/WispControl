@@ -218,4 +218,5 @@ PING_CONTROL = {
     'count': 2,        # número de pings por dispositivo
     'timeout': 2,      # timeout en segundos por ping
     'interval': 0.2,   # intervalo entre pings en segundos
+    'size': 32,        # tamaño del paquete bytes
 }

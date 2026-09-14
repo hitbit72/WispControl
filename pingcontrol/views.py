@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404, render
 from django.views.decorators.http import require_POST
 
 from dispositivos.models import Dispositivo
-from pingcontrol.services import ping_dispositivo as ejecutar_ping
+from pingcontrol.services import ping_detalles
 
 
 @login_required
@@ -15,13 +15,16 @@ def ping_dispositivo(request, pk):
 
     dispositivo = get_object_or_404(Dispositivo, pk=pk, ip_gestion__isnull=False)
     # Hacer ping
-    exitoso, latencia, error_msg = ejecutar_ping(dispositivo)
+    exitoso, latencia, resultado, error_msg = ping_detalles(dispositivo)
     if error_msg:
         print(error_msg)
 
+    print(resultado)
+    
     return render(request, 'dispositivo/comun/_ping_result.html', {
         'exitoso': exitoso,
         'latencia': latencia,
+        'resultado': resultado,
         'error_msg': error_msg,
     })
 

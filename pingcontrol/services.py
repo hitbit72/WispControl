@@ -23,6 +23,7 @@ DEFAULT_PING_CONFIG = {
     'count': 3,
     'timeout': 2,
     'interval': 0.2,
+    'size': 32,
 }
 
 def get_ping_config():
@@ -74,6 +75,57 @@ def ping_dispositivo(dispositivo):
         return False, None, f"Error en ping: {str(e)}"
 
 
+def ping_detalles(dispositivo):
+    """
+    Hace ping desde la apgina de detalles de un dispositivo y devuelve 
+    (exitoso, latencia_promedio_ms, resultado, error_msg).
+    
+    Returns:
+        tuple: (bool, float|None, str|None)
+            - bool: True si al menos un ping tuvo respuesta
+            - float: latencia promedio en ms (None si falló)
+            - result: resultados de ping
+            - str: mensaje de error (None si éxito)
+    """
+    if ping is None:
+        return False, None, None, "pythonping no está instalado"
+
+    if not dispositivo.ip_gestion:
+        return False, None, None, "Sin IP de gestión"
+    
+    config = get_ping_config()
+    #count = config.get('count', DEFAULT_PING_CONFIG['count'])
+    timeout = config.get('timeout', DEFAULT_PING_CONFIG['timeout'])
+    interval = config.get('interval', DEFAULT_PING_CONFIG['interval'])
+    size = config.get('size', DEFAULT_PING_CONFIG['size'])
+
+    count = 4
+    #print(f'Ping a {dispositivo.ip_gestion}')
+
+    try:
+        result = ping(
+            str(dispositivo.ip_gestion),
+            count=count,
+            timeout=timeout,
+            interval=interval,
+            size=size,
+        )
+        
+        if result.success():
+            # Calcular latencia promedio de los pings exitosos en ms
+            latencias = [r.time_elapsed_ms for r in result if r.success]
+            if latencias:
+                latencia_promedio = sum(latencias) / len(latencias)
+                return True, round(latencia_promedio, 2), result, None
+            return True, 0.0, result, None
+        else:
+            return False, None, None, f"Sin respuesta tras {count} pings"
+            
+    except Exception as e:
+        return False, None, None, f"Error en ping: {str(e)}"
+
+    
+    
 def guardar_metrica_ping(dispositivo, exitoso, latencia, error_msg=None):
     """
     Guarda o actualiza la métrica de ping en DeviceMetrics.
