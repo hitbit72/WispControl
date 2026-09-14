@@ -31,11 +31,7 @@
                     </div>
 
                     <div class="d-flex gap-2">
-                        <form>
-                        {% csrf_token %}
-                        <!-- i class="bi bi-card-list" aria-hidden="true"></i -->
-                        <i class="bi bi-gear" aria-hidden="true" title="opciones"></i>
-                        </form>
+                        {% include "dispositivo/comun/_bt_ping.html" %}
                     </div>
                 </div>
 

@@ -1329,6 +1329,9 @@ html[data-theme="dark"] .auth-body {
   color: var(--admin-text);
 }
 
+.dropdown-shadow {
+  box-shadow:  1px 4px 10px 4px rgba(15, 23, 42, 0.23);
+}
 /*
 .form-control,
 .form-select {

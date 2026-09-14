@@ -1,11 +1,14 @@
 <form>
 {% csrf_token %}
-<div x-data="{ metodo: '0'}">
-    <div class="card h-100" id="bt_ping">
-        <div class="row text-right mb-2 mt-2">
-
-
+    <div x-data="{ metodo: '0'}">
+        <div class="dropdown">
+            <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenuPing1" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-gear" aria-hidden="true" title="opciones"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-shadow" aria-labelledby="dropdownMenuPing1">
+                <li><a class="dropdown-item" href="#">Ping</a></li>
+                <li><a class="dropdown-item" href="#">Reiniciar</a></li>
+            </ul>
         </div>
     </div>
-</div>
 </form>
