@@ -181,5 +181,22 @@
     </div>
 </div>
 {% endif %}
-
+<div class="modal fade" 
+    id="pingModal" 
+    tabindex="-1" 
+    aria-labelledby="confirmModalLabel" 
+    aria-hidden="true"
+    data-bs-backdrop="true"> <!-- fondo bloqueado -->
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content modal-shadow" id="pingData">
+            <div class="modal-header">
+                <h2 class="modal-title h5" id="confirmModalLabel">Ejecutando Ping </h2>
+                <span class="spinner-border spinner-border-sm htmx-indicator" id="spinner-ping" role="status" aria-hidden="true"></span>
+            </div>
+            <div class="modal-body">Se están ejecutando el ping al dispositivo, espere ...</div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

@@ -6,8 +6,28 @@
                 <i class="bi bi-gear" aria-hidden="true" title="opciones"></i>
             </button>
             <ul class="dropdown-menu dropdown-shadow" aria-labelledby="dropdownMenuPing1">
-                <li><a class="dropdown-item" href="#">Ping</a></li>
-                <li><a class="dropdown-item" href="#">Reiniciar</a></li>
+                <li>
+                    <button hx-post="{% url 'pingcontrol:ping_dispositivo' dispositivo.pk %}"
+                            hx-target="#pingData"
+                            hx-swap="innerHTML"
+                            hx-indicator="#spinner-ping"
+                            id="ping_dispositivo"
+                            data-bs-toggle="modal" data-bs-target="#pingModal"
+                            class="dropdown-item">
+                        <i class="bi bi-arrow-left-right"></i> · Ping
+                    </button>
+                </li>
+                <li>
+                    <button hx-post="{% url 'metricas:actualizar_snmp' dispositivo.pk %}"
+                            hx-target="#pingData"
+                            hx-swap="innerHTML"
+                            hx-indicator="#spinner-ping"
+                            id="reload_dispositivo"
+                            data-bs-toggle="modal" data-bs-target="#pingModal"
+                            class="dropdown-item">
+                        <i class="bi bi-clock-history"></i> · Reiniciar
+                    </button>
+                </li>
             </ul>
         </div>
     </div>

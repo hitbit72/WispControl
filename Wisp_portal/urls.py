@@ -18,6 +18,7 @@ urlpatterns = [
     path('eventos/', include('eventos.urls')),
     path('clientes/', include('clientes.urls')),
     path('metricas/', include('metricas.urls')),
+    path('pingcontrol/', include('pingcontrol.urls'))
 ]
 
 # Manejo de archivos estáticos en modo de desarrollo

@@ -43,15 +43,6 @@ def ping_dispositivo(dispositivo):
     if ping is None:
         return False, None, "pythonping no está instalado"
 
-    """
-    if dispositivo.ip_gestion:
-        ip_dispositivo = dispositivo.ip_gestion
-    elif dispositivo.ip_publica:
-        ip_dispositivo = dispositivo.ip_publica
-    else:
-        return False, None, "Sin IP de gestión"
-    """
-
     if not dispositivo.ip_gestion:
         return False, None, "Sin IP de gestión"
     
