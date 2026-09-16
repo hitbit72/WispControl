@@ -98,9 +98,7 @@ def ping_detalles(dispositivo):
     timeout = config.get('timeout', DEFAULT_PING_CONFIG['timeout'])
     interval = config.get('interval', DEFAULT_PING_CONFIG['interval'])
     size = config.get('size', DEFAULT_PING_CONFIG['size'])
-
     count = 4
-    #print(f'Ping a {dispositivo.ip_gestion}')
 
     try:
         result = ping(

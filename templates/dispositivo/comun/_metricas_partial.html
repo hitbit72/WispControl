@@ -1,5 +1,3 @@
-<div id="metricas">
-
 {% if metricas %}
 {% load dispositivo_tags %}
   <div class="d-flex justify-content-between align-items-start">
@@ -94,33 +92,5 @@
   </div>
 {% endif %}
 
-  <div class="modal fade" 
-      id="metricaModal" 
-      tabindex="-1" 
-      aria-labelledby="confirmModalLabel" 
-      aria-hidden="true"
-      data-bs-backdrop="false"> <!-- fondo bloqueado -->
-      <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content modal-shadow">
-              <div class="modal-header">
-                  <h2 class="modal-title h5" id="confirmModalLabel">Información</h2>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">Se están actualizando los datos SNMP del dispositivo ...</div>
-              <div class="modal-footer">
-                  <button type="button" 
-                          class="btn btn-primary" 
-                          data-bs-dismiss="modal">
-                    <span class="spinner-border spinner-border-sm htmx-indicator" id="spinner-snmp" role="status" aria-hidden="true"></span>
-                    Aceptar
-                  </button>
-              </div>
-          </div>
-      </div>
-  </div>
-  <script>
-  document.body.removeAttribute('style');
-  document.body.className = '';
-  </script>
-</div> <!-- id metricas -->
+
 

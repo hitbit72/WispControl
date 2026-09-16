@@ -12,3 +12,15 @@ function mensajeModalPing(){
         `;
     }
 }
+
+
+
+document.body.addEventListener('cerrarMetricaModal', function () {
+    // Aquí ejecutas la lógica de tu modal
+    const modalEl = document.getElementById('metricaModal');
+    if (modalEl) {
+        const modal = bootstrap.Modal.getInstance(modalEl);
+        if (modal) modal.hide();
+    }
+});
+

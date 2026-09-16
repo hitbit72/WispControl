@@ -69,11 +69,33 @@
     <div class="col-md-4">
         <div class="card h-100">
             <div class="card-body">
+                <div id="metricas">
                 {% include "dispositivo/comun/_metricas_partial.html" %}
+                </div>
             </div>
         </div>
     </div>
 </div>
+<div class="modal" 
+    id="metricaModal" 
+    tabindex="-1" 
+    aria-labelledby="metricaModalLabel" 
+    aria-hidden="true"
+    data-bs-backdrop="static"> <!-- fondo bloqueado -->
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content modal-shadow" id="metricaData">
+            <div class="modal-header">
+                <h2 class="modal-title h5" id="metricaModalLabel">Información SNMP </h2>
+                <!-- button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button -->
+                <span class="spinner-border spinner-border-sm htmx-indicator" id="spinner-snmp" role="status" aria-hidden="true"></span>
+            </div>
+            <div class="modal-body">Se están actualizando los datos SNMP del dispositivo ...</div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
 
     {% if dispositivo.notas %}
     <div class="alert alert-light border">{{ dispositivo.notas|linebreaks }}</div>
@@ -119,13 +141,13 @@
 <div class="modal fade" 
     id="deleteDevice" 
     tabindex="-1" 
-    aria-labelledby="confirmModalLabel" 
+    aria-labelledby="deleteModalLabel" 
     aria-hidden="true"
     data-bs-backdrop="true"> <!-- fondo -->
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content modal-shadow">
             <div class="modal-header">
-                <h2 class="modal-title h5" id="confirmModalLabel">Eliminar: {{ dispositivo.nombre }}</h2>
+                <h2 class="modal-title h5" id="deleteModalLabel">Eliminar: {{ dispositivo.nombre }}</h2>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -138,9 +160,9 @@
             </div>
             <div class="modal-footer">
                 <button type="button" 
-                        class="btn btn-outline-secondary" 
+                        class="btn btn-sm btn-primary" 
                         data-bs-dismiss="modal"><i class="bi bi-x-circle" aria-hidden="true"></i> Cancelar</button>
-                <a id="deleteReponse" href="{% url 'dispositivos:eliminar' dispositivo.pk %}" class="btn btn-outline-danger"><i class="bi bi-trash" aria-hidden="true"></i> Eliminar</a>
+                <a id="deleteReponse" href="{% url 'dispositivos:eliminar' dispositivo.pk %}" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash" aria-hidden="true"></i> Eliminar</a>
             </div>
         </div>
     </div>
@@ -154,17 +176,17 @@
 {% endif %}
 </div>
 
-{% if dispositivo.alarmas.all.0 %}
+{% if hay_alarmas %}
 <div class="modal" 
     id="alarmDeviceDetail" 
     tabindex="-1" 
-    aria-labelledby="myModalLabel"
+    aria-labelledby="alarmModalLabel"
     aria-hidden="true"
     data-bs-backdrop="true"> <!-- fondo -->
     <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content modal-shadow">
+        <div class="modal-content modal-shadow" id="alarmData">
             <div class="modal-header">
-                <h2 class="modal-title h5 text-danger" id="confirmModalLabel">Alarma: {{ dispositivo.nombre }}</h2>
+                <h2 class="modal-title h5 text-danger" id="alarmModalLabel">Alarma: {{ dispositivo.nombre }}</h2>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -174,23 +196,23 @@
             </div>
             <div class="modal-footer">
                 <button type="button" 
-                        class="btn btn-primary" 
+                        class="btn btn-sm btn-primary" 
                         data-bs-dismiss="modal"><i class="bi bi-check2" aria-hidden="true"></i> Aceptar</button>
             </div>
         </div>
     </div>
 </div>
 {% endif %}
-<div class="modal fade" 
+<div class="modal" 
     id="pingModal" 
     tabindex="-1" 
-    aria-labelledby="confirmModalLabel" 
+    aria-labelledby="pingModalLabel" 
     aria-hidden="true"
-    data-bs-backdrop="true"> <!-- fondo bloqueado -->
+    data-bs-backdrop="static">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content modal-shadow" id="pingData">
             <div class="modal-header">
-                <h2 class="modal-title h5" id="confirmModalLabel">Ejecutando Ping </h2>
+                <h2 class="modal-title h5" id="pingModalLabel">Ejecutando Ping </h2>
                 <span class="spinner-border spinner-border-sm htmx-indicator" id="spinner-ping" role="status" aria-hidden="true"></span>
             </div>
             <div class="modal-body">Se están ejecutando el ping al dispositivo, espere ...</div>

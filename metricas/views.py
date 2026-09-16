@@ -30,7 +30,11 @@ def actualizar_metricas_snmp(request, pk):
 
     metricas = dispositivo.metricas.first()
 
-    return render(request, 'dispositivo/comun/_metricas_partial.html', {
+    response = render(request, 'dispositivo/comun/_metricas_partial.html', {
         'metricas': metricas,
         'dispositivo': dispositivo,
     })
+    # Envía un encabezado HTTP que htmx interpreta como evento
+    response['HX-Trigger'] = 'cerrarMetricaModal'
+
+    return response

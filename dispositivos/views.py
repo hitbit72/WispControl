@@ -166,11 +166,14 @@ def detalle_dispositivo(request, pk):
 
     # Obtener las métricas asociada al dispositivo
     metricas = dispositivo.metricas.first()
+    # contar el número de alarmas que tiene
+    hay_alarmas = dispositivo.alarmas.count()
 
     return render(request, 'dispositivo/detalle_dispositivo.html', {
         'dispositivo': dispositivo,
         'metricas': metricas,
         'url_anterior': url_anterior,
+        'hay_alarmas': hay_alarmas,
     })
 
 
