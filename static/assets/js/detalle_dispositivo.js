@@ -14,24 +14,41 @@ function mensajeModalPing(){
     }
 }
 
+// Abre/Cierra modal de alarma
 function modalAlert(id, ver=false) {
-const modalEl = document.getElementById(id);
+    const modalEl = document.getElementById(id);
     if (modalEl) {
         const modal = bootstrap.Modal.getInstance(modalEl);
         if (modal){
-    if (ver)
-        modal.show();
-    }else{
-        modal.hide();
-    }
+            if (ver)
+                modal.show();
+            }else{
+                modal.hide();
+            }
     }
 }
 
-document.body.addEventListener('cerrarMetricaModal', function () {
-    // Cierra modal de mensaje actualizando metrica
-    const modalEl = document.getElementById('metricaModal');
-    if (modalEl) {
-        const modal = bootstrap.Modal.getInstance(modalEl);
-        if (modal) modal.hide();
+
+window.addEventListener('DOMContentLoaded', event => {
+
+    document.body.addEventListener('cerrarMetricaModal', function () {
+        // Cierra modal de mensaje actualizando metrica
+        const modalEl = document.getElementById('metricaModal');
+        if (modalEl) {
+            const modal = bootstrap.Modal.getInstance(modalEl);
+            if (modal) modal.hide();
+        }
+    });
+
+
+    // Muestra alarma si existe al iniciar la pantalla detalle dispositivo
+    const alarmDv = document.getElementById("alarmDeviceDetail");
+    if (alarmDv) {
+        let alertDeviceDetail = new bootstrap.Modal(
+        alarmDv,
+        {}
+      );
+      alertDeviceDetail.show();
     }
+
 });
