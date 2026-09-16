@@ -166,8 +166,13 @@ def eliminar_contrato(request, pk):
     contrato = get_object_or_404(Contrato, pk=pk)
     cliente_pk = contrato.cliente_id
 
+    # Capturamos la URL de redirección (si viene en el GET o en el POST)
+    url_anterior = request.POST.get('next') or request.GET.get('next')
+
     if request.method == 'POST':
         contrato.delete()
+        if url_anterior:
+            return redirect(url_anterior)
         return redirect('clientes:detalle', pk=cliente_pk)
 
     return render(request, 'clientes/confirmar_eliminar_contrato.html', {'contrato': contrato})

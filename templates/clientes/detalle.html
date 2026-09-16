@@ -84,7 +84,7 @@
             <td>{{ contrato.precio_mensual }} €</td>
             <td class="text-end">
                 <a href="{% url 'clientes:editar_contrato' contrato.pk %}" class="btn btn-sm btn-outline-primary">Editar</a>
-                <a href="{% url 'clientes:eliminar_contrato' contrato.pk %}" class="btn btn-sm btn-outline-danger">Eliminar</a>
+                <button class="btn btn-sm btn-outline-danger" onclick="mensajeModal('{% url 'clientes:eliminar_contrato' contrato.pk %}?next={{ request.path }}', '{{ contrato.nombre }}', '{{ contrato.conexion }}', 'contrato')">Eliminar</button>
             </td>
         </tr>
         {% empty %}
@@ -123,7 +123,7 @@
             <td>{{ dispositivo.tipo.nombre }}</td>
             <td class="text-end">
                 <a href="{% url 'dispositivos:editar' dispositivo.pk %}?next={{ request.path }}" class="btn btn-sm btn-outline-primary">Editar</a>
-                <a href="{% url 'dispositivos:eliminar' dispositivo.pk %}?next={{ request.path }}" class="btn btn-sm btn-outline-danger">Eliminar</a>
+                <button class="btn btn-sm btn-outline-danger" onclick="mensajeModal('{% url 'dispositivos:eliminar' dispositivo.pk %}?next={{ request.path }}', '{{ dispositivo.ip_gestion }}', '{{ dispositivo.interfaces.count }}', 'dispositivo')">Eliminar</button>
             </td>
         </tr>
         {% empty %}
@@ -134,6 +134,32 @@
 </div>
 </section>
 
+
+<div class="modal" 
+    id="deleteModal" 
+    tabindex="-1" 
+    aria-labelledby="deleteModalTitle" 
+    aria-hidden="true"
+    data-bs-backdrop="true"> <!-- fondo -->
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content modal-shadow" id="deleteModalData">
+            <div class="modal-header">
+                <h2 class="modal-title h5" id="deleteModalTitle">Eliminar</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="deleteModalBody">
+                ¿Seguro que quieres eliminar?
+            </div>
+            <div class="modal-footer" id="deleteModalFooter">
+                <button type="button" 
+                        class="btn btn-sm btn-primary" 
+                        data-bs-dismiss="modal"><i class="bi bi-x-circle" aria-hidden="true"></i> Cancelar</button>
+                <a id="deleteBtConfirm" href="${url_pk}" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash" aria-hidden="true"></i> Eliminar</a>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div style="margin-top: 0.5rem;">
 {% if url_anterior %}
 <a href="{{ url_anterior }}" class="btn btn-sm btn-outline-primary"><i class="bi bi-box-arrow-in-left"></i> Volver</a>
@@ -141,4 +167,5 @@
 <a href="{% url 'clientes:lista' %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-box-arrow-in-left"></i> Volver</a>
 {% endif %}
 </div>
+<script src="/static/assets/js/detalle_cliente.js"></script>
 {% endblock %}
