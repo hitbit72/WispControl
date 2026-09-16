@@ -1,4 +1,5 @@
 function mensajeModalPing(){
+    // Cambia el contenido del mensaje modal Ping
     const contenedor = document.getElementById('pingData');
     if (contenedor) {
         contenedor.innerHTML = `
@@ -13,14 +14,24 @@ function mensajeModalPing(){
     }
 }
 
-
+function modalAlert(id, ver=false) {
+const modalEl = document.getElementById(id);
+    if (modalEl) {
+        const modal = bootstrap.Modal.getInstance(modalEl);
+        if (modal){
+    if (ver)
+        modal.show();
+    }else{
+        modal.hide();
+    }
+    }
+}
 
 document.body.addEventListener('cerrarMetricaModal', function () {
-    // Aquí ejecutas la lógica de tu modal
+    // Cierra modal de mensaje actualizando metrica
     const modalEl = document.getElementById('metricaModal');
     if (modalEl) {
         const modal = bootstrap.Modal.getInstance(modalEl);
         if (modal) modal.hide();
     }
 });
-
