@@ -61,11 +61,8 @@ window.addEventListener('DOMContentLoaded', event => {
     // Muestra alarma si existe al iniciar la pantalla detalle dispositivo
     const alarmDv = document.getElementById("alarmDeviceDetail");
     if (alarmDv) {
-        let alertDeviceDetail = new bootstrap.Modal(
-        alarmDv,
-        {}
-      );
-      alertDeviceDetail.show();
-    }
+        const modal = bootstrap.Modal.getOrCreateInstance(alarmDv);
+        modal.show();
+     }
 
 });
