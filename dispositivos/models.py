@@ -51,12 +51,10 @@ class Dispositivo(models.Model):
         RETIRADO = 'retirado', 'Retirado'
         DISCOVER = 'discover', 'Descubierto'
 
+    # Permite identificar dispositivos principales o estaciones de clientes
     class Rol(models.TextChoices):
         MAIN = 'main', 'Principal'
         STATION = 'station', 'Estación'
-        MASTER = 'master', 'PtP Master'
-        SLAVE = 'slave', 'PtP Esclavo'
-        OTRO = 'otro', 'Otro'
 
     # nombre o SSID es unico
     nombre = models.CharField(max_length=100, null=False, blank=False, help_text='Nombre identificativo del eqipo',)
@@ -66,7 +64,7 @@ class Dispositivo(models.Model):
                               verbose_name='Merca y modelo', related_name='dispositivos')
     tipo = models.ForeignKey(TipoEquipo, null=False, blank=False, on_delete=models.PROTECT, 
                              verbose_name='Tipo de equipo', related_name='dispositivos')
-    rol = models.CharField(max_length=20, choices=Rol.choices, default=Rol.OTRO, verbose_name='Modo operación')
+    rol = models.CharField(max_length=20, choices=Rol.choices, default=Rol.MAIN, verbose_name='Modo operación')
 
     sector = models.ForeignKey('sector.Sector', on_delete=models.SET_NULL, null=True, blank=True, 
                                related_name='dispositivos')
