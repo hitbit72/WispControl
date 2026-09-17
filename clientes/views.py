@@ -83,6 +83,7 @@ def detalle_cliente(request, pk):
 
 @login_required
 def form_cliente(request, pk=None):
+    error_msg = ''
     cliente = get_object_or_404(Cliente, pk=pk) if pk else None
 
     # Capturamos la URL de redirección (si viene en el GET o en el POST)
@@ -93,6 +94,9 @@ def form_cliente(request, pk=None):
         if form.is_valid():
             cliente = form.save()
             return redirect('clientes:detalle', pk=cliente.pk)
+        else:
+            # si el formlario no es válido.
+            error_msg = "Por favor, corrige los errores en el formulario: " + form.errors.as_text()
     else:
         form = ClienteForm(instance=cliente)
 
@@ -100,6 +104,7 @@ def form_cliente(request, pk=None):
         'form': form, 
         'cliente': cliente,
         'url_anterior': url_anterior,
+        'error_msg': error_msg,
         })
 
 

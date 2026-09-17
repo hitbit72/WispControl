@@ -46,6 +46,7 @@ def detalle_sector(request, pk):
 
 @login_required
 def form_sector(request, pk=None):
+    error_msg = ''
     sector = get_object_or_404(Sector, pk=pk) if pk else None
 
     # Capturamos la URL de redirección (si viene en el GET o en el POST)
@@ -56,6 +57,9 @@ def form_sector(request, pk=None):
         if form.is_valid():
             sector = form.save()
             return redirect('sectores:detalle', pk=sector.pk)
+        else:
+            # si el formlario no es válido.
+            error_msg = "Por favor, corrige los errores en el formulario: " + form.errors.as_text()
     else:
         form = SectorForm(instance=sector)
 
@@ -63,6 +67,7 @@ def form_sector(request, pk=None):
         'form': form, 
         'sector': sector,
         'url_anterior': url_anterior,
+        'error_msg': error_msg,
         })
 
 

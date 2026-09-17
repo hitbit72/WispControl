@@ -61,6 +61,7 @@ def detalle_router(request, pk):
 
 @login_required
 def form_router(request, pk=None):
+    error_msg = ''
     router = get_object_or_404(Router, pk=pk) if pk else None
 
     if request.method == 'POST':
@@ -68,10 +69,17 @@ def form_router(request, pk=None):
         if form.is_valid():
             router = form.save()
             return redirect('mikrotik:detalle', pk=router.pk)
+        else:
+            # si el formlario no es válido.
+            error_msg = "Por favor, corrige los errores en el formulario: " + form.errors.as_text()
     else:
         form = RouterForm(instance=router)
 
-    return render(request, 'mikrotik/form_router.html', {'form': form, 'router': router})
+    return render(request, 'mikrotik/form_router.html', {
+        'form': form, 
+        'router': router,
+        'error_msg': error_msg,
+        })
 
 
 @login_required
@@ -87,6 +95,7 @@ def eliminar_router(request, pk):
 
 @login_required
 def nuevo_plan(request, router_pk):
+    error_msg = ''
     router = get_object_or_404(Router, pk=router_pk)
 
     if request.method == 'POST':
@@ -101,11 +110,17 @@ def nuevo_plan(request, router_pk):
                 f'Plan #{plan.pk}: {plan.nombre} - Down: {plan.velocidad_bajada} Mbps / Up: {plan.velocidad_subida} Mbps',
                 nivel=Evento.Nivel.INFO,)
             return redirect('mikrotik:detalle', pk=router.pk)
+        else:
+            # si el formlario no es válido.
+            error_msg = "Por favor, corrige los errores en el formulario: " + form.errors.as_text()
     else:
         form = PlanForm()
 
     return render(request, 'mikrotik/form_plan.html', {
-        'form': form, 'router': router, 'plan': None,
+        'form': form, 
+        'router': router, 
+        'plan': None,
+        'error_msg': error_msg,
     })
 
 
@@ -113,6 +128,7 @@ def nuevo_plan(request, router_pk):
 def editar_plan(request, pk):
     plan = get_object_or_404(Plan, pk=pk)
     router = plan.router
+    error_msg = ''
 
     if request.method == 'POST':
         form = PlanForm(request.POST, instance=plan)
@@ -124,11 +140,17 @@ def editar_plan(request, pk):
                 f'Plan #{plan.pk}: {plan.nombre} - Down: {plan.velocidad_bajada} Mbps / Up: {plan.velocidad_subida} Mbps',
                 nivel=Evento.Nivel.INFO,)
             return redirect('mikrotik:detalle', pk=router.pk)
+        else:
+            # si el formlario no es válido.
+            error_msg = "Por favor, corrige los errores en el formulario: " + form.errors.as_text()
     else:
         form = PlanForm(instance=plan)
 
     return render(request, 'mikrotik/form_plan.html', {
-        'form': form, 'router': router, 'plan': plan,
+        'form': form, 
+        'router': router, 
+        'plan': plan,
+        'error_msg': error_msg,
     })
 
 

@@ -8,7 +8,9 @@
 {% endif %}</h2>
 
 <section class="row">
-
+{% if error_msg %}
+<div class="alert alert-danger mt-2" style="max-width: 760px;" role="alert"><strong>{{ error_msg }}</strong></div>
+{% endif %}
 <form method="post" class="panel needs-validation {% if form.errors %}was-validated{% endif %}" style="max-width: 760px;" novalidate>
     {% csrf_token %}
     <div class="row g-3">

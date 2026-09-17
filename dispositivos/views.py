@@ -110,8 +110,7 @@ def nuevo_dispositivo(request, pk=0):
     sector = ''
     cliente = ''
     dispositivo = ''
-    # Obtiene la URL anterior, o asigna una ruta por defecto si no existe
-    # url_anterior = request.META.get('HTTP_REFERER', 'dispositivos/')
+    error_msg = ''
 
     # Capturamos la URL de redirección (si viene en el GET o en el POST)
     url_anterior = request.POST.get('next') or request.GET.get('next')
@@ -130,6 +129,9 @@ def nuevo_dispositivo(request, pk=0):
             if url_anterior:
                 return redirect(url_anterior)
             return redirect('dispositivos:lista')
+        else:
+            # si el formlario no es válido.
+            error_msg = "Por favor, corrige los errores en el formulario: " + form.errors.as_text()
     else:
         form = DispositivoForm()
         if sector:
@@ -144,6 +146,7 @@ def nuevo_dispositivo(request, pk=0):
         'modelo_pk': pk,
         'dispositivo': dispositivo,
         'url_anterior': url_anterior,
+        'error_msg': error_msg,
     })
 
 
