@@ -8,7 +8,8 @@
     </div>
     <div class="d-flex gap-2">
         <a href="{% url 'sectores:editar' sector.pk %}" class="btn btn-outline-primary">Editar</a>
-        <a href="{% url 'sectores:eliminar' sector.pk %}" class="btn btn-outline-danger">Eliminar</a>
+        <!-- a href="{% url 'sectores:eliminar' sector.pk %}" class="btn btn-outline-danger">Eliminar</a -->
+        <button class="btn btn-outline-danger" onclick="DelMsgModal('deleteModal', '{% url 'sectores:eliminar' sector.pk %}', '{{ sector.nombre }}', '{{ sector.dispositivos.count }}', 'sector')">Eliminar</button>
     </div>
 </div>
 
@@ -94,6 +95,35 @@
 </div>
 </section>
 {% endif %}
+
+<div class="modal" 
+    id="deleteModal" 
+    tabindex="-1" 
+    aria-labelledby="deleteModalTitle" 
+    aria-hidden="true"
+    data-bs-backdrop="true"> <!-- fondo -->
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content modal-shadow" id="deleteModalData">
+            <div class="modal-header">
+                <h2 class="modal-title h5" id="deleteModalTitle">Eliminar</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="deleteModalBody">
+                ¿Seguro que quieres eliminar?
+            </div>
+            <div class="modal-footer" id="deleteModalFooter">
+                <form method="post" action="" id="deleteModalForm">
+                    {% csrf_token %}
+                    <button type="button" 
+                            class="btn btn-sm btn-primary" 
+                            data-bs-dismiss="modal"><i class="bi bi-x-circle" aria-hidden="true"></i> Cancelar</button>
+                    <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash" aria-hidden="true"></i> Eliminar</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div style="margin-top: 0.5rem;">
 {% if url_anterior %}
 <a href="{{ url_anterior }}"  class="btn btn-sm btn-outline-primary"><i class="bi bi-box-arrow-in-left"></i> Volver</a>
@@ -101,4 +131,5 @@
 <a href="{% url 'sectores:lista' %}"  class="btn btn-sm btn-outline-primary"><i class="bi bi-box-arrow-in-left"></i> Volver</a>
 {% endif %}
 </div>
+<script src="/static/assets/js/detalle_sector.js"></script>
 {% endblock %}

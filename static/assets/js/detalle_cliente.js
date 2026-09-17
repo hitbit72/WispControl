@@ -1,12 +1,13 @@
 
 
-function mensajeModal(url_pk, nombre, opcion=null, tipo='contrato') {
-    // Cambia el contenido del mensaje modal Ping
-    const contenedor = document.getElementById('deleteModal');
+function DelMsgModal(id, url_pk, nombre, opcion=null, tipo='contrato') {
+    // Cambia el contenido del mensaje modal
+    let bm='';
+    const contenedor = document.getElementById(id);
     if (contenedor) {
         if (tipo == 'contrato') {
             document.getElementById('deleteModalTitle').innerHTML="Eliminar contrato";
-            let bm = `¿Seguro que quieres eliminar el dispositivo <strong>${nombre}</strong>?
+            bm = `¿Seguro que quieres eliminar el dispositivo <strong>${nombre}</strong>?
             <p>La acción no se puede deshacer.</p>`;
             if (opcion){
                 if ( opcion == 'pppoe' || opcion == 'sq'){
@@ -16,12 +17,11 @@ function mensajeModal(url_pk, nombre, opcion=null, tipo='contrato') {
                     `
                 }
             }
-            document.getElementById('deleteModalBody').innerHTML = bm;
-            document.getElementById('deleteBtConfirm').href = url_pk;
         }
+        
         if (tipo == 'dispositivo') {
             document.getElementById('deleteModalTitle').innerHTML="Eliminar dispositivo";
-            let bm = `¿Seguro que quieres eliminar el dispositivo <strong>${nombre}</strong>?
+            bm = `¿Seguro que quieres eliminar el dispositivo <strong>${nombre}</strong>?
             <p>La acción no se puede deshacer.</p>`;
             if (opcion && opcion>0){
                 bm = `¿Seguro que quieres eliminar el dispositivo <strong>${nombre}</strong>?
@@ -29,10 +29,11 @@ function mensajeModal(url_pk, nombre, opcion=null, tipo='contrato') {
                 que se eliminarán en cascada. La acción no se puede deshacer.</p>
                 `
             }
-            document.getElementById('deleteModalBody').innerHTML = bm;
-            document.getElementById('deleteBtConfirm').href = url_pk;
         }
-        mostrarModal('deleteModal', true);
+
+        document.getElementById('deleteModalBody').innerHTML = bm;
+        document.getElementById('formModal').action = url_pk;
+        mostrarModal(id, true);
     }
 }
 

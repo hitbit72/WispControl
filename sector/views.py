@@ -65,4 +65,4 @@ def eliminar_sector(request, pk):
     if request.method == 'POST':
         sector.delete()
         return redirect('sectores:lista')
-    return render(request, 'sector/confirmar_eliminar_sector.html', {'sector': sector})
+    return render(request, 'sector/confirmar_eliminar_sector.html', {'sector': sector,})

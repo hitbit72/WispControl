@@ -28,7 +28,7 @@
             <td>{% firstof interfaz.velocidad_mbps "—" %} {% if interfaz.velocidad_mbps %}Mbps{% endif %}</td>
             <td class="text-end">
                 <a href="{% url 'dispositivos:editar_interfaz' interfaz.pk %}" class="btn btn-sm btn-outline-primary">Editar</a>
-                <a href="{% url 'dispositivos:eliminar_interfaz' interfaz.pk %}" class="btn btn-sm btn-outline-danger">Eliminar</a>
+                <button class="btn btn-sm btn-outline-danger" onclick="DelMsgModal('deleteModal', '{% url 'dispositivos:eliminar_interfaz' interfaz.pk %}', '{{ interfaz.nombre }}', '0', 'interfaz')">Eliminar</button>
             </td>
         </tr>
         {% empty %}
