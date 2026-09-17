@@ -13,6 +13,14 @@ Uso manual:
 
     -- Para un solo dispositivo por IP:
     python manage.py ping_dispositivos --ip=192.168.25.50
+
+    -- Para filtrar por tipo de dispositivo:
+    python manage.py ping_dispositivos --tipo=ap
+    python manage.py ping_dispositivos --tipo=router
+
+    -- Combinado con IP (aunque IP ya es único)
+    python manage.py ping_dispositivos --ip=192.168.1.10 --tipo=ap
+
 """
 
 from django.core.management.base import BaseCommand
@@ -30,9 +38,15 @@ class Command(BaseCommand):
             type=str,
             help='Filtrar y procesar únicamente un dispositivo por su IP de gestión.',
         )
+        parser.add_argument(
+            '--tipo',
+            type=str,
+            help='Filtrar dispositivos por tipo (clave del TipoEquipo, ej: ap, router, switch, olt, onu).',
+        )
 
     def handle(self, *args, **options):
         ip_filtro = options.get('ip')
+        tipo_filtro = options.get('tipo')
 
         if ip_filtro:
             dispositivos = Dispositivo.objects.filter(
@@ -43,6 +57,9 @@ class Command(BaseCommand):
                 ping=True,
                 ip_gestion__isnull=False,
             )
+
+        if tipo_filtro:
+            dispositivos = dispositivos.filter(tipo__clave=tipo_filtro)
 
         total = dispositivos.count()
         ok = 0
