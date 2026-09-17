@@ -695,12 +695,14 @@ html[data-theme="dark"] .profile-button .avatar-sm {
   white-space: nowrap;
 }
 
+/*
 .table tbody td {
   min-width: 90px;
-  /* min-width: 120px; */
-  /* padding-top: 1rem; */
-  /* padding-bottom: 1rem; */
+  min-width: 120px;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
 }
+*/
 
 .table tbody tr {
   transition: background 0.16s ease;
