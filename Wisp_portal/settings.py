@@ -220,3 +220,14 @@ PING_CONTROL = {
     'interval': 0.2,   # intervalo entre pings en segundos
     'size': 32,        # tamaño del paquete bytes
 }
+
+# --- Alertas por TELEGRAM ------------------------------------------------------
+# Configuración del chatBot de Telegram
+# https://api.telegram.org/bot$BOTID/sendMessage
+TELEGRAM = {
+    'BOTID': os.environ.get('TELEGRAM_BOTID', ''),
+    'CHATID': os.environ.get('TELEGRAM_CHATID', ''),
+    'URL': 'https://api.telegram.org/',
+    'TIMEOUT': 10,
+    'SOUND': 0,
+}
