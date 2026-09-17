@@ -47,7 +47,7 @@
             <td>{{ dispositivo.get_rol_display }}</td>
             <td class="text-end">
                 <a href="{% url 'dispositivos:editar' dispositivo.pk %}?next={{ request.path }}" class="btn btn-sm btn-outline-primary">Editar</a>
-                <a href="{% url 'dispositivos:eliminar' dispositivo.pk %}?next={{ request.path }}" class="btn btn-sm btn-outline-danger">Eliminar</a>
+                <button class="btn btn-sm btn-outline-danger" onclick="DelMsgModal('deleteModal', '{% url 'dispositivos:eliminar' dispositivo.pk %}?next={{ request.path }}', '{{ dispositivo.ip_gestion }}', '{{ dispositivo.interfaces.count }}', 'dispositivo')">Eliminar</button>
             </td>
         </tr>
         {% empty %}

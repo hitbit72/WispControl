@@ -34,7 +34,7 @@
             <td>{% if enlace.frecuencia_ghz %}{{ enlace.frecuencia_ghz }} GHz{% else %}—{% endif %}</td>
             <td class="text-end">
                 <a href="{% url 'dispositivos:editar_enlace' enlace.pk %}" class="btn btn-sm btn-outline-primary">Editar</a>
-                <a href="{% url 'dispositivos:eliminar_enlace' enlace.pk %}" class="btn btn-sm btn-outline-danger">Eliminar</a>
+                <button class="btn btn-sm btn-outline-danger" onclick="DelMsgModal('deleteModal', '{% url 'dispositivos:eliminar_enlace' enlace.pk %}', '{{ enlace.dispositivo_origen.nombre }}', '0', 'enlace')">Eliminar</button>
             </td>
         </tr>
         {% empty %}
