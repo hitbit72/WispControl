@@ -48,6 +48,9 @@ def detalle_sector(request, pk):
 def form_sector(request, pk=None):
     sector = get_object_or_404(Sector, pk=pk) if pk else None
 
+    # Capturamos la URL de redirección (si viene en el GET o en el POST)
+    url_anterior = request.POST.get('next') or request.GET.get('next')
+
     if request.method == 'POST':
         form = SectorForm(request.POST, instance=sector)
         if form.is_valid():
@@ -56,7 +59,11 @@ def form_sector(request, pk=None):
     else:
         form = SectorForm(instance=sector)
 
-    return render(request, 'sector/form_sector.html', {'form': form, 'sector': sector})
+    return render(request, 'sector/form_sector.html', {
+        'form': form, 
+        'sector': sector,
+        'url_anterior': url_anterior,
+        })
 
 
 @login_required

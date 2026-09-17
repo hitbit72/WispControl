@@ -85,6 +85,9 @@ def detalle_cliente(request, pk):
 def form_cliente(request, pk=None):
     cliente = get_object_or_404(Cliente, pk=pk) if pk else None
 
+    # Capturamos la URL de redirección (si viene en el GET o en el POST)
+    url_anterior = request.POST.get('next') or request.GET.get('next')
+
     if request.method == 'POST':
         form = ClienteForm(request.POST, instance=cliente)
         if form.is_valid():
@@ -93,7 +96,11 @@ def form_cliente(request, pk=None):
     else:
         form = ClienteForm(instance=cliente)
 
-    return render(request, 'clientes/form_cliente.html', {'form': form, 'cliente': cliente})
+    return render(request, 'clientes/form_cliente.html', {
+        'form': form, 
+        'cliente': cliente,
+        'url_anterior': url_anterior,
+        })
 
 
 

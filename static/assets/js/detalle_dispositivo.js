@@ -24,19 +24,7 @@ function DelMsgModal(id, url_pk, nombre, opcion=null, tipo='dispositivo') {
 
         document.getElementById('deleteModalForm').action = url_pk;
         document.getElementById('deleteModalBody').innerHTML = bm;
-        mostrarModal(id);
-    }
-}
-
-// Muestra modal
-function mostrarModal(id){
-    const alarmDv = document.getElementById(id);
-    if (alarmDv) {
-        let modalWin = new bootstrap.Modal(
-        alarmDv,
-        {}
-        );
-        modalWin.show();
+        mostrarModal(id, true);
     }
 }
 
@@ -56,21 +44,8 @@ function mensajeModalPing(id){
     }
 }
 
-// Abre/Cierra modal de alarma
-function modalAlert(id, ver=false) {
-    const modalEl = document.getElementById(id);
-    if (modalEl) {
-        const modal = bootstrap.Modal.getInstance(modalEl);
-        if (modal){
-            if (ver)
-                modal.show();
-            }else{
-                modal.hide();
-            }
-    }
-}
 
-
+// Carga del documento
 window.addEventListener('DOMContentLoaded', event => {
 
     document.body.addEventListener('cerrarMetricaModal', function () {

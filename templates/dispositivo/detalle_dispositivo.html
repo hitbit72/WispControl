@@ -6,7 +6,7 @@
     <div class="row align-items-left">
         <div class="col-md-12">
             <h2 class="mb-1"><i class="bi bi-layout-wtf" aria-hidden="true"></i> ·  {{ dispositivo.nombre }} 
-            {% if hay_alarmas %}<i class="bi bi-exclamation-triangle-fill alert-dot" aria-hidden="true" title="Alerta en el dispositivo" style="cursor: pointer" onclick="modalAlert('alarmDeviceDetail', true)"></i>{% endif %}</h2>
+            {% if hay_alarmas %}<i class="bi bi-exclamation-triangle-fill alert-dot" aria-hidden="true" title="Alerta en el dispositivo" style="cursor: pointer" onclick="mostrarModal('alarmDeviceDetail', true)"></i>{% endif %}</h2>
         </div>
         <div class="col"><h5>({{ dispositivo.marca.nombre }} {{ dispositivo.marca.modelo|default:"" }})</h5></div>
         <div class="text-muted"></div>

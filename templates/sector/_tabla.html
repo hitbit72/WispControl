@@ -19,7 +19,7 @@
             <td>{{ sector.dispositivos.count }}</td>
             <td>{{ sector.routers_mikrotik.count }}</td>
             <td class="text-end">
-                <a href="{% url 'sectores:detalle' sector.pk %}" class="btn btn-sm btn-outline-secondary">Ver</a>
+                <a href="{% url 'sectores:editar' sector.pk %}?next={{ request.path }}" class="btn btn-sm btn-outline-primary">Editar</a>
             </td>
         </tr>
         {% empty %}

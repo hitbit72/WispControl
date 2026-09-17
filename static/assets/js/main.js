@@ -1,5 +1,16 @@
 "use strict";
 
+// Abre/cierra una ventana modal
+function  mostrarModal(id, ver=false) {
+    const modalEl = document.getElementById(id);
+    if (modalEl) {
+        // Obtiene la instancia si existe, o la crea solo si hace falta
+        const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+        ver ? modal.show() : modal.hide();
+    }
+}
+
+
 (function () {
   var sidebarStorageKey = "adminHMD.sidebarMini";
   var themeStorageKey = "adminHMD.colorTheme";

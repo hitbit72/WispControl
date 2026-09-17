@@ -38,15 +38,3 @@ function DelMsgModal(id, url_pk, nombre, opcion=null, tipo='contrato') {
 }
 
 
-// Muestra modal
-function mostrarModal(id){
-    const alarmDv = document.getElementById(id);
-    if (alarmDv) {
-        let modalWin = new bootstrap.Modal(
-        alarmDv,
-        {}
-        );
-        modalWin.show();
-    }
-}
-

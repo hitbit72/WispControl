@@ -28,7 +28,7 @@
             <td>{{ cliente.poblacion|default:"—" }}</td>
             <td>{{ cliente.direccion|default:"—" }}</td>
             <td class="text-end">
-                <a href="{% url 'clientes:editar' cliente.pk %}" class="btn btn-sm btn-outline-primary">Editar</a>
+                <a href="{% url 'clientes:editar' cliente.pk %}?next={{ request.path }}" class="btn btn-sm btn-outline-primary">Editar</a>
             </td>
         </tr>
         {% empty %}
