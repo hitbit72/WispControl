@@ -193,8 +193,9 @@ def consultar_if_table(dispositivo, oids, modo='general'):
             lexicographicMode=False,
         ):
             if errorIndication:
-                print(f"Error SNMP indication {dispositivo.ip_gestion} (Modo: {modo}): {errorIndication}")
-                #print(f'ip: {dispositivo.ip_gestion}')
+                if modo != 'wifi':
+                    print(f"Error SNMP indication {dispositivo.ip_gestion} (Modo: {modo}): {errorIndication}")
+                    #print(f'ip: {dispositivo.ip_gestion}')
                 break
             elif errorStatus:
                 print(f"Error SNMP status {dispositivo.ip_gestion} (Modo: {modo}): {errorStatus.prettyPrint()}")
