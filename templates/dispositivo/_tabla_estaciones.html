@@ -3,6 +3,7 @@
 <table class="table table-hover align-middle" id="table_estaciones">
     <thead>
         <tr>
+            <th>st</th>
             <th>IP</th>
             <th>Cliente</th>
             <th>Host</th>
@@ -17,6 +18,16 @@
     <tbody>
     {% for metrica in estaciones %}
     <tr>
+        <td>
+        <span class="badge
+            {% if metrica.estado == 'activo' %}bg-success
+            {% elif metrica.estado == 'inactivo' %}bg-danger
+            {% elif metrica.estado == 'mantenimiento' %}bg-warning text-dark
+            {% elif metrica.estado == 'instalacion' %}bg-info text-dark
+            {% elif metrica.estado == 'retirado' %}bg-warning text-dark{% else %}bg-secondary{% endif %}">
+            {{ metrica.estado }}
+        </span>
+        </td>
         <td>{% if metrica.registrado %}
         <a href="{% url 'dispositivos:detalle' metrica.device_pk %}?next={{ request.path }}">{{ metrica.ip_gestion }}</a>
         {% else %}

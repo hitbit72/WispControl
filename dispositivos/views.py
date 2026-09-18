@@ -193,6 +193,7 @@ def detalle_dispositivo(request, pk):
             cl_name = metrica.device.cliente.nombre_completo
         devices.append({
             'registrado': True,
+            'estado': metrica.device.estado,
             'ip_gestion': metrica.device.ip_gestion,
             'device_pk': metrica.device.pk,
             'cliente': cl_name,
@@ -217,6 +218,7 @@ def detalle_dispositivo(request, pk):
         if device['ip'] not in ips_estaciones:
             devices.append({
                 'registrado': False,
+                'estado': 'activo',
                 'ip_gestion': device['ip'],
                 'device_pk': 0,
                 'cliente': '—',
