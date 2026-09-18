@@ -110,10 +110,13 @@
             <th>Tipo</th>
             <th>Conectado</th>
             <th>Señal</th>
+            <th>Tx Rate</th>
+            <th>Rx Rate</th>
             <th></th>
         </tr>
     </thead>
     <tbody>
+        {% load dispositivo_tags %}
         {% for dispositivo in cliente.dispositivos.all %}
         <tr>
             <td>{% include "dispositivo/comun/_estado.html" %}</td>
@@ -121,15 +124,17 @@
             <td>{{ dispositivo.marca.nombre }} {{ dispositivo.marca.modelo }}</td>
             <td>{{ dispositivo.ip_gestion|default:"—" }}</td>
             <td>{{ dispositivo.tipo.nombre }}</td>
-            <td>{{ dispositivo.metricas.all.0.ssid|default:"—" }}</td>
+            <td>{{ dispositivo.metricas.all.0.ssid|find_ap:request.path }}</td>
             <td>{% include "dispositivo/comun/_signal_bg.html" %}</td>
+            <td>{{ dispositivo.metricas.all.0.tx|format_bitrate }} </td>
+            <td>{{ dispositivo.metricas.all.0.rx|format_bitrate }} </td>
             <td class="text-end">
                 <a href="{% url 'dispositivos:editar' dispositivo.pk %}?next={{ request.path }}" class="btn btn-sm btn-outline-primary">Editar</a>
                 <button class="btn btn-sm btn-outline-danger" onclick="DelMsgModal('deleteModal', '{% url 'dispositivos:eliminar' dispositivo.pk %}?next={{ request.path }}', '{{ dispositivo.ip_gestion }}', '{{ dispositivo.interfaces.count }}', 'dispositivo')">Eliminar</button>
             </td>
         </tr>
         {% empty %}
-        <tr><td colspan="8" class="text-center text-muted py-3">Este cliente todavía no tiene dispositivos.</td></tr>
+        <tr><td colspan="10" class="text-center text-muted py-3">Este cliente todavía no tiene dispositivos.</td></tr>
         {% endfor %}
     </tbody>
 </table>

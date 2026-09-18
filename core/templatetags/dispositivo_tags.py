@@ -2,7 +2,7 @@ from django import template
 from django.utils import timezone
 from datetime import datetime, timedelta
 from django.urls import reverse
-from django.utils.safestring import mark_safe  # <-- Importa esto
+from django.utils.safestring import mark_safe  # <-- renderizar como HTML real
 from urllib.parse import urlencode # Para formatear correctamente la URL
 
 from dispositivos.models import Dispositivo
@@ -135,3 +135,27 @@ def find_station(ip, current_path=None):
 
     html = f'<td>{ip}</td><td>—</td>'
     return mark_safe(html)
+
+@register.filter
+def find_ap(nombre, current_path=None):
+    # Busca el AP a partir de su nombre/SSID
+
+    if not nombre:
+        return '—'
+
+    dispositivo = Dispositivo.objects.filter(nombre=nombre).first()
+    url_ap = ''
+
+    if dispositivo:
+        url_ap = reverse('dispositivos:detalle', args=[dispositivo.pk])
+
+        # Si nos pasaron la ruta actual, añadimos el ?next=
+        if current_path:
+            querystring = urlencode({'next': current_path})
+            url_ap = f"{url_ap}?{querystring}"
+
+        # Envolvemos el string con mark_safe para renderizar como HTML real
+        html = f'<a href="{url_ap}">{nombre}</a>'
+        return mark_safe(html)
+
+    return nombre
