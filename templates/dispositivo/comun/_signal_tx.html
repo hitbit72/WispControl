@@ -1,0 +1,12 @@
+<span class="{% if dispositivo.tipo.clave == 'olt' or dispositivo.tipo.clave == 'onu' %}
+    {% if metricas.signal <= -20 %}text-danger
+    {% elif metricas.signal <= -18 %}text-warning
+    {% elif metricas.signal > -18 and metricas.signal < 0 %}text-success
+    {% else %}text-dark{% endif %}
+{% else %}
+    {% if metricas.signal <= -70 %}text-danger
+    {% elif metricas.signal > -50 %}text-warning
+    {% elif metricas.signal > -70 and metricas.signal <= -50 %}text-success
+    {% else %}text-dark{% endif %}
+{% endif %}
+"> {{ metricas.signal|default:'0' }} dbm</span>

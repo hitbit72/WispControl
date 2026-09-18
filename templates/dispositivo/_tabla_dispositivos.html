@@ -38,7 +38,7 @@
             <td style="max-width: 5px;">{{ dispositivo.metricas.all.0.clients|default:'0' }}</td>
             <td>{% if dispositivo.sector %}<a href="{% url 'sectores:detalle' dispositivo.sector.pk %}">{{ dispositivo.sector.nombre }}</a>{% else %}—{% endif %}</td>
             <td>{{ dispositivo.metricas.all.0.ssid|default:"—" }}</td>
-            <td style="width: 30px; min-width:20px;">{% include "dispositivo/comun/_signal.html" %}</td>
+            <td style="width: 30px; min-width:20px;">{% include "dispositivo/comun/_signal_bg.html" %}</td>
             <td>{{ dispositivo.metricas.all.0.tx|format_bitrate }} </td>
             <td>{{ dispositivo.metricas.all.0.rx|format_bitrate }} </td>
             <td class="text-end">

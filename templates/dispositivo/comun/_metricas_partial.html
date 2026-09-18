@@ -50,7 +50,7 @@
 
   <div class="row g-2 align-items-start mb-1">
     <div class="col-auto d-flex gap-1">
-      <p class="mb-0"><strong>Señal:</strong> {{ metricas.signal|default:'0' }} dbm</p> ·
+      <p class="mb-0"><strong>Señal:</strong>{% include "dispositivo/comun/_signal_tx.html" %}</p> ·
     </div>
     <div class="col-auto d-flex gap-1">
       <p class="mb-0"><strong>Potencia:</strong> {{ metricas.power|default:'0' }} dbm</p>
