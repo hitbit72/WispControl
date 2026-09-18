@@ -17,8 +17,10 @@ Uso manual:
     -- Para una solo IP: (con o sin el igual, funciona los dos)
     python manage.py monitorizar --ip=192.168.25.50 // python manage.py monitorizar --ip 192.168.25.50
 
-Si quieres confirmar qué hay realmente en esa columna:
+    -- Para filtrar por rol de dispositivo:
+    python manage.py monitorizar --rol=main   (solo acepta: main y station)
 
+Si quieres confirmar qué hay realmente en esa columna:
     uv run manage.py shell -c "from dispositivos.models import Dispositivo; [print(d.nombre, repr(d.snmp_community)) for d in Dispositivo.objects.all()]"
 
 """
@@ -72,28 +74,37 @@ class Command(BaseCommand):
             type=str,
             help='Filtrar y procesar únicamente un dispositivo por su IP de gestión.',
         )
+        parser.add_argument(
+            '--rol',
+            type=str,
+            choices=['main', 'station'],
+            help='Filtrar dispositivos por su rol (rol disponibles: main, station).',
+        )
 
     def handle(self, *args, **options):
         # Recuperamos el valor del argumento --ip si fue proporcionado
         ip_filtro = options.get('ip')
+        tipo_rol = options.get('rol')
 
         if ip_filtro:
             dispositivos = (
                 Dispositivo.objects
                 .filter(ip_gestion=ip_filtro)
+                .filter(estado='activo')
                 .exclude(snmp_community__isnull=True)
             )
         else:
             dispositivos = (
                 Dispositivo.objects
                 .filter(ip_gestion__isnull=False)
+                .filter(estado='activo')
                 .exclude(snmp_community__isnull=True)
                 .exclude(escanear=False)
             )
 
-        # Si se pasó una IP, filtramos el queryset para que solo devuelva ese registro
-        # if ip_filtro:
-        #    dispositivos = dispositivos.filter(ip_gestion=ip_filtro)
+        # Si se pasó un ROL, filtramos el queryset para que solo devuelva esos registros
+        if tipo_rol:
+            dispositivos = dispositivos.filter(rol=tipo_rol)
 
         total = dispositivos.count()
         ok=0
@@ -171,7 +182,7 @@ class Command(BaseCommand):
         datos['status'] = status
         datos['timescan'] = timezone.now()
 
-        # test de alarmas
+        # DEBUG: test de alarmas
         #if dispositivo.ip_gestion == '192.168.25.150':
             #datos['cpu'] = 95
             #datos['ram'] = 97
