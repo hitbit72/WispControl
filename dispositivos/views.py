@@ -187,7 +187,6 @@ def detalle_dispositivo(request, pk):
     for metrica in estaciones:
         cl_pk = 0
         cl_name = metrica.device.nombre
-        print(metrica.device)
         if metrica.device.cliente:
             cl_pk = metrica.device.cliente.pk
             cl_name = metrica.device.cliente.nombre_completo
