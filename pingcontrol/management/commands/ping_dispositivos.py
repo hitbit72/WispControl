@@ -27,6 +27,7 @@ Uso manual:
 """
 
 from django.core.management.base import BaseCommand
+from django.utils import timezone
 
 from dispositivos.models import Dispositivo
 from pingcontrol.services import procesar_dispositivo
@@ -80,7 +81,8 @@ class Command(BaseCommand):
 
         if not total:
             self.stdout.write(self.style.WARNING(
-                'No hay dispositivos con ping=True e IP de gestión.'))
+                f'[{timezone.now():%d/%m/%Y %H:%M:%S}] '
+                'No hay dispositivos para comprobar.'))
             return
 
         # Bucle por los dispositivos
@@ -89,15 +91,18 @@ class Command(BaseCommand):
                 metrica, detectadas = procesar_dispositivo(dispositivo)
                 if metrica.status == metrica.Status.OK:
                     ok += 1
-                    # self.stdout.write(self.style.SUCCESS(f'[{dispositivo.ip_gestion}] Ping OK · {metrica.latencia} ms'))
+                    # self.stdout.write(self.style.SUCCESS(f'[{timezone.now():%d/%m/%Y %H:%M:%S}] 'f'[{dispositivo.ip_gestion}] Ping OK · {metrica.latencia} ms'))
                 else:
                     errores += 1
                     self.stdout.write(self.style.ERROR(
+                        f'[{timezone.now():%d/%m/%Y %H:%M:%S}] '
                         f'[{dispositivo.ip_gestion}] Ping FALLÓ · {metrica.sys_name or "Sin respuesta"}'))
             except Exception as e:
                 errores += 1
                 self.stdout.write(self.style.ERROR(
+                    f'[{timezone.now():%d/%m/%Y %H:%M:%S}] '
                     f'[{dispositivo.ip_gestion}] Error: {e}'))
 
         self.stdout.write(self.style.SUCCESS(
+            f'[{timezone.now():%d/%m/%Y %H:%M:%S}] '
             f'Procesados {total} dispositivos: {ok} OK, {errores} fallos.\n'))

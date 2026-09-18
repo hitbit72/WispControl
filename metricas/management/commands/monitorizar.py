@@ -111,11 +111,14 @@ class Command(BaseCommand):
 
         if not total:
             self.stdout.write(self.style.WARNING(
-                'No hay dispositivos con IP de gestión.'))
+                f'[{timezone.now():%d/%m/%Y %H:%M:%S}] '
+                'No hay dispositivos para comprobar.'))
+        # Bucle para consultar SNMP
         for dispositivo in dispositivos:
             if self._procesar(dispositivo):
                 ok += 1
         self.stdout.write(self.style.SUCCESS(
+            f'[{timezone.now():%d/%m/%Y %H:%M:%S}] '
             f'Monitorizados {ok} de {total} dispositivos.'))
 
 
@@ -157,7 +160,9 @@ class Command(BaseCommand):
 
         except snmp_client.SnmpError as exc:
             self.stdout.write(
-                self.style.ERROR(f'[{dispositivo.ip_gestion}] {exc}'))
+                self.style.ERROR(
+                    f'[{timezone.now():%d/%m/%Y %H:%M:%S}] '
+                    f'[{dispositivo.ip_gestion}] {exc}'))
             resultado = {}
             puertos, puertos_pon, estaciones, onus = [], [], [], []
             mensaje = str(exc).lower()
@@ -214,6 +219,7 @@ class Command(BaseCommand):
         services.evaluar_y_aplicar(dispositivo, metrica, metrica_anterior)
 
         self.stdout.write(self.style.SUCCESS(
+            f'[{timezone.now():%d/%m/%Y %H:%M:%S}] '
             f'[{dispositivo.nombre} {dispositivo.ip_gestion}] {status}'))
         return status == DeviceMetrics.Status.OK
 
