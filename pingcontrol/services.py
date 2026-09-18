@@ -51,7 +51,7 @@ def ping_dispositivo(dispositivo):
     count = config.get('count', DEFAULT_PING_CONFIG['count'])
     timeout = config.get('timeout', DEFAULT_PING_CONFIG['timeout'])
     interval = config.get('interval', DEFAULT_PING_CONFIG['interval'])
-    print(f'Ping a {dispositivo.ip_gestion}')
+    #print(f'Ping a {dispositivo.ip_gestion}')
 
     try:
         result = ping(
