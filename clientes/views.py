@@ -6,6 +6,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from .forms import ClienteForm, ContratoForm
 from .models import Cliente, Contrato
 
+from dispositivos.models import Dispositivo
 from eventos.models import Evento
 from eventos.services import registrar_evento
 MODULO = 'clientes'
@@ -76,7 +77,7 @@ def detalle_cliente(request, pk):
     url_anterior = request.POST.get('next') or request.GET.get('next')
 
     return render(request, 'clientes/detalle.html', {
-        'cliente': cliente, 
+        'cliente': cliente,
         'url_anterior': url_anterior,
         })
 
