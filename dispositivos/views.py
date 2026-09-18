@@ -183,7 +183,11 @@ def detalle_dispositivo(request, pk):
 @login_required
 def detalle_dispositivo2(request, pk):
     dispositivo = get_object_or_404(
-        Dispositivo.objects.prefetch_related('interfaces', 'enlaces_origen', 'enlaces_destino', 'metricas'),
+        Dispositivo.objects.prefetch_related(
+            'interfaces', 
+            'enlaces_origen', 
+            'enlaces_destino', 
+            'metricas'),
         pk=pk,
     )
 
@@ -258,6 +262,26 @@ def eliminar_dispositivo(request, pk):
 
 @login_required
 def alternar_escaneo_dispositivo(request, pk):
+
+    dispositivo = get_object_or_404(Dispositivo, pk=pk)
+
+    if request.method == 'POST':
+        dispositivo.escanear = 'escanear' in request.POST
+        dispositivo.alarma = 'alarma' in request.POST
+        dispositivo.alarma_puerto = 'alarma_puerto' in request.POST
+        dispositivo.ping = 'ping' in request.POST
+        dispositivo.alarma_ping = 'alarma_ping' in request.POST
+        dispositivo.save()
+    
+    return render(request, 'dispositivo/comun/_opt_escanear.html', {
+        'dispositivo': dispositivo,
+        })
+
+
+
+# Vista obsoleta, usa botones para cambio de estado. Ahora usamos un formulario
+@login_required
+def alternar_escaneo_dispositivo_noUsada(request, pk):
     dispositivo = get_object_or_404(Dispositivo, pk=pk)
 
     if request.method == 'POST':

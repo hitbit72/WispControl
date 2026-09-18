@@ -31,7 +31,7 @@
                     </div>
 
                     <div class="d-flex gap-2">
-                        {% include "dispositivo/comun/_bt_ping.html" %}
+                        {% include "dispositivo/comun/_menu_option1.html" %}
                     </div>
                 </div>
 
@@ -41,7 +41,6 @@
                 {% if dispositivo.ip_publica %}<p class="mb-1"><strong>IP pública:</strong> {{ dispositivo.ip_publica }}</p>{% endif %}
                 <p class="mb-1"><strong>MAC:</strong> {{ dispositivo.mac_address|default:"—" }}</p>
                 <p class="mb-3"><strong>Firmware:</strong> {{ dispositivo.firmware_version|default:"—" }}</p>
-                {% include "dispositivo/comun/_bt_scanear.html" %}
             </div>
         </div>
     </div>
@@ -217,5 +216,43 @@
         </div>
     </div>
 </div>
+
+<div class="modal" 
+    id="alertOptModal" 
+    tabindex="-1" 
+    aria-labelledby="alertOptModalLabel" 
+    aria-hidden="true"
+    data-bs-backdrop="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content modal-shadow" id="alertOptModalData">
+            <form method="post">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h2 class="modal-title h5" id="alertOptModalLabel">Opciones de escaneo y alarmas</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="card h-100">
+                        <div class="card-body" id="check_data">
+                        {% include "dispositivo/comun/_opt_escanear.html" %}
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" 
+                        class="btn btn-sm btn-outline-danger" 
+                        data-bs-dismiss="modal"><i class="bi bi-x" aria-hidden="true"></i> Cancelar</button>
+                    <button type="submit" 
+                        class="btn btn-sm btn-primary" 
+                        hx-post="{% url 'dispositivos:alternar_escaneo' dispositivo.pk %}"
+                        hx-target="#check_data" 
+                        hx-swap="innerHTML" 
+                        data-bs-dismiss="modal"><i class="bi bi-check2" aria-hidden="true"></i> Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script src="/static/assets/js/detalle_dispositivo.js"></script>
 {% endblock %}

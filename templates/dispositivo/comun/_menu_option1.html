@@ -1,12 +1,14 @@
-<form>
-{% csrf_token %}
-    <div x-data="{ metodo: '0'}">
+
+    
         <div class="dropdown">
             <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenuPing1" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="bi bi-gear" aria-hidden="true" title="opciones"></i>
             </button>
             <ul class="dropdown-menu dropdown-shadow" aria-labelledby="dropdownMenuPing1">
                 <li>
+                    <form>
+                    {% csrf_token %}
+                    <div x-data="{ metodo: '0'}">
                     <button hx-post="{% url 'pingcontrol:ping_dispositivo' dispositivo.pk %}"
                             hx-target="#pingData"
                             hx-swap="innerHTML"
@@ -16,19 +18,16 @@
                             class="dropdown-item">
                         <i class="bi bi-arrow-left-right"></i> · Ping
                     </button>
+                    </div>
+                    </form>
                 </li>
                 <li>
-                    <button hx-post="{% url 'metricas:actualizar_snmp' dispositivo.pk %}"
-                            hx-target="#pingData"
-                            hx-swap="innerHTML"
-                            hx-indicator="#spinner-ping"
-                            id="reload_dispositivo"
-                            data-bs-toggle="modal" data-bs-target="#pingModal"
+                    <button id="alertas_dispositivo"
+                            data-bs-toggle="modal" data-bs-target="#alertOptModal"
                             class="dropdown-item">
-                        <i class="bi bi-clock-history"></i> · Reiniciar
+                        <i class="bi bi-list-check"></i> · Escaner y alertas
                     </button>
                 </li>
             </ul>
         </div>
-    </div>
-</form>
+
