@@ -89,8 +89,7 @@ class Command(BaseCommand):
                 metrica, detectadas = procesar_dispositivo(dispositivo)
                 if metrica.status == metrica.Status.OK:
                     ok += 1
-                    self.stdout.write(self.style.SUCCESS(
-                        f'[{dispositivo.nombre}] Ping OK · {metrica.latencia} ms'))
+                    # self.stdout.write(self.style.SUCCESS(f'[{dispositivo.nombre}] Ping OK · {metrica.latencia} ms'))
                 else:
                     errores += 1
                     self.stdout.write(self.style.ERROR(
@@ -101,4 +100,4 @@ class Command(BaseCommand):
                     f'[{dispositivo.nombre}] Error: {e}'))
 
         self.stdout.write(self.style.SUCCESS(
-            f'Procesados {total} dispositivos: {ok} OK, {errores} fallos.'))
+            f'Procesados {total} dispositivos: {ok} OK, {errores} fallos.\n'))
