@@ -1,6 +1,6 @@
 <span class="badge 
 {% if dispositivo.tipo.clave == 'olt' or dispositivo.tipo.clave == 'onu' %}
-    {% if dispositivo.metricas.all.0.signal <= -20 %}bg-danger
+    {% if dispositivo.metricas.all.0.signal <= -21 %}bg-danger
     {% elif dispositivo.metricas.all.0.signal <= -18 %}bg-warning
     {% elif dispositivo.metricas.all.0.signal > -18 and dispositivo.metricas.all.0.signal < 0 %}bg-success
     {% else %}bg-secondary{% endif %}

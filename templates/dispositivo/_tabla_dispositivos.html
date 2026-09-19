@@ -38,7 +38,21 @@
             <td style="max-width: 5px;">{{ dispositivo.metricas.all.0.clients|default:'0' }}</td>
             <td>{% if dispositivo.sector %}<a href="{% url 'sectores:detalle' dispositivo.sector.pk %}">{{ dispositivo.sector.nombre }}</a>{% else %}—{% endif %}</td>
             <td>{{ dispositivo.metricas.all.0.ssid|default:"—" }}</td>
-            <td style="width: 30px; min-width:20px;">{% include "dispositivo/comun/_signal_bg.html" %}</td>
+            <td style="width: 30px; min-width:20px;">
+                <span class="badge 
+                {% if dispositivo.tipo.clave == 'olt' or dispositivo.tipo.clave == 'onu' %}
+                    {% if dispositivo.metricas.all.0.signal <= -21 %}bg-danger
+                    {% elif dispositivo.metricas.all.0.signal <= -18 %}bg-warning
+                    {% elif dispositivo.metricas.all.0.signal > -18 and dispositivo.metricas.all.0.signal < 0 %}bg-success
+                    {% else %}bg-secondary{% endif %}
+                {% else %}
+                    {% if dispositivo.metricas.all.0.signal <= -70 %}bg-danger
+                    {% elif dispositivo.metricas.all.0.signal > -50 %}bg-warning text-dark
+                    {% elif dispositivo.metricas.all.0.signal > -70 and dispositivo.metricas.all.0.signal <= -50 %}bg-success
+                    {% else %}bg-secondary{% endif %}
+                {% endif %}
+                "> {{ dispositivo.metricas.all.0.signal|default:"—"}} </span>
+            </td>
             <td>{{ dispositivo.metricas.all.0.tx|format_bitrate }} </td>
             <td>{{ dispositivo.metricas.all.0.rx|format_bitrate }} </td>
             <td class="text-end">

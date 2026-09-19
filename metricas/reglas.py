@@ -11,6 +11,7 @@ from eventos.models import Evento
 from dispositivos.models import Dispositivo
 
 from .models import DeviceMetrics
+from dispositivos.models import reglas_ap # Dispositivos que son AP, para cambio de canala
 
 # Nivel Evento asociado a cada regla (fijo, no configurable) -> service.py.
 REGLA_NIVEL = {
@@ -72,21 +73,22 @@ def evaluar(dispositivo, metrica, anterior, config):
                 reglas.append({'regla': 'puerto_caido', 'titulo': f'Puerto caído {dispositivo.ip_gestion}',
                                'texto': f'Interfaz(es) caída(s): {", ".join(caidos)}.'})
             
-    if config.get('sin_clientes_ap') and dispositivo.tipo.clave in ('ap','nodo','olt') \
+    if config.get('sin_clientes_ap') and dispositivo.tipo.clave in reglas_ap \
             and metrica.clients is not None and metrica.clients == 0:
         reglas.append({'regla': 'sin_clientes_ap', 'titulo': f'AP sin clientes {dispositivo.ip_gestion}',
                        'texto': 'Ningún cliente asociado al AP.'})
 
     if anterior is not None:
-        if config.get('cambio_frecuencia') and metrica.frequency is not None \
-                and dispositivo.frequency is not None and metrica.frequency != dispositivo.frequency:
-            reglas.append({'regla': 'cambio_frecuencia', 'titulo': f'Cambio de frecuencia {dispositivo.ip_gestion}',
-                           'texto': f'Frecuencia {dispositivo.frequency:.0f} → {metrica.frequency:.0f} MHz.'})
-            
-        if config.get('cambio_canal') and metrica.channel and anterior.channel \
-                and dispositivo.tipo.clave in ('ap','nodo','olt') and metrica.channel != anterior.channel:
-            reglas.append({'regla': 'cambio_canal', 'titulo': f'Cambio de canal {dispositivo.ip_gestion}',
-                           'texto': f'Canal {anterior.channel} → {metrica.channel}.'})
+        if dispositivo.tipo.clave in reglas_ap:
+            if config.get('cambio_frecuencia') and metrica.frequency is not None \
+                    and dispositivo.frequency is not None and metrica.frequency != dispositivo.frequency:
+                reglas.append({'regla': 'cambio_frecuencia', 'titulo': f'Cambio de frecuencia {dispositivo.ip_gestion}',
+                            'texto': f'Frecuencia {dispositivo.frequency:.0f} → {metrica.frequency:.0f} MHz.'})
+                
+            if config.get('cambio_canal') and metrica.channel and anterior.channel \
+                    and dispositivo.tipo.clave in ('ap','nodo','olt') and metrica.channel != anterior.channel:
+                reglas.append({'regla': 'cambio_canal', 'titulo': f'Cambio de canal {dispositivo.ip_gestion}',
+                            'texto': f'Canal {anterior.channel} → {metrica.channel}.'})
             
         for metrica_campo, regla, titulo, umbral in (
             ('rx_dbm', 'caida_potencia_rx', 'Caída de potencia RX', config.get('caida_potencia_rx')),

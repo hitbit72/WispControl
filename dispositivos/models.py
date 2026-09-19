@@ -1,5 +1,11 @@
 from django.db import models
 
+# Claves de TipoEquipo que se consideran AP (muestran sus estaciones asociadas)
+dispositivos_ap = ['ap', 'nodo', 'ptp_main', 'ptp_station']
+# Claves de TipoEquipo que se consideran AP para evaluar alertas
+reglas_ap = ['ap', 'nodo', 'ptp_main', 'olt']
+
+
 
 class Marca(models.Model):
     """ 
@@ -20,7 +26,9 @@ class Marca(models.Model):
 
 
 class TipoEquipo(models.Model):
-    """ Tipos de dispositivos/equipos """
+    """ Tipos de dispositivos/equipos 
+        Es obligatorio registrar los tipos dispositivos_ap y reglas_ap
+    """
     nombre = models.CharField(max_length=100, unique=True, null=False,blank=False)
     clave = models.CharField(max_length=100, unique=True, null=False, blank=False, 
                              help_text='Clave identificativa (sin espacios ni caracteres especiales)',)

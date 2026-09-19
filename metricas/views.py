@@ -5,7 +5,7 @@ from django.http import HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, render
 from django.views.decorators.http import require_POST
 
-from dispositivos.models import Dispositivo
+from dispositivos.models import Dispositivo, dispositivos_ap
 from metricas.management.commands.monitorizar import Command as MonitorizarCommand
 
 
@@ -33,6 +33,7 @@ def actualizar_metricas_snmp(request, pk):
     response = render(request, 'dispositivo/comun/_metricas_partial.html', {
         'metricas': metricas,
         'dispositivo': dispositivo,
+        'dispositivos_ap': dispositivos_ap,
     })
     # Envía un encabezado HTTP que htmx interpreta como evento
     response['HX-Trigger'] = 'cerrarMetricaModal'

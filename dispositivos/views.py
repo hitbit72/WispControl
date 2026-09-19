@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import DispositivoForm, EnlaceForm, InterfazForm
 
-from .models import Dispositivo, Enlace, Interfaz, TipoEquipo
+from .models import Dispositivo, Enlace, Interfaz, TipoEquipo, dispositivos_ap
 from clientes.models import Cliente
 from sector.models import Sector
 
@@ -131,7 +131,7 @@ def nuevo_dispositivo(request, pk=0):
             return redirect('dispositivos:lista')
         else:
             # si el formlario no es válido.
-            error_msg = "Por favor, corrige los errores en el formulario: " + form.errors.as_text()
+            error_msg = "Por favor, corrige los errores del formulario: " + form.errors.as_text()
     else:
         form = DispositivoForm()
         if sector:
@@ -172,67 +172,68 @@ def detalle_dispositivo(request, pk):
 
     # si es main, buscamos las estaciones
     estaciones = ''
-    if dispositivo.rol == 'main':
-        estaciones = (
-            DeviceMetrics.objects
-            .select_related('device')
-            .filter(ssid=metricas.ssid,)
-            .exclude(device=dispositivo)
-        )
-
-    
-    # ---- a partir de aqui, es para crear una lista combinada de estaciones registradas y estaciones detectadas por el AP
     devices = []
-    # Primero las estaciones registradas
-    for metrica in estaciones:
-        cl_pk = 0
-        cl_name = metrica.device.nombre
-        if metrica.device.cliente:
-            cl_pk = metrica.device.cliente.pk
-            cl_name = metrica.device.cliente.nombre_completo
-        devices.append({
-            'registrado': True,
-            'estado': metrica.device.estado,
-            'ip_gestion': metrica.device.ip_gestion,
-            'device_pk': metrica.device.pk,
-            'cliente': cl_name,
-            'cliente_pk': cl_pk,
-            'nombre_host': metrica.device.nombre_host,
-            'signal': metrica.signal,
-            'noise': metrica.noise,
-            'ccq': metrica.ccq,
-            'distancia': metrica.distancia,
-            'tx': metrica.tx,
-            'rx': metrica.rx,
-        })
+    if metricas:
+        if dispositivo.rol == 'main':
+            estaciones = (
+                DeviceMetrics.objects
+                .select_related('device')
+                .filter(ssid=metricas.ssid,)
+                .exclude(device=dispositivo)
+            )
 
-    # IPs que ya tienes
-    ips_estaciones = {
-        metrica.device.ip_gestion
-        for metrica in estaciones
-    }
-
-    # Después añadimos los dispositivos que no están en estaciones registradas
-    for device in metricas.estaciones:
-        if device['ip'] not in ips_estaciones:
+        
+        # ---- a partir de aqui, es para crear una lista combinada de estaciones registradas y estaciones detectadas por el AP
+        
+        # Primero las estaciones registradas
+        for metrica in estaciones:
+            cl_pk = 0
+            cl_name = metrica.device.nombre
+            if metrica.device.cliente:
+                cl_pk = metrica.device.cliente.pk
+                cl_name = metrica.device.cliente.nombre_completo
             devices.append({
-                'registrado': False,
-                'estado': 'activo',
-                'ip_gestion': device['ip'],
-                'device_pk': 0,
-                'cliente': '—',
-                'cliente_pk': 0,
-                'nombre_host': device['host'],
-                'signal': device['signal'],
-                'noise': device['noise'],
-                'ccq': device['ccq'],
-                'distancia': device['distancia'],
-                'tx': device['tx_rate'],
-                'rx': device['rx_rate'],
+                'registrado': True,
+                'estado': metrica.device.estado,
+                'ip_gestion': metrica.device.ip_gestion,
+                'device_pk': metrica.device.pk,
+                'cliente': cl_name,
+                'cliente_pk': cl_pk,
+                'nombre_host': metrica.device.nombre_host,
+                'signal': metrica.signal,
+                'noise': metrica.noise,
+                'ccq': metrica.ccq,
+                'distancia': metrica.distancia,
+                'tx': metrica.tx,
+                'rx': metrica.rx,
             })
-    
-    # ----------- FIN COMBINACION DE LISTAS ---------------------
 
+        # IPs que ya tienes
+        ips_estaciones = {
+            metrica.device.ip_gestion
+            for metrica in estaciones
+        }
+
+        # Después añadimos los dispositivos que no están en estaciones registradas
+        for device in metricas.estaciones:
+            if device['ip'] not in ips_estaciones:
+                devices.append({
+                    'registrado': False,
+                    'estado': 'activo',
+                    'ip_gestion': device['ip'],
+                    'device_pk': 0,
+                    'cliente': '—',
+                    'cliente_pk': 0,
+                    'nombre_host': device['host'],
+                    'signal': device['signal'],
+                    'noise': device['noise'],
+                    'ccq': device['ccq'],
+                    'distancia': device['distancia'],
+                    'tx': device['tx_rate'],
+                    'rx': device['rx_rate'],
+                })
+    
+        # ----------- FIN COMBINACION DE LISTAS ---------------------
 
     # contar el número de alarmas que tiene
     hay_alarmas = dispositivo.alarmas.count()
@@ -243,6 +244,7 @@ def detalle_dispositivo(request, pk):
         'estaciones': devices,
         'url_anterior': url_anterior,
         'hay_alarmas': hay_alarmas,
+        'dispositivos_ap': dispositivos_ap,
     })
 
 
@@ -274,6 +276,7 @@ def detalle_dispositivo2(request, pk):
         'enlaces': enlaces,
         'metricas': metricas,
         'url_anterior': url_anterior,
+        'dispositivos_ap': dispositivos_ap,
     })
 
 @login_required
@@ -400,7 +403,7 @@ def nueva_interfaz(request, dispositivo_pk):
             return redirect('dispositivos:detalle', pk=dispositivo.pk)
         else:
             # si el formlario no es válido.
-            error_msg = "Por favor, corrige los errores en el formulario: " + form.errors.as_text()
+            error_msg = "Por favor, corrige los errores del formulario: " + form.errors.as_text()
     else:
         form = InterfazForm()
 
@@ -489,7 +492,7 @@ def editar_enlace(request, pk):
             return redirect('dispositivos:detalle', pk=dispositivo_pk)
         else:
             # si el formlario no es válido.
-            error_msg = "Por favor, corrige los errores en el formulario: " + form.errors.as_text()
+            error_msg = "Por favor, corrige los errores del formulario: " + form.errors.as_text()
     else:
         form = EnlaceForm(instance=enlace, dispositivo_origen=enlace.dispositivo_origen)
 
