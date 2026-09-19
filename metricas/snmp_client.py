@@ -10,6 +10,7 @@ El transporte se configura por dispositivo desde
 valores por defecto de `settings.METRICAS_SNMP`.
 """
 
+from django.utils import timezone
 import django.conf as _conf
 
 from pysnmp.hlapi import (
@@ -177,11 +178,7 @@ def consultar_if_table(dispositivo, oids, modo='general'):
     # 1. Separar claves ("host", "signal"...) y valores OID ("1.3.6.1...")
     nombres_metricas = list(oids.keys())
     objetos_snmp = [ObjectType(ObjectIdentity(oid)) for oid in oids.values()]
-    #if modo == 'puertos' and dispositivo.ip_gestion == '192.168.25.150':
-    #    print(oids)
-    #    print('----------------------')
-    #    print(objetos_snmp)
-
+ 
     try:
         # Usamos nextCmd para hacer un walk sobre las 3 columnas simultáneamente
         for errorIndication, errorStatus, errorIndex, varBinds in nextCmd(
@@ -275,6 +272,6 @@ def consultar_if_table(dispositivo, oids, modo='general'):
                 if fila:
                     estaciones.append(fila)
     except Exception as e:
-        print(f"Error al consultar {dispositivo.ip_gestion} (Modo: {modo}): {e}")
+        print(f"[{timezone.now():%d/%m/%Y %H:%M:%S}] Error al consultar {dispositivo.ip_gestion} (Modo: {modo}): {e}")
  
     return estaciones

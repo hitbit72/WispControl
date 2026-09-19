@@ -87,7 +87,8 @@ def _build_message(dispositivo, alarma, accion):
 
     # Sector si existe
     if dispositivo.sector:
-        lines.append(f"📍 Sector: {dispositivo.sector.nombre}")
+        # lines.append(f"📍 Sector: {dispositivo.sector.nombre}")
+        lines.append(f"Sector: {dispositivo.sector.nombre}")
     
     return "\n".join(lines)
 
