@@ -173,13 +173,13 @@ def detalle_dispositivo(request, pk):
     # si es main, buscamos las estaciones
     estaciones = ''
     devices = []
-    if metricas and metricas.ssid != '':
+    if metricas and metricas.ssid:
         if dispositivo.rol == 'main':
             estaciones = (
                 DeviceMetrics.objects
                 .select_related('device')
-                .filter(ssid=metricas.ssid,)
-                .exclude(device=dispositivo, ssid__isnull=False)
+                .filter(ssid=metricas.ssid, ssid__isnull=False)
+                .exclude(device=dispositivo)
             )
 
         
