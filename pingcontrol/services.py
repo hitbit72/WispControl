@@ -9,6 +9,7 @@ from dispositivos.models import Dispositivo
 from metricas.models import DeviceMetrics, Alarma
 from eventos.services import registrar_evento
 from eventos.models import Evento
+from telegram.services import enviar_alerta_telegram
 
 try:
     from pythonping import ping
@@ -201,6 +202,8 @@ def sincronizar_alarmas_ping(dispositivo, detectadas, error_msg):
                 f'{dispositivo.nombre} · {alarma.texto}',
                 nivel=Evento.Nivel.NOTICE,
             )
+            # Enviar Telegram (async)
+            enviar_alerta_telegram(dispositivo, alarma, 'resuelta')
         resultados['resueltas'].append(alarma)
     
     # Crear nuevas alarmas
@@ -233,6 +236,8 @@ def sincronizar_alarmas_ping(dispositivo, detectadas, error_msg):
                 f'{dispositivo.nombre} · {alarma.texto}',
                 nivel=nivel,
             )
+            # Enviar Telegram (async)
+            enviar_alerta_telegram(dispositivo, alarma, 'nueva')
         resultados['nuevas'].append(alarma)
     
     return resultados

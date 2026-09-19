@@ -14,6 +14,7 @@ from dispositivos.models import Dispositivo, Interfaz
 
 from .models import Alarma, DeviceMetrics
 from .reglas import REGLA_NIVEL, evaluar
+from telegram.services import enviar_alerta_telegram
 
 MODULO = 'metricas'
 
@@ -178,8 +179,6 @@ def evaluar_y_aplicar(dispositivo, metrica, anterior):
     """
     activas = evaluar(dispositivo, metrica, anterior, settings.METRICAS_ALARMAS)
     if dispositivo.alarma:
-        #print('Proccesando activas')
-        #print(activas)
         resultados = _sincronizar_alarmas(dispositivo, activas)
     return resultados
 
@@ -195,12 +194,7 @@ def _sincronizar_alarmas(dispositivo, detectadas):
 
     reglas_activas = dict(activas.values_list('regla', 'pk'))
     detectadas = {a['regla']: a for a in detectadas}
-
     resultados = {'nuevas': [], 'resueltas': []}
-
-    #print(f'Reglas activas: {reglas_activas}')
-    #print(f'Detectadas: {detectadas}')
-    #print('---------------------')
 
     for regla, pk in reglas_activas.items():
         #print(f'{regla} - {pk}')
@@ -217,6 +211,8 @@ def _sincronizar_alarmas(dispositivo, detectadas):
             f'{dispositivo.nombre} · {alarma.texto}',
             nivel=Evento.Nivel.NOTICE,
         )
+        # Enviar Telegram (async)
+        enviar_alerta_telegram(dispositivo, alarma, 'resuelta')
         resultados['resueltas'].append(alarma)
 
     for regla, datos in detectadas.items():
@@ -236,5 +232,7 @@ def _sincronizar_alarmas(dispositivo, detectadas):
             f'{dispositivo.nombre} · {alarma.texto}',
             nivel=REGLA_NIVEL.get(regla, Evento.Nivel.WARNING),
         )
+        # Enviar Telegram (async)
+        enviar_alerta_telegram(dispositivo, alarma, 'nueva')
         resultados['nuevas'].append(alarma)
     return resultados

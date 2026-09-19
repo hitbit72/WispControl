@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'clientes',
     'metricas',
     'pingcontrol',
+    'telegram',
 ]
 
 MIDDLEWARE = [
