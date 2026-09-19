@@ -44,6 +44,7 @@ class DeviceMetrics(models.Model):
     ssid = models.CharField(max_length=200, null=True, blank=True)
     snr = models.FloatField(null=True, blank=True, verbose_name='SNR (dB)')
     ccq = models.FloatField(null=True, blank=True, verbose_name='CCQ (%)')
+
     signal = models.FloatField(null=True, blank=True, verbose_name='Señal (dBm)')
     frequency = models.FloatField(null=True, blank=True, verbose_name='Frecuencia (MHz)')
     channel = models.CharField(max_length=20, blank=True, verbose_name='Canal')
