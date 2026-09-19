@@ -42,18 +42,25 @@ def _build_message(dispositivo, alarma, accion):
         f"📝 <b>Detalle:</b> {alarma.texto or '—'}",
     ]
     """
+    if accion == 'resuelta' and alarma.resuelta_en:
+        detec = f"⏱ <b>Resuelta:</b> {alarma.resuelta_en.strftime('%d/%m/%Y %H:%M:%S')}"
+    elif accion == 'nueva':
+        detec = f"🕐 <b>Detectada:</b> {alarma.creada_en.strftime('%d/%m/%Y %H:%M:%S')}"
 
     lines = [
         f"{emoji} <b>{alarma.titulo}</b>",
-        f"{tipo_emoji} <b>Dispositivo:</b> {dispositivo.nombre} ({dispositivo.ip_gestion})",
+        detec,
+        f"<b>Dispositivo:</b> {dispositivo.nombre} ({dispositivo.ip_gestion})",
         f"{alarma.texto or '—'}",
     ]
 
+    """
     if accion == 'resuelta' and alarma.resuelta_en:
         lines.append(f"⏱ <b>Resuelta:</b> {alarma.resuelta_en.strftime('%d/%m/%Y %H:%M:%S')}")
     elif accion == 'nueva':
         lines.append(f"🕐 <b>Detectada:</b> {alarma.creada_en.strftime('%d/%m/%Y %H:%M:%S')}")
-    
+    """
+
     # Estado actual del dispositivo
     #estado_label = dict(dispositivo.Estado.choices).get(dispositivo.estado, dispositivo.estado)
     #lines.append(f"🔘 <b>Estado:</b> {estado_label}")

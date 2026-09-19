@@ -46,7 +46,7 @@
         {% elif metrica.signal > -50 %}bg-warning text-dark
         {% elif metrica.signal > -70 %}bg-success
         {% else %}bg-secondary{% endif %}">
-        {{ metrica.signal|default:"—" }}</span></td>
+        {{ metrica.signal|floatformat:"0" }}</span></td>
         <td>{{ metrica.noise|default:"—" }}</td>
         <td>{{ metrica.ccq|default:"—" }}%</td>
         <td>{{ metrica.distancia|metros_a_km }} </td>
