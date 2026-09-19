@@ -32,7 +32,7 @@
     </div>
   </div>
 
-  {% if metricas.sys_name %}<p class="mb-1"><strong>Nombre:</strong> {{ metricas.sys_name }}</p>{% endif %}
+  {% if metricas.antena %}<p class="mb-1"><strong>Antena:</strong> {{ metricas.antena }}</p>{% endif %}
   {% if metricas.ssid %}
   <p class="mb-1"><strong>SSID:</strong>
     {% if dispositivo.tipo.clave in dispositivos_ap %}
