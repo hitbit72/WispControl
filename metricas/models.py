@@ -128,7 +128,7 @@ class Alarma(models.Model):
         ordering = ['-creada_en']
         constraints = [
             models.UniqueConstraint(
-                fields=['device', 'regla'],
+                fields=['device', 'tipo', 'regla'],
                 condition=models.Q(estado='activa'),
                 name='alarma_activa_por_regla',
             ),
