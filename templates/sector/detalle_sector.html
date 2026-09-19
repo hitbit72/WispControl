@@ -33,6 +33,7 @@
             <th>IP gestión</th>
             <th>Tipo</th>
             <th>Modo</th>
+            <th>Estaciones</th>
             <th></th>
         </tr>
     </thead>
@@ -45,13 +46,14 @@
             <td>{{ dispositivo.ip_gestion|default:"—" }}</td>
             <td>{{ dispositivo.tipo.nombre }}</td>
             <td>{{ dispositivo.get_rol_display }}</td>
+            <td style="max-width: 5px;">{{ dispositivo.metricas.all.0.clients|default:'0' }}</td>
             <td class="text-end">
                 <a href="{% url 'dispositivos:editar' dispositivo.pk %}?next={{ request.path }}" class="btn btn-sm btn-outline-primary">Editar</a>
                 <button class="btn btn-sm btn-outline-danger" onclick="DelMsgModal('deleteModal', '{% url 'dispositivos:eliminar' dispositivo.pk %}?next={{ request.path }}', '{{ dispositivo.ip_gestion }}', '{{ dispositivo.interfaces.count }}', 'dispositivo')">Eliminar</button>
             </td>
         </tr>
         {% empty %}
-        <tr><td colspan="7" class="text-center text-muted py-3">Este sector todavía no tiene dispositivos.</td></tr>
+        <tr><td colspan="8" class="text-center text-muted py-3">Este sector todavía no tiene dispositivos.</td></tr>
         {% endfor %}
     </tbody>
 </table>
