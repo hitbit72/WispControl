@@ -173,7 +173,7 @@ def detalle_dispositivo(request, pk):
     # si es main, buscamos las estaciones
     estaciones = ''
     devices = []
-    if metricas:
+    if metricas and metricas.ssid != '':
         if dispositivo.rol == 'main':
             estaciones = (
                 DeviceMetrics.objects
