@@ -5,6 +5,7 @@ import logging
 import threading
 import requests
 
+from django.utils import timezone
 from django.conf import settings
 
 logger = logging.getLogger(__name__)
@@ -45,7 +46,7 @@ def _build_message(dispositivo, alarma, accion):
     lines = [
         f"{emoji} <b>{alarma.titulo}</b>",
         f"{tipo_emoji} <b>Dispositivo:</b> {dispositivo.nombre} ({dispositivo.ip_gestion})",
-        f"📝 <b>Detalle:</b> {alarma.texto or '—'}",
+        f"{alarma.texto or '—'}",
     ]
 
     if accion == 'resuelta' and alarma.resuelta_en:
@@ -61,6 +62,16 @@ def _build_message(dispositivo, alarma, accion):
     metrica = dispositivo.metricas.first()
     if metrica:
         if alarma.tipo == 'snmp':
+            if metrica.signal is not None:
+                lines.append(f"📶 Señal: {metrica.signal} dBm")
+            if metrica.frequency is not None:
+                lines.append(f"📶 Frecuencia: {metrica.frequency} Mhz")
+        elif alarma.tipo == 'ping':
+            if metrica.latencia is not None:
+                lines.append(f"⏱ Latencia: {metrica.latencia} ms")
+    """
+    if metrica:
+        if alarma.tipo == 'snmp':
             if metrica.cpu is not None:
                 lines.append(f"💻 CPU: {metrica.cpu:.0f}%")
             if metrica.ram is not None:
@@ -72,7 +83,8 @@ def _build_message(dispositivo, alarma, accion):
         elif alarma.tipo == 'ping':
             if metrica.latencia is not None:
                 lines.append(f"⏱ Latencia: {metrica.latencia} ms")
-    
+    """
+
     # Sector si existe
     if dispositivo.sector:
         lines.append(f"📍 Sector: {dispositivo.sector.nombre}")
@@ -94,6 +106,7 @@ def _send_telegram_sync(message):
     
     if not bot_id or not chat_id:
         logger.warning("Telegram no configurado: faltan BOTID o CHATID en settings")
+        print(f"[{timezone.now():%d/%m/%Y %H:%M:%S}] Telegram no configurado: faltan BOTID o CHATID en settings")
         return False
     
     url = f"{getattr(settings, 'TELEGRAM', {}).get('URL', 'https://api.telegram.org/')}bot{bot_id}/sendMessage"
@@ -111,18 +124,23 @@ def _send_telegram_sync(message):
         result = response.json()
         if result.get('ok'):
             logger.info(f"Telegram enviado: message_id={result['result']['message_id']}")
+            print(f"[{timezone.now():%d/%m/%Y %H:%M:%S}] Telegram enviado: message_id={result['result']['message_id']}")
             return True
         else:
             logger.error(f"Error Telegram API: {result}")
+            print(f"[{timezone.now():%d/%m/%Y %H:%M:%S}] Error Telegram API: {result}")
             return False
     except requests.exceptions.Timeout:
         logger.error(f"Timeout enviando a Telegram ({timeout}s)")
+        print(f"[{timezone.now():%d/%m/%Y %H:%M:%S}] Timeout enviando a Telegram ({timeout}s)")
         return False
     except requests.exceptions.RequestException as e:
         logger.error(f"Error de red enviando a Telegram: {e}")
+        print(f"[{timezone.now():%d/%m/%Y %H:%M:%S}] Error de red enviando a Telegram: {e}")
         return False
     except Exception as e:
         logger.exception(f"Error inesperado enviando a Telegram: {e}")
+        print(f"[{timezone.now():%d/%m/%Y %H:%M:%S}] Error inesperado enviando a Telegram: {e}")
         return False
 
 
@@ -141,9 +159,11 @@ def enviar_alerta_telegram(dispositivo, alarma, accion):
     # Verificar si el dispositivo tiene notificaciones habilitadas
     if alarma.tipo == 'snmp' and not dispositivo.alarma:
         logger.debug(f"Dispositivo {dispositivo.nombre} tiene alarma=False, omitiendo Telegram")
+        print(f"[{timezone.now():%d/%m/%Y %H:%M:%S}] Dispositivo {dispositivo.nombre} tiene alarma=False, omitiendo Telegram")
         return None
     if alarma.tipo == 'ping' and not dispositivo.alarma_ping:
         logger.debug(f"Dispositivo {dispositivo.nombre} tiene alarma_ping=False, omitiendo Telegram")
+        print(f"[{timezone.now():%d/%m/%Y %H:%M:%S}] Dispositivo {dispositivo.nombre} tiene alarma_ping=False, omitiendo Telegram")
         return None
     
     message = _build_message(dispositivo, alarma, accion)
@@ -153,6 +173,7 @@ def enviar_alerta_telegram(dispositivo, alarma, accion):
             _send_telegram_sync(message)
         except Exception as e:
             logger.exception(f"Error en hilo Telegram: {e}")
+            print(f"[{timezone.now():%d/%m/%Y %H:%M:%S}] Error en hilo Telegram: {e}")
     
     thread = threading.Thread(target=_worker, daemon=True)
     thread.start()
