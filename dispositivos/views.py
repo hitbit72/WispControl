@@ -179,7 +179,7 @@ def detalle_dispositivo(request, pk):
                 DeviceMetrics.objects
                 .select_related('device')
                 .filter(ssid=metricas.ssid,)
-                .exclude(device=dispositivo)
+                .exclude(device=dispositivo, ssid__isnull=False)
             )
 
         
