@@ -27,7 +27,7 @@ from pysnmp.hlapi import (
 
 MODO_IPV4 = 0  # CommunityData(mpModel=0) mpModel=0 para SNMPv1, 1 para SNMPv2c
 
-EXCLUDE_PORT = ('lo','ubond','lag','teql','gre','airview','rif','802.1Q','system','encapsulation')
+EXCLUDE_PORT = ('lo','ubond','lag','teql','gre','airview','rif', 'tunl', 'sit', '802.1Q','system','encapsulation')
 EXCLUDE_PON_PORT = ('eth0','ubond','lag','teql','gre','airview')
 
 # ErrorStatus que significan "el OID no existe" (no fallo de comunicaciones).
