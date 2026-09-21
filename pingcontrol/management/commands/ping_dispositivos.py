@@ -81,8 +81,7 @@ class Command(BaseCommand):
 
         if not total:
             self.stdout.write(self.style.WARNING(
-                f'[{timezone.now():%d/%m/%Y %H:%M:%S}] '
-                'No hay dispositivos para comprobar.'))
+                f'[{timezone.now():%d/%m/%Y %H:%M:%S}] No hay dispositivos para comprobar.'))
             return
 
         # Bucle por los dispositivos
@@ -95,11 +94,11 @@ class Command(BaseCommand):
                 else:
                     errores += 1
                     self.stdout.write(self.style.ERROR(
-                        f'[{timezone.now():%d/%m/%Y %H:%M:%S}] {dispositivo.ip_gestion} ({dispositivo.nombre})  Ping FALLÓ'))
+                        f'[{timezone.now():%d/%m/%Y %H:%M:%S}] {dispositivo.ip_gestion} ({dispositivo.nombre}) Ping FALLÓ'))
             except Exception as e:
                 errores += 1
                 self.stdout.write(self.style.ERROR(
-                    f'[{timezone.now():%d/%m/%Y %H:%M:%S}] [{dispositivo.ip_gestion}] Error: {e}'))
+                    f'[{timezone.now():%d/%m/%Y %H:%M:%S}] {dispositivo.ip_gestion} ({dispositivo.nombre}) Error: {e}'))
 
         self.stdout.write(self.style.SUCCESS(
             f'[{timezone.now():%d/%m/%Y %H:%M:%S}] Procesados {total} dispositivos: {ok} OK, {errores} fallos.\n'))
