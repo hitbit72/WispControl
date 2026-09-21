@@ -3,6 +3,7 @@ Servicios para el control de ping a dispositivos.
 """
 from django.conf import settings
 from django.utils import timezone
+from django.db.models import Q
 
 from dispositivos.models import Dispositivo
 from metricas.models import DeviceMetrics, Alarma
