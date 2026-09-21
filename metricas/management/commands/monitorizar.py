@@ -149,21 +149,18 @@ class Command(BaseCommand):
         try:
             resultado = snmp_client.consultar_escalares(dispositivo, escalares)
             puertos = snmp_client.consultar_if_table(dispositivo, escalares_puerto, 'puertos')
-            #print('Puertos Ok')
             if escalares_st:
                 estaciones = snmp_client.consultar_if_table(dispositivo, escalares_st, 'wifi')
-                #print('Estaciones Ok')
             if escalares_puerto_pon:
                 puertos_pon = snmp_client.consultar_if_table(dispositivo, escalares_puerto_pon, 'puertos')
             if escalares_onu:
                 onus = snmp_client.consultar_if_table(dispositivo, escalares_onu, 'onus')
             status = DeviceMetrics.Status.OK
-            #print(resultado)
 
         except snmp_client.SnmpError as exc:
             self.stdout.write(
                 self.style.ERROR(
-                    f'[{timezone.now():%d/%m/%Y %H:%M:%S}] {dispositivo.ip_gestion} {exc}'))
+                    f'[{timezone.localtime():%d/%m/%Y %H:%M:%S}] {dispositivo.ip_gestion} {exc}'))
             resultado = {}
             puertos, puertos_pon, estaciones, onus = [], [], [], []
             mensaje = str(exc).lower()
@@ -210,7 +207,7 @@ class Command(BaseCommand):
         # Actualiza modelo de interfaz (puertos)
         if puertos:
             services.guardar_puertos(dispositivo, **datos)
-            # Actizalizar datos estaciones wifi y onus
+        # Actizalizar datos estaciones wifi y onus
         if estaciones:
             services.guarda_staciones_wifi(dispositivo, **datos)     # <-- Datos wifi de ubiquiti
         if onus:
