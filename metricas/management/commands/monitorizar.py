@@ -108,6 +108,7 @@ class Command(BaseCommand):
 
         total = dispositivos.count()
         ok=0
+        errores = 0
 
         if not total:
             self.stdout.write(self.style.WARNING(
@@ -116,8 +117,11 @@ class Command(BaseCommand):
         for dispositivo in dispositivos:
             if self._procesar(dispositivo):
                 ok += 1
+            else:
+                errores += 1
+
         self.stdout.write(self.style.SUCCESS(
-            f'[{timezone.now():%d/%m/%Y %H:%M:%S}] Monitorizados {ok} de {total} dispositivos.'))
+            f'[{timezone.now():%d/%m/%Y %H:%M:%S}] Procesados {total} dispositivos: {ok} OK, {errores} fallos.\n'))
 
 
     def _procesar(self, dispositivo):
@@ -215,8 +219,7 @@ class Command(BaseCommand):
         # evalua la alerta/alarma
         services.evaluar_y_aplicar(dispositivo, metrica, metrica_anterior)
 
-        self.stdout.write(self.style.SUCCESS(
-            f'[{timezone.now():%d/%m/%Y %H:%M:%S}] {dispositivo.ip_gestion} ({dispositivo.nombre}) {status}'))
+        #self.stdout.write(self.style.SUCCESS(f'[{timezone.now():%d/%m/%Y %H:%M:%S}] {dispositivo.ip_gestion} ({dispositivo.nombre}) {status}'))
         return status == DeviceMetrics.Status.OK
 
     def _construir_datos(self, dispositivo, resultado):

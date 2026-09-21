@@ -191,14 +191,14 @@ def consultar_if_table(dispositivo, oids, modo='general'):
         ):
             if errorIndication:
                 if modo != 'wifi':
-                    print(f"Error SNMP indication {dispositivo.ip_gestion} (Modo: {modo}): {errorIndication}")
+                    print(f"[{timezone.now():%d/%m/%Y %H:%M:%S}] {dispositivo.ip_gestion} ({dispositivo.nombre}) Error SNMP indication (Modo: {modo}): {errorIndication}")
                     #print(f'ip: {dispositivo.ip_gestion}')
                 break
             elif errorStatus:
-                print(f"Error SNMP status {dispositivo.ip_gestion} (Modo: {modo}): {errorStatus.prettyPrint()}")
+                print(f"[{timezone.now():%d/%m/%Y %H:%M:%S}] {dispositivo.ip_gestion} ({dispositivo.nombre}) Error SNMP status (Modo: {modo}): {errorStatus.prettyPrint()}")
                 break
             elif errorIndex:
-                print(f"Error SNMP index {dispositivo.ip_gestion} (Modo: {modo}): {errorIndex}")
+                print(f"[{timezone.now():%d/%m/%Y %H:%M:%S}] {dispositivo.ip_gestion} ({dispositivo.nombre}) Error SNMP index (Modo: {modo}): {errorIndex}")
                 break
             else:
                 fila = {}
@@ -272,6 +272,6 @@ def consultar_if_table(dispositivo, oids, modo='general'):
                 if fila:
                     estaciones.append(fila)
     except Exception as e:
-        print(f"[{timezone.now():%d/%m/%Y %H:%M:%S}] Error al consultar {dispositivo.ip_gestion} (Modo: {modo}): {e}")
+        print(f"[{timezone.now():%d/%m/%Y %H:%M:%S}] {dispositivo.ip_gestion} ({dispositivo.nombre}) Error al consultar (Modo: {modo}): {e}")
  
     return estaciones

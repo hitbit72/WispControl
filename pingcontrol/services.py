@@ -70,10 +70,10 @@ def ping_dispositivo(dispositivo):
                 return True, round(latencia_promedio, 2), None
             return True, 0.0, None
         else:
-            return False, None, f"[{timezone.now():%d/%m/%Y %H:%M:%S}] {dispositivo.ip_gestion} Sin respuesta tras {count} pings"
+            return False, None, f"[{timezone.now():%d/%m/%Y %H:%M:%S}] {dispositivo.ip_gestion} ({dispositivo.nombre}) Sin respuesta tras {count} pings"
             
     except Exception as e:
-        return False, None, f"[{timezone.now():%d/%m/%Y %H:%M:%S}] {dispositivo.ip_gestion} Error en ping: {str(e)}"
+        return False, None, f"[{timezone.now():%d/%m/%Y %H:%M:%S}] {dispositivo.ip_gestion} ({dispositivo.nombre}) Error en ping: {str(e)}"
 
 
 def ping_detalles(dispositivo):
