@@ -71,7 +71,7 @@ def ping_dispositivo(dispositivo):
             return True, 0.0, None
         else:
             # f"[{timezone.now():%d/%m/%Y %H:%M:%S}] {dispositivo.ip_gestion} ({dispositivo.nombre}) Sin respuesta tras {count} pings"
-            return False, None, f"[{timezone.now():%d/%m/%Y %H:%M:%S}] {dispositivo.ip_gestion} ({dispositivo.nombre}) Sin respuesta tras {count} pings"
+            return False, None, None
             
     except Exception as e:
         return False, None, f"[{timezone.localtime():%d/%m/%Y %H:%M:%S}] {dispositivo.ip_gestion} ({dispositivo.nombre}) Error en ping: {str(e)}"

@@ -112,7 +112,7 @@ class Command(BaseCommand):
 
         if not total:
             self.stdout.write(self.style.WARNING(
-                f'[{timezone.now():%d/%m/%Y %H:%M:%S}] No hay dispositivos para comprobar.'))
+                f'[{timezone.localtime():%d/%m/%Y %H:%M:%S}] No hay dispositivos para comprobar.'))
         # Bucle para consultar SNMP
         for dispositivo in dispositivos:
             if self._procesar(dispositivo):
@@ -121,7 +121,7 @@ class Command(BaseCommand):
                 errores += 1
 
         self.stdout.write(self.style.SUCCESS(
-            f'[{timezone.now():%d/%m/%Y %H:%M:%S}] Procesados {total} dispositivos: {ok} OK, {errores} fallos.\n'))
+            f'[{timezone.localtime():%d/%m/%Y %H:%M:%S}] Procesados {total} dispositivos: {ok} OK, {errores} fallos.\n'))
 
 
     def _procesar(self, dispositivo):
