@@ -50,7 +50,7 @@ def _build_message(dispositivo, alarma, accion):
     lines = [
         f"{emoji} <b>{alarma.titulo}</b>",
         detec,
-        f"<b>{dispositivo.nombre}</b> ({dispositivo.ip_gestion})",
+        f"<b>{dispositivo.nombre}</b>",
         f"{alarma.texto or '—'}",
     ]
 
