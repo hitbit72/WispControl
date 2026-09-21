@@ -118,10 +118,9 @@ def consultar_escalares(dispositivo, oids):
     # no existe. En ese caso se reintenta cada OID por separado.
     if error_st:
         if _es_falta_oid(error_st):
-            # debug
-            #print(f'* --- Escalares uno a uno ({error_st})---')
-            #print(oids)
-            return _escalares_uno_a_uno(engine, _auth(comunidad), transporte, contexto, oids)
+            return _escalares_uno_a_uno(engine, _auth(comunidad), transporte, contexto, oids, dispositivo.ip_gestion)
+        
+        print(f"[{timezone.localtime():%d/%m/%Y %H:%M:%S}] {dispositivo.ip_gestion} ({dispositivo.nombre}) Error SNMP escalares: {error_st.prettyPrint()}")
         raise SnmpError(error_st.prettyPrint())
 
     resultado = {}
@@ -134,7 +133,7 @@ def consultar_escalares(dispositivo, oids):
 
 
 
-def _escalares_uno_a_uno(engine, auth, transporte, contexto, oids):
+def _escalares_uno_a_uno(engine, auth, transporte, contexto, oids, ip):
     #print('escalares_uno_a_uno')
     if not oids:
         return {}
@@ -145,10 +144,12 @@ def _escalares_uno_a_uno(engine, auth, transporte, contexto, oids):
             getCmd(engine, auth, transporte, contexto, _objetos(oid))
         )
         if error_ind:
+            print(f"[{timezone.localtime():%d/%m/%Y %H:%M:%S}] {ip} Error SNMP uno a uno, indication: {error_ind}")
             raise SnmpError(str(error_ind))
         if error_st:
             if _es_falta_oid(error_st):
                 continue
+            print(f"[{timezone.localtime():%d/%m/%Y %H:%M:%S}] {ip} Error SNMP uno a uno, error: {error_st.prettyPrint()}")
             raise SnmpError(error_st.prettyPrint())
         for _oid, valor in var_binds:
             texto = _valor_texto(valor)
