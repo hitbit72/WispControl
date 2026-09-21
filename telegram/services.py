@@ -50,7 +50,7 @@ def _build_message(dispositivo, alarma, accion):
     lines = [
         f"{emoji} <b>{alarma.titulo}</b>",
         detec,
-        f"<b>Dispositivo:</b> {dispositivo.nombre} ({dispositivo.ip_gestion})",
+        f"<b>{dispositivo.nombre}</b> ({dispositivo.ip_gestion})",
         f"{alarma.texto or '—'}",
     ]
 
@@ -132,7 +132,7 @@ def _send_telegram_sync(message):
         result = response.json()
         if result.get('ok'):
             logger.info(f"Telegram enviado: message_id={result['result']['message_id']}")
-            print(f"[{timezone.now():%d/%m/%Y %H:%M:%S}] Telegram enviado: message_id={result['result']['message_id']}")
+            #print(f"[{timezone.now():%d/%m/%Y %H:%M:%S}] Telegram enviado: message_id={result['result']['message_id']}")
             return True
         else:
             logger.error(f"Error Telegram API: {result}")

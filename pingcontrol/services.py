@@ -43,10 +43,10 @@ def ping_dispositivo(dispositivo):
             - str: mensaje de error (None si éxito)
     """
     if ping is None:
-        return False, None, "pythonping no está instalado"
+        return False, None, f"[{timezone.localtime():%d/%m/%Y %H:%M:%S}] pythonping no está instalado"
 
     if not dispositivo.ip_gestion:
-        return False, None, "Sin IP de gestión"
+        return False, None, f"[{timezone.localtime():%d/%m/%Y %H:%M:%S}] Sin IP de gestión"
     
     config = get_ping_config()
     count = config.get('count', DEFAULT_PING_CONFIG['count'])
@@ -71,7 +71,7 @@ def ping_dispositivo(dispositivo):
             return True, 0.0, None
         else:
             # f"[{timezone.now():%d/%m/%Y %H:%M:%S}] {dispositivo.ip_gestion} ({dispositivo.nombre}) Sin respuesta tras {count} pings"
-            return False, None, None
+            return False, None, f"[{timezone.now():%d/%m/%Y %H:%M:%S}] {dispositivo.ip_gestion} ({dispositivo.nombre}) Sin respuesta tras {count} pings"
             
     except Exception as e:
         return False, None, f"[{timezone.localtime():%d/%m/%Y %H:%M:%S}] {dispositivo.ip_gestion} ({dispositivo.nombre}) Error en ping: {str(e)}"
@@ -90,10 +90,10 @@ def ping_detalles(dispositivo):
             - str: mensaje de error (None si éxito)
     """
     if ping is None:
-        return False, None, None, "pythonping no está instalado"
+        return False, None, None, f"[{timezone.localtime():%d/%m/%Y %H:%M:%S}] pythonping no está instalado"
 
     if not dispositivo.ip_gestion:
-        return False, None, None, "Sin IP de gestión"
+        return False, None, None, f"[{timezone.localtime():%d/%m/%Y %H:%M:%S}] Sin IP de gestión"
     
     config = get_ping_config()
     #count = config.get('count', DEFAULT_PING_CONFIG['count'])
@@ -119,10 +119,10 @@ def ping_detalles(dispositivo):
                 return True, round(latencia_promedio, 2), result, None
             return True, 0.0, result, None
         else:
-            return False, None, None, f"Sin respuesta tras {count} pings"
+            return False, None, None, f"[{timezone.localtime():%d/%m/%Y %H:%M:%S}] {dispositivo.ip_gestion} Sin respuesta tras {count} pings"
             
     except Exception as e:
-        return False, None, None, f"Error en ping: {str(e)}"
+        return False, None, None, f"[{timezone.localtime():%d/%m/%Y %H:%M:%S}] Error en ping: {str(e)}"
 
     
     
