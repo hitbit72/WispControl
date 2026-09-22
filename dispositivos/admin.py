@@ -30,7 +30,7 @@ class DispositivoAdmin(admin.ModelAdmin):
 
 @admin.register(Interfaz)
 class InterfazAdmin(admin.ModelAdmin):
-    list_display = ('dispositivo', 'nombre', 'tipo', 'estado', 'ip_address')
+    list_display = ('dispositivo', 'nombre', 'tipo', 'estado', 'velocidad_mbps', 'ip_address')
     list_filter = ('tipo', 'estado')
     search_fields = ('nombre', 'dispositivo__nombre', 'ip_address')
 
