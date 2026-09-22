@@ -97,6 +97,9 @@ def evaluar(dispositivo, metrica, anterior, config):
         ):
             if not umbral:
                 continue
+            if regla == 'caida_signal':
+                if any(r['regla'] == 'sin_clientes_ap' for r in reglas):
+                    continue
             actual, previo = getattr(metrica, metrica_campo), getattr(anterior, metrica_campo)
             if actual is not None and previo is not None:
                 caida = previo - actual

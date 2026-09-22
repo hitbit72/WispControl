@@ -246,13 +246,11 @@ def consultar_if_table(dispositivo, oids, modo='general'):
                     fila['estado'] = 'up' if fila['estado'] == '1' else 'down'
                     if fila.get('speed'):
                         if int(fila['speed']) > 1000:
-                            #fila['speed'] = int(fila['speed']) * 0.000001   # bps a Mbps
                             fila['speed'] = int(fila['speed']) / 1_000_000   # bps a Mbps
                         else:
                             fila['speed'] = 0
                     else:
                         fila['speed'] = 0
-                    #if fila['nombre'] in EXCLUDE_PORT:
                     if any(exclude.lower() in fila['nombre'].lower() for exclude in EXCLUDE_PORT):
                         fila = {}
 
@@ -265,8 +263,6 @@ def consultar_if_table(dispositivo, oids, modo='general'):
                             fila['speed'] = 0
                     else:
                         fila['speed'] = 0
-
-                    #if fila['nombre'] in EXCLUDE_PON_PORT:
                     if any(exclude.lower() in fila['nombre'].lower() for exclude in EXCLUDE_PORT):
                         fila = {}
 

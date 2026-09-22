@@ -127,6 +127,7 @@ class Interfaz(models.Model):
         VLAN = 'vlan', 'VLAN'
         OPTICO = 'opt', 'OPTICO'
         OTRO = 'otro', 'Otro'
+        TRONCAL = 'trunk', 'Troncal'
 
     class Estado(models.TextChoices):
         ARRIBA = 'up', 'Conectado'
