@@ -150,7 +150,7 @@ def evaluar_ping(dispositivo, metrica, anterior):
     
     # Regla: sin respuesta a ping
     if metrica.status_ping != DeviceMetrics.Status.OK:
-        texto = f'{dispositivo.ip_gestion} ({dispositivo.nombre}) no responde a ping.'
+        texto = f'{dispositivo.nombre} no responde a ping.'
         reglas.append({
             'regla': 'ping_sin_respuesta',
             'titulo': f'Ping sin respuesta {dispositivo.ip_gestion}',
@@ -162,7 +162,7 @@ def evaluar_ping(dispositivo, metrica, anterior):
         reglas.append({
             'regla': 'ping_recuperado',
             'titulo': f'Ping recuperado {dispositivo.ip_gestion}',
-            'texto': f'{dispositivo.ip_gestion} ({dispositivo.nombre}) vuelve a responder a ping (latencia: {metrica.latencia} ms).',
+            'texto': f'{dispositivo.nombre} vuelve a responder a ping (latencia: {metrica.latencia} ms).',
         })
     
     return reglas
