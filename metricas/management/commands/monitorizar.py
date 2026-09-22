@@ -245,6 +245,8 @@ class Command(BaseCommand):
             elif campo == 'temperature':
                 if numero > 1000:
                     datos['temperature'] = numero / 1000
+            elif campo == 'antena':
+                datos['antena'] = texto or numero
             elif numero is not None:
                 datos[campo] = numero
                 #print(f'es numero: {campo}: {numero}')
