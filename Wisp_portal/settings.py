@@ -210,6 +210,7 @@ METRICAS_ALARMAS = {
     'caida_potencia_rx': 10,   # dBm de bajada de Rx que dispara la alarma
     'caida_signal_dbm': 10,     # dBm de bajada de señal que dispara la alarma
     'caida_potencia_tx': 10,          # bajada de potencia de trasmision que dispara la alarma
+    'latencia_alta': -10,          # Latencia alta > 10 seg 
 }
 
 

@@ -86,14 +86,16 @@ def evaluar(dispositivo, metrica, anterior, config):
                             'texto': f'Frecuencia {dispositivo.frequency:.0f} → {metrica.frequency:.0f} MHz.'})
                 
             if config.get('cambio_canal') and metrica.channel and anterior.channel \
-                    and dispositivo.tipo.clave in ('ap','nodo','olt') and metrica.channel != anterior.channel:
+                    and metrica.channel != anterior.channel:
                 reglas.append({'regla': 'cambio_canal', 'titulo': f'Cambio de canal {dispositivo.ip_gestion}',
                             'texto': f'Canal {anterior.channel} → {metrica.channel}.'})
+
             
-        for metrica_campo, regla, titulo, umbral in (
-            ('rx_dbm', 'caida_potencia_rx', 'Caída de potencia RX', config.get('caida_potencia_rx')),
-            ('signal', 'caida_signal', 'Caída de señal', config.get('caida_signal_dbm')),
-            ('power', 'caida_potencia_tx', 'Caída de potencia TX', config.get('caida_potencia_tx')),
+        for metrica_campo, regla, titulo, medida, umbral in (
+            ('rx_dbm', 'caida_potencia_rx', 'Caída de potencia RX', 'dBm', config.get('caida_potencia_rx')),
+            ('signal', 'caida_signal', 'Caída de señal', 'dBm', config.get('caida_signal_dbm')),
+            ('power', 'caida_potencia_tx', 'Caída de potencia TX', 'dBm', config.get('caida_potencia_tx')),
+            ('latencia', 'latencia_alta', 'Latencia alta', 'seg', config.get('latencia_alta')),
         ):
             if not umbral:
                 continue
@@ -105,6 +107,6 @@ def evaluar(dispositivo, metrica, anterior, config):
                 caida = previo - actual
                 if caida >= umbral:
                     reglas.append({'regla': regla, 'titulo': f'{titulo} {dispositivo.ip_gestion} ({actual:.0f})',
-                                   'texto': f'{titulo} de {previo:.0f} a {actual:.0f} dBm.'})
+                                   'texto': f'{titulo} de {previo:.0f} a {actual:.0f} {medida}.'})
     return reglas
 
