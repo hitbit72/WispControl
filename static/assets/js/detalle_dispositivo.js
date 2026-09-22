@@ -34,7 +34,7 @@ function mensajeModalPing(id){
     if (contenedor) {
         contenedor.innerHTML = `
             <div class="modal-header">
-                <h2 class="modal-title h5" id="confirmModalLabel">Ejecutando Ping </h2>
+                <h2 class="modal-title h5" id="confirmModalLabel">Ejecutando Ping&nbsp;&nbsp;</h2>
                 <span class="spinner-border spinner-border-sm htmx-indicator" id="spinner-ping" role="status" aria-hidden="true"></span>
             </div>
             <div class="modal-body"><p>Se están ejecutando el ping al dispositivo, espere ...</p></div>
