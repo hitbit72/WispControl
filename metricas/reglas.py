@@ -106,7 +106,7 @@ def evaluar(dispositivo, metrica, anterior, config):
             if actual is not None and previo is not None:
                 caida = previo - actual
                 if caida >= umbral:
-                    reglas.append({'regla': regla, 'titulo': f'{titulo} {dispositivo.ip_gestion} ({actual:.0f})',
+                    reglas.append({'regla': regla, 'titulo': f'{titulo} {dispositivo.ip_gestion} ({actual:.0f} {medida})',
                                    'texto': f'{titulo} de {previo:.0f} a {actual:.0f} {medida}.'})
     return reglas
 
