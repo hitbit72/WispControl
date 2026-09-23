@@ -230,9 +230,7 @@ class Command(BaseCommand):
         for metrica, (numero, texto) in resultado.items():
             
             campo = CAMPO.get(metrica)
-            #debug
-            #print(f'{campo} - {metrica}: {numero} - {texto} ')
-
+            
             if not campo:
                 continue
             if metrica == 'uptime':
