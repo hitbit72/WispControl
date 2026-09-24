@@ -16,9 +16,9 @@
     {% csrf_token %}
     <div class="row g-3">
         <div class="col-md-6">
-            <label class="form-label" for="{{ form.nombre.id_for_label }}">Nombre</label>
+            <label class="form-label" for="{{ form.nombre.id_for_label }}">Nombre del plan PPPoE</label>
             {{ form.nombre }}
-            <div class="invalid-feedback">El nombre descriptivo es obligatorio.</div>
+            <div class="invalid-feedback">El nombre es obligatorio.</div>
         </div>
         <div class="col-md-3">
             <label class="form-label" for="{{ form.velocidad_bajada.id_for_label }}">Bajada (Mbps)</label>
