@@ -6,6 +6,7 @@
   --admin-surface-soft: #f8fafc;
   --admin-border: #dbe4ef;
   --admin-text: #1f2937;
+  --form-label: #1f2937;
   --admin-muted: #6b7280;
   --admin-primary: #2563eb;
   --admin-primary-dark: #1d4ed8;
@@ -1159,6 +1160,7 @@ html[data-theme="dark"] {
   --admin-surface-soft: #111827;
   --admin-border: #2f3b52;
   --admin-text: #1f2937;
+  --form-label: #dbe4ef;
   --admin-muted: #9aa8bd;
   --admin-primary: #60a5fa;
   --admin-primary-dark: #3b82f6;
@@ -1342,6 +1344,11 @@ html[data-theme="dark"] .auth-body {
   color: var(--admin-text);
 }
 */
+
+.form-label {
+  color: var(--form-label);
+  /* --admin-sidebar-text */
+}
 
 .form-control,
 .form-select {
