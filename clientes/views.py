@@ -9,6 +9,7 @@ from .models import Cliente, Contrato
 from dispositivos.models import Dispositivo
 from eventos.models import Evento
 from eventos.services import registrar_evento
+
 MODULO = 'clientes'
 
 @login_required

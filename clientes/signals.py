@@ -1,17 +1,21 @@
 """
-Señales que mantienen la cola de sincronización MikroTik al día cada vez
-que se crea, edita o elimina un Contrato.
+Señales que ejecuta un acción contra el mikrotik, si falla mantienen la cola 
+de sincronización MikroTik al día cada vez que se crea, edita o elimina un Contrato.
 
-Django nunca llama al router aquí — solo encola la tarea correspondiente
-en TareaSincronizacion. El servicio MikroTik (proceso aparte) es quien la
-procesa de verdad. Ver docs/mikrotik_proceso.md.
+Se encola la tarea y la ejecuta inmediatamente, si falla se ejecutará 
+el servicio MikroTik (sincronizar_mikrotik.py) (proceso aparte) quien la procesa nuevamente más adelante.
+Ver docs/mikrotik_proceso.md.
 """
-
 from django.db.models.signals import post_delete, post_save, pre_save
 from django.dispatch import receiver
+from django.utils import timezone
 
 from mikrotik.models import TareaSincronizacion
 from mikrotik.services import encolar_tarea
+from mikrotik.procesador import procesar_tarea
+
+from eventos.models import Evento
+from eventos.services import registrar_evento
 
 from .models import Contrato
 
@@ -19,6 +23,7 @@ from .models import Contrato
 # que se compara aparte para detectar un renombrado).
 CAMPOS_RELEVANTES = ('estado', 'plan_id', 'ip_asignada', 'pppoe_clave', 'conexion')
 
+MODULO = 'contratos'
 
 @receiver(pre_save, sender=Contrato)
 def _guardar_valores_anteriores(sender, instance, **kwargs):
@@ -44,7 +49,9 @@ def _guardar_valores_anteriores(sender, instance, **kwargs):
 def _sincronizar_al_guardar(sender, instance, created, **kwargs):
     if created:
         if instance.estado == Contrato.Estado.ACTIVO:
-            encolar_tarea(instance, TareaSincronizacion.Operacion.ALTA)
+            tarea = encolar_tarea(instance, TareaSincronizacion.Operacion.ALTA)
+            # Procesamos la tarea inmediatamente, si falla queda encolada para intentar más tarde
+            _sincronizar_mk(tarea)
         return
 
     anteriores = getattr(instance, '_valores_anteriores', None)
@@ -53,7 +60,7 @@ def _sincronizar_al_guardar(sender, instance, created, **kwargs):
         # encola de todas formas: es mejor una tarea de más, que el
         # servicio puede resolver comprobando el estado real del router,
         # que arriesgarse a perder un cambio real sin sincronizar.
-        encolar_tarea(instance, TareaSincronizacion.Operacion.MODIFICACION)
+        tarea = encolar_tarea(instance, TareaSincronizacion.Operacion.MODIFICACION)
         return
 
     identificador_cambio = anteriores.get('identificador_mikrotik') != instance.identificador_mikrotik
@@ -74,4 +81,29 @@ def _sincronizar_al_eliminar(sender, instance, **kwargs):
     # 'instance' ya no existe en la base de datos en este punto (aunque el
     # objeto en memoria todavía tiene sus valores), así que la tarea se crea
     # sin vincular el FK — ver encolar_tarea().
-    encolar_tarea(instance, TareaSincronizacion.Operacion.BAJA, vincular_contrato=False)
+    tarea = encolar_tarea(instance, TareaSincronizacion.Operacion.BAJA, vincular_contrato=False)
+    # Ejecutamos la tarea inmediatamente
+    _sincronizar_mk(tarea)
+
+
+
+def _sincronizar_mk(tarea):
+    """ Procesamos la tarea inmediatamente 
+        si falla, al estar encolada, se intentará más adelante en sincronizar_mikrotik.py
+    """
+    if tarea:
+        try:
+            procesar_tarea(tarea)
+            tarea.estado = TareaSincronizacion.Estado.COMPLETADA
+            tarea.mensaje_error = ''
+            tarea.procesada_en = timezone.now()
+            tarea.save(update_fields=['estado', 'mensaje_error', 'procesada_en'])
+            registrar_evento(
+                MODULO,
+                f'Contrato #{tarea.pk} · {tarea.get_operacion_display()} efectuada ({tarea.identificador_mikrotik})',
+                f'{tarea.plan_nombre} {tarea.get_operacion_display()} completada correctamente.',
+                nivel=Evento.Nivel.INFO,
+            )
+        except Exception as exc:
+            print(f'[FALLO] Tarea #{tarea.pk} ({tarea.identificador_mikrotik}: {exc} ')
+            pass

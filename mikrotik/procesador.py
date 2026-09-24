@@ -34,6 +34,11 @@ def procesar_tarea(tarea):
             'La tarea no tiene un router asociado (el plan o el router pudo haberse eliminado).'
         )
 
+    #DEBUG
+    #raise RuntimeError(f'ERROR Procensando {tarea.pk}, {tarea.router} - {tarea.operacion} - {tarea.conexion} - {tarea.plan_nombre}')
+    print(f'Procensado {tarea.pk}, {tarea.router} - {tarea.operacion} - {tarea.conexion} - {tarea.plan_nombre}')
+    return # Eliminar para produccion
+
     with conectar(tarea.router) as api:
         if tarea.conexion == 'pppoe':
             _procesar_pppoe(api, tarea)
