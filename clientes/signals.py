@@ -51,7 +51,7 @@ def _sincronizar_al_guardar(sender, instance, created, **kwargs):
         if instance.estado == Contrato.Estado.ACTIVO:
             tarea = encolar_tarea(instance, TareaSincronizacion.Operacion.ALTA)
             # Procesamos la tarea inmediatamente, si falla queda encolada para intentar más tarde
-            _sincronizar_mk(tarea)
+            _sincronizar_mk(tarea, instance)
         return
 
     anteriores = getattr(instance, '_valores_anteriores', None)
@@ -70,10 +70,11 @@ def _sincronizar_al_guardar(sender, instance, created, **kwargs):
 
     if cambio_relevante or identificador_cambio:
         identificador_anterior = anteriores.get('identificador_mikrotik') if identificador_cambio else ''
-        encolar_tarea(
-            instance, TareaSincronizacion.Operacion.MODIFICACION,
+        tarea = encolar_tarea(
+            instance, TareaSincronizacion.Operacion.MODIFICACION, 
             identificador_anterior=identificador_anterior,
         )
+        _sincronizar_mk(tarea, instance)
 
 
 @receiver(post_delete, sender=Contrato)
@@ -83,11 +84,10 @@ def _sincronizar_al_eliminar(sender, instance, **kwargs):
     # sin vincular el FK — ver encolar_tarea().
     tarea = encolar_tarea(instance, TareaSincronizacion.Operacion.BAJA, vincular_contrato=False)
     # Ejecutamos la tarea inmediatamente
-    _sincronizar_mk(tarea)
+    _sincronizar_mk(tarea, instance)
 
 
-
-def _sincronizar_mk(tarea):
+def _sincronizar_mk(tarea, contrato):
     """ Procesamos la tarea inmediatamente 
         si falla, al estar encolada, se intentará más adelante en sincronizar_mikrotik.py
     """
@@ -100,10 +100,10 @@ def _sincronizar_mk(tarea):
             tarea.save(update_fields=['estado', 'mensaje_error', 'procesada_en'])
             registrar_evento(
                 MODULO,
-                f'Contrato #{tarea.pk} · {tarea.get_operacion_display()} efectuada ({tarea.identificador_mikrotik})',
-                f'{tarea.plan_nombre} {tarea.get_operacion_display()} completada correctamente.',
+                f'Contrato {contrato.nombre} · {tarea.get_operacion_display()} efectuada ({tarea.identificador_mikrotik})',
+                f'{contrato.cliente.nombre_completo} - {tarea.plan_nombre} {tarea.get_operacion_display()} completada correctamente.',
                 nivel=Evento.Nivel.INFO,
             )
         except Exception as exc:
-            print(f'[FALLO] Tarea #{tarea.pk} ({tarea.identificador_mikrotik}: {exc} ')
+            print(f'[FALLO] Tarea #{tarea.pk} {contrato.nombre} ({tarea.identificador_mikrotik}: {exc} ')
             pass

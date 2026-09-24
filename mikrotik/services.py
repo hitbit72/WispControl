@@ -6,12 +6,21 @@ constancia en TareaSincronizacion para que el servicio MikroTik (proceso
 Python aparte) la procese más adelante. Ver docs/fase2_mikrotik_proceso.md.
 """
 
+import unicodedata
 from .models import TareaSincronizacion
 
 # Por ahora solo estos tipos de conexión requieren sincronizar con el router.
 # PPPoE y SimpleQueue
 CONEXIONES_SINCRONIZABLES = ('pppoe', 'sq', 'dhcp')
 
+
+def quitar_tildes(texto):
+    if isinstance(texto, str):
+        return ''.join(
+            c for c in unicodedata.normalize('NFD', texto)
+            if unicodedata.category(c) != 'Mn'
+        )
+    return texto
 
 def encolar_tarea(contrato, operacion, identificador_anterior='', vincular_contrato=True):
     """
@@ -33,6 +42,7 @@ def encolar_tarea(contrato, operacion, identificador_anterior='', vincular_contr
     return TareaSincronizacion.objects.create(
         contrato=contrato if vincular_contrato else None,
         router=contrato.plan.router,
+        cliente_nombre=quitar_tildes(contrato.cliente.nombre_completo),
         identificador_mikrotik=contrato.identificador_mikrotik,
         conexion=contrato.conexion,
         plan_nombre=contrato.plan.nombre,

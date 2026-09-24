@@ -155,6 +155,10 @@ class TareaSincronizacion(models.Model):
         max_length=100, blank=True,
         help_text="Copia de contrato.plan.nombre en el momento de encolar la tarea",
     )
+    cliente_nombre = models.CharField(
+        max_length=250, blank=True, null=True,
+        help_text="Copia del nombre del cleinte en el momento de encolar la tarea",
+    )
     router = models.ForeignKey(
         'mikrotik.Router', on_delete=models.SET_NULL, null=True, blank=True,
         related_name='tareas_sincronizacion',

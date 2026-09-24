@@ -140,6 +140,8 @@ def nuevo_contrato(request, cliente_pk):
         if form.is_valid():
             contrato = form.save(commit=False)
             contrato.cliente = cliente
+            contrato.nombre = quitar_tildes(contrato.nombre)
+            contrato.identificador_mikrotik = quitar_tildes(contrato.identificador_mikrotik)
             contrato.save()
             return redirect('clientes:detalle', pk=cliente.pk)
         else:
@@ -162,7 +164,10 @@ def editar_contrato(request, pk):
     if request.method == 'POST':
         form = ContratoForm(request.POST, instance=contrato)
         if form.is_valid():
-            form.save()
+            contrato = form.save(commit=False)
+            contrato.nombre = quitar_tildes(contrato.nombre)
+            contrato.identificador_mikrotik = quitar_tildes(contrato.identificador_mikrotik)
+            contrato.save()
             return redirect('clientes:detalle', pk=cliente.pk)
         else:
             # si el formlario no es válido.
@@ -191,3 +196,15 @@ def eliminar_contrato(request, pk):
         return redirect('clientes:detalle', pk=cliente_pk)
 
     return render(request, 'clientes/confirmar_eliminar_contrato.html', {'contrato': contrato})
+
+
+# ------------------------ utilidades
+
+def quitar_tildes(texto):
+    import unicodedata
+    if isinstance(texto, str):
+        return ''.join(
+            c for c in unicodedata.normalize('NFD', texto)
+            if unicodedata.category(c) != 'Mn'
+        )
+    return texto

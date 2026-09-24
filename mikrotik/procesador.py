@@ -11,6 +11,7 @@ pruebas (o al menos un plan/contrato de prueba) y revisa los resultados en
 el admin (TareaSincronizacion) y directamente en el router.
 """
 
+import unicodedata
 from django.conf import settings
 from .client import conectar        # conexion al router
 
@@ -54,7 +55,7 @@ def procesar_tarea(tarea):
             registrar_evento(
                 MODULO,
                 f'Tipo de conexión no soportado: {tarea.conexion!r}',
-                f'Tarea #{tarea.pk} ({tarea.identificador_mikrotik}).',
+                f'Tarea #{tarea.pk} ({tarea.identificador_mikrotik} * {tarea.contrato}).',
                 nivel=Evento.Nivel.ERROR,
             )
             raise RuntimeError(f"Tipo de conexión no soportado: {tarea.conexion!r}")
@@ -71,8 +72,8 @@ def _procesar_pppoe(api, tarea):
             # eventos: 6=info
             registrar_evento(
                 MODULO,
-                f'Secret PPPoE ya existía: {tarea.identificador_mikrotik}',
-                f'Tarea #{tarea.pk} de alta: no se crea porque ya existe en el router.',
+                f'Alta Secret PPPoE ya existía: {tarea.identificador_mikrotik}',
+                f'Tarea #{tarea.pk} {tarea.cliente_nombre}: no se crea porque ya existe en el router.',
                 nivel=Evento.Nivel.INFO,
             )
             return  # ya existe, no se crea de nuevo
@@ -94,7 +95,7 @@ def _procesar_pppoe(api, tarea):
         registrar_evento(
             MODULO,
             f'Secret PPPoE no encontrado para modificar: {nombre_buscar}',
-            f'Tarea #{tarea.pk} ({tarea.identificador_mikrotik}). Revisa manualmente '
+            f'Tarea #{tarea.pk} ({tarea.identificador_mikrotik} * {tarea.cliente_nombre}). Revisa manualmente '
             'si hay que darlo de alta.',
             nivel=Evento.Nivel.WARNING,
         )
@@ -106,8 +107,8 @@ def _procesar_pppoe(api, tarea):
         # eventos: 3=error
         registrar_evento(
             MODULO,
-            'Contrato eliminado durante modificación PPPoE',
-            f'Tarea #{tarea.pk} ({tarea.identificador_mikrotik}): no se puede '
+            f'Contrato {tarea.contrato} eliminado durante modificación PPPoE',
+            f'Tarea #{tarea.pk} ({tarea.identificador_mikrotik} * {tarea.cliente_nombre}): no se puede '
             'completar la modificación.',
             nivel=Evento.Nivel.ERROR,
         )
@@ -126,7 +127,7 @@ def _datos_secret(contrato):
         'password': contrato.pppoe_clave,
         'profile': contrato.plan.nombre if activo else contrato.plan.router.ppp_disable,
         'service': 'pppoe',
-        'comment': contrato.cliente.nombre_completo,
+        'comment': quitar_tildes(contrato.cliente.nombre_completo),
     }
     if contrato.ip_asignada:
         datos['remote-address'] = contrato.ip_asignada
@@ -153,8 +154,8 @@ def _procesar_sq(api, tarea):
         if _buscar_por_nombre(queues, tarea.identificador_mikrotik):
             registrar_evento(
                 MODULO,
-                f'Simple Queue ya existía: {tarea.identificador_mikrotik}',
-                f'Tarea #{tarea.pk} de alta: no se crea porque ya existe en el router.',
+                f'Alta Simple Queue que ya existía: {tarea.identificador_mikrotik}',
+                f'Tarea #{tarea.pk} {tarea.cliente_nombre}: no se crea porque ya existe en el router.',
                 nivel=Evento.Nivel.INFO,
             )
             return
@@ -179,7 +180,7 @@ def _procesar_sq(api, tarea):
         registrar_evento(
             MODULO,
             f'Simple Queue no encontrada para modificar: {nombre_buscar}',
-            f'Tarea #{tarea.pk} ({tarea.identificador_mikrotik}). Revisa manualmente '
+            f'Tarea #{tarea.pk} ({tarea.identificador_mikrotik} * {tarea.cliente_nombre}). Revisa manualmente '
             'si hay que darla de alta.',
             nivel=Evento.Nivel.WARNING,
         )
@@ -192,7 +193,7 @@ def _procesar_sq(api, tarea):
         registrar_evento(
             MODULO,
             'Contrato eliminado durante modificación de Simple Queue',
-            f'Tarea #{tarea.pk} ({tarea.identificador_mikrotik}): no se puede '
+            f'Tarea #{tarea.pk} ({tarea.identificador_mikrotik} * {tarea.cliente_nombre}): no se puede '
             'completar la modificación.',
             nivel=Evento.Nivel.ERROR,
         )
@@ -226,7 +227,7 @@ def _datos_simple_queue(contrato, incluir_place_before=True):
         'bucket-size': opciones['BUCKET_SIZE'],
         'queue': opciones['QUEUE_TYPE'],
         'total-queue': opciones['TOTAL_QUEUE'],
-        'comment': contrato.cliente.nombre_completo,
+        'comment': quitar_tildes(contrato.cliente.nombre_completo),
     }
     if incluir_place_before:
         datos['place-before'] = plan.before
@@ -243,12 +244,13 @@ def _buscar_entrada_lista(path, identificador):
     if not identificador:
         return None
     for fila in path:
-        if fila.get('comment') == identificador:
+        if str(fila.get('comment')) == str(identificador):
             return fila
     return None
 
 
 def _asegurar_en_active_list(path, contrato, activo):
+    print('_asegurar_en_active_list() ---------------------')
     router = contrato.plan.router
     existente = _buscar_entrada_lista(path, contrato.identificador_mikrotik)
     datos = {
@@ -269,9 +271,32 @@ def _asegurar_en_active_list(path, contrato, activo):
 def _buscar_por_nombre(path, nombre):
     """Busca una fila por 'name' en un Path de librouteros. Devuelve el
     diccionario completo (incluye '.id') o None si no existe."""
+    print(f'_buscar_por_nombre({path}, {nombre})')
     if not nombre:
         return None
     for fila in path:
-        if fila.get('name') == nombre:
+        if str(fila.get('name')) == str(nombre):
             return fila
     return None
+
+
+def quitar_tildes(texto):
+    if isinstance(texto, str):
+        return ''.join(
+            c for c in unicodedata.normalize('NFD', texto)
+            if unicodedata.category(c) != 'Mn'
+        )
+    return texto
+
+
+def _datos_bytes(datos):
+    # Convertir los valores de texto (str) a bytes codificados en UTF-8 en los campos comment y name
+    datos_api = {}
+    for k, v in datos.items():
+        if k in ['comment', 'name']:
+            # Solo codificar a bytes los campos de texto libre que puedan llevar tildes
+            datos_api[k] = v.encode('utf-8') if isinstance(v, str) else v
+        else:
+            # IPs, límites y opciones de cola se envían como cadenas str ASCII
+            datos_api[k] = str(v)
+    return datos_api

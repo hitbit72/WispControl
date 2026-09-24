@@ -340,7 +340,7 @@ a {
 }
 
 .notification-menu {
-  width: min(385px, calc(100vw - 2rem));
+  width: min(485px, calc(100vw - 2rem));
   border: 1px solid var(--admin-border);
   border-radius: 8px;
   /* box-shadow: var(--admin-shadow); */

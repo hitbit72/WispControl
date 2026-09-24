@@ -30,6 +30,6 @@ class PlanAdmin(admin.ModelAdmin):
 
 @admin.register(TareaSincronizacion)
 class TareaAdmin(admin.ModelAdmin):
-    list_display = ( 'contrato', 'identificador_mikrotik', 'plan_nombre', 'operacion', 'estado', 'conexion', 'intentos', 'creada_en', 'procesada_en')
+    list_display = ( 'contrato', 'identificador_mikrotik', 'cliente_nombre', 'plan_nombre', 'operacion', 'estado', 'conexion', 'intentos', 'creada_en', 'procesada_en')
     list_filter = ('router', 'plan_nombre')
-    search_fields = ('identificador_mikrotik', 'plan_nombre',)
+    search_fields = ('identificador_mikrotik', 'plan_nombre', 'cliente_nombre')
