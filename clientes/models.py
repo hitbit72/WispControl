@@ -86,13 +86,13 @@ class Contrato(models.Model):
     identificador_mikrotik = models.CharField(
         max_length=100, blank=True,
         verbose_name='Usuario MikroTik',
-        help_text='Nombre del secret PPPoE o del simple queue en el router, según el tipo de conexión.',
+        help_text='Nombre del secret PPPoE o del simple queue en el router',
     )
     pppoe_clave = models.CharField(max_length=100, blank=True, verbose_name='Clave PPPoE')
     ip_asignada = models.GenericIPAddressField(
         null=True, blank=True, verbose_name='IP asignada',
         help_text='IP fija asignada, si es el caso')
-
+    
     notas = models.TextField(blank=True)
 
     class Meta:
