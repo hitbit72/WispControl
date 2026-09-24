@@ -35,9 +35,10 @@ def procesar_tarea(tarea):
         )
 
     #DEBUG
-    #raise RuntimeError(f'ERROR Procensando {tarea.pk}, {tarea.router} - {tarea.operacion} - {tarea.conexion} - {tarea.plan_nombre}')
-    print(f'Procensado {tarea.pk}, {tarea.router} - {tarea.operacion} - {tarea.conexion} - {tarea.plan_nombre}')
-    return # Eliminar para produccion
+    if settings.DEBUG:
+        #raise RuntimeError(f'ERROR Procensando {tarea.pk}, {tarea.router} - {tarea.operacion} - {tarea.conexion} - {tarea.plan_nombre}')
+        print(f'Procensado {tarea.pk}, {tarea.router} - {tarea.operacion} - {tarea.conexion} - {tarea.plan_nombre}')
+        return # Eliminar para produccion
 
     with conectar(tarea.router) as api:
         if tarea.conexion == 'pppoe':
