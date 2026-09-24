@@ -38,7 +38,7 @@ class Command(BaseCommand):
         ).order_by('creada_en')
 
         if not tareas.exists():
-            self.stdout.write('No hay tareas pendientes.')
+            #self.stdout.write('No hay tareas pendientes.')
             return
 
         for tarea in tareas:
@@ -65,14 +65,14 @@ class Command(BaseCommand):
                 registrar_evento(
                     MODULO,
                     f'Tarea #{tarea.pk} fallida definitivamente ({tarea.identificador_mikrotik})',
-                    f'Operación {tarea.get_operacion_display()} · {exc}',
+                    f'Operación {tarea.get_operacion_display()} {tarea.plan_nombre} · {exc}',
                     nivel=Evento.Nivel.CRITICAL,
                 )
             else:
                 registrar_evento(
                     MODULO,
                     f'Intento {tarea.intentos}/{max_intentos} fallido en tarea #{tarea.pk}',
-                    f'Operación {tarea.get_operacion_display()} ({tarea.identificador_mikrotik}) · {exc}',
+                    f'Operación {tarea.get_operacion_display()} {tarea.plan_nombre} ({tarea.identificador_mikrotik}) · {exc}',
                     nivel=Evento.Nivel.ERROR,
                 )
         else:
@@ -84,6 +84,6 @@ class Command(BaseCommand):
             registrar_evento(
                 MODULO,
                 f'Tarea #{tarea.pk} sincronizada ({tarea.identificador_mikrotik})',
-                f'Operación {tarea.get_operacion_display()} completada correctamente.',
+                f'Operación {tarea.get_operacion_display()} {tarea.plan_nombre} completada correctamente.',
                 nivel=Evento.Nivel.INFO,
             )

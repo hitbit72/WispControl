@@ -39,6 +39,8 @@ def procesar_tarea(tarea):
             _procesar_pppoe(api, tarea)
         elif tarea.conexion == 'sq':
             _procesar_sq(api, tarea)
+        elif tarea.conexion == 'dhcp':
+            _procesar_sq(api, tarea)
         else:
             # eventos: 3=error
             registrar_evento(

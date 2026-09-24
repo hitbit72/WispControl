@@ -5,7 +5,6 @@
             <th>Nombre</th>
             <th>Modelo</th>
             <th>IP</th>
-            <th>Puerto</th>
             <th>Sector</th>
             <th>Planes</th>
             <th></th>
@@ -17,7 +16,6 @@
             <td><a href="{% url 'mikrotik:detalle' router.pk %}">{{ router.nombre }}</a></td>
             <td>{{ router.modelo|default:"—" }}</td>
             <td>{{ router.ip }}</td>
-            <td>{{ router.puerto }}</td>
             <td>{{ router.sector.nombre|default:"—" }}</td>
             <td>{{ router.planes.count }}</td>
             <td class="text-end">
@@ -26,7 +24,7 @@
             </td>
         </tr>
         {% empty %}
-        <tr><td colspan="7" class="text-center text-muted py-4">No se encontraron routers.</td></tr>
+        <tr><td colspan="6" class="text-center text-muted py-4">No se encontraron routers.</td></tr>
         {% endfor %}
     </tbody>
 </table>

@@ -23,6 +23,11 @@ class ClienteForm(BootstrapFormMixin, forms.ModelForm):
 
 
 class ContratoForm(BootstrapFormMixin, forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Esto añade el atributo 'required' en el HTML y fuerza la validación en el servidor
+        self.fields['identificador_mikrotik'].required = True
+
     class Meta:
         model = Contrato
         fields = [

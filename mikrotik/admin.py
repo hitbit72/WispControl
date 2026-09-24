@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib import admin
 
-from .models import Router, Plan
+from .models import Router, Plan, TareaSincronizacion
 from core.fields import EncryptedCharField
 
 
@@ -26,3 +26,10 @@ class PlanAdmin(admin.ModelAdmin):
     list_display = ('nombre', 'router', 'velocidad_bajada', 'velocidad_subida', 'priority_down', 'priority_up')
     list_filter = ('router',)
     search_fields = ('nombre', 'router__nombre')
+
+
+@admin.register(TareaSincronizacion)
+class TareaAdmin(admin.ModelAdmin):
+    list_display = ( 'contrato', 'identificador_mikrotik', 'plan_nombre', 'operacion', 'estado', 'conexion', 'intentos', 'creada_en', 'procesada_en')
+    list_filter = ('router', 'plan_nombre')
+    search_fields = ('identificador_mikrotik', 'plan_nombre',)

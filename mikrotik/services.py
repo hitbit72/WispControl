@@ -9,7 +9,8 @@ Python aparte) la procese más adelante. Ver docs/fase2_mikrotik_proceso.md.
 from .models import TareaSincronizacion
 
 # Por ahora solo estos tipos de conexión requieren sincronizar con el router.
-CONEXIONES_SINCRONIZABLES = ('pppoe', 'sq')
+# PPPoE y SimpleQueue
+CONEXIONES_SINCRONIZABLES = ('pppoe', 'sq', 'dhcp')
 
 
 def encolar_tarea(contrato, operacion, identificador_anterior='', vincular_contrato=True):

@@ -133,6 +133,7 @@ def nuevo_contrato(request, cliente_pk):
     cliente = get_object_or_404(Cliente, pk=cliente_pk)
     error_msg = ""
 
+    # Se ejecuta signals.py al recibir "@receiver(pre_save, sender=Contrato)"
     if request.method == 'POST':
         form = ContratoForm(request.POST)
         if form.is_valid():

@@ -7,13 +7,13 @@ function DelMsgModal(id, url_pk, nombre, opcion=null, tipo='contrato') {
     if (contenedor) {
         if (tipo == 'contrato') {
             document.getElementById('deleteModalTitle').innerHTML="Eliminar contrato";
-            bm = `¿Seguro que quieres eliminar el dispositivo <strong>${nombre}</strong>?
+            bm = `¿Seguro que quieres eliminar el contrato <strong>${nombre}</strong>?
             <p>La acción no se puede deshacer.</p>`;
             if (opcion){
-                if ( opcion == 'pppoe' || opcion == 'sq'){
+                if ( opcion == 'pppoe' || opcion == 'sq' || opcion == 'dhcp'){
                     bm = `¿Seguro que quieres eliminar el contrato <strong>${nombre}</strong>?
                     <p class="mb-0 mt-2">Esto encola una tarea de <strong>baja</strong> para que el servicio MikroTik 
-                    elimine el secret/queue correspondiente del router. La acción no se puede deshacer.</p>
+                    elimine el secret/queue correspondiente del router.</p><p>La acción no se puede deshacer.</p>
                     `
                 }
             }
