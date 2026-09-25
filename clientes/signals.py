@@ -99,6 +99,9 @@ def _sincronizar_tarea():
     # Ejecuta el Command de sincronización, actulizando todas las tareas pendientes.
     # Se ha optado por esta opción porque puede haber otras tareas pendientes antes de la instancia actual.
 
+    #DEBUG -> desactivado, solo en producción
+    return
+
     if esta_ejecutandose():
             print("sincronizar_tarea ya está corriendo")
             return
