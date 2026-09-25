@@ -56,12 +56,13 @@
 <table class="table table-hover" id="contratoTable">
     <thead>
         <tr>
-            <th>Núm.</th>
             <th>Estado</th>
             <th>Descripción</th>
             <th>Plan</th>
             <th>Conexión</th>
-            <th>Precio</th>
+            <th>Identificador</th>
+            <th>IP Asignada</th>
+            <th>Tarifa</th>
             <th>Sync.</th>
             <th></th>
         </tr>
@@ -69,7 +70,6 @@
     <tbody>
         {% for contrato in cliente.contratos.all %}
         <tr>
-            <td>{{ contrato.pk }}</td>
             <td>
                 <span class="badge
                     {% if contrato.estado == 'activo' %}bg-success
@@ -83,7 +83,9 @@
             <td>{{ contrato.nombre|default:"—" }}</td>
             <td>{{ contrato.plan.nombre }} <span class="text-muted small">({{ contrato.plan.router.nombre }})</span></td>
             <td>{{ contrato.get_conexion_display }}</td>
-            <td>{{ contrato.precio_mensual }} €</td>
+            <td>{{ contrato.identificador_mikrotik|default:"—" }}</td>
+            <td>{{ contrato.ip_asignada|default:"—" }}</td>
+            <td>{{ contrato.precio_mensual|default:"—" }}</td>
             <td>{{ contrato.tareas_mikrotik.all.0.get_estado_display }}</td>
             <td class="text-end">
                 <a href="{% url 'clientes:editar_contrato' contrato.pk %}" class="btn btn-sm btn-outline-primary">Editar</a>
@@ -91,7 +93,7 @@
             </td>
         </tr>
         {% empty %}
-        <tr><td colspan="8" class="text-center text-muted py-3">Este cliente todavía no tiene contratos.</td></tr>
+        <tr><td colspan="9" class="text-center text-muted py-3">Este cliente todavía no tiene contratos.</td></tr>
         {% endfor %}
     </tbody>
 </table>

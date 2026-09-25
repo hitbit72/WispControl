@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 {% block titulo %}{% if contrato %}Editar contrato{% else %}Nuevo contrato{% endif %} · Portal WISP{% endblock %}
 {% block contenido %}
-<h2>
+<h2><i class="bi bi-file-earmark-text" aria-hidden="true"></i>
 {% if contrato %}
-<i class="bi bi-file-check" aria-hidden="true"></i> Editar contrato
+ Editar contrato
 {% else %}
-<i class="bi bi-file-plus" aria-hidden="true"></i> Nuevo contrato
+ Nuevo contrato
 {% endif %}</h2>
 <p class="text-muted">Cliente: <strong>{{ cliente.nombre_completo }}{% if cliente.apodo %} ({{ cliente.apodo }}){% endif %}</strong></p>
 
