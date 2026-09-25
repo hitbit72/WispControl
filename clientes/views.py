@@ -146,7 +146,7 @@ def nuevo_contrato(request, cliente_pk):
             return redirect('clientes:detalle', pk=cliente.pk)
         else:
             # si el formlario no es válido.
-            error_msg = "Por favor, corrige los errores en el formulario: " + form.errors.as_text()
+            error_msg = "Por favor, corrige los errores del formulario: " + form.errors.as_text()
     else:
         form = ContratoForm()
 
@@ -178,7 +178,7 @@ def editar_contrato(request, pk):
             return redirect('clientes:detalle', pk=cliente.pk)
         else:
             # si el formlario no es válido.
-            error_msg = "Por favor, corrige los errores en el formulario: " + form.errors.as_text
+            error_msg = "Por favor, corrige los errores del formulario: " + form.errors.as_text
     else:
         form = ContratoForm(instance=contrato)
 

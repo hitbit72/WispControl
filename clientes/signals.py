@@ -53,7 +53,7 @@ def _guardar_valores_anteriores(sender, instance, **kwargs):
 def _sincronizar_al_guardar(sender, instance, created, **kwargs):
     if created:
         if instance.estado == Contrato.Estado.ACTIVO:
-            tarea = encolar_tarea(instance, TareaSincronizacion.Operacion.ALTA)
+            encolar_tarea(instance, TareaSincronizacion.Operacion.ALTA)
             # Procesamos la tarea inmediatamente, si falla esta encolada para intentar más tarde
             #_sincronizar_mk(tarea, instance)
             _sincronizar_tarea()
@@ -65,7 +65,7 @@ def _sincronizar_al_guardar(sender, instance, created, **kwargs):
         # encola de todas formas: es mejor una tarea de más, que el
         # servicio puede resolver comprobando el estado real del router,
         # que arriesgarse a perder un cambio real sin sincronizar.
-        tarea = encolar_tarea(instance, TareaSincronizacion.Operacion.MODIFICACION)
+        encolar_tarea(instance, TareaSincronizacion.Operacion.MODIFICACION)
         return
 
     identificador_cambio = anteriores.get('identificador_mikrotik') != instance.identificador_mikrotik
@@ -75,7 +75,7 @@ def _sincronizar_al_guardar(sender, instance, created, **kwargs):
 
     if cambio_relevante or identificador_cambio:
         identificador_anterior = anteriores.get('identificador_mikrotik') if identificador_cambio else ''
-        tarea = encolar_tarea(
+        encolar_tarea(
             instance, TareaSincronizacion.Operacion.MODIFICACION, 
             identificador_anterior=identificador_anterior,
         )
@@ -88,7 +88,7 @@ def _sincronizar_al_eliminar(sender, instance, **kwargs):
     # 'instance' ya no existe en la base de datos en este punto (aunque el
     # objeto en memoria todavía tiene sus valores), así que la tarea se crea
     # sin vincular el FK — ver encolar_tarea().
-    tarea = encolar_tarea(instance, TareaSincronizacion.Operacion.BAJA, vincular_contrato=False)
+    encolar_tarea(instance, TareaSincronizacion.Operacion.BAJA, vincular_contrato=False)
 
     # Ejecutamos la tarea encolada inmediatamente
     #_sincronizar_mk(tarea, instance)
