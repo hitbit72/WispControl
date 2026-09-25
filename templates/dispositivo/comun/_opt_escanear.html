@@ -1,22 +1,22 @@
     <div class="capability-checkboxes">
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="snmp" name="escanear" {% if dispositivo.escanear %}checked{% endif %}>
+        <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" role="switch" id="snmp" name="escanear" {% if dispositivo.escanear %}checked{% endif %}>
             <label class="form-check-label" for="snmp"> Escaner SNMP</label>
         </div>
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="snmp_alarm" name="alarma" {% if dispositivo.alarma %}checked{% endif %}>
+        <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" role="switch" id="snmp_alarm" name="alarma" {% if dispositivo.alarma %}checked{% endif %}>
             <label class="form-check-label" for="snmp_alarm"> Alarma SNMP</label>
         </div>
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="port_alarm" name="alarma_puerto" {% if dispositivo.alarma_puerto %}checked{% endif %}>
+        <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" role="switch" id="port_alarm" name="alarma_puerto" {% if dispositivo.alarma_puerto %}checked{% endif %}>
             <label class="form-check-label" for="port_alarm"> Alarma puertos caidos</label>
         </div>
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="ping" name="ping" {% if dispositivo.ping %}checked{% endif %}>
+        <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" role="switch" id="ping" name="ping" {% if dispositivo.ping %}checked{% endif %}>
             <label class="form-check-label" for="ping"> Ping</label>
         </div>
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="ping_alarm" name="alarma_ping" {% if dispositivo.alarma_ping %}checked{% endif %}>
+        <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" role="switch" id="ping_alarm" name="alarma_ping" {% if dispositivo.alarma_ping %}checked{% endif %}>
             <label class="form-check-label" for="ping_alarm"> Alarma Ping</label>
         </div>
     </div>

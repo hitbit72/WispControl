@@ -19,6 +19,7 @@ class ClienteForm(BootstrapFormMixin, forms.ModelForm):
         ]
         widgets = {
             'notas': forms.Textarea(attrs={'rows': 3}),
+            'activo': forms.CheckboxInput(attrs={'role': 'switch',}),
         }
 
 
