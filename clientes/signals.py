@@ -6,6 +6,9 @@ Se encola la tarea y la ejecuta inmediatamente, si falla se ejecutará
 el servicio MikroTik (sincronizar_mikrotik.py) (proceso aparte) quien la procesa nuevamente más adelante.
 Ver docs/mikrotik_proceso.md.
 """
+from io import StringIO
+
+from django.core.management import call_command
 from django.db.models.signals import post_delete, post_save, pre_save
 from django.dispatch import receiver
 from django.utils import timezone
@@ -13,6 +16,7 @@ from django.utils import timezone
 from mikrotik.models import TareaSincronizacion
 from mikrotik.services import encolar_tarea
 from mikrotik.procesador import procesar_tarea
+from mikrotik.management.commands.sincronizar_mikrotik import esta_ejecutandose
 
 from eventos.models import Evento
 from eventos.services import registrar_evento
@@ -50,8 +54,9 @@ def _sincronizar_al_guardar(sender, instance, created, **kwargs):
     if created:
         if instance.estado == Contrato.Estado.ACTIVO:
             tarea = encolar_tarea(instance, TareaSincronizacion.Operacion.ALTA)
-            # Procesamos la tarea inmediatamente, si falla queda encolada para intentar más tarde
-            _sincronizar_mk(tarea, instance)
+            # Procesamos la tarea inmediatamente, si falla esta encolada para intentar más tarde
+            #_sincronizar_mk(tarea, instance)
+            _sincronizar_tarea()
         return
 
     anteriores = getattr(instance, '_valores_anteriores', None)
@@ -74,7 +79,8 @@ def _sincronizar_al_guardar(sender, instance, created, **kwargs):
             instance, TareaSincronizacion.Operacion.MODIFICACION, 
             identificador_anterior=identificador_anterior,
         )
-        _sincronizar_mk(tarea, instance)
+        #_sincronizar_mk(tarea, instance)
+        _sincronizar_tarea()
 
 
 @receiver(post_delete, sender=Contrato)
@@ -83,12 +89,28 @@ def _sincronizar_al_eliminar(sender, instance, **kwargs):
     # objeto en memoria todavía tiene sus valores), así que la tarea se crea
     # sin vincular el FK — ver encolar_tarea().
     tarea = encolar_tarea(instance, TareaSincronizacion.Operacion.BAJA, vincular_contrato=False)
-    # Ejecutamos la tarea inmediatamente
-    _sincronizar_mk(tarea, instance)
+
+    # Ejecutamos la tarea encolada inmediatamente
+    #_sincronizar_mk(tarea, instance)
+    _sincronizar_tarea()
 
 
+def _sincronizar_tarea():
+    # Ejecuta el Command de sincronización, actulizando todas las tareas pendientes.
+    # Se ha optado por esta opción porque puede haber otras tareas pendientes antes de la instancia actual.
+
+    if esta_ejecutandose():
+            print("sincronizar_tarea ya está corriendo")
+            return
+    
+    out = StringIO()
+    # Ejecuta el comando de forma segura e inicializada por Django
+    call_command('sincronizar_mikrotik', stdout=out, stderr=out)
+
+
+# No usado por ahora, ejecuta solo la tarea de la instancia actual
 def _sincronizar_mk(tarea, contrato):
-    """ Procesamos la tarea inmediatamente 
+    """ Procesamos una tarea inmediatamente 
         si falla, al estar encolada, se intentará más adelante en sincronizar_mikrotik.py
     """
     if tarea:

@@ -14,14 +14,6 @@ from .models import TareaSincronizacion
 CONEXIONES_SINCRONIZABLES = ('pppoe', 'sq', 'dhcp')
 
 
-def quitar_tildes(texto):
-    if isinstance(texto, str):
-        return ''.join(
-            c for c in unicodedata.normalize('NFD', texto)
-            if unicodedata.category(c) != 'Mn'
-        )
-    return texto
-
 def encolar_tarea(contrato, operacion, identificador_anterior='', vincular_contrato=True):
     """
     Crea una fila en TareaSincronizacion para que el servicio MikroTik la
@@ -50,3 +42,13 @@ def encolar_tarea(contrato, operacion, identificador_anterior='', vincular_contr
         operacion=operacion,
         identificador_anterior=identificador_anterior,
     )
+
+
+
+def quitar_tildes(texto):
+    if isinstance(texto, str):
+        return ''.join(
+            c for c in unicodedata.normalize('NFD', texto)
+            if unicodedata.category(c) != 'Mn'
+        )
+    return texto

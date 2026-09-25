@@ -25,8 +25,19 @@ class ClienteForm(BootstrapFormMixin, forms.ModelForm):
 class ContratoForm(BootstrapFormMixin, forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Esto añade el atributo 'required' en el HTML y fuerza la validación en el servidor
-        self.fields['identificador_mikrotik'].required = True
+
+        # Evaluar si estamos editando un objeto existente (self.instance tiene PK)
+        if self.instance and self.instance.pk:
+            field = self.fields['identificador_mikrotik']
+            # Deshabilitar el input en el HTML (no será editable)
+            field.widget.attrs['disabled'] = 'disabled'
+            # Quitar la obligación de envío en el POST
+            field.required = False
+            # ignora el POST para este campo para mantener el valor de la instancia
+            field.disabled = True
+        else:
+            # Para nuevo registro añade el atributo 'required' en el HTML y fuerza la validación en el servidor
+            self.fields['identificador_mikrotik'].required = True
 
     class Meta:
         model = Contrato

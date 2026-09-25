@@ -27,7 +27,7 @@ def procesar_tarea(tarea):
         registrar_evento(
             MODULO,
             'Tarea de sincronización sin router asociado',
-            f'Tarea #{tarea.pk} ({tarea.identificador_mikrotik}): el plan o el '
+            f'Tarea #{tarea.pk} ({tarea.identificador_mikrotik} * {tarea.cliente_nombre}): el plan o el '
             'router pudo haberse eliminado.',
             nivel=Evento.Nivel.NOTICE,
         )
@@ -55,7 +55,7 @@ def procesar_tarea(tarea):
             registrar_evento(
                 MODULO,
                 f'Tipo de conexión no soportado: {tarea.conexion!r}',
-                f'Tarea #{tarea.pk} ({tarea.identificador_mikrotik} * {tarea.contrato}).',
+                f'Tarea #{tarea.pk} ({tarea.identificador_mikrotik} * {tarea.cliente_nombre}).',
                 nivel=Evento.Nivel.ERROR,
             )
             raise RuntimeError(f"Tipo de conexión no soportado: {tarea.conexion!r}")

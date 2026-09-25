@@ -24,12 +24,16 @@ from eventos.models import Evento
 from eventos.services import registrar_evento
 
 MODULO = 'mikrotik'
+IS_RUNNING = False
 
+def esta_ejecutandose():
+    return IS_RUNNING
 
 class Command(BaseCommand):
     help = 'Procesa las tareas pendientes de sincronización con MikroTik (TareaSincronizacion).'
 
     def handle(self, *args, **options):
+        global IS_RUNNING
         max_intentos = getattr(settings, 'MK_MAX_INTENTOS', 3)
 
         tareas = TareaSincronizacion.objects.filter(
@@ -41,8 +45,12 @@ class Command(BaseCommand):
             #self.stdout.write('No hay tareas pendientes.')
             return
 
+        IS_RUNNING = True
         for tarea in tareas:
             self._procesar_una(tarea, max_intentos)
+
+        IS_RUNNING = False
+
 
     def _procesar_una(self, tarea, max_intentos):
         tarea.estado = TareaSincronizacion.Estado.PROCESANDO

@@ -166,7 +166,9 @@ def editar_contrato(request, pk):
         if form.is_valid():
             contrato = form.save(commit=False)
             contrato.nombre = quitar_tildes(contrato.nombre)
-            contrato.identificador_mikrotik = quitar_tildes(contrato.identificador_mikrotik)
+            # Ya no es necesario limpiar el identificador_mikrotik al editar
+            # porque su valor permanece intacto en la instancia guardada.
+            # --> contrato.identificador_mikrotik = quitar_tildes(contrato.identificador_mikrotik)
             contrato.save()
             return redirect('clientes:detalle', pk=cliente.pk)
         else:
