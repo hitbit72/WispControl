@@ -65,22 +65,22 @@ class Command(BaseCommand):
             tarea.procesada_en = timezone.now()
             tarea.save(update_fields=['intentos', 'mensaje_error', 'estado', 'procesada_en'])
             self.stderr.write(
-                f'[FALLO] Tarea #{tarea.pk} ({tarea.identificador_mikrotik}, '
-                f'intento {tarea.intentos}/{max_intentos}): {exc}'
+                f'[FALLO] Tarea #{tarea.pk} ({tarea.identificador_mikrotik} * {tarea.cliente_nombre}), '
+                f'intento {tarea.intentos}/{max_intentos}: {exc}'
             )
             # eventos: 3=error
             if tarea.intentos >= max_intentos:
                 registrar_evento(
                     MODULO,
                     f'Tarea #{tarea.pk} fallida definitivamente ({tarea.identificador_mikrotik})',
-                    f'Operación {tarea.get_operacion_display()} {tarea.plan_nombre} · {exc}',
+                    f'{tarea.get_operacion_display()} {tarea.plan_nombre} ({tarea.cliente_nombre})· {exc}',
                     nivel=Evento.Nivel.CRITICAL,
                 )
             else:
                 registrar_evento(
                     MODULO,
-                    f'Intento {tarea.intentos}/{max_intentos} fallido en tarea #{tarea.pk}',
-                    f'Operación {tarea.get_operacion_display()} {tarea.plan_nombre} ({tarea.identificador_mikrotik}) · {exc}',
+                    f'Intento {tarea.intentos}/{max_intentos}, tarea #{tarea.pk} ({tarea.identificador_mikrotik})',
+                    f'{tarea.get_operacion_display()} {tarea.plan_nombre} ({tarea.cliente_nombre}) · {exc}',
                     nivel=Evento.Nivel.ERROR,
                 )
         else:
@@ -91,7 +91,7 @@ class Command(BaseCommand):
             self.stdout.write(f'[OK] Tarea #{tarea.pk} ({tarea.identificador_mikrotik}) completada.')
             registrar_evento(
                 MODULO,
-                f'Tarea #{tarea.pk} sincronizada ({tarea.identificador_mikrotik})',
-                f'Operación {tarea.get_operacion_display()} {tarea.plan_nombre} completada correctamente.',
+                f'Tarea #{tarea.pk} {tarea.plan_nombre} sincronizada ({tarea.identificador_mikrotik})',
+                f'{tarea.get_operacion_display()} {tarea.plan_nombre} ({tarea.cliente_nombre}) completada correctamente.',
                 nivel=Evento.Nivel.INFO,
             )
