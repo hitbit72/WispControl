@@ -23,7 +23,7 @@ from mikrotik.procesador import procesar_tarea
 from eventos.models import Evento
 from eventos.services import registrar_evento
 
-MODULO = 'mikrotik'
+MODULO = 'mikrotik.sincronizar'
 IS_RUNNING = False
 
 def esta_ejecutandose():

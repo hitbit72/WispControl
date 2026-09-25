@@ -27,7 +27,7 @@ from .models import Contrato
 # que se compara aparte para detectar un renombrado).
 CAMPOS_RELEVANTES = ('estado', 'plan_id', 'ip_asignada', 'pppoe_clave', 'conexion')
 
-MODULO = 'contratos'
+MODULO = 'clientes.contratos'
 
 @receiver(pre_save, sender=Contrato)
 def _guardar_valores_anteriores(sender, instance, **kwargs):
