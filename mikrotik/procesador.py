@@ -127,7 +127,7 @@ def _datos_secret(contrato):
         'password': contrato.pppoe_clave,
         'profile': contrato.plan.nombre if activo else contrato.plan.router.ppp_disable,
         'service': 'pppoe',
-        'comment': quitar_tildes(contrato.cliente.nombre_completo),
+        'comment': contrato.cliente_nombre,
     }
     if contrato.ip_asignada:
         datos['remote-address'] = contrato.ip_asignada
@@ -148,7 +148,7 @@ def _desconectar_pppoe_activo(api, nombre):
 def _procesar_sq(api, tarea):
     queues = api.path('queue', 'simple')
     address_list = api.path('ip', 'firewall', 'address-list')
-    contrato = tarea.contrato
+    contrato = tarea.contrato # puede ser None si la tarea es una 'baja'
 
     if tarea.operacion == 'alta':
         if _buscar_por_nombre(queues, tarea.identificador_mikrotik):
@@ -251,7 +251,6 @@ def _buscar_entrada_lista(path, identificador):
 
 
 def _asegurar_en_active_list(path, contrato, activo):
-    print('_asegurar_en_active_list() ---------------------')
     router = contrato.plan.router
     existente = _buscar_entrada_lista(path, contrato.identificador_mikrotik)
     datos = {

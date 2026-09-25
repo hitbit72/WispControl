@@ -168,8 +168,12 @@ class TareaSincronizacion(models.Model):
         max_length=100, blank=True,
         help_text='Copia del identificador en el momento de encolar la tarea (sobrevive aunque el contrato se elimine).',
     )
+    ip_asignada = models.CharField(
+        max_length=100, blank=True, null=True,
+        help_text='Copia de la ip asignada en el momento de encolar la tarea (sobrevive aunque el contrato se elimine).',
+    )
     conexion = models.CharField(
-        max_length=20, blank=True,
+        max_length=20, blank=True, 
         help_text="Copia de Contrato.conexion en el momento de encolar la tarea ('pppoe' o 'sq').",
     )
     estado_contrato = models.CharField(
