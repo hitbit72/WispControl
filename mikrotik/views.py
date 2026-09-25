@@ -185,3 +185,25 @@ def eliminar_plan(request, pk):
 
     return render(request, 'mikrotik/confirmar_eliminar_plan.html', {'plan': plan})
 
+
+@login_required
+def detalle_plan(request, pk):
+    """Detalle de un plan con lista de contratos asociados."""
+    plan = get_object_or_404(
+        Plan.objects.select_related('router', 'router__sector').prefetch_related('contratos__cliente'),
+        pk=pk
+    )
+
+    # Capturamos la URL de redirección
+    url_anterior = request.POST.get('next') or request.GET.get('next')
+    if not url_anterior:
+        url_anterior = plan.router.get_absolute_url() if hasattr(plan.router, 'get_absolute_url') else '/mikrotik/'
+
+    contratos = plan.contratos.select_related('cliente').order_by('-fecha_inicio')
+
+    return render(request, 'mikrotik/detalle_plan.html', {
+        'plan': plan,
+        'contratos': contratos,
+        'url_anterior': url_anterior,
+    })
+

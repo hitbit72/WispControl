@@ -51,7 +51,7 @@
 <table class="table table-hover align-middle" id="ordersTable" data-searchable-table>
     <thead>
         <tr>
-            <th>Nombre</th>
+            <th>Perfil</th>
             <th>Bajada</th>
             <th>Subida</th>
             <th>Límites (↓/↑)</th>
@@ -63,12 +63,14 @@
     <tbody>
         {% for plan in router.planes.all %}
         <tr>
-            <td>{{ plan.nombre }}</td>
+            <td><a href="{% url 'mikrotik:detalle_plan' plan.pk %}?next={{ request.path }}">{{ plan.nombre }}</a></td>
             <td>{{ plan.velocidad_bajada }} Mbps</td>
             <td>{{ plan.velocidad_subida }} Mbps</td>
             <td>{{ plan.limit_down }}/{{ plan.limit_up }} Mbps</td>
             <td>{{ plan.priority_down }}/{{ plan.priority_up }}</td>
-            <td>{{ plan.contratos.count }}</td>
+            <td>
+                <a href="{% url 'mikrotik:detalle_plan' plan.pk %}">{{ plan.contratos.count }}</a>
+            </td>
             <td class="text-end">
                 <a href="{% url 'mikrotik:editar_plan' plan.pk %}" class="btn btn-sm btn-outline-primary">Editar</a>
                 <a href="{% url 'mikrotik:eliminar_plan' plan.pk %}" class="btn btn-sm btn-outline-danger">Eliminar</a>

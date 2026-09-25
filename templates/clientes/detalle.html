@@ -74,8 +74,9 @@
                 <span class="badge
                     {% if contrato.estado == 'activo' %}bg-success
                     {% elif contrato.estado == 'suspendido' %}bg-warning text-dark
-                    {% elif contrato.estado == 'cancelado' %}bg-secondary
-                    {% else %}bg-info text-dark{% endif %}">
+                    {% elif contrato.estado == 'cancelado' %}bg-danger
+                    {% elif contrato.estado == 'pendiente' %}bg-info text-dark
+                    {% else %}bg-secondary{% endif %}">
                     {{ contrato.get_estado_display }}
                 </span>
             </td>

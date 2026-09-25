@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block titulo %}{{ plan.nombre }} · Portal WISP{% endblock %}
+{% block contenido %}
+
+<div class="d-flex justify-content-between align-items-start mb-3">
+    <div>
+        <h2 class="mb-0">{{ plan.nombre }}</h2>
+        <div class="text-muted">{{ plan.router.nombre }} · {{ plan.velocidad_bajada }}/{{ plan.velocidad_subida }} Mbps</div>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{% url 'mikrotik:editar_plan' plan.pk %}" class="btn btn-outline-primary">Editar</a>
+        <a href="{% url 'mikrotik:eliminar_plan' plan.pk %}" class="btn btn-outline-danger">Eliminar</a>
+    </div>
+</div>
+
+<section class="panel row g-1 mt-1">
+
+<div class="row mb-1">
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Configuración del Plan</h5>
+                <p class="mb-1"><strong>Router:</strong> <a href="{% url 'mikrotik:detalle' plan.router.pk %}">{{ plan.router.nombre }}</a></p>
+                <p class="mb-1"><strong>Sector:</strong> {{ plan.router.sector.nombre|default:"—" }}</p>
+                <p class="mb-1"><strong>Velocidad:</strong> {{ plan.velocidad_bajada }} / {{ plan.velocidad_subida }} Mbps</p>
+                <p class="mb-0"><strong>Límites (↓/↑):</strong> {{ plan.limit_down }} / {{ plan.limit_up }} Mbps</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Simple Queue</h5>
+                <p class="mb-1"><strong>Parent:</strong> {{ plan.parent|default:"—" }}</p>
+                <p class="mb-1"><strong>Before:</strong> {{ plan.before|default:"—" }}</p>
+                <p class="mb-1"><strong>Address List:</strong> {{ plan.addr_list|default:"—" }}</p>
+                <p class="mb-0"><strong>Prioridad (↓/↑):</strong> {{ plan.priority_down }} / {{ plan.priority_up }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if plan.notas %}
+<div class="alert alert-light border mb-4">{{ plan.notas|linebreaks }}</div>
+{% endif %}
+</section>
+
+<section class="panel mt-1">
+
+<div class="d-flex justify-content-between align-items-center mb-2">
+    <h4 class="mb-0">Contratos asociados ({{ contratos.count }})</h4>
+</div>
+
+<div id="tabla-contratos" class="table-responsive">
+<table class="table table-hover align-middle" id="ordersTable" data-searchable-table>
+    <thead>
+        <tr>
+            <th>Cliente</th>
+            <th>Contrato</th>
+            <th>Estado</th>
+            <th>Conexión</th>
+            <th>Identificador</th>
+            <th>IP Asignada</th>
+            <th>Fecha Inicio</th>
+            <th>Tarifa</th>
+            <th>Sync.</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for contrato in contratos %}
+        <tr>
+            <td>
+                <a href="{% url 'clientes:detalle' contrato.cliente.pk %}?next={{ request.path }}">
+                    {{ contrato.cliente.nombre_completo }}
+                </a>
+            </td>
+            <td>{{ contrato.nombre }}</td>
+            <td>
+                <span class="badge 
+                    {% if contrato.estado == 'activo' %}bg-success
+                    {% elif contrato.estado == 'suspendido' %}bg-warning text-dark
+                    {% elif contrato.estado == 'cancelado' %}bg-danger
+                    {% elif contrato.estado == 'pendiente' %}bg-info text-dark
+                    {% else %}bg-secondary{% endif %}">
+                    {{ contrato.get_estado_display }}
+                </span>
+            </td>
+            <td>{{ contrato.get_conexion_display }}</td>
+            <td>{{ contrato.identificador_mikrotik|default:"—" }}</td>
+            <td>{{ contrato.ip_asignada|default:"—" }}</td>
+            <td>{{ contrato.fecha_inicio|date:"d/m/Y" }}</td>
+            <td>{{ contrato.precio_mensual|default:"—" }}</td>
+            <td>{{ contrato.tareas_mikrotik.all.0.get_estado_display }}</td>
+            <td class="text-end">
+                <a href="{% url 'clientes:editar_contrato' contrato.pk %}?next={{ request.path }}" class="btn btn-sm btn-outline-primary">Editar</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="10" class="text-center text-muted py-3">Este plan no tiene contratos asociados.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+
+</section>
+<div style="margin-top: 0.5rem;">
+<a href="{{ url_anterior }}" class="btn btn-outline-secondary"><i class="bi bi-box-arrow-in-left"></i> Volver</a>
+</div>
+{% endblock %}

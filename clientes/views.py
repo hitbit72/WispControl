@@ -161,6 +161,9 @@ def editar_contrato(request, pk):
     cliente = contrato.cliente
     error_msg = ""
 
+    # Capturamos la URL de redirección (si viene en el GET o en el POST)
+    url_anterior = request.POST.get('next') or request.GET.get('next')
+ 
     if request.method == 'POST':
         form = ContratoForm(request.POST, instance=contrato)
         if form.is_valid():
@@ -170,6 +173,8 @@ def editar_contrato(request, pk):
             # porque su valor permanece intacto en la instancia guardada.
             # --> contrato.identificador_mikrotik = quitar_tildes(contrato.identificador_mikrotik)
             contrato.save()
+            if url_anterior:
+                return redirect(url_anterior)
             return redirect('clientes:detalle', pk=cliente.pk)
         else:
             # si el formlario no es válido.
@@ -178,7 +183,11 @@ def editar_contrato(request, pk):
         form = ContratoForm(instance=contrato)
 
     return render(request, 'clientes/form_contrato.html', {
-        'form': form, 'cliente': cliente, 'contrato': contrato, 'error_msg': error_msg
+        'form': form, 
+        'cliente': cliente, 
+        'contrato': contrato, 
+        'error_msg': error_msg,
+        'url_anterior': url_anterior,
     })
 
 
