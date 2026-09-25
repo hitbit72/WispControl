@@ -51,12 +51,19 @@ def lista_routers(request):
 
 @login_required
 def detalle_router(request, pk):
-    router = get_object_or_404(Router.objects.prefetch_related('planes'), pk=pk)
-    # Obtiene la URL anterior, o asigna una ruta por defecto si no existe
-    url_anterior = request.META.get('HTTP_REFERER', 'mikrotik:lista')
-    url_anterior = http_ruta(url_anterior, '/mikrotik/')  # Cambia la ruta si es necesario
+    router = get_object_or_404(
+        Router.objects.prefetch_related('planes'), 
+        pk=pk)
 
-    return render(request, 'mikrotik/detalle.html', {'router': router, 'url_anterior': url_anterior})
+    # Capturamos la URL de redirección (si viene en el GET o en el POST)
+    url_anterior = request.POST.get('next') or request.GET.get('next')
+    if not url_anterior:
+        url_anterior = '/mikrotik/'
+
+    return render(request, 'mikrotik/detalle.html', {
+        'router': router, 
+        'url_anterior': url_anterior
+        })
 
 
 @login_required
@@ -64,10 +71,15 @@ def form_router(request, pk=None):
     error_msg = ''
     router = get_object_or_404(Router, pk=pk) if pk else None
 
+    # Capturamos la URL de redirección (si viene en el GET o en el POST)
+    url_anterior = request.POST.get('next') or request.GET.get('next')
+
     if request.method == 'POST':
         form = RouterForm(request.POST, instance=router)
         if form.is_valid():
             router = form.save()
+            if url_anterior:
+                return redirect(url_anterior)
             return redirect('mikrotik:detalle', pk=router.pk)
         else:
             # si el formlario no es válido.
@@ -79,6 +91,7 @@ def form_router(request, pk=None):
         'form': form, 
         'router': router,
         'error_msg': error_msg,
+        'url_anterior': url_anterior,
         })
 
 

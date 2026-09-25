@@ -19,7 +19,7 @@
             <td>{{ router.sector.nombre|default:"—" }}</td>
             <td>{{ router.planes.count }}</td>
             <td class="text-end">
-                <a href="{% url 'mikrotik:editar' router.pk %}" class="btn btn-sm btn-outline-primary">Editar</a>
+                <a href="{% url 'mikrotik:editar' router.pk %}?next={{ request.path }}" class="btn btn-sm btn-outline-primary">Editar</a>
                 <!-- <a href="{% url 'mikrotik:detalle' router.pk %}" class="btn btn-sm btn-outline-secondary">Ver</a> -->
             </td>
         </tr>
