@@ -235,7 +235,7 @@ def detalle_dispositivo(request, pk):
 
         # Después añadimos los dispositivos que no están en estaciones registradas
         for device in metricas.estaciones:
-            if device['ip'] not in ips_estaciones:
+            if device['ip'] not in ips_estaciones and device['ip'] != '0.0.0.0':
                 devices.append({
                     'registrado': False,
                     'estado': 'activo',
