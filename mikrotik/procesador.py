@@ -199,6 +199,7 @@ def _procesar_sq(api, tarea):
         )
         raise RuntimeError('El contrato ya no existe; no se puede completar la modificación.')
 
+    # Modificacion
     activo = contrato.estado == contrato.Estado.ACTIVO
     if activo:
         datos = _datos_simple_queue(contrato, incluir_place_before=False)
@@ -287,16 +288,3 @@ def quitar_tildes(texto):
             if unicodedata.category(c) != 'Mn'
         )
     return texto
-
-
-def _datos_bytes(datos):
-    # Convertir los valores de texto (str) a bytes codificados en UTF-8 en los campos comment y name
-    datos_api = {}
-    for k, v in datos.items():
-        if k in ['comment', 'name']:
-            # Solo codificar a bytes los campos de texto libre que puedan llevar tildes
-            datos_api[k] = v.encode('utf-8') if isinstance(v, str) else v
-        else:
-            # IPs, límites y opciones de cola se envían como cadenas str ASCII
-            datos_api[k] = str(v)
-    return datos_api

@@ -63,21 +63,21 @@ class Contrato(models.Model):
         SUSPENDIDO = 'suspendido', 'Suspendido'
         CANCELADO = 'cancelado', 'Cancelado'
         PENDIENTE = 'pendiente', 'Pendiente'
-        INSTALACION = 'instalacion', 'Pendiente de instalación'
-        POTENCIAL = 'potencial', 'Cliente potencial'
+        #INSTALACION = 'instalacion', 'Pendiente de instalación'
+        #POTENCIAL = 'potencial', 'Cliente potencial'
 
     class Conexion(models.TextChoices):
         PPPOE = 'pppoe', 'PPPoE'
         SQ = 'sq', 'Simple Queue'
         DHCP = 'dhcp', 'DHCP'
-        IP = 'ip', 'IP Fija'
-        WIFI = 'wifi', 'WIFI'
+        #IP = 'ip', 'IP Fija'
+        #WIFI = 'wifi', 'WIFI'
 
     cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, related_name='contratos')
-    nombre = models.CharField(max_length=100, verbose_name='Nombre del contrato')
+    nombre = models.CharField(max_length=100, verbose_name='Nombre corto descriptivo del contrato')
     plan = models.ForeignKey('mikrotik.Plan', on_delete=models.PROTECT, related_name='contratos', verbose_name='Plan')
     precio_mensual = models.DecimalField(max_digits=8, decimal_places=2)
-    estado = models.CharField(max_length=20, choices=Estado.choices, default=Estado.INSTALACION)
+    estado = models.CharField(max_length=20, choices=Estado.choices, default=Estado.PENDIENTE)
     fecha_inicio = models.DateField()
     fecha_cancelacion = models.DateField(null=True, blank=True)
 
@@ -91,7 +91,7 @@ class Contrato(models.Model):
     pppoe_clave = models.CharField(max_length=100, blank=True, verbose_name='Clave PPPoE')
     ip_asignada = models.GenericIPAddressField(
         null=True, blank=True, verbose_name='IP asignada',
-        help_text='IP fija asignada, si es el caso')
+        help_text='IP fija asignada, si es Simple Queue o DHCP')
     
     notas = models.TextField(blank=True)
 
