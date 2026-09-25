@@ -228,11 +228,13 @@ def detalle_dispositivo(request, pk):
                 'rx': metrica.rx,
             })
 
-        # IPs que ya tienes
+        # IPs de gestion que ya tienes
         ips_estaciones = {
             metrica.device.ip_gestion
             for metrica in estaciones
         }
+        ips_estaciones.add('0.0.0.0')
+        ips_estaciones.add('')
         # IPs publicas que ya tienes
         ips_publicas = {
             metrica.device.ip_publica
@@ -241,9 +243,7 @@ def detalle_dispositivo(request, pk):
         # Después añadimos los dispositivos que no están en estaciones registradas
         for device in metricas.estaciones:
             if device['ip'] not in ips_estaciones \
-            and device['ip'] not in ips_publicas \
-            and device['ip'] != '0.0.0.0' \
-            and device['ip'] != '':
+            and device['ip'] not in ips_publicas:
                 devices.append({
                     'registrado': False,
                     'estado': 'activo',
