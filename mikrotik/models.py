@@ -2,7 +2,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 from core.fields import EncryptedCharField
-
+from dispositivos.models import Marca
 
 class Router(models.Model):
     """
@@ -21,6 +21,10 @@ class Router(models.Model):
 
     nombre = models.CharField(max_length=100, verbose_name='Nombre identificativo')
     modelo = models.CharField(max_length=100, blank=True, null=True)
+
+    marca = models.ForeignKey(Marca, null=True, blank=True, on_delete=models.PROTECT, 
+                              verbose_name='Merca y modelo', related_name='routers')
+    
     numero_serie  = models.CharField(max_length=100, null=True, blank=True)
     
     usuario = models.CharField(max_length=100, verbose_name='Usuario API')

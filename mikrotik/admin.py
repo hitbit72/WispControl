@@ -12,8 +12,8 @@ class PlanInline(admin.TabularInline):
 
 @admin.register(Router)
 class RouterAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'modelo', 'numero_serie', 'ip', 'puerto', 'sector')
-    list_filter = ('sector',)
+    list_display = ('nombre', 'modelo', 'marca', 'numero_serie', 'ip', 'puerto', 'sector')
+    list_filter = ('sector', 'marca')
     search_fields = ('nombre', 'ip', 'modelo')
     inlines = [PlanInline]
     formfield_overrides = {

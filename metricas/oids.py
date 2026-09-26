@@ -13,9 +13,9 @@ from metricas.models import OIDmetric
 
 
 OIDS_MIKROTIK = {
-    'cpu': '1.3.6.1.4.1.14988.1.1.1.2.1.1.0',      # mtikSystemCpu (%)
-    'mem_libre': '1.3.6.1.4.1.14988.1.1.1.2.1.2.0',  # mtikSystemFreeMemory
-    'mem_total': '1.3.6.1.4.1.14988.1.1.1.2.1.3.0',  # mtikSystemTotalMemory
+    'cpu': '1.3.6.1.4.1.2021.11.10.0',      # Carga cpu 1min (%)
+    'mem_libre': '1.3.6.1.2.1.25.2.3.1.6.65536',  # mtikSystemFreeMemory
+    'mem_total': '1.3.6.1.2.1.25.2.3.1.5.65536',  # TotalMemory
     #'uptime': '1.3.6.1.4.1.14988.1.1.1.2.1.4.0',     # mtikSystemUptime (segundos)
 }
 
