@@ -69,6 +69,7 @@ class Plan(models.Model):
 
     router = models.ForeignKey(Router, on_delete=models.SET_NULL, null=True, related_name='planes')
     nombre = models.CharField(max_length=100)
+    numero_serie  = models.CharField(max_length=100, null=True, blank=True)
 
     velocidad_bajada = models.PositiveIntegerField(
         verbose_name='Velocidad de bajada (Mbps)',

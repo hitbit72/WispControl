@@ -24,6 +24,10 @@
             {{ form.modelo }}
         </div>
         <div class="col-md-6">
+            <label class="form-label" for="{{ form.numero_serie.id_for_label }}">Número de serie</label>
+            {{ form.numero_serie }}
+        </div>
+        <div class="col-md-6">
             <label class="form-label" for="{{ form.usuario.id_for_label }}">Usuario API</label>
             {{ form.usuario }}
             <div class="invalid-feedback">El nombre de usuario es obligatorio.</div>

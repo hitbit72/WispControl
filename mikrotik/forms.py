@@ -8,7 +8,7 @@ class RouterForm(BootstrapFormMixin, forms.ModelForm):
     class Meta:
         model = Router
         fields = [
-            'nombre', 'modelo', 'usuario', 'clave', 'ip', 'puerto', 'sector',
+            'nombre', 'modelo', 'numero_serie', 'usuario', 'clave', 'ip', 'puerto', 'sector',
             'active_list', 'ppp_disable', 'latitud', 'longitud', 'notas',
         ]
         widgets = {
