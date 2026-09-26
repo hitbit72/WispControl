@@ -21,6 +21,8 @@ class Router(models.Model):
 
     nombre = models.CharField(max_length=100, verbose_name='Nombre identificativo')
     modelo = models.CharField(max_length=100, blank=True, null=True)
+    numero_serie  = models.CharField(max_length=100, null=True, blank=True)
+    
     usuario = models.CharField(max_length=100, verbose_name='Usuario API')
     clave = EncryptedCharField(max_length=100, verbose_name='Contraseña API (cifrada)')
     ip = models.GenericIPAddressField(verbose_name='IP del router')
@@ -69,7 +71,6 @@ class Plan(models.Model):
 
     router = models.ForeignKey(Router, on_delete=models.SET_NULL, null=True, related_name='planes')
     nombre = models.CharField(max_length=100)
-    numero_serie  = models.CharField(max_length=100, null=True, blank=True)
 
     velocidad_bajada = models.PositiveIntegerField(
         verbose_name='Velocidad de bajada (Mbps)',
