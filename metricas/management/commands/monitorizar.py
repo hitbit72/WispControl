@@ -143,6 +143,7 @@ class Command(BaseCommand):
             if dispositivo.tipo.clave in dispositivos_ap:
                 escalares_st = oids_dispositivo(dispositivo, 'wifi')
 
+        # Puertos, OID especiales para OLT
         if dispositivo.tipo.clave == 'olt':
             escalares_puerto_pon = oids_dispositivo(dispositivo, 'puertos_pon')
             escalares_onu = oids_dispositivo(dispositivo, 'onus')
@@ -226,7 +227,11 @@ class Command(BaseCommand):
             total, _ = resultado['mem_total']
             libre, _ = resultado['mem_libre']
             if total:
-                datos['ram'] = round((1 - libre / total) * 100, 2)
+                # en MKT la Ram libre = Ram Ocupada
+                if dispositivo.tipo.clave == "mkt":
+                    datos['ram'] = round((total / 1 - libre) * 100, 2)
+                else:
+                    datos['ram'] = round((1 - libre / total) * 100, 2)
 
         for metrica, (numero, texto) in resultado.items():
             
@@ -242,7 +247,8 @@ class Command(BaseCommand):
             elif campo == 'channel':
                 datos['channel'] = numero or ''
             elif campo == 'temperature':
-                if numero > 1000:
+                datos['temperature'] = numero
+                if datos['temperature'] > 1000:
                     datos['temperature'] = numero / 1000
             elif campo == 'antena':
                 datos['antena'] = texto or numero

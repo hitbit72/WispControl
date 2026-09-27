@@ -2,6 +2,8 @@ from django.db import models
 
 # Claves de TipoEquipo que se consideran AP (muestran sus estaciones asociadas)
 dispositivos_ap = ['ap', 'nodo', 'ptp_main', 'ptp_station']
+# Claves de TipoEquipo que se considera una Antena, tanto AP como estacion
+dispositivos_antenas = ['ap', 'nodo', 'ptp_main', 'ptp_station', 'antena_cliente', 'st']
 # Claves de TipoEquipo que se consideran AP para evaluar alertas
 reglas_ap = ['ap', 'nodo', 'ptp_main', 'olt']
 

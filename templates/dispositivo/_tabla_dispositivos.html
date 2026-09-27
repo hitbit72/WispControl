@@ -8,9 +8,9 @@
             <th>IP gestión</th>
             <th>Cliente</td>
             <th>Tipo</th>
-            <th>ST</th>
             <th>Sector</th>
             <th>SSID</th>
+            <th>ST</th>
             <th>Señal</th>
             <th>Tx Rate</th>
             <th>Rx Rate</th>
@@ -35,9 +35,9 @@
                 {% endif %}
             </td>
             <td>{{ dispositivo.tipo.nombre }} {{ dispositivo.get_rol_display }}</td>
-            <td style="max-width: 5px;">{{ dispositivo.metricas.all.0.clients|default:'0' }}</td>
             <td>{% if dispositivo.sector %}<a href="{% url 'sectores:detalle' dispositivo.sector.pk %}">{{ dispositivo.sector.nombre }}</a>{% else %}—{% endif %}</td>
             <td>{{ dispositivo.metricas.all.0.ssid|default:"—" }}</td>
+            <td style="max-width: 5px;">{{ dispositivo.metricas.all.0.clients|default:'0' }}</td>
             <td style="width: 30px; min-width:20px;">
                 <span class="badge 
                 {% if dispositivo.tipo.clave == 'olt' or dispositivo.tipo.clave == 'onu' %}
@@ -52,9 +52,9 @@
                     {% else %}bg-secondary{% endif %}
                 {% endif %}
                 "> {{ dispositivo.metricas.all.0.signal|default:"—"}} </span>
-            </td>
-            <td>{{ dispositivo.metricas.all.0.tx|format_bitrate }} </td>
-            <td>{{ dispositivo.metricas.all.0.rx|format_bitrate }} </td>
+                </td>
+                <td>{{ dispositivo.metricas.all.0.tx|format_bitrate }} </td>
+                <td>{{ dispositivo.metricas.all.0.rx|format_bitrate }} </td>
             <td class="text-end">
                 <a href="{% url 'dispositivos:editar' dispositivo.pk %}" class="btn btn-sm btn-outline-primary">Editar</a>
             </td>

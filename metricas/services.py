@@ -25,9 +25,6 @@ def guardar_metrica(dispositivo, **datos):
         mismo dispositivo y no necesitamos datos a lo largo del tiempo.
         Usamos timescan y timeping solo para saber cuando se actualizó.
     """
-    #datos.setdefault('status', DeviceMetrics.Status.OK)
-    #datos.setdefault('timescan', timezone.now())
-    #print(f'Datos despues: {datos}')
     return DeviceMetrics.objects.update_or_create(
         device=dispositivo,
         defaults=datos

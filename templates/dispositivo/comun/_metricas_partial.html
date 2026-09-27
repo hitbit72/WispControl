@@ -32,7 +32,9 @@
     </div>
   </div>
 
+  {% if metricas.temperature %}<p class="mb-1"><strong>Temperatura:</strong> {{ metricas.temperature }}º</p>{% endif %}
   {% if metricas.antena %}<p class="mb-1"><strong>Antena:</strong> {{ metricas.antena }}</p>{% endif %}
+  
   {% if metricas.ssid %}
   <p class="mb-1"><strong>SSID:</strong>
     {% if dispositivo.tipo.clave in dispositivos_ap %}
@@ -48,6 +50,7 @@
   </p>
   {% endif %}
 
+  {% if dispositivo.tipo.clave in dispositivos_antenas %}
   <div class="row g-2 align-items-start mb-1">
     <div class="col-auto d-flex gap-1">
       <p class="mb-0"><strong>Señal:</strong>{% include "dispositivo/comun/_signal_tx.html" %}</p> ·
@@ -56,10 +59,12 @@
       <p class="mb-0"><strong>Potencia:</strong> {{ metricas.power|default:'0' }} dbm</p>
     </div>
   </div>
+
   <div class="row g-2 align-items-start mb-1">
     <div class="col-auto d-flex gap-1">
       <p class="mb-0"><strong>CCQ:</strong> {{ metricas.ccq|default:'0' }} %</p> ·
     </div>
+  {% endif %}
     <div class="col-auto d-flex gap-1">
       <p class="mb-0"><strong>Latencia:</strong> {{ metricas.latencia|default:'0' }} ms</p>
     </div>

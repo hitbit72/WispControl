@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import DispositivoForm, EnlaceForm, InterfazForm
 
-from .models import Dispositivo, Enlace, Interfaz, TipoEquipo, dispositivos_ap
+from .models import Dispositivo, Enlace, Interfaz, TipoEquipo, dispositivos_ap, dispositivos_antenas
 from clientes.models import Cliente
 from sector.models import Sector
 
@@ -273,6 +273,7 @@ def detalle_dispositivo(request, pk):
         'url_anterior': url_anterior,
         'hay_alarmas': hay_alarmas,
         'dispositivos_ap': dispositivos_ap,
+        'dispositivos_antenas': dispositivos_antenas,
     })
 
 
@@ -305,6 +306,7 @@ def detalle_dispositivo2(request, pk):
         'metricas': metricas,
         'url_anterior': url_anterior,
         'dispositivos_ap': dispositivos_ap,
+        'dispositivos_antenas': dispositivos_antenas,
     })
 
 @login_required
