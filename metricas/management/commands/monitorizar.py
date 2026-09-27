@@ -187,16 +187,6 @@ class Command(BaseCommand):
         datos['status'] = status
         datos['timescan'] = timezone.now()
 
-        # DEBUG: test de alarmas
-        #if dispositivo.ip_gestion == '192.168.25.150':
-            #datos['cpu'] = 95
-            #datos['ram'] = 97
-            #datos['frequency'] = 5200
-
-        #print(' DATOS --------------------')
-        #print(f'Datos: {datos}')
-        #print(f'Estaciones: {estaciones}')
-
         # recuperar el estado anterio para evalua la alerta/alarma
         metrica_anterior = (
             DeviceMetrics.objects.filter(device=dispositivo)
