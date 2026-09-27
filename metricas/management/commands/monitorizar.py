@@ -227,16 +227,8 @@ class Command(BaseCommand):
         if 'mem_total' in resultado and 'mem_libre' in resultado:
             total, _ = resultado['mem_total']
             libre, _ = resultado['mem_libre']
-            ocupado, _ = resultado['mem_libre'] # MKT te da el ocupado
-            if ocupado<=0:
-                ocupado=1
-            if libre<=0:
-                libre=1
             if total:
-                if dispositivo.tipo.clave != "mkt":
-                    ocupado = total - libre
-                datos['ram'] = round((ocupado / total) * 100, 2)
-                
+                datos['ram'] = round((1 - libre / total) * 100, 2)
 
         for metrica, (numero, texto) in resultado.items():
             
