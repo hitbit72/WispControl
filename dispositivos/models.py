@@ -135,6 +135,15 @@ class Interfaz(models.Model):
         DESCONOCIDO = 'desconocido', 'Desconocido'
 
     dispositivo = models.ForeignKey(Dispositivo, on_delete=models.CASCADE, related_name='interfaces')
+
+    """
+    router = models.ForeignKey(
+        'mikrotik.Router',
+        on_delete=models.CASCADE,
+        related_name='interfaces',
+        blank=True, null=True
+    )
+    """
     nombre = models.CharField(max_length=100, help_text="Ej. 'eth1', 'wlan0', 'eth1.100'")
     nombre2 = models.CharField(max_length=200, null=True, blank=True, help_text="Nombre alternativo")
     descripcion = models.CharField(max_length=200, null=True, blank=True)

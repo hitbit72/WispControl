@@ -169,7 +169,7 @@ def detalle_dispositivo(request, pk):
         Dispositivo.objects.prefetch_related(
             Prefetch(
                 'interfaces',
-                queryset=Interfaz.objects.order_by('nombre')
+                queryset=Interfaz.objects.order_by('id')
             ),
             'metricas',
             Prefetch(

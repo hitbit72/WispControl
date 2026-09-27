@@ -20,19 +20,13 @@
             <div class="invalid-feedback">El nombre es obligatorio.</div>
         </div>
         <div class="col-md-4">
-            <label class="form-label" for="{{ form.marca.id_for_label }}">Marca</label>
-            {{ form.marca }}
+            <label class="form-label" for="{{ form.modelo.id_for_label }}">Modelo</label>
+            {{ form.modelo }}
         </div>
         <div class="col-md-4">
             <label class="form-label" for="{{ form.numero_serie.id_for_label }}">Número de serie</label>
             {{ form.numero_serie }}
         </div>
-        <!--
-        <div class="col-md-4">
-            <label class="form-label" for="{{ form.modelo.id_for_label }}">Modelo</label>
-            {{ form.modelo }}
-        </div>
-        -->
         <div class="col-md-6">
             <label class="form-label" for="{{ form.usuario.id_for_label }}">Usuario API</label>
             {{ form.usuario }}
