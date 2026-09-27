@@ -49,39 +49,38 @@
     {% endif %}
   </p>
   {% endif %}
-
   {% if dispositivo.tipo.clave in dispositivos_antenas %}
-  <div class="row g-2 align-items-start mb-1">
-    <div class="col-auto d-flex gap-1">
-      <p class="mb-0"><strong>Señal:</strong>{% include "dispositivo/comun/_signal_tx.html" %}</p> ·
-    </div>
-    <div class="col-auto d-flex gap-1">
-      <p class="mb-0"><strong>Potencia:</strong> {{ metricas.power|default:'0' }} dbm</p>
-    </div>
-  </div>
-
-  <div class="row g-2 align-items-start mb-1">
-    <div class="col-auto d-flex gap-1">
-      <p class="mb-0"><strong>CCQ:</strong> {{ metricas.ccq|default:'0' }} %</p> ·
-    </div>
+    <div class="row g-2 align-items-start mb-1">
       <div class="col-auto d-flex gap-1">
-      <p class="mb-0"><strong>Latencia:</strong> {{ metricas.latencia|default:'0' }} ms</p>
+        <p class="mb-0"><strong>Señal:</strong>{% include "dispositivo/comun/_signal_tx.html" %}</p> ·
+      </div>
+      <div class="col-auto d-flex gap-1">
+        <p class="mb-0"><strong>Potencia:</strong> {{ metricas.power|default:'0' }} dbm</p>
+      </div>
     </div>
-  </div>
+    <div class="row g-2 align-items-start mb-1">
+      <div class="col-auto d-flex gap-1">
+        <p class="mb-0"><strong>CCQ:</strong> {{ metricas.ccq|default:'0' }} %</p> ·
+      </div>
+        <div class="col-auto d-flex gap-1">
+        <p class="mb-0"><strong>Latencia:</strong> {{ metricas.latencia|default:'0' }} ms</p>
+      </div>
+    </div>
+    {% if metricas.rx %}
+      <p class="mb-1"><strong>Capacidad rx/tx:</strong> {{ metricas.rx|format_bitrate }} / {{ metricas.tx|format_bitrate }} </p>
+    {% endif %}
   {% endif %}
+  {% if not dispositivo.tipo.clave in dispositivos_antenas %}
   <div class="row g-2 align-items-start mb-1">
-  {% if dispositivo.tipo.clave == 'mkt' %}
+    {% if dispositivo.tipo.clave == 'mkt' %}
     <div class="col-auto d-flex gap-1">
       <p class="mb-0"><strong>CPU Frcuancia:</strong> {{ metricas.frequency |default:'0' }} MHz</p> ·
     </div>
-  {% endif %}
+    {% endif %}
     <div class="col-auto d-flex gap-1">
       <p class="mb-0"><strong>Latencia:</strong> {{ metricas.latencia|default:'0' }} ms</p>
     </div>
   </div>
-
-  {% if metricas.rx %}
-  <p class="mb-1"><strong>Capacidad rx/tx:</strong> {{ metricas.rx|format_bitrate }} / {{ metricas.tx|format_bitrate }} </p>
   {% endif %}
   {% if metricas.uptime %}<p class="mb-1"><strong>Funcionando:</strong> {{ metricas.uptime|formatear_uptime }}</p>{% endif %}
   {% if metricas.timescan %}<p class="mb-0"><strong>Actualizado:</strong> {{ metricas.timescan }}</p>{% endif %}
