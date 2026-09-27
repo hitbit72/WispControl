@@ -233,7 +233,6 @@ class Command(BaseCommand):
                 if 'mem_ocupada' in resultado:
                     ocupada, _ = resultado['mem_ocupada']
                     libre = total - ocupada
-                    print(f'2 libre: {libre}')
                 if libre<=0:
                     libre=1
                 datos['ram'] = round((1 - libre / total) * 100, 2)
