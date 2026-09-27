@@ -14,7 +14,7 @@
         {% for router in pagina %}
         <tr>
             <td><a href="{% url 'mikrotik:detalle' router.pk %}">{{ router.nombre }}</a></td>
-            <td>{{ router.modelo|default:"—" }}</td>
+            <td>{{ router.marca }}</td>
             <td>{{ router.ip }}</td>
             <td>{{ router.sector.nombre|default:"—" }}</td>
             <td>{{ router.planes.count }}</td>

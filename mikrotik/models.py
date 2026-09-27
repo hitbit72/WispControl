@@ -57,7 +57,7 @@ class Router(models.Model):
         ordering = ['nombre']
 
     def __str__(self):
-        return f'{self.nombre} ({self.ip})'
+        return f'{self.nombre} · {self.marca} ({self.ip})'
 
 
 

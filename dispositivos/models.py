@@ -136,6 +136,8 @@ class Interfaz(models.Model):
 
     dispositivo = models.ForeignKey(Dispositivo, on_delete=models.CASCADE, related_name='interfaces')
     nombre = models.CharField(max_length=100, help_text="Ej. 'eth1', 'wlan0', 'eth1.100'")
+    nombre2 = models.CharField(max_length=200, null=True, blank=True, help_text="Nombre alternativo")
+    descripcion = models.CharField(max_length=200, null=True, blank=True)
     tipo = models.CharField(max_length=20, choices=Tipo.choices, default=Tipo.ETHERNET)
     estado = models.CharField(max_length=20, choices=Estado.choices, default=Estado.DESCONOCIDO)
     ip_address = models.GenericIPAddressField(null=True, blank=True)

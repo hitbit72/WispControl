@@ -39,8 +39,8 @@ OIDS_PUERTOS_GENERICO = {
     'nombre': '1.3.6.1.2.1.2.2.1.2',       # ifTable/ifDescr (walk). MIB-II (RFC1213-MIB / IF-MIB)
     'estado': '1.3.6.1.2.1.2.2.1.8',        # ifTable/ifOperStatus (walk). MIB-II (RFC1213-MIB / IF-MIB) current state (1 = up, 2 = down)
     'speed': '1.3.6.1.2.1.2.2.1.5',       # ifSpeed (walk). (RFC1213-MIB / IF-MIB) Estimated bandwidth in bits per second.
-    #'if_rx': '1.3.6.1.2.1.2.2.1.16',
-    #'if_tx': '1.3.6.1.2.1.2.2.1.10',
+    "rx_counter": "1.3.6.1.2.1.2.2.1.16",
+    "tx_counter": "1.3.6.1.2.1.2.2.1.10",
     #'if_typw': '1.3.6.1.2.1.2.2.1.3',        # ifType (walk) Type of network protocol. 1=other, 2=regular1822, 3=ethernet-card, 24=loopback, 32=frame-relay
     #'if_physadress': '1.3.6.1.2.1.2.2.1.6'   # ifPhysAddress (walk) MAC
     #'if_inerrors': '1.3.6.1.2.1.2.2.1.14'    # ifInErrors (walk) Bad packets received with errors.

@@ -81,7 +81,7 @@ class InterfazForm(BootstrapFormMixin, forms.ModelForm):
     class Meta:
         model = Interfaz
         fields = [
-            'nombre', 'tipo', 'estado', 'ip_address', 'mac_address', 'velocidad_mbps',
+            'nombre', 'nombre2', 'tipo', 'estado', 'ip_address', 'mac_address', 'velocidad_mbps', 'descripcion',
         ]
 
 

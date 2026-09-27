@@ -13,7 +13,13 @@
     </thead>
         {% for interfaz in dispositivo.interfaces.all %}
         <tr>
-            <td>{{ interfaz.nombre }}</td>
+            <td>
+            {% if interfaz.nombre2 %}
+                {{ interfaz.nombre2 }}
+            {% else %}
+                {{ interfaz.nombre }}
+            {% endif %}
+            </td>
             <td>{{ interfaz.get_tipo_display }}</td>
             <td>
                 <span class="badge

@@ -20,12 +20,21 @@
             <div class="invalid-feedback">El nombre es obligatorio.</div>
         </div>
         <div class="col-md-6">
+            <label class="form-label" for="{{ form.nombre2.id_for_label }}">Nombre Alternativo</label>
+            {{ form.nombre2 }}
+            <div class="form-text">Ej. 'ether1', 'wlan0', 'vlan100'.</div>
+        </div>
+        <div class="col-md-4">
             <label class="form-label" for="{{ form.tipo.id_for_label }}">Tipo</label>
             {{ form.tipo }}
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
             <label class="form-label" for="{{ form.estado.id_for_label }}">Estado</label>
             {{ form.estado }}
+        </div>
+        <div class="col-md-4">
+            <label class="form-label" for="{{ form.velocidad_mbps.id_for_label }}">Velocidad (Mbps)</label>
+            {{ form.velocidad_mbps }}
         </div>
         <div class="col-md-6">
             <label class="form-label" for="{{ form.ip_address.id_for_label }}">IP</label>
@@ -35,9 +44,9 @@
             <label class="form-label" for="{{ form.mac_address.id_for_label }}">Dirección MAC</label>
             {{ form.mac_address }}
         </div>
-        <div class="col-md-3">
-            <label class="form-label" for="{{ form.velocidad_mbps.id_for_label }}">Velocidad (Mbps)</label>
-            {{ form.velocidad_mbps }}
+        <div class="col-md-12">
+            <label class="form-label" for="{{ form.descripcion.id_for_label }}">Descripción</label>
+            {{ form.descripcion }}
         </div>
     </div>
     <div class="mt-4 d-flex gap-2">

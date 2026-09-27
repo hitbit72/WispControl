@@ -5,7 +5,7 @@
 <div class="d-flex justify-content-between align-items-start mb-3">
     <div>
         <h2 class="mb-0">{{ router.nombre }}</h2>
-        <div class="text-muted">{{ router.modelo|default:"" }} · {{ router.ip }}</div>
+        <div class="text-muted">{{ router.marca }} · {{ router.ip }}</div>
     </div>
     <div class="d-flex gap-2">
         <a href="{% url 'mikrotik:editar' router.pk %}" class="btn btn-outline-primary">Editar</a>
@@ -19,16 +19,20 @@
     <div class="col-md-6">
         <div class="card h-100">
             <div class="card-body">
-                <h5 class="card-title">Conexión API</h5>
-                <p class="mb-1"><strong>Usuario:</strong> {{ router.usuario }}</p>
-                <p class="mb-0"><strong>Sector:</strong> {{ router.sector.nombre|default:"—" }}</p>
+                <!-- h5 class="card-title">Conexión API</h5 -->
+                <p class="mb-1"><strong>Modelo:</strong> {{ router.marca }}</p>
+                {% if router.sector %}
+                    <p class="mb-1"><strong>Sector:</strong>
+                    <a href="{% url 'sectores:detalle' router.sector.pk %}?next={{ request.path }}">{{ router.sector.nombre }}</a>
+                    </p>
+                {% endif %}
             </div>
         </div>
     </div>
     <div class="col-md-6">
         <div class="card h-100">
             <div class="card-body">
-                <h5 class="card-title">MikroTik</h5>
+                <!-- h5 class="card-title">Mikrotik</h5 -->
                 <p class="mb-1"><strong>Lista firewall de activos:</strong> {{ router.active_list }}</p>
                 <p class="mb-0"><strong>Perfil PPPoE desactivados:</strong> {{ router.ppp_disable }}</p>
             </div>
@@ -85,6 +89,6 @@
 
 </section>
 <div style="margin-top: 0.5rem;">
-<a href="{{ url_anterior }}" class="btn btn-outline-secondary"><i class="bi bi-box-arrow-in-left"></i> Volver</a>
+<a href="{{ url_anterior }}" class="btn btn-sm btn-outline-primary"><i class="bi bi-box-arrow-in-left"></i> Volver</a>
 </div>
 {% endblock %}
