@@ -226,6 +226,7 @@ class Command(BaseCommand):
         # los dispositivos UBNT dan memoria_libre, en router MKT ya da memoria_ocupada
         if 'mem_total' in resultado:
             total, _ = resultado['mem_total']
+            ocupada=1
             if 'mem_libre' in resultado:
                 libre, _ = resultado['mem_libre']
                 ocupada = total - libre
