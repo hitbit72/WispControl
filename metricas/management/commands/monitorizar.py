@@ -223,15 +223,16 @@ class Command(BaseCommand):
 
     def _construir_datos(self, dispositivo, resultado):
         datos = {}
+        # los dispositivos UBNT dan memoria_libre, en router MKT ya da memoria_ocupada
         if 'mem_total' in resultado and 'mem_libre' in resultado:
             total, _ = resultado['mem_total']
-            libre, _ = resultado['mem_libre']
+            libre, _ = 0
+            ocupado = resultado['mem_libre'] if resultado['mem_libre']>0 else 1
             if total:
-                # en MKT la Ram libre = Ram Ocupada
-                if dispositivo.tipo.clave == "mkt":
-                    datos['ram'] = round((total / 1 - libre) * 100, 2)
-                else:
-                    datos['ram'] = round((1 - libre / total) * 100, 2)
+                if dispositivo.tipo.clave != "mkt":
+                    ocupado = total - libre
+                datos['ram'] = round((ocupado / total) * 100, 2)
+                
 
         for metrica, (numero, texto) in resultado.items():
             

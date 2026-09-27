@@ -64,6 +64,16 @@
     <div class="col-auto d-flex gap-1">
       <p class="mb-0"><strong>CCQ:</strong> {{ metricas.ccq|default:'0' }} %</p> ·
     </div>
+      <div class="col-auto d-flex gap-1">
+      <p class="mb-0"><strong>Latencia:</strong> {{ metricas.latencia|default:'0' }} ms</p>
+    </div>
+  </div>
+  {% endif %}
+  <div class="row g-2 align-items-start mb-1">
+  {% if dispositivo.tipo.clave == 'mkt' %}
+    <div class="col-auto d-flex gap-1">
+      <p class="mb-0"><strong>CPU Frcuancia:</strong> {{ metricas.frequency |default:'0' }} MHz</p> ·
+    </div>
   {% endif %}
     <div class="col-auto d-flex gap-1">
       <p class="mb-0"><strong>Latencia:</strong> {{ metricas.latencia|default:'0' }} ms</p>
