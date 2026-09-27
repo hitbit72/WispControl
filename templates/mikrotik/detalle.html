@@ -5,7 +5,7 @@
 <div class="d-flex justify-content-between align-items-start mb-3">
     <div>
         <h2 class="mb-0">{{ router.nombre }}</h2>
-        <div class="text-muted">{{ router.marca }} · {{ router.ip }}</div>
+        <div class="text-muted">{{ router.modelo }} · {{ router.ip }}</div>
     </div>
     <div class="d-flex gap-2">
         <a href="{% url 'mikrotik:editar' router.pk %}" class="btn btn-outline-primary">Editar</a>
@@ -20,7 +20,7 @@
         <div class="card h-100">
             <div class="card-body">
                 <!-- h5 class="card-title">Conexión API</h5 -->
-                <p class="mb-1"><strong>Modelo:</strong> {{ router.marca }}</p>
+                <p class="mb-1"><strong>Modelo:</strong> {{ router.modelo }}</p>
                 {% if router.sector %}
                     <p class="mb-1"><strong>Sector:</strong>
                     <a href="{% url 'sectores:detalle' router.sector.pk %}?next={{ request.path }}">{{ router.sector.nombre }}</a>

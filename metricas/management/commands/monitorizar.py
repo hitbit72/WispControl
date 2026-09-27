@@ -28,7 +28,7 @@ Si quieres confirmar qué hay realmente en esa columna:
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 
-from dispositivos.models import Dispositivo
+from dispositivos.models import Dispositivo, dispositivos_ap
 
 from metricas import snmp_client
 from metricas.models import DeviceMetrics
@@ -138,9 +138,10 @@ class Command(BaseCommand):
         escalares = oids_dispositivo(dispositivo, 'general')
         escalares_puerto = oids_dispositivo(dispositivo, 'puertos')
 
-        # Solo los dispositivos main
+        # Solo los dispositivos main y tipo antenas
         if dispositivo.rol == 'main':
-            escalares_st = oids_dispositivo(dispositivo, 'wifi')
+            if dispositivo.tipo.clave in dispositivos_ap:
+                escalares_st = oids_dispositivo(dispositivo, 'wifi')
 
         if dispositivo.tipo.clave == 'olt':
             escalares_puerto_pon = oids_dispositivo(dispositivo, 'puertos_pon')
