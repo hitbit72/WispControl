@@ -194,7 +194,8 @@ def consultar_escalares(dispositivo, oids):
 
 
 def _escalares_uno_a_uno(engine, auth, transporte, contexto, oids, ip):
-    print(f'escalares_uno_a_uno {ip}')
+    #print(f'escalares_uno_a_uno {ip}')
+    print(f"[{timezone.localtime():%d/%m/%Y %H:%M:%S}] escalares uno a uno {ip}")
     if not oids:
         return {}
     
