@@ -10,6 +10,65 @@ El transporte se configura por dispositivo desde
 valores por defecto de `settings.METRICAS_SNMP`.
 """
 
+
+# ----------------------------------------------------------------------
+# Compatibilidad Ubiquiti: Counter64 sobre SNMPv1
+#
+# Algunos agentes Ubiquiti devuelven Counter64 usando SNMPv1.
+# RFC1155 no contempla Counter64, por lo que PySNMP rechaza la
+# respuesta antes de entregarla a nextCmd()/getCmd().
+#
+# Añadimos Counter64 al ApplicationSyntax de SNMPv1.
+# ----------------------------------------------------------------------
+
+# ============================================================
+# PARCHE 1
+# Permitir Counter64 dentro de SNMPv1/rfc1155
+# ============================================================
+from pyasn1.type import namedtype
+from pyasn1.codec.ber import decoder
+
+from pysnmp.proto import rfc1155, rfc1902
+
+class _UbiquitiApplicationSyntax(rfc1155.ApplicationSyntax):
+    componentType = namedtype.NamedTypes(
+        *rfc1155.ApplicationSyntax.componentType.namedTypes,
+        namedtype.NamedType(
+            'big-counter',
+            rfc1902.Counter64()
+        )
+    )
+
+
+rfc1155.ObjectSyntax.componentType = namedtype.NamedTypes(
+    namedtype.NamedType(
+        'simple',
+        rfc1155.ObjectSyntax.componentType.getTypeByPosition(0)
+    ),
+    namedtype.NamedType(
+        'application-wide',
+        _UbiquitiApplicationSyntax()
+    )
+)
+
+# ============================================================
+# PARCHE 2
+# Permitir que rfc2576 convierta Counter64
+# ============================================================
+# Importante: después de modificar rfc1155.ObjectSyntax
+from pysnmp.proto.proxy import rfc2576
+
+rfc2576.__v1ToV2ValueMap[
+    rfc1902.Counter64.tagSet
+] = rfc1902.Counter64()
+
+
+
+# ----------------------------------------------------------------------
+# PySNMP HLAPI
+# IMPORTANTE: debe importarse DESPUÉS del parche anterior.
+# ----------------------------------------------------------------------
+
 from django.utils import timezone
 import django.conf as _conf
 
