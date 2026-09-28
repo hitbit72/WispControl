@@ -194,7 +194,7 @@ def consultar_escalares(dispositivo, oids):
 
 
 def _escalares_uno_a_uno(engine, auth, transporte, contexto, oids, ip):
-    #print('escalares_uno_a_uno')
+    print('escalares_uno_a_uno')
     if not oids:
         return {}
     
@@ -251,9 +251,9 @@ def consultar_if_table(dispositivo, oids, modo='general'):
             lexicographicMode=False,
         ):
             if errorIndication:
-                if modo != 'wifi':
-                    print(f"[{timezone.now():%d/%m/%Y %H:%M:%S}] {dispositivo.ip_gestion} ({dispositivo.nombre}) Error SNMP indication (Modo: {modo}): {errorIndication}")
-                    #print(f'ip: {dispositivo.ip_gestion}')
+                #if modo != 'wifi':
+                print(f"[{timezone.now():%d/%m/%Y %H:%M:%S}] {dispositivo.ip_gestion} ({dispositivo.nombre}) Error SNMP indication (Modo: {modo}): {errorIndication}")
+                #print(f'ip: {dispositivo.ip_gestion}')
                 break
             elif errorStatus:
                 print(f"[{timezone.now():%d/%m/%Y %H:%M:%S}] {dispositivo.ip_gestion} ({dispositivo.nombre}) Error SNMP status (Modo: {modo}): {errorStatus.prettyPrint()}")
