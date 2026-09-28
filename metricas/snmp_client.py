@@ -182,7 +182,7 @@ def consultar_if_table(dispositivo, oids, modo='general'):
     objetos_snmp = [ObjectType(ObjectIdentity(oid)) for oid in oids.values()]
  
     try:
-        # Usamos nextCmd para hacer un walk sobre las 3 columnas simultáneamente
+        # Usamos nextCmd para hacer un walk sobre las columnas simultáneamente
         for errorIndication, errorStatus, errorIndex, varBinds in nextCmd(
             engine,
             comunity,
