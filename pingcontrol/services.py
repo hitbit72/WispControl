@@ -124,15 +124,6 @@ def ping_detalles(dispositivo):
     except Exception as e:
         return False, None, None, f"[{timezone.localtime():%d/%m/%Y %H:%M:%S}] Error en ping: {str(e)}"
 
-    
-def guardar_historico_latencia(dispositivo, exitoso, latencia):
-    """ Guarda el historio de latencia del dispositivo """
-    DeviceLatencyHistory.objects.create(
-        device=dispositivo,
-        timestamp = timezone.localtime(),
-        latency_ms = latencia,
-        success = exitoso
-    )
 
 def guardar_metrica_ping(dispositivo, exitoso, latencia, error_msg=None):
     """
@@ -149,6 +140,34 @@ def guardar_metrica_ping(dispositivo, exitoso, latencia, error_msg=None):
     return guardar_metrica(dispositivo, **datos)
 
 
+
+def evaluar_alarma(dispositivo, ping_actual, ping_anterior):
+    """
+    Evalúa el resultado del ping y genera alarmas si corresponde.
+    Retorna lista de alarmas detectadas.
+    """
+    reglas = []
+
+    # Regla: sin respuesta a ping
+    if ping_actual.success == False:
+        reglas.append({
+            'regla': 'ping_sin_respuesta',
+            'titulo': f'Ping sin respuesta {dispositivo.ip_gestion}',
+            'texto': f'{dispositivo.nombre} no responde a ping.',
+        })
+
+    # Regla: recuperado (estaba inactivo y ahora responde)
+    elif ping_anterior.success != True:
+        reglas.append({
+            'regla': 'ping_recuperado',
+            'titulo': f'Ping recuperado {dispositivo.ip_gestion}',
+            'texto': f'{dispositivo.nombre} vuelve a responder a ping (latencia: {ping_actual.latency_ms} ms).',
+        })
+
+    return reglas
+
+
+# Funcion secundaria - Pendiente de aliminar cunado evaluar_alarma() este en fucionamiento
 def evaluar_ping(dispositivo, metrica, anterior):
     """
     Evalúa el resultado del ping y genera alarmas si corresponde.
@@ -343,16 +362,29 @@ def procesar_dispositivo(dispositivo):
 
     # Guardar métrica
     metrica = guardar_metrica_ping(dispositivo, exitoso, latencia, error_msg)
-    guardar_historico_latencia(dispositivo, exitoso, latencia)
 
     # Obtener métrica anterior
     anterior = DeviceMetrics.objects.filter(
         device=dispositivo, pk__lt=metrica.pk
     ).order_by('-pk').first()
-    
+
+    # Obtener historico anterior
+    ping_anterior = DeviceLatencyHistory.objects.filter(
+        device = dispositivo,
+    ).order_by('-pk').first()
+
+    #Guarda el historico de latencia del dispositivo
+    ping_actual = DeviceLatencyHistory.objects.create(
+        device=dispositivo,
+        timestamp = timezone.localtime(),
+        latency_ms = latencia,
+        success = exitoso
+    )
+  
     # Evaluar alarmas de ping
-    detectadas = evaluar_ping(dispositivo, metrica, anterior)
-    
+    # detectadas = evaluar_ping(dispositivo, metrica, anterior)
+    detectadas = evaluar_alarma(dispositivo, ping_actual, ping_anterior)
+
     # Sincronizar alarmas
     #if dispositivo.alarma_ping:
     sincronizar_alarmas_ping(dispositivo, detectadas, error_msg)
