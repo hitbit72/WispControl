@@ -95,7 +95,6 @@ def evaluar(dispositivo, metrica, anterior, config):
             ('rx_dbm', 'caida_potencia_rx', 'Caída de potencia RX', 'dBm', config.get('caida_potencia_rx')),
             ('signal', 'caida_signal', 'Caída de señal', 'dBm', config.get('caida_signal_dbm')),
             ('power', 'caida_potencia_tx', 'Caída de potencia TX', 'dBm', config.get('caida_potencia_tx')),
-            ('latencia', 'latencia_alta', 'Latencia alta', 'seg', config.get('latencia_alta')),
         ):
             if not umbral:
                 continue
