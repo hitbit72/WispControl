@@ -300,26 +300,28 @@ def procesar_dispositivo(dispositivo):
     if error_msg:
         print(error_msg)
 
-    # Guardar métrica (ya no se usa)
+    
+    """
+    # --- Guardar métrica (ya no se usa)
     # Sustituido por ping_anterior y ping_actual, usa el modelo DeviceLatencyHistory
 
     metrica = guardar_metrica_ping(dispositivo, exitoso, latencia, error_msg)
     
-    #Obtener métrica anterior
-    #anterior = DeviceMetrics.objects.filter(
-    #    device=dispositivo, pk__lt=metrica.pk
-    # ).order_by('-pk').first()
-    
+    # --- Obtener métrica anterior
+    anterior = DeviceMetrics.objects.filter(
+        device=dispositivo, pk__lt=metrica.pk
+    ).order_by('-pk').first()
+    """
 
     # Obtener historico anterior
     ping_anterior = DeviceLatencyHistory.objects.filter(
         device = dispositivo,
-    ).order_by('-pk').first()
+    ).order_by('-timestamp').first()
 
     #Guarda el historico de latencia del dispositivo
     ping_actual = DeviceLatencyHistory.objects.create(
         device=dispositivo,
-        timestamp = timezone.localtime(),
+        timestamp = timezone.now(),
         latency_ms = latencia,
         success = exitoso
     )
@@ -335,4 +337,4 @@ def procesar_dispositivo(dispositivo):
     # Actualizar estado del dispositivo
     actualizar_estado_dispositivo(dispositivo, detectadas)
     
-    return metrica, detectadas
+    return ping_actual, detectadas

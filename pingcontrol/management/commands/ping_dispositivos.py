@@ -87,10 +87,10 @@ class Command(BaseCommand):
         # Bucle por los dispositivos
         for dispositivo in dispositivos:
             try:
-                metrica, detectadas = procesar_dispositivo(dispositivo)
-                if metrica.status_ping == metrica.Status.OK:
+                ping_actual, detectadas = procesar_dispositivo(dispositivo)
+                if ping_actual.success:
                     ok += 1
-                    # self.stdout.write(self.style.SUCCESS(f'[{timezone.now():%d/%m/%Y %H:%M:%S}] 'f'[{dispositivo.ip_gestion}] Ping OK · {metrica.latencia} ms'))
+                    # self.stdout.write(self.style.SUCCESS(f'[{timezone.now():%d/%m/%Y %H:%M:%S}] 'f'[{dispositivo.ip_gestion}] Ping OK · {ping_actual.latency_ms} ms'))
                 else:
                     errores += 1
                     self.stdout.write(self.style.ERROR(

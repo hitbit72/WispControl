@@ -76,7 +76,7 @@ def guardar_puertos(dispositivo, **datos):
             if puerto["estado"] == 'up':
                 InterfaceMetricHistory.objects.create(
                     interfaz = interfaz,
-                    timestamp = timezone.localtime(),
+                    timestamp = timezone.now(),
                     rx = puerto["rx_counter"],
                     tx = puerto["tx_counter"],
                 )
