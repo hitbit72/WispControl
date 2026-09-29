@@ -167,32 +167,6 @@ def evaluar_alarma(dispositivo, ping_actual, ping_anterior):
     return reglas
 
 
-# Funcion secundaria - Pendiente de aliminar cunado evaluar_alarma() este en fucionamiento
-def evaluar_ping(dispositivo, metrica, anterior):
-    """
-    Evalúa el resultado del ping y genera alarmas si corresponde.
-    Retorna lista de alarmas detectadas.
-    """
-    reglas = []
-    
-    # Regla: sin respuesta a ping
-    if metrica.status_ping != DeviceMetrics.Status.OK:
-        reglas.append({
-            'regla': 'ping_sin_respuesta',
-            'titulo': f'Ping sin respuesta {dispositivo.ip_gestion}',
-            'texto': f'{dispositivo.nombre} no responde a ping.',
-        })
-    
-    # Regla: recuperado (estaba inactivo y ahora responde)
-    elif anterior and anterior.status_ping != DeviceMetrics.Status.OK:
-        reglas.append({
-            'regla': 'ping_recuperado',
-            'titulo': f'Ping recuperado {dispositivo.ip_gestion}',
-            'texto': f'{dispositivo.nombre} vuelve a responder a ping (latencia: {metrica.latencia} ms).',
-        })
-    
-    return reglas
-
 
 def sincronizar_alarmas_ping(dispositivo, detectadas, error_msg):
     """
@@ -327,7 +301,6 @@ def procesar_dispositivo(dispositivo):
     )
   
     # Evaluar alarmas de ping
-    # detectadas = evaluar_ping(dispositivo, metrica, anterior)
     detectadas = evaluar_alarma(dispositivo, ping_actual, ping_anterior)
 
     # Sincronizar alarmas
