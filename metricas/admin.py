@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Alarma, DeviceMetrics, OIDmetric
+from .models import Alarma, DeviceMetrics, OIDmetric, DeviceLatencyHistory
 
 
 @admin.register(DeviceMetrics)
@@ -28,3 +28,11 @@ class OIDmetricAdmin(admin.ModelAdmin):
     list_filter = ('marca__nombre', 'tipo')
     search_fields = ('marca__nombre', 'marca__modelo', 'tipo')
     list_select_related = ('marca',)
+
+@admin.register(DeviceLatencyHistory)
+class DeviceLatency(admin.ModelAdmin):
+    list_display = ('device', 'latency_ms', 'success', 'timestamp')
+    list_filter = ('device',)
+    date_hierarchy = 'timestamp'
+    search_fields = ('device__nombre',)
+    readonly_fields = ('device',)
