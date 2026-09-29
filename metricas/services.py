@@ -12,7 +12,7 @@ from eventos.services import registrar_evento
 
 from dispositivos.models import Dispositivo, Interfaz
 
-from .models import Alarma, DeviceMetrics
+from .models import Alarma, DeviceMetrics, InterfaceMetricHistory
 from .reglas import REGLA_NIVEL, evaluar
 from telegram.services import enviar_alerta_telegram
 
@@ -31,8 +31,11 @@ def guardar_metrica(dispositivo, **datos):
     )[0]
 
 
+
+
 def guardar_puertos(dispositivo, **datos):
-    """Guarda o actualiza las interfaces/puertos recibidos en el diccionario de métricas.
+    """
+    Guarda o actualiza las interfaces/puertos recibidos en el diccionario de métricas.
     :param dispositivo: Instancia del modelo Dispositivo (o su objeto/ID)
     :param datos: Diccionario con los datos recopilados por SNMP
     """
@@ -68,6 +71,18 @@ def guardar_puertos(dispositivo, **datos):
             defaults=uData,
         )
 
+        # guardamos las metrcias históricas
+        if interfaz:
+            if puerto["estado"] == 'up':
+                InterfaceMetricHistory.objects.create(
+                    interfaz = interfaz,
+                    timestamp = timezone.localtime(),
+                    rx = puerto["rx_counter"],
+                    tx = puerto["tx_counter"],
+                )
+
+
+
     # Puertos especiales de la olt ubiquiti
     if datos.get("puertos_pon"):
         puertos = datos.get("puertos", [])
@@ -88,6 +103,10 @@ def guardar_puertos(dispositivo, **datos):
                 nombre=puerto["nombre"],
                 defaults=uData,
             )
+
+
+
+
 
 def guarda_staciones_wifi(dispositivo, **datos):
     """ 

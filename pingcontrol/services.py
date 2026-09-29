@@ -157,7 +157,7 @@ def evaluar_alarma(dispositivo, ping_actual, ping_anterior):
         })
 
     # Regla: recuperado (estaba inactivo y ahora responde)
-    elif ping_anterior.success != True:
+    elif ping_anterior.success == False:
         reglas.append({
             'regla': 'ping_recuperado',
             'titulo': f'Ping recuperado {dispositivo.ip_gestion}',
@@ -285,70 +285,10 @@ def actualizar_estado_dispositivo(dispositivo, detectadas):
     if ping_caido and dispositivo.estado == Dispositivo.Estado.ACTIVO:
         dispositivo.estado = Dispositivo.Estado.INACTIVO
         dispositivo.save(update_fields=['estado'])
-
-        """
-        ya se genera un aviso en sincronizar_alarmas_ping
-
-        if dispositivo.alarma_ping:
-            registrar_evento(
-                MODULO,
-                f'Dispositivo inactivo por ping: {dispositivo.ip_gestion}',
-                f'{dispositivo.nombre} marcado como inactivo por no responder a ping.',
-                nivel=Evento.Nivel.NOTICE,
-            )
-        """
     
     elif not ping_caido and dispositivo.estado == Dispositivo.Estado.INACTIVO:
         dispositivo.estado = Dispositivo.Estado.ACTIVO
         dispositivo.save(update_fields=['estado'])
-
-        """
-        if dispositivo.alarma_ping:
-            registrar_evento(
-                MODULO,
-                f'Dispositivo recuperado por ping: {dispositivo.ip_gestion}',
-                f'{dispositivo.nombre} vuelve a responder a ping, marcado como activo.',
-                nivel=Evento.Nivel.NOTICE,
-            )
-        """
-
-
-# Funcion original que no funciona correctamente (desabilitada)
-def actualizar_estado_dispositivo_original(dispositivo, detectadas):
-    """
-    Actualiza el estado del dispositivo según las alarmas de ping.
-    Solo toca estados 'activo'/'inactivo'.
-    """
-    if dispositivo.estado not in (Dispositivo.Estado.ACTIVO, Dispositivo.Estado.INACTIVO):
-        return
-    
-    # Verificar si hay alarma de ping sin respuesta activa
-    ping_caido = any(a['regla'] == 'ping_sin_respuesta' for a in detectadas)
-    ping_recuperado = any(a['regla'] == 'ping_recuperado' for a in detectadas)
-    
-    if ping_caido and dispositivo.estado == Dispositivo.Estado.ACTIVO:
-        dispositivo.estado = Dispositivo.Estado.INACTIVO
-        dispositivo.save(update_fields=['estado'])
-
-        if dispositivo.alarma_ping:
-            registrar_evento(
-                MODULO,
-                f'Dispositivo inactivo por ping: {dispositivo.ip_gestion}',
-                f'{dispositivo.nombre} marcado como inactivo por no responder a ping.',
-                nivel=Evento.Nivel.CRITICAL,
-            )
-    
-    elif ping_recuperado and dispositivo.estado == Dispositivo.Estado.INACTIVO:
-        dispositivo.estado = Dispositivo.Estado.ACTIVO
-        dispositivo.save(update_fields=['estado'])
-
-        if dispositivo.alarma_ping:
-            registrar_evento(
-                MODULO,
-                f'Dispositivo recuperado por ping: {dispositivo.ip_gestion}',
-                f'{dispositivo.nombre} vuelve a responder a ping, marcado como activo.',
-                nivel=Evento.Nivel.NOTICE,
-            )
 
 
 def procesar_dispositivo(dispositivo):

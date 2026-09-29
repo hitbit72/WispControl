@@ -50,7 +50,7 @@ def evaluar(dispositivo, metrica, anterior, config):
 
     if metrica.status != DeviceMetrics.Status.OK:
         texto = f'{dispositivo.ip_gestion} ({dispositivo.nombre}) no responde a SNMP ({metrica.get_status_display()}).'
-        return [{'regla': 'sin_respuesta_snmp', 'titulo': f'{dispositivo.ip_gestion} {_texto_conectividad(dispositivo.tipo.nombre)}', 'texto': texto}]
+        return [{'regla': 'sin_respuesta_snmp', 'titulo': f'Sin respuesta SNMP {dispositivo.ip_gestion}', 'texto': texto}]
 
     if metrica.cpu is not None and metrica.cpu > config['cpu_max']:
         #print(f'CPU alta {dispositivo.ip_gestion}')

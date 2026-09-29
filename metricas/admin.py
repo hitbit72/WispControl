@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Alarma, DeviceMetrics, OIDmetric, DeviceLatencyHistory
+from .models import Alarma, DeviceMetrics, OIDmetric, DeviceLatencyHistory, InterfaceMetricHistory
 
 
 @admin.register(DeviceMetrics)
@@ -35,3 +35,9 @@ class DeviceLatency(admin.ModelAdmin):
     date_hierarchy = 'timestamp'
     search_fields = ('device__nombre',)
     readonly_fields = ('device',)
+
+@admin.register(InterfaceMetricHistory)
+class InterfaceMetrica(admin.ModelAdmin):
+    list_display = ('interfaz', 'timestamp', 'rx', 'tx')
+    search_fields = ('interfaz__nombre',)
+    readonly_fields = ('interfaz',)

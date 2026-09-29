@@ -106,10 +106,43 @@ class DeviceLatencyHistory(models.Model):
     class Meta:
         verbose_name = 'Métrica de latencia de dispositivo'
         verbose_name_plural = 'Métricas de latencia de dispositivos'
+        ordering = ['-timestamp']
         indexes = [
             models.Index(fields=['device', 'timestamp']),
-            models.Index(fields=['timestamp']),
         ]
+
+
+
+# Histórico de rx/tx de los puertos
+class InterfaceMetricHistory(models.Model):
+    interfaz = models.ForeignKey(
+        'dispositivos.Interfaz',
+        on_delete=models.CASCADE,
+        related_name='metricas_historicas',
+    )
+
+    timestamp = models.DateTimeField()
+    rx = models.BigIntegerField(null=True, blank=True)
+    tx = models.BigIntegerField(null=True, blank=True)
+
+    class Meta:
+        verbose_name = 'Histórico de tráfico de interfaz'
+        verbose_name_plural = 'Históricos de tráfico de interfaces'
+        ordering = ['-timestamp']
+        
+        constraints = [
+            models.UniqueConstraint(
+                fields=['interfaz', 'timestamp'],
+                name='interface_metric_unique_timestamp',
+            ),
+        ]
+        indexes = [
+            models.Index(
+                fields=['interfaz', 'timestamp'],
+                name='interface_metric_history_idx',
+            ),
+        ]
+
 
 class Alarma(models.Model):
     """

@@ -63,7 +63,7 @@
         <p class="mb-0"><strong>CCQ:</strong> {{ metricas.ccq|default:'0' }} %</p> ·
       </div>
         <div class="col-auto d-flex gap-1">
-        <p class="mb-0"><strong>Latencia:</strong> {{ metricas.latencia|default:'0' }} ms</p>
+        <p class="mb-0"><strong>Latencia:</strong> {{ metricas.latencia|default:'—' }} ms</p>
       </div>
     </div>
     {% if metricas.rx %}
@@ -78,7 +78,7 @@
     </div>
     {% endif %}
     <div class="col-auto d-flex gap-1">
-      <p class="mb-0"><strong>Latencia:</strong> {{ metricas.latencia|default:'0' }} ms</p>
+      <p class="mb-0"><strong>Latencia:</strong> {{ metricas.latencia|default:'—' }} ms</p>
     </div>
   </div>
   {% endif %}
