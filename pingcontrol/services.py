@@ -6,7 +6,7 @@ from django.utils import timezone
 from django.db.models import Q
 
 from dispositivos.models import Dispositivo
-from metricas.models import DeviceMetrics, Alarma
+from metricas.models import DeviceMetrics, Alarma, DeviceLatencyHistory
 from eventos.services import registrar_evento
 from eventos.models import Evento
 from telegram.services import enviar_alerta_telegram
@@ -79,7 +79,7 @@ def ping_dispositivo(dispositivo):
 
 def ping_detalles(dispositivo):
     """
-    Hace ping desde la apgina de detalles de un dispositivo y devuelve 
+    Hace ping desde la página de detalles de un dispositivo y devuelve 
     (exitoso, latencia_promedio_ms, resultado, error_msg).
     
     Returns:
@@ -125,7 +125,15 @@ def ping_detalles(dispositivo):
         return False, None, None, f"[{timezone.localtime():%d/%m/%Y %H:%M:%S}] Error en ping: {str(e)}"
 
     
-    
+def guardar_historico_latencia(dispositivo, exitoso, latencia):
+    """ Guarda el historio de latencia del dispositivo """
+    DeviceLatencyHistory.objects.create(
+        device=dispositivo,
+        timestamp = timezone.localtime(),
+        latency_ms = latencia,
+        success = exitoso
+    )
+
 def guardar_metrica_ping(dispositivo, exitoso, latencia, error_msg=None):
     """
     Guarda o actualiza la métrica de ping en DeviceMetrics.
@@ -335,7 +343,8 @@ def procesar_dispositivo(dispositivo):
 
     # Guardar métrica
     metrica = guardar_metrica_ping(dispositivo, exitoso, latencia, error_msg)
-    
+    guardar_historico_latencia(dispositivo, exitoso, latencia)
+
     # Obtener métrica anterior
     anterior = DeviceMetrics.objects.filter(
         device=dispositivo, pk__lt=metrica.pk

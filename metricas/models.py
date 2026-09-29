@@ -91,6 +91,25 @@ class DeviceMetrics(models.Model):
         return f'{self.device.nombre} · {self.timestamp:%d/%m/%Y %H:%M} · {self.status}'
 
 
+# Histórico de latencia de dispositivos
+class DeviceLatencyHistory(models.Model):
+    device = models.ForeignKey(
+        'dispositivos.Dispositivo',
+        on_delete=models.CASCADE,
+        related_name='latencias',
+    )
+
+    timestamp = models.DateTimeField()
+    latency_ms = models.FloatField(null=True, blank=True)
+    success = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name = 'Métrica de latencia de dispositivo'
+        verbose_name_plural = 'Métricas de latencia de dispositivos'
+        indexes = [
+            models.Index(fields=['device', 'timestamp']),
+            models.Index(fields=['timestamp']),
+        ]
 
 class Alarma(models.Model):
     """
