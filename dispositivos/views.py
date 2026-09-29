@@ -266,6 +266,8 @@ def detalle_dispositivo(request, pk):
 
     # contar el número de alarmas que tiene
     hay_alarmas = dispositivo.alarmas.count()
+    # Latencia ping
+    ping_actual = dispositivo.latencias.first()
 
     return render(request, 'dispositivo/detalle_dispositivo.html', {
         'dispositivo': dispositivo,
@@ -273,6 +275,7 @@ def detalle_dispositivo(request, pk):
         'estaciones': devices,
         'url_anterior': url_anterior,
         'hay_alarmas': hay_alarmas,
+        'ping_actual': ping_actual,
         'dispositivos_ap': dispositivos_ap,
         'dispositivos_antenas': dispositivos_antenas,
     })

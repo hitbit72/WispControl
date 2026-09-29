@@ -29,10 +29,13 @@ def actualizar_metricas_snmp(request, pk):
         pass
 
     metricas = dispositivo.metricas.first()
+    # Latencia ping
+    ping_actual = dispositivo.latencias.first()
 
     response = render(request, 'dispositivo/metrica/_metricas_partial.html', {
         'metricas': metricas,
         'dispositivo': dispositivo,
+        'ping_actual': ping_actual,
         'dispositivos_ap': dispositivos_ap,
     })
     # Envía un encabezado HTTP que htmx interpreta como evento

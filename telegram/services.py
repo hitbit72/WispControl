@@ -67,6 +67,8 @@ def _build_message(dispositivo, alarma, accion):
     
     # Métricas relevantes según tipo
     metrica = dispositivo.metricas.first()
+    ping_actual = dispositivo.latencias.first()
+
     if metrica:
         if alarma.tipo == 'snmp':
             if metrica.signal is not None:
@@ -74,8 +76,8 @@ def _build_message(dispositivo, alarma, accion):
             if metrica.frequency is not None:
                 lines.append(f"📶 Frecuencia: {metrica.frequency} Mhz")
         elif alarma.tipo == 'ping':
-            if metrica.latencia is not None:
-                lines.append(f"⏱ Latencia: {metrica.latencia} ms")
+            if ping_actual and ping_actual.success:
+                lines.append(f"⏱ Latencia: {ping_actual.latency_ms} ms")
     """
     if metrica:
         if alarma.tipo == 'snmp':
