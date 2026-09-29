@@ -301,12 +301,15 @@ def procesar_dispositivo(dispositivo):
         print(error_msg)
 
     # Guardar métrica (ya no se usa)
-    # metrica = guardar_metrica_ping(dispositivo, exitoso, latencia, error_msg)
+    # Sustituido por ping_anterior y ping_actual, usa el modelo DeviceLatencyHistory
 
-    # Obtener métrica anterior
-    # anterior = DeviceMetrics.objects.filter(
+    metrica = guardar_metrica_ping(dispositivo, exitoso, latencia, error_msg)
+    
+    #Obtener métrica anterior
+    #anterior = DeviceMetrics.objects.filter(
     #    device=dispositivo, pk__lt=metrica.pk
     # ).order_by('-pk').first()
+    
 
     # Obtener historico anterior
     ping_anterior = DeviceLatencyHistory.objects.filter(
