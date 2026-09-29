@@ -32,7 +32,6 @@ class OIDmetricAdmin(admin.ModelAdmin):
 @admin.register(DeviceLatencyHistory)
 class DeviceLatency(admin.ModelAdmin):
     list_display = ('device', 'latency_ms', 'success', 'timestamp')
-    list_filter = ('device',)
     date_hierarchy = 'timestamp'
     search_fields = ('device__nombre',)
     readonly_fields = ('device',)
