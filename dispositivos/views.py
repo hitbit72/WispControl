@@ -152,7 +152,7 @@ def nuevo_dispositivo(request, pk=0):
 
 @login_required
 def detalle_dispositivo(request, pk):
-    """
+    
     dispositivo = get_object_or_404(
         Dispositivo.objects.prefetch_related(
             'interfaces', 
@@ -182,6 +182,7 @@ def detalle_dispositivo(request, pk):
         ),
         pk=pk,
     )
+    """
 
     # Capturamos la URL de redirección (si viene en el GET o en el POST)
     url_anterior = request.POST.get('next') or request.GET.get('next')

@@ -159,7 +159,7 @@ class Interfaz(models.Model):
         verbose_name = 'Interfaz'
         verbose_name_plural = 'Interfaces'
         unique_together = ('dispositivo', 'nombre')
-        ordering = ['dispositivo', 'nombre']
+        ordering = ['id',]
 
     def __str__(self):
         return f'{self.dispositivo.nombre} · {self.nombre}'

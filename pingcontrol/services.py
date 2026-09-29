@@ -300,13 +300,13 @@ def procesar_dispositivo(dispositivo):
     if error_msg:
         print(error_msg)
 
-    # Guardar métrica
-    metrica = guardar_metrica_ping(dispositivo, exitoso, latencia, error_msg)
+    # Guardar métrica (ya no se usa)
+    # metrica = guardar_metrica_ping(dispositivo, exitoso, latencia, error_msg)
 
     # Obtener métrica anterior
-    anterior = DeviceMetrics.objects.filter(
-        device=dispositivo, pk__lt=metrica.pk
-    ).order_by('-pk').first()
+    # anterior = DeviceMetrics.objects.filter(
+    #    device=dispositivo, pk__lt=metrica.pk
+    # ).order_by('-pk').first()
 
     # Obtener historico anterior
     ping_anterior = DeviceLatencyHistory.objects.filter(
