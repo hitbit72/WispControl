@@ -6,7 +6,7 @@ from django.utils import timezone
 from django.db.models import Q
 
 from dispositivos.models import Dispositivo
-from metricas.models import DeviceMetrics, Alarma, DeviceLatencyHistory
+from metricas.models import Alarma, DeviceLatencyHistory
 from eventos.services import registrar_evento
 from eventos.models import Evento
 from telegram.services import enviar_alerta_telegram
@@ -123,22 +123,6 @@ def ping_detalles(dispositivo):
             
     except Exception as e:
         return False, None, None, f"[{timezone.localtime():%d/%m/%Y %H:%M:%S}] Error en ping: {str(e)}"
-
-
-def guardar_metrica_ping(dispositivo, exitoso, latencia, error_msg=None):
-    """
-    Guarda o actualiza la métrica de ping en DeviceMetrics.
-    """
-    from metricas.services import guardar_metrica
-    
-    datos = {
-        'status_ping': DeviceMetrics.Status.OK if exitoso else DeviceMetrics.Status.TIMEOUT,
-        'latencia': latencia,
-        'timeping': timezone.now(),
-    }
-    
-    return guardar_metrica(dispositivo, **datos)
-
 
 
 def evaluar_alarma(dispositivo, ping_actual, ping_anterior):
@@ -274,19 +258,6 @@ def procesar_dispositivo(dispositivo):
     if error_msg:
         print(error_msg)
 
-    
-    """
-    # --- Guardar métrica (ya no se usa)
-    # Sustituido por ping_anterior y ping_actual, usa el modelo DeviceLatencyHistory
-
-    metrica = guardar_metrica_ping(dispositivo, exitoso, latencia, error_msg)
-    
-    # --- Obtener métrica anterior
-    anterior = DeviceMetrics.objects.filter(
-        device=dispositivo, pk__lt=metrica.pk
-    ).order_by('-pk').first()
-    """
-
     # Obtener historico anterior
     ping_anterior = DeviceLatencyHistory.objects.filter(
         device = dispositivo,
@@ -304,7 +275,6 @@ def procesar_dispositivo(dispositivo):
     detectadas = evaluar_alarma(dispositivo, ping_actual, ping_anterior)
 
     # Sincronizar alarmas
-    #if dispositivo.alarma_ping:
     sincronizar_alarmas_ping(dispositivo, detectadas, error_msg)
     
     # Actualizar estado del dispositivo
