@@ -5,11 +5,11 @@ from .models import Alarma, DeviceMetrics, OIDmetric, DeviceLatencyHistory, Inte
 
 @admin.register(DeviceMetrics)
 class DeviceMetricsAdmin(admin.ModelAdmin):
-    list_display = ('device', 'status', 'status_ping', 'cpu', 'ram', 'frequency', 'clients', 'timeping')
+    list_display = ('device', 'status', 'status_ping', 'cpu', 'ram', 'frequency', 'clients')
     list_filter = ('status', 'status_ping', 'device__tipo', 'device__marca')
     date_hierarchy = 'timestamp'
     search_fields = ('device__nombre',)
-    readonly_fields = ('device', 'timestamp', 'timescan', 'timeping')
+    readonly_fields = ('device', 'timestamp', 'timescan')
     list_select_related = ('device',)
 
 

@@ -21,7 +21,7 @@ class DeviceMetrics(models.Model):
 
     timestamp = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de registro')
     timescan = models.DateTimeField(null=True, blank=True, verbose_name='Fecha escaneo SNMP')
-    timeping = models.DateTimeField(null=True, blank=True, verbose_name='Fecha escaneo Ping')
+    #timeping = models.DateTimeField(null=True, blank=True, verbose_name='Fecha escaneo Ping')
 
     sys_name = models.CharField(max_length=255, null=True, blank=True, verbose_name='Nombre sistema')
     sys_descr = models.CharField(max_length=255, null=True, blank=True, verbose_name='Descripción')
@@ -53,7 +53,7 @@ class DeviceMetrics(models.Model):
     antena = models.CharField(max_length=100, null=True, blank=True, verbose_name='Tipo Antena')
     distancia = models.PositiveIntegerField(null=True, blank=True, verbose_name='Distnacia')
     clients = models.PositiveIntegerField(null=True, blank=True, verbose_name='Clientes conectados')
-    latencia = models.FloatField(null=True, blank=True, verbose_name='Latencia')
+    #latencia = models.FloatField(null=True, blank=True, verbose_name='Latencia')
 
     puertos = models.JSONField(
         default=list, blank=True,

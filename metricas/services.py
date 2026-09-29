@@ -23,7 +23,7 @@ def guardar_metrica(dispositivo, **datos):
     """ Crea la fila DeviceMetrics.
         Se actualiza siempre el mismo registro, ya que se refiere siempre al
         mismo dispositivo y no necesitamos datos a lo largo del tiempo.
-        Usamos timescan y timeping solo para saber cuando se actualizó.
+        Usamos timescan solo para saber cuando se actualizó.
     """
     return DeviceMetrics.objects.update_or_create(
         device=dispositivo,

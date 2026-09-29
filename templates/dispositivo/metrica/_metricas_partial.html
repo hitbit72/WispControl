@@ -32,11 +32,11 @@
     </div>
   </div>
 
-  {% if metricas.temperature %}<p class="mb-1"><strong>Temperatura:</strong> {{ metricas.temperature }}º</p>{% endif %}
-  {% if metricas.antena %}<p class="mb-1"><strong>Antena:</strong> {{ metricas.antena }}</p>{% endif %}
+  {% if metricas.temperature %}<p class="mb-1"><strong>Temperatura: </strong>{{ metricas.temperature }}º</p>{% endif %}
+  {% if metricas.antena %}<p class="mb-1"><strong>Antena: </strong>{{ metricas.antena }}</p>{% endif %}
   
   {% if metricas.ssid %}
-  <p class="mb-1"><strong>SSID:</strong>
+  <p class="mb-1"><strong>SSID: </strong>
     {% if dispositivo.tipo.clave in dispositivos_ap %}
       {{ metricas.ssid }}
       {% if metricas.frequency %}
@@ -52,38 +52,38 @@
   {% if dispositivo.tipo.clave in dispositivos_antenas %}
     <div class="row g-2 align-items-start mb-1">
       <div class="col-auto d-flex gap-1">
-        <p class="mb-0"><strong>Señal:</strong>{% include "dispositivo/comun/_signal_tx.html" %}</p> ·
+        <p class="mb-0"><strong>Señal: </strong>{% include "dispositivo/comun/_signal_tx.html" %}</p> ·
       </div>
       <div class="col-auto d-flex gap-1">
-        <p class="mb-0"><strong>Potencia:</strong> {{ metricas.power|default:'0' }} dbm</p>
+        <p class="mb-0"><strong>Potencia: </strong>{{ metricas.power|default:'0' }} dbm</p>
       </div>
     </div>
     <div class="row g-2 align-items-start mb-1">
       <div class="col-auto d-flex gap-1">
-        <p class="mb-0"><strong>CCQ:</strong> {{ metricas.ccq|default:'0' }} %</p> ·
+        <p class="mb-0"><strong>CCQ: </strong>{{ metricas.ccq|default:'0' }} %</p> ·
       </div>
         <div class="col-auto d-flex gap-1">
-        <p class="mb-0"><strong>Latencia:</strong> {{ ping_actual.latency_ms|default:'—' }} ms</p>
+        <p class="mb-0"><strong>Latencia: </strong> {{ ping_actual.latency_ms|default:'—' }} ms</p>
       </div>
     </div>
     {% if metricas.rx %}
-      <p class="mb-1"><strong>Capacidad rx/tx:</strong> {{ metricas.rx|format_bitrate }} / {{ metricas.tx|format_bitrate }} </p>
+      <p class="mb-1"><strong>Capacidad rx/tx: </strong>{{ metricas.rx|format_bitrate }} / {{ metricas.tx|format_bitrate }} </p>
     {% endif %}
   {% endif %}
   {% if not dispositivo.tipo.clave in dispositivos_antenas %}
   <div class="row g-2 align-items-start mb-1">
     {% if dispositivo.tipo.clave == 'mkt' %}
     <div class="col-auto d-flex gap-1">
-      <p class="mb-0"><strong>CPU Frecuencia:</strong> {{ metricas.frequency |default:'0' }} MHz</p> ·
+      <p class="mb-0"><strong>CPU Frecuencia: </strong>{{ metricas.frequency |default:'0' }} MHz</p> ·
     </div>
     {% endif %}
     <div class="col-auto d-flex gap-1">
-      <p class="mb-0"><strong>Latencia:</strong>{{ ping_actual.latency_ms|default:'—' }} ms</p>
+      <p class="mb-0"><strong>Latencia: </strong>{{ ping_actual.latency_ms|default:'—' }} ms</p>
     </div>
   </div>
   {% endif %}
-  {% if metricas.uptime %}<p class="mb-1"><strong>Funcionando:</strong> {{ metricas.uptime|formatear_uptime }}</p>{% endif %}
-  {% if metricas.timescan %}<p class="mb-0"><strong>Actualizado:</strong> {{ metricas.timescan }}</p>{% endif %}
+  {% if metricas.uptime %}<p class="mb-1"><strong>Funcionando: </strong>{{ metricas.uptime|formatear_uptime }}</p>{% endif %}
+  {% if metricas.timescan %}<p class="mb-0"><strong>Actualizado: </strong>{{ metricas.timescan }}</p>{% endif %}
 
 
 {% else %}
