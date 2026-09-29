@@ -54,18 +54,17 @@ class DeviceMetrics(models.Model):
     distancia = models.PositiveIntegerField(null=True, blank=True, verbose_name='Distnacia')
     clients = models.PositiveIntegerField(null=True, blank=True, verbose_name='Clientes conectados')
     latencia = models.FloatField(null=True, blank=True, verbose_name='Latencia')
+
     puertos = models.JSONField(
         default=list, blank=True,
         verbose_name='Interfaces',
         help_text='JSON de interfaz: {speed, estado, nombre, rx_counter, tx_counter}',
     )
-
     puertos_pon = models.JSONField(
         default=list, blank=True, null=True,
         verbose_name='Puertos PON',
         help_text='JSON de interfaces PON: {speed, estado, nombre, rx_counter, tx_counter}',
     )
-
     estaciones = models.JSONField(
         default=list, blank=True, null=True,
         verbose_name='Estaciones',

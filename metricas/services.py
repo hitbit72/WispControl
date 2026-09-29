@@ -61,13 +61,14 @@ def guardar_puertos(dispositivo, **datos):
         elif any(exclude.lower() in puerto['nombre'].lower() for exclude in ('ppp',)):
             uData.update({'tipo': Interfaz.Tipo.PPPOE})
 
-        #print(f' {puerto["nombre"]}: {uData}')
+        # Actualizamos o registramos el puero si no existe
         interfaz, created = Interfaz.objects.update_or_create(
             dispositivo=dispositivo,
             nombre=puerto["nombre"],
             defaults=uData,
         )
 
+    # Puertos especiales de la olt ubiquiti
     if datos.get("puertos_pon"):
         puertos = datos.get("puertos", [])
         for puerto in puertos:
@@ -81,7 +82,7 @@ def guardar_puertos(dispositivo, **datos):
                 uData = {
                     "estado": puerto["estado"],
                 }
-            #print(f' {puerto["nombre"]}: {uData}')
+            # Actualizamos o registramos el puero si no existe
             interfaz, created = Interfaz.objects.update_or_create(
                 dispositivo=dispositivo,
                 nombre=puerto["nombre"],
@@ -108,13 +109,6 @@ def guarda_staciones_wifi(dispositivo, **datos):
         # Obtenemos la INSTANCIA única del dispositivo por su IP de gestión
         estacion_dev = Dispositivo.objects.filter(ip_gestion=ip).first()
 
-        """
-        Se puede usar una busqueda por ip publica o ip privada:
-        estacion_dev = Dispositivo.objects.filter(
-            Q(ip_gestion=ip) | Q(ip_publica=ip)
-        ).first()
-        """
-
         # Actualización de datos. Se tiene que usar las keys de OID
         uData = {
             'ccq': estacion.get('ccq'),
@@ -133,12 +127,16 @@ def guarda_staciones_wifi(dispositivo, **datos):
                 device=estacion_dev,
                 defaults=uData,
             )
-        # Si el dispositivo no existe, se puede crear cómo Discover. (Queda peniente)
+        # Si el dispositivo no existe, se puede crear cómo Discover. (Queda pendiente)
 
 
 
 def guarda_estaciones_onu(dispositivo, **datos):
-    """ Guarda los datos básicos de los dispositivos 'onu' de ubiquiti """
+    """ 
+        Guarda los datos básicos de los dispositivos 'onu' de ubiquiti.
+        Estos dispositivos no tiene servicio SNMP.
+
+    """
 
     # Extraer la lista de estaciones del diccionario (si no existe, usa lista vacía)
     onus = datos.get("onus", [])
@@ -150,7 +148,7 @@ def guarda_estaciones_onu(dispositivo, **datos):
         if not serial:
             continue
 
-        # Se tiene que usar las keys de OID
+        # Se tiene que relacionar las keys de OID con el modelo.
         uData = {
             'signal': onu.get('signal'),
             'power': onu.get('power'),
