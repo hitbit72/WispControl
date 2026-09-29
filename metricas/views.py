@@ -30,7 +30,8 @@ def actualizar_metricas_snmp(request, pk):
 
     metricas = dispositivo.metricas.first()
     # Latencia ping
-    ping_actual = dispositivo.latencias.first()
+    #ping_actual = dispositivo.latencias.first()
+    ping_actual = dispositivo.latencias.order_by('-timestamp').first()
 
     response = render(request, 'dispositivo/metrica/_metricas_partial.html', {
         'metricas': metricas,
