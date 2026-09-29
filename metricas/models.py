@@ -77,7 +77,7 @@ class DeviceMetrics(models.Model):
     )
 
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.OK, verbose_name='Estado SNMP',)
-    status_ping = models.CharField(max_length=20, choices=Status.choices, default=Status.OK, verbose_name='Estado PING',)
+    #status_ping = models.CharField(max_length=20, choices=Status.choices, default=Status.OK, verbose_name='Estado PING',)
 
     class Meta:
         verbose_name = 'Métrica de dispositivo'
