@@ -43,7 +43,6 @@ CAMPO = {
     'ram': 'ram',
     'temperature': 'temperature',
     'power': 'power',
-    'snr': 'snr',
     'ccq': 'ccq',
     'signal': 'signal',
     'frequency': 'frequency',

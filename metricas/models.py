@@ -21,7 +21,6 @@ class DeviceMetrics(models.Model):
 
     timestamp = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de registro')
     timescan = models.DateTimeField(null=True, blank=True, verbose_name='Fecha escaneo SNMP')
-    #timeping = models.DateTimeField(null=True, blank=True, verbose_name='Fecha escaneo Ping')
 
     sys_name = models.CharField(max_length=255, null=True, blank=True, verbose_name='Nombre sistema')
     sys_descr = models.CharField(max_length=255, null=True, blank=True, verbose_name='Descripción')
@@ -33,13 +32,12 @@ class DeviceMetrics(models.Model):
     power = models.FloatField(null=True, blank=True, verbose_name='Potencia (W)')
     rx = models.BigIntegerField(null=True, blank=True, verbose_name='Capacidad Rx (bps)')
     tx = models.BigIntegerField(null=True, blank=True, verbose_name='Capacidad Tx (bps)')
-    snr = models.FloatField(null=True, blank=True, verbose_name='SNR (dB)')
+    #snr = models.FloatField(null=True, blank=True, verbose_name='SNR (dB)')  # (SNR = Señal - Ruido)
     ccq = models.FloatField(null=True, blank=True, verbose_name='CCQ (%)')
     signal = models.FloatField(null=True, blank=True, verbose_name='Señal (dBm)')
     noise = models.FloatField(null=True,blank=True, verbose_name='Noise floor')
 
     ssid = models.CharField(max_length=200, null=True, blank=True)
-    #channel = models.CharField(max_length=20, blank=True, verbose_name='Canal')
     frequency = models.FloatField(null=True, blank=True, verbose_name='Frecuencia (MHz)')
     w_channel = models.FloatField(null=True,blank=True, verbose_name='Ancho canal')
     antena = models.CharField(max_length=100, null=True, blank=True, verbose_name='Tipo Antena')
@@ -50,7 +48,6 @@ class DeviceMetrics(models.Model):
         verbose_name='Uptime (segundos)',
         help_text='Segundos desde el último reinicio.',
     )
-    #latencia = models.FloatField(null=True, blank=True, verbose_name='Latencia')
 
     puertos = models.JSONField(
         default=list, blank=True,
@@ -72,9 +69,7 @@ class DeviceMetrics(models.Model):
         verbose_name='Onus',
         help_text='JSON de ONUs: {pon, name, model, power, serial, signal}',
     )
-
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.OK, verbose_name='Estado SNMP',)
-    #status_ping = models.CharField(max_length=20, choices=Status.choices, default=Status.OK, verbose_name='Estado PING',)
 
     class Meta:
         verbose_name = 'Métrica de dispositivo'
