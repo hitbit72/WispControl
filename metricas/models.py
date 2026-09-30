@@ -136,6 +136,39 @@ class InterfaceMetricHistory(models.Model):
         ]
 
 
+# Histótico general de dispositivos
+class DeviceMetricHistory(models.Model):
+    device = models.ForeignKey(
+        'dispositivos.Dispositivo',
+        on_delete=models.CASCADE,
+        related_name='metrica_historica',
+    )
+
+    timestamp = models.DateTimeField()
+
+    # General
+    cpu = models.FloatField(null=True, blank=True)
+    ram = models.FloatField(null=True, blank=True)
+    temperatura = models.FloatField(null=True, blank=True)
+
+    # Antenas
+    ccq = models.FloatField(null=True, blank=True)
+    power = models.FloatField(null=True, blank=True)
+    signal = models.FloatField(null=True, blank=True)
+    noise = models.FloatField(null=True, blank=True)
+    tx_capacity = models.BigIntegerField(null=True, blank=True)		# Capacidad tx
+    rx_capacity = models.BigIntegerField(null=True, blank=True)		# Capacidad rx
+	
+    class Meta:
+        verbose_name = 'Hostórico general del dispositivo'
+        verbose_name_plural = 'Hostóricoss generales de dispositivos'
+        ordering = ['-timestamp']
+        indexes = [
+            models.Index(fields=['device', 'timestamp']),
+        ]
+
+
+
 class Alarma(models.Model):
     """
     Alarma detectada por el servicio de monitorización a partir de una regla.
