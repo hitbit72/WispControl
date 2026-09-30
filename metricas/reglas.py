@@ -85,7 +85,6 @@ def evaluar(dispositivo, metrica, anterior, config):
                             'texto': f'Frecuencia {dispositivo.frequency:.0f} → {metrica.frequency:.0f} MHz.'})
                 
         for metrica_campo, regla, titulo, medida, umbral in (
-            ('rx_dbm', 'caida_potencia_rx', 'Caída de potencia RX', 'dBm', config.get('caida_potencia_rx')),
             ('signal', 'caida_signal', 'Caída de señal', 'dBm', config.get('caida_signal_dbm')),
             ('power', 'caida_potencia_tx', 'Caída de potencia TX', 'dBm', config.get('caida_potencia_tx')),
         ):
