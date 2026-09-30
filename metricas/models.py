@@ -161,7 +161,7 @@ class DeviceMetricHistory(models.Model):
 	
     class Meta:
         verbose_name = 'Hostórico general del dispositivo'
-        verbose_name_plural = 'Hostóricoss generales de dispositivos'
+        verbose_name_plural = 'Hostóricos generales de dispositivos'
         ordering = ['-timestamp']
         indexes = [
             models.Index(fields=['device', 'timestamp']),
