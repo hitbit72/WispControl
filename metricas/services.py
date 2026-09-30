@@ -12,7 +12,7 @@ from eventos.services import registrar_evento
 
 from dispositivos.models import Dispositivo, Interfaz
 
-from .models import Alarma, DeviceMetrics, InterfaceMetricHistory
+from .models import Alarma, DeviceMetrics, DeviceMetricHistory, InterfaceMetricHistory
 from .reglas import REGLA_NIVEL, evaluar
 from telegram.services import enviar_alerta_telegram
 
@@ -25,10 +25,29 @@ def guardar_metrica(dispositivo, **datos):
         mismo dispositivo y no necesitamos datos a lo largo del tiempo.
         Usamos timescan solo para saber cuando se actualizó.
     """
-    return DeviceMetrics.objects.update_or_create(
+    metricas = DeviceMetrics.objects.update_or_create(
         device=dispositivo,
         defaults=datos
     )[0]
+
+    # Guardamos el hístórico general
+    historico = DeviceMetricHistory.objects.create(
+        device = dispositivo,
+        timestamp = timezone.now(),
+
+        cpu = datos['cpu'],
+        ram = datos['ram'],
+        temperatura = datos['temperature'],
+
+        ccq = datos['ccq'],
+        power = datos['power'],
+        signal = datos['signal'],
+        noise = datos['noise'],
+        tx_capacity  = datos['tx'],
+        rx_capacity = datos['rx'],
+    )
+
+    return metricas, historico
 
 
 

@@ -31,29 +31,28 @@ from django.utils import timezone
 from dispositivos.models import Dispositivo, dispositivos_ap
 
 from metricas import snmp_client
-from metricas.models import DeviceMetrics
+from metricas.models import DeviceMetrics, DeviceMetricHistory
 from metricas.oids import oids_dispositivo
-#from metricas.services import evaluar_y_aplicar, guardar_metrica, guardar_puertos, guarda_staciones_wifi, guarda_estaciones_onu
 from metricas import services
 
 # metrica OID -> campo del modelo (clave 'mem_total'/'mem_libre' -> ram).
-# modelo DeviceMetrics
+# campos del modelo DeviceMetrics y DeviceMetricHistory 
 CAMPO = {
     'cpu': 'cpu',
     'ram': 'ram',
     'temperature': 'temperature',
-    'power': 'power',
     'ccq': 'ccq',
+    'power': 'power',
     'signal': 'signal',
-    'frequency': 'frequency',
-    'clients': 'clients',
+    'noise': 'noise',
     'rx': 'rx',
     'tx': 'tx',
+    'frequency': 'frequency',
+    'clients': 'clients',
     'uptime': 'uptime',
     'w_channel': 'w_channel',
     'ssid': 'ssid',
     'antena': 'antena',
-    'noise': 'noise',
     'sys_name': 'sys_name',
     'sys_descr': 'sys_descr',
     'version': 'version',
@@ -187,11 +186,17 @@ class Command(BaseCommand):
         metrica_anterior = (
             DeviceMetrics.objects.filter(device=dispositivo)
             .order_by('-pk').first()
-            )
+        )
 
-        # guarda los datos en DeviceMetrics
+        # Version historico, recuperar metricas historicas anteriores para evalua la alerta/alarma
+        historico_anterior = (
+            DeviceMetricHistory.objects.filter(device=dispositivo)
+            .order_by('-timestamp').first()
+        )
+
+        # guarda los datos en DeviceMetrics y  DeviceMetricHistory
         if datos:
-            metrica = services.guardar_metrica(dispositivo, **datos)
+            metrica, historico = services.guardar_metrica(dispositivo, **datos)
         # Actualiza modelo de interfaz (puertos)
         if puertos:
             services.guardar_puertos(dispositivo, **datos)
