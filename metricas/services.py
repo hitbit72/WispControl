@@ -37,7 +37,7 @@ def guardar_metrica(dispositivo, **datos):
 
         cpu = datos['cpu'],
         ram = datos['ram'],
-        temperatura = datos['temperature'],
+        temperature = datos['temperature'],
 
         ccq = datos['ccq'],
         power = datos['power'],

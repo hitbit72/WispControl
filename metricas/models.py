@@ -149,7 +149,7 @@ class DeviceMetricHistory(models.Model):
     # General
     cpu = models.FloatField(null=True, blank=True)
     ram = models.FloatField(null=True, blank=True)
-    temperatura = models.FloatField(null=True, blank=True)
+    temperature = models.FloatField(null=True, blank=True)
 
     # Antenas
     ccq = models.FloatField(null=True, blank=True)
