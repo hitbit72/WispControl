@@ -36,13 +36,15 @@ REGLA_NIVEL = {
 def _texto_conectividad(tipo):
     return f'Dispositivo {tipo} sin respuesta SNMP'
 
-def evaluar(dispositivo, metrica, anterior, config):
+def evaluar(dispositivo, metrica, anterior, historico, historico_anterior, config):
     """
     Devuelve la lista de alarmas 'activas' según la métrica dada.
 
     - dispositivo: `dispositivos.Dispositivo` monitorizado.
     - metrica: `metricas.DeviceMetrics` recién creada (la actual).
     - anterior: métrica anterior del mismo dispositivo (o None).
+    - historico: metrica historica altual
+    - hisotrico_anterior: metrica historica anterior
     - config: dict `settings.METRICAS_ALARMAS`.
     """
     reglas = []
@@ -51,19 +53,19 @@ def evaluar(dispositivo, metrica, anterior, config):
         texto = f'{dispositivo.ip_gestion} ({dispositivo.nombre}) no responde a SNMP ({metrica.get_status_display()}).'
         return [{'regla': 'sin_respuesta_snmp', 'titulo': f'Sin respuesta SNMP {dispositivo.ip_gestion}', 'texto': texto}]
 
-    if metrica.cpu is not None and metrica.cpu > config['cpu_max']:
+    if historico.cpu is not None and historico.cpu > config['cpu_max']:
         #print(f'CPU alta {dispositivo.ip_gestion}')
-        reglas.append({'regla': 'cpu_alta', 'titulo': f'CPU alta {metrica.cpu:.0f}% · {dispositivo.ip_gestion}',
-                       'texto': f'La CPU del dispositivo esta al {metrica.cpu:.0f}% (máx. {config["cpu_max"]:.0f}%).'})
+        reglas.append({'regla': 'cpu_alta', 'titulo': f'CPU alta {historico.cpu:.0f}% · {dispositivo.ip_gestion}',
+                       'texto': f'La CPU del dispositivo esta al {historico.cpu:.0f}% (máx. {config["cpu_max"]:.0f}%).'})
 
-    if metrica.ram is not None and metrica.ram > config['ram_max']:
+    if historico.ram is not None and historico.ram > config['ram_max']:
         #print(f'RAM alta {dispositivo.ip_gestion}')
-        reglas.append({'regla': 'ram_alta', 'titulo': f'RAM alta {metrica.ram:.0f}% · {dispositivo.ip_gestion}',
-                       'texto': f'La RAM del dispositivo esta al {metrica.ram:.0f}% (máx. {config["ram_max"]:.0f}%).'})
+        reglas.append({'regla': 'ram_alta', 'titulo': f'RAM alta {historico.ram:.0f}% · {dispositivo.ip_gestion}',
+                       'texto': f'La RAM del dispositivo esta al {historico.ram:.0f}% (máx. {config["ram_max"]:.0f}%).'})
         
-    if metrica.temperature is not None and metrica.temperature > config['temp_max']:
-        reglas.append({'regla': 'temp_alta', 'titulo': f'Temperatura alta {metrica.temperature:.0f} °C · {dispositivo.ip_gestion}',
-                       'texto': f'La Temperatura del dispositivos es alta {metrica.temperature:.0f} °C (máx. {config["temp_max"]:.0f} °C).'})
+    if historico.temperature is not None and historico.temperature > config['temp_max']:
+        reglas.append({'regla': 'temp_alta', 'titulo': f'Temperatura alta {historico.temperature:.0f} °C · {dispositivo.ip_gestion}',
+                       'texto': f'La Temperatura del dispositivos es alta {historico.temperature:.0f} °C (máx. {config["temp_max"]:.0f} °C).'})
 
     if dispositivo.alarma_puerto:
         if config.get('puerto_caido'):
@@ -93,7 +95,7 @@ def evaluar(dispositivo, metrica, anterior, config):
             if regla == 'caida_signal':
                 if any(r['regla'] == 'sin_clientes_ap' for r in reglas):
                     continue
-            actual, previo = getattr(metrica, metrica_campo), getattr(anterior, metrica_campo)
+            actual, previo = getattr(historico, metrica_campo), getattr(historico_anterior, metrica_campo)
             if actual is not None and previo is not None:
                 caida = previo - actual
                 if caida >= umbral:

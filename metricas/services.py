@@ -201,17 +201,13 @@ def guarda_estaciones_onu(dispositivo, **datos):
             )
         
 
-def evaluar_y_aplicar(dispositivo, metrica, anterior):
+def evaluar_y_aplicar(dispositivo, metrica, anterior, historico, historico_anterior):
     """Evalúa las reglas sobre la métrica recién creada y aplica alarmas y
     estado. Devuelve dict {nuevas, resueltas} con las alarmas tocadas."""
+
     resultados =[]
-    """
-    anterior = (
-        DeviceMetrics.objects.filter(device=dispositivo, pk__lt=metrica.pk)
-        .order_by('-pk').first()
-        )
-    """
-    activas = evaluar(dispositivo, metrica, anterior, settings.METRICAS_ALARMAS)
+
+    activas = evaluar(dispositivo, metrica, anterior, historico, historico_anterior, settings.METRICAS_ALARMAS)
     if dispositivo.alarma:
         resultados = _sincronizar_alarmas(dispositivo, activas)
     return resultados
