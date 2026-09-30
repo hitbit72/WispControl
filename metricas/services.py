@@ -34,15 +34,15 @@ def guardar_metrica(dispositivo, **datos):
     historico = DeviceMetricHistory.objects.create(
         device = dispositivo,
         timestamp = timezone.now(),
-        cpu = datos['cpu'],
-        ram = datos['ram'],
-        temperature = datos['temperature'],
-        ccq = datos['ccq'],
-        power = datos['power'],
-        signal = datos['signal'],
-        noise = datos['noise'],
-        tx_capacity  = datos['tx'],
-        rx_capacity = datos['rx'],
+        cpu = datos.get('cpu'),
+        ram = datos.get('ram'),
+        temperature = datos.get('temperature'),
+        ccq = datos.get('ccq'),
+        power = datos.get('power'),
+        signal = datos.get('signal'),
+        noise = datos.get('noise'),
+        tx_capacity  = datos.get('tx'),
+        rx_capacity = datos.get('rx'),
     )
 
     return metricas, historico
