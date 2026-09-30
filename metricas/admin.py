@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Alarma, DeviceMetrics, OIDmetric, DeviceLatencyHistory, InterfaceMetricHistory
+from .models import Alarma, DeviceMetrics, DeviceMetricHistory, OIDmetric, DeviceLatencyHistory, InterfaceMetricHistory
 
 
 @admin.register(DeviceMetrics)
@@ -12,6 +12,13 @@ class DeviceMetricsAdmin(admin.ModelAdmin):
     readonly_fields = ('device', 'timestamp', 'timescan')
     list_select_related = ('device',)
 
+
+@admin.register(DeviceMetricHistory)
+class DeviceHistoryAdmin(admin.ModelAdmin):
+    list_display = ('device', 'cpu', 'ram', 'timestamp')
+    date_hierarchy = 'timestamp'
+    search_fields = ('device__nombre',)
+    readonly_fields = ('device', 'timestamp')
 
 @admin.register(Alarma)
 class AlarmaAdmin(admin.ModelAdmin):
