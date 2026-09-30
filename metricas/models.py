@@ -96,8 +96,8 @@ class DeviceLatencyHistory(models.Model):
     success = models.BooleanField(default=True)
 
     class Meta:
-        verbose_name = 'Métrica de latencia de dispositivo'
-        verbose_name_plural = 'Métricas de latencia de dispositivos'
+        verbose_name = 'Histórico de latencia de dispositivo'
+        verbose_name_plural = 'Históricos de latencias de dispositivos'
         ordering = ['-timestamp']
         indexes = [
             models.Index(fields=['device', 'timestamp']),
