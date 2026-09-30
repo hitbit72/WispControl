@@ -38,7 +38,6 @@ class DeviceMetrics(models.Model):
     signal = models.FloatField(null=True, blank=True, verbose_name='Señal (dBm)')
     noise = models.FloatField(null=True,blank=True, verbose_name='Noise floor')
 
-    rx_dbm = models.FloatField(null=True, blank=True, verbose_name='Rx (dBm)')
     tx_dbm = models.FloatField(null=True, blank=True, verbose_name='Tx (dBm)')
 
     ssid = models.CharField(max_length=200, null=True, blank=True)
