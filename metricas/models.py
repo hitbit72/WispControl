@@ -38,8 +38,6 @@ class DeviceMetrics(models.Model):
     signal = models.FloatField(null=True, blank=True, verbose_name='Señal (dBm)')
     noise = models.FloatField(null=True,blank=True, verbose_name='Noise floor')
 
-    tx_dbm = models.FloatField(null=True, blank=True, verbose_name='Tx (dBm)')
-
     ssid = models.CharField(max_length=200, null=True, blank=True)
     #channel = models.CharField(max_length=20, blank=True, verbose_name='Canal')
     frequency = models.FloatField(null=True, blank=True, verbose_name='Frecuencia (MHz)')
