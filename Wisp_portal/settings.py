@@ -206,7 +206,6 @@ METRICAS_ALARMAS = {
     'puerto_caido': True,         # avisar con interfaz(es) abajo
     'sin_clientes_ap': False,      # avisar de AP sin clientes
     'cambio_frecuencia': True,    # avisar si cambia la frecuencia del enlace
-    'cambio_canal': True,         # avisar si cambia el canal
     'caida_potencia_rx': 10,   # dBm de bajada de Rx que dispara la alarma
     'caida_signal_dbm': 10,     # dBm de bajada de señal que dispara la alarma
     'caida_potencia_tx': 10,          # bajada de potencia de trasmision que dispara la alarma

@@ -26,7 +26,6 @@ REGLA_NIVEL = {
     'puerto_caido': Evento.Nivel.WARNING,
     'sin_clientes_ap': Evento.Nivel.NOTICE,
     'cambio_frecuencia': Evento.Nivel.ERROR,
-    'cambio_canal': Evento.Nivel.ERROR,
     'caida_potencia_rx': Evento.Nivel.WARNING,
     'caida_potencia_tx': Evento.Nivel.WARNING,
     'caida_signal': Evento.Nivel.WARNING,
@@ -85,12 +84,6 @@ def evaluar(dispositivo, metrica, anterior, config):
                 reglas.append({'regla': 'cambio_frecuencia', 'titulo': f'Cambio de frecuencia {dispositivo.ip_gestion}',
                             'texto': f'Frecuencia {dispositivo.frequency:.0f} → {metrica.frequency:.0f} MHz.'})
                 
-            if config.get('cambio_canal') and metrica.channel and anterior.channel \
-                    and metrica.channel != anterior.channel:
-                reglas.append({'regla': 'cambio_canal', 'titulo': f'Cambio de canal {dispositivo.ip_gestion}',
-                            'texto': f'Canal {anterior.channel} → {metrica.channel}.'})
-
-            
         for metrica_campo, regla, titulo, medida, umbral in (
             ('rx_dbm', 'caida_potencia_rx', 'Caída de potencia RX', 'dBm', config.get('caida_potencia_rx')),
             ('signal', 'caida_signal', 'Caída de señal', 'dBm', config.get('caida_signal_dbm')),

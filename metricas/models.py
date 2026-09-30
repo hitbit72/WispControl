@@ -30,29 +30,29 @@ class DeviceMetrics(models.Model):
     cpu = models.FloatField(null=True, blank=True, verbose_name='CPU (%)')
     ram = models.FloatField(null=True, blank=True, verbose_name='RAM (%)')
     temperature = models.FloatField(null=True, blank=True, verbose_name='Temperatura (°C)')
-
     power = models.FloatField(null=True, blank=True, verbose_name='Potencia (W)')
-    rx_dbm = models.FloatField(null=True, blank=True, verbose_name='Rx (dBm)')
-    tx_dbm = models.FloatField(null=True, blank=True, verbose_name='Tx (dBm)')
     rx = models.BigIntegerField(null=True, blank=True, verbose_name='Capacidad Rx (bps)')
     tx = models.BigIntegerField(null=True, blank=True, verbose_name='Capacidad Tx (bps)')
+    snr = models.FloatField(null=True, blank=True, verbose_name='SNR (dB)')
+    ccq = models.FloatField(null=True, blank=True, verbose_name='CCQ (%)')
+    signal = models.FloatField(null=True, blank=True, verbose_name='Señal (dBm)')
+    noise = models.FloatField(null=True,blank=True, verbose_name='Noise floor')
+
+    rx_dbm = models.FloatField(null=True, blank=True, verbose_name='Rx (dBm)')
+    tx_dbm = models.FloatField(null=True, blank=True, verbose_name='Tx (dBm)')
+
+    ssid = models.CharField(max_length=200, null=True, blank=True)
+    #channel = models.CharField(max_length=20, blank=True, verbose_name='Canal')
+    frequency = models.FloatField(null=True, blank=True, verbose_name='Frecuencia (MHz)')
+    w_channel = models.FloatField(null=True,blank=True, verbose_name='Ancho canal')
+    antena = models.CharField(max_length=100, null=True, blank=True, verbose_name='Tipo Antena')
+    distancia = models.PositiveIntegerField(null=True, blank=True, verbose_name='Distnacia')
+    clients = models.PositiveIntegerField(null=True, blank=True, verbose_name='Clientes conectados')
     uptime = models.PositiveBigIntegerField(
         null=True, blank=True,
         verbose_name='Uptime (segundos)',
         help_text='Segundos desde el último reinicio.',
     )
-    ssid = models.CharField(max_length=200, null=True, blank=True)
-    snr = models.FloatField(null=True, blank=True, verbose_name='SNR (dB)')
-    ccq = models.FloatField(null=True, blank=True, verbose_name='CCQ (%)')
-
-    signal = models.FloatField(null=True, blank=True, verbose_name='Señal (dBm)')
-    frequency = models.FloatField(null=True, blank=True, verbose_name='Frecuencia (MHz)')
-    channel = models.CharField(max_length=20, blank=True, verbose_name='Canal')
-    noise = models.FloatField(null=True,blank=True, verbose_name='Noise floor')
-    w_channel = models.FloatField(null=True,blank=True, verbose_name='Ancho canal')
-    antena = models.CharField(max_length=100, null=True, blank=True, verbose_name='Tipo Antena')
-    distancia = models.PositiveIntegerField(null=True, blank=True, verbose_name='Distnacia')
-    clients = models.PositiveIntegerField(null=True, blank=True, verbose_name='Clientes conectados')
     #latencia = models.FloatField(null=True, blank=True, verbose_name='Latencia')
 
     puertos = models.JSONField(

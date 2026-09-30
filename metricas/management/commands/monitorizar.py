@@ -49,7 +49,6 @@ CAMPO = {
     'ccq': 'ccq',
     'signal': 'signal',
     'frequency': 'frequency',
-    'channel': 'channel',
     'clients': 'clients',
     'rx': 'rx',
     'tx': 'tx',
@@ -238,8 +237,6 @@ class Command(BaseCommand):
                 #valor = numero / 100 if dispositivo.marca != Dispositivo.Marcas.MIKROTIK else numero
                 #datos['uptime'] = int(valor)
                 datos['uptime'] = numero or 0
-            elif campo == 'channel':
-                datos['channel'] = numero or ''
             elif campo == 'temperature':
                 datos['temperature'] = numero
                 if datos['temperature'] > 1000:
