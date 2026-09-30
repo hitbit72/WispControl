@@ -218,6 +218,7 @@ def _sincronizar_alarmas(dispositivo, detectadas):
         if regla in detectadas:
             #print('regla sigue activa')
             continue
+        
         alarma = Alarma.objects.get(pk=pk)
         alarma.estado = Alarma.Estado.RESUELTA
         alarma.resuelta_en = timezone.now()

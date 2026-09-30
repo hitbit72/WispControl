@@ -154,8 +154,7 @@ def evaluar_alarma(dispositivo, ping_actual, ping_anterior):
 
 def sincronizar_alarmas_ping(dispositivo, detectadas, error_msg):
     """
-    Sincroniza alarmas de ping: crea nuevas, resuelve las que ya no aplican.
-    regla='ping_sin_respuesta'
+    Sincroniza alarmas de ping: crea nuevas, resuelve las que ya no aplican. regla='ping_sin_respuesta'
     """
 
     activas = Alarma.objects.filter(
@@ -165,7 +164,6 @@ def sincronizar_alarmas_ping(dispositivo, detectadas, error_msg):
     
     reglas_activas = dict(activas.values_list('regla', 'pk'))
     detectadas_dict = {a['regla']: a for a in detectadas}
-    
     resultados = {'nuevas': [], 'resueltas': []}
     
     # Resolver alarmas que ya no se cumplen
