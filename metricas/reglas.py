@@ -96,7 +96,7 @@ def evaluar(dispositivo, metrica, anterior, historico, historico_anterior, confi
                 if any(r['regla'] == 'sin_clientes_ap' for r in reglas):
                     continue
             actual, previo = getattr(historico, historico_campo), getattr(historico_anterior, historico_campo)
-            if actual is not None and previo is not None:
+            if actual is not None and previo is not None and actual != 0 and  previo != 0:
                 caida = previo - actual
                 if caida >= umbral:
                     reglas.append({'regla': regla, 'titulo': f'{titulo} {dispositivo.ip_gestion} ({actual:.0f} {medida})',
