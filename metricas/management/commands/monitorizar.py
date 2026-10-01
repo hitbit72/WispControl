@@ -139,7 +139,7 @@ class Command(BaseCommand):
                 errores += 1
 
         self.stdout.write(self.style.SUCCESS(
-            f'[{timezone.localtime():%d/%m/%Y %H:%M:%S}] Procesados {total} dispositivos: {ok} OK, {errores} fallos.\n'))
+            f'[{timezone.localtime():%d/%m/%Y %H:%M:%S}] Procesados {total} dispositivos: {ok} OK, {errores} fallos. Zona: {tipo_zona}\n'))
 
 
     def _procesar(self, dispositivo):
