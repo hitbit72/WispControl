@@ -72,7 +72,7 @@ class Command(BaseCommand):
         parser.add_argument(
             '--rol',
             type=str,
-            choices=['main', 'station'],
+            choices=['main', 'station', 'mkt'],
             help='Filtrar dispositivos por su rol (rol disponibles: main, station).',
         )
 
