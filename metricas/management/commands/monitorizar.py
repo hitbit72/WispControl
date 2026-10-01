@@ -245,10 +245,7 @@ class Command(BaseCommand):
 
         # evalua la alerta/alarma
         if self.zonas['general']:
-            if not metrica:
-                metrica = metrica_anterior
-            if not historico:
-                historico = historico_anterior
+            if metrica and historico:
                 services.evaluar_y_aplicar(dispositivo, metrica, metrica_anterior, historico, historico_anterior)
 
         #self.stdout.write(self.style.SUCCESS(f'[{timezone.now():%d/%m/%Y %H:%M:%S}] {dispositivo.ip_gestion} ({dispositivo.nombre}) {status}'))
