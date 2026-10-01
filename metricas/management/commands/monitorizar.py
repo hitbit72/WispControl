@@ -241,7 +241,8 @@ class Command(BaseCommand):
                 services.guarda_estaciones_onu(dispositivo, **datos)     # <-- Datos de ONU de OLT ubiquiti
 
         # evalua la alerta/alarma
-        services.evaluar_y_aplicar(dispositivo, metrica, metrica_anterior, historico, historico_anterior)
+        if self.zonas['general']:
+            services.evaluar_y_aplicar(dispositivo, metrica, metrica_anterior, historico, historico_anterior)
 
         #self.stdout.write(self.style.SUCCESS(f'[{timezone.now():%d/%m/%Y %H:%M:%S}] {dispositivo.ip_gestion} ({dispositivo.nombre}) {status}'))
         return status == DeviceMetrics.Status.OK
