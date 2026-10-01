@@ -20,6 +20,9 @@ Uso manual:
     -- Para filtrar por rol de dispositivo:
     python manage.py monitorizar --rol=main   (solo acepta: main y station)
 
+    -- para fgiltrar por tipo de consulta y rol:
+    python manage.py monitorizar --zona=puertos --rol=main
+
 Si quieres confirmar qué hay realmente en esa columna:
     uv run manage.py shell -c "from dispositivos.models import Dispositivo; [print(d.nombre, repr(d.snmp_community)) for d in Dispositivo.objects.all()]"
 
@@ -75,11 +78,30 @@ class Command(BaseCommand):
             choices=['main', 'station', 'mkt'],
             help='Filtrar dispositivos por su rol (rol disponibles: main, station).',
         )
+        parser.add_argument(
+            '--zona',
+            type=str,
+            choices=['general', 'puertos', 'wifi', 'onus', 'puertos_pon'],
+            help='Filtrar y procesar únicamente el tipo de sonculta (general, puertos, wifi, onus).',
+        )
 
     def handle(self, *args, **options):
         # Recuperamos el valor del argumento --ip si fue proporcionado
         ip_filtro = options.get('ip')
         tipo_rol = options.get('rol')
+        tipo_zona = options.get('zona')
+
+        # Zonas de escaneo, por defecto todas activas
+        self.zonas = {'general': True,
+                      'puertos': True,
+                      'wifi': True,
+                      'onus': True,
+                      'puertos_pon': True}
+        
+        # Filtrar por tipo de zona si se paso el argumento
+        if tipo_zona:
+            for zona in self.zonas:
+                self.zonas[zona] = True if zona == tipo_zona else False
 
         if ip_filtro:
             dispositivos = (
@@ -108,6 +130,7 @@ class Command(BaseCommand):
         if not total:
             self.stdout.write(self.style.WARNING(
                 f'[{timezone.localtime():%d/%m/%Y %H:%M:%S}] No hay dispositivos para comprobar.'))
+
         # Bucle para consultar SNMP
         for dispositivo in dispositivos:
             if self._procesar(dispositivo):
@@ -144,14 +167,19 @@ class Command(BaseCommand):
             escalares_onu = oids_dispositivo(dispositivo, 'onus')
 
         try:
-            resultado = snmp_client.consultar_escalares(dispositivo, escalares)
-            puertos = snmp_client.consultar_if_table(dispositivo, escalares_puerto, 'puertos')
-            if escalares_st:
-                estaciones = snmp_client.consultar_if_table(dispositivo, escalares_st, 'wifi')
-            if escalares_puerto_pon:
-                puertos_pon = snmp_client.consultar_if_table(dispositivo, escalares_puerto_pon, 'puertos')
-            if escalares_onu:
-                onus = snmp_client.consultar_if_table(dispositivo, escalares_onu, 'onus')
+            if self.zonas['general']:
+                resultado = snmp_client.consultar_escalares(dispositivo, escalares)
+            if self.zonas['puertos']:
+                puertos = snmp_client.consultar_if_table(dispositivo, escalares_puerto, 'puertos')
+            if self.zonas['wifi']:
+                if escalares_st:
+                    estaciones = snmp_client.consultar_if_table(dispositivo, escalares_st, 'wifi')
+            if self.zonas['puertos_pon']:
+                if escalares_puerto_pon:
+                    puertos_pon = snmp_client.consultar_if_table(dispositivo, escalares_puerto_pon, 'puertos')
+            if self.zonas['onus']:
+                if escalares_onu:
+                    onus = snmp_client.consultar_if_table(dispositivo, escalares_onu, 'onus')
             status = DeviceMetrics.Status.OK
 
         except snmp_client.SnmpError as exc:
