@@ -124,6 +124,8 @@ class Command(BaseCommand):
         # Si se pasó un ROL, filtramos el queryset para que solo devuelva esos registros
         if tipo_rol:
             dispositivos = dispositivos.filter(rol=tipo_rol)
+        else:
+            tipo_rol = 'todos'
 
         total = dispositivos.count()
         ok=0
@@ -141,7 +143,7 @@ class Command(BaseCommand):
                 errores += 1
 
         self.stdout.write(self.style.SUCCESS(
-            f'[{timezone.localtime():%d/%m/%Y %H:%M:%S}] Procesados {total} dispositivos: {ok} OK, {errores} fallos. Zona: {tipo_zona}\n'))
+            f'[{timezone.localtime():%d/%m/%Y %H:%M:%S}] Procesados {total} dispositivos: {ok} OK, {errores} fallos. Zona: {tipo_zona} - Rol: {tipo_rol}\n'))
 
 
     def _procesar(self, dispositivo):
