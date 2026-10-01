@@ -8,7 +8,7 @@
         <h2 class="mb-0"><i class="bi bi-graph-up" aria-hidden="true"></i> {{ dispositivo.nombre }}</h2>
         <div class="text-muted">{{ dispositivo.marca.nombre }} {{ dispositivo.marca.modelo }} · {{ dispositivo.ip_gestion }}</div>
     </div>
-    <a href="{{ url_anterior }}" class="btn btn-outline-secondary"><i class="bi bi-box-arrow-in-left"></i> Volver</a>
+    <a href="{{ url_anterior }}" class="btn btn-outline-primary"><i class="bi bi-box-arrow-in-left"></i> Volver</a>
 </div>
 
 <!-- Selector de periodo -->
@@ -60,8 +60,8 @@
                 <h5 class="mb-0"><i class="bi bi-cpu" aria-hidden="true"></i> Sistema</h5>
                 <div class="d-flex gap-2">
                     <select class="form-select form-select-sm" id="sistema-metric-select" style="width: auto;" onchange="renderSistemaChart()">
-                        <option value="cpu">CPU %</option>
-                        <option value="ram">RAM %</option>
+                        <option value="cpu">% CPU - RAM </option>
+                        <!-- <option value="ram">RAM %</option> -->
                         <option value="temperature">Temperatura °C</option>
                     </select>
                 </div>
@@ -80,10 +80,10 @@
                 <h5 class="mb-0"><i class="bi bi-wifi" aria-hidden="true"></i> Radio</h5>
                 <div class="d-flex gap-2">
                     <select class="form-select form-select-sm" id="radio-metric-select" style="width: auto;" onchange="renderRadioChart()">
+                        <option value="signal">Señal/Ruido (dBm)</option>
+                        <!-- <option value="noise">Ruido (dBm)</option> -->
                         <option value="ccq">CCQ %</option>
                         <option value="power">Potencia (dBm)</option>
-                        <option value="signal">Señal (dBm)</option>
-                        <option value="noise">Ruido (dBm)</option>
                         <option value="capacity">Capacidad RX/TX (Mbps)</option>
                     </select>
                 </div>
@@ -123,6 +123,9 @@
             </div>
         </div>
     </div>
+</div>
+<div style="margin-top: 0.5rem;">
+    <a href="{{ url_anterior }}" class="btn btn-outline-primary"><i class="bi bi-box-arrow-in-left"></i> Volver</a>
 </div>
 
 <!-- Chart.js CDN -->
@@ -310,7 +313,13 @@ function renderSistemaChart() {
         ? { scales: { ...commonOptions.scales, y: { ...commonOptions.scales.y, suggestedMin: 0 } } }
         : { scales: { ...commonOptions.scales, y: { ...commonOptions.scales.y, suggestedMin: 0, suggestedMax: 100 } } };
     
-    createSingleChart('sistema-chart', metricasData.labels, values, metric, extraOpts);
+    if (metric === 'cpu'){
+        const cpuValues = metricasData.datasets['cpu'] || [];
+        const ramValues = metricasData.datasets['ram'] || [];
+        createDualChart('sistema-chart', metricasData.labels, cpuValues, ramValues, 'cpu', 'ram', extraOpts);
+    } else {
+        createSingleChart('sistema-chart', metricasData.labels, values, metric, extraOpts);
+    }
 }
 
 // Render gráfica Radio
@@ -339,6 +348,11 @@ function renderRadioChart() {
             }
         };
         createDualChart('radio-chart', metricasData.labels, rxValues, txValues, 'rx', 'tx', extraOpts);
+    } else if (metric === 'signal') { 
+        const extraOpts = { scales: { ...commonOptions.scales, y: { ...commonOptions.scales.y, reverse: true, suggestedMin: -100, suggestedMax: 0 } } }
+        const signalValues = metricasData.datasets['signal'] || [];
+        const noiseValues = metricasData.datasets['noise'] || [];
+        createDualChart('radio-chart', metricasData.labels, signalValues, noiseValues, 'signal', 'noise', extraOpts);
     } else {
         const values = metricasData.datasets[metric] || [];
         const extraOpts = (metric === 'signal' || metric === 'noise' || metric === 'power')
