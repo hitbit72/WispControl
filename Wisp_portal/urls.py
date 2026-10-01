@@ -2,14 +2,13 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 
-from accounts import views
 
 admin.site.site_header = "InforCEM"
 admin.site.index_title = "Panel de administrador"
 admin.site.site_title = "InforCEM"
 
 urlpatterns = [
-    path('', views.inicio, name='inicio'),
+    path('', include('dashboard.urls')),
     path('accounts/', include('accounts.urls')),
     path('admin/', admin.site.urls),
     path('mikrotik/', include('mikrotik.urls')),

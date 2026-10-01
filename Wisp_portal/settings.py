@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'metricas',
     'pingcontrol',
     'telegram',
+    'dashboard',
 ]
 
 MIDDLEWARE = [
@@ -126,7 +127,7 @@ AUTH_USER_MODEL = 'accounts.Usuario'
 
 # --- Autenticación ---------------------------------------------------------
 LOGIN_URL = 'accounts:login'
-LOGIN_REDIRECT_URL = 'accounts:inicio'
+LOGIN_REDIRECT_URL = 'dashboard:inicio'
 LOGOUT_REDIRECT_URL = 'accounts:login'
 
 # --- Cifrado de campos sensibles (ej. clave API de routers MikroTik) ------
