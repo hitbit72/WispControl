@@ -267,6 +267,8 @@ function createDualChart(canvasId, labels, values1, values2, key1, key2, extraOp
 }
 
 // Calcular bps a partir de contadores acumulados
+// los contadores SNMP ifHCInOctets / ifHCOutOctets están en bytes, por lo que
+// para obtener bits por segundo tienes que multiplicar por 8
 function calculateBps(data) {
     // data: array of {timestamp, rx, tx}
     if (!data || data.length < 2) return { labels: [], rx: [], tx: [] };
