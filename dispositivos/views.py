@@ -1,8 +1,9 @@
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Q, Prefetch
-from django.http import Http404
+from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
 
 from .forms import DispositivoForm, EnlaceForm, InterfazForm
 
@@ -10,7 +11,7 @@ from .models import Dispositivo, Enlace, Interfaz, TipoEquipo, dispositivos_ap, 
 from clientes.models import Cliente
 from sector.models import Sector
 
-from metricas.models import DeviceMetrics, Alarma
+from metricas.models import DeviceMetrics, Alarma, DeviceMetricHistory, DeviceLatencyHistory, InterfaceMetricHistory
 from eventos.models import Evento
 from eventos.services import registrar_evento
 
@@ -554,3 +555,128 @@ def eliminar_enlace(request, pk):
         return redirect('dispositivos:detalle', pk=dispositivo_pk)
 
     return render(request, 'dispositivo/enlace/confirmar_eliminar_enlace.html', {'enlace': enlace})
+
+
+@login_required
+def graficas_dispositivo(request, pk):
+    """
+    Vista para mostrar gráficas históricas de un dispositivo.
+    Soporta filtros de tiempo: día, semana, mes, rango personalizado.
+    """
+    from datetime import timedelta
+    import json
+    
+    dispositivo = get_object_or_404(Dispositivo, pk=pk)
+    
+    # Parámetros de tiempo
+    periodo = request.GET.get('periodo', 'day')  # day, week, month, custom
+    fecha_inicio_str = request.GET.get('fecha_inicio')
+    fecha_fin_str = request.GET.get('fecha_fin')
+    
+    ahora = timezone.now()
+    
+    if periodo == 'day':
+        fecha_inicio = ahora - timedelta(days=1)
+        fecha_fin = ahora
+    elif periodo == 'week':
+        fecha_inicio = ahora - timedelta(weeks=1)
+        fecha_fin = ahora
+    elif periodo == 'month':
+        fecha_inicio = ahora - timedelta(days=30)
+        fecha_fin = ahora
+    elif periodo == 'custom' and fecha_inicio_str and fecha_fin_str:
+        try:
+            fecha_inicio = timezone.datetime.fromisoformat(fecha_inicio_str)
+            fecha_fin = timezone.datetime.fromisoformat(fecha_fin_str)
+            if timezone.is_naive(fecha_inicio):
+                fecha_inicio = timezone.make_aware(fecha_inicio)
+            if timezone.is_naive(fecha_fin):
+                fecha_fin = timezone.make_aware(fecha_fin)
+        except ValueError:
+            fecha_inicio = ahora - timedelta(days=1)
+            fecha_fin = ahora
+            periodo = 'day'
+    else:
+        fecha_inicio = ahora - timedelta(days=1)
+        fecha_fin = ahora
+        periodo = 'day'
+    
+    # Obtener datos históricos
+    # Métricas generales (CPU, RAM, temperatura, señal, etc.)
+    metricas_hist = DeviceMetricHistory.objects.filter(
+        device=dispositivo,
+        timestamp__gte=fecha_inicio,
+        timestamp__lte=fecha_fin
+    ).order_by('timestamp')
+    
+    # Latencia/ping
+    latencias_hist = DeviceLatencyHistory.objects.filter(
+        device=dispositivo,
+        timestamp__gte=fecha_inicio,
+        timestamp__lte=fecha_fin
+    ).order_by('timestamp')
+    
+    # Tráfico de interfaces
+    interfaces = dispositivo.interfaces.all()
+    trafico_interfaces = {}
+    for interfaz in interfaces:
+        trafico = InterfaceMetricHistory.objects.filter(
+            interfaz=interfaz,
+            timestamp__gte=fecha_inicio,
+            timestamp__lte=fecha_fin
+        ).order_by('timestamp')
+        if trafico.exists():
+            # Convert datetime to ISO string for JSON serialization
+            trafico_interfaces[interfaz.nombre] = [
+                {'timestamp': t['timestamp'].isoformat(), 'rx': t['rx'], 'tx': t['tx']}
+                for t in trafico.values('timestamp', 'rx', 'tx')
+            ]
+    
+    # Preparar datos para Chart.js (formato: labels + datasets)
+    def prepare_chart_data(queryset, timestamp_field, value_fields):
+        """Convierte queryset a formato Chart.js"""
+        labels = []
+        datasets = {field: [] for field in value_fields}
+        
+        for obj in queryset:
+            ts = getattr(obj, timestamp_field)
+            labels.append(ts.isoformat())
+            for field in value_fields:
+                val = getattr(obj, field)
+                datasets[field].append(val if val is not None else None)
+        
+        return {
+            'labels': labels,
+            'datasets': datasets
+        }
+    
+    # Datos para gráficas
+    metricas_data = prepare_chart_data(
+        metricas_hist, 
+        'timestamp', 
+        ['cpu', 'ram', 'temperature', 'ccq', 'power', 'signal', 'noise', 'rx_capacity', 'tx_capacity']
+    )
+    
+    latencias_data = prepare_chart_data(
+        latencias_hist,
+        'timestamp',
+        ['latency_ms']
+    )
+    
+    # Datos de éxito/fallo de ping
+    #ping_success = list(latencias_hist.values('timestamp', 'success'))
+
+    contexto = {
+        'dispositivo': dispositivo,
+        'periodo': periodo,
+        'fecha_inicio': fecha_inicio.isoformat(),
+        'fecha_fin': fecha_fin.isoformat(),
+        'metricas_data': json.dumps(metricas_data),
+        'latencias_data': json.dumps(latencias_data),
+        #'ping_success': json.dumps(ping_success),
+        'trafico_interfaces': json.dumps(trafico_interfaces),
+        'dispositivos_antenas': dispositivos_antenas,
+        'url_anterior': request.GET.get('next') or request.META.get('HTTP_REFERER') or '/dispositivos/',
+    }
+    
+    return render(request, 'dispositivo/graficas.html', contexto)

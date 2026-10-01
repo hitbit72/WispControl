@@ -1,0 +1,493 @@
+{% extends "base.html" %}
+{% load static %}
+{% block titulo %}{{ dispositivo.nombre }} · Gráficas · Portal WISP{% endblock %}
+{% block contenido %}
+
+<div class="d-flex justify-content-between align-items-start mb-3">
+    <div>
+        <h2 class="mb-0"><i class="bi bi-graph-up" aria-hidden="true"></i> {{ dispositivo.nombre }}</h2>
+        <div class="text-muted">{{ dispositivo.marca.nombre }} {{ dispositivo.marca.modelo }} · {{ dispositivo.ip_gestion }}</div>
+    </div>
+    <a href="{{ url_anterior }}" class="btn btn-outline-secondary"><i class="bi bi-box-arrow-in-left"></i> Volver</a>
+</div>
+
+<!-- Selector de periodo -->
+<div class="card mb-3">
+    <div class="card-body py-2">
+        <form method="get" class="row g-2 align-items-end" id="periodo-form">
+            <input type="hidden" name="next" value="{{ url_anterior }}">
+            
+            <!-- Botones de periodo rápido -->
+            <div class="col-auto">
+                <label class="form-label mb-0 fw-bold">Periodo:</label>
+                <div class="btn-group" role="group" id="periodo-buttons">
+                    <button type="button" class="btn btn-sm {% if periodo == 'day' %}btn-primary{% else %}btn-outline-primary{% endif %}" 
+                            data-periodo="day" onclick="setPeriodo('day')">24h</button>
+                    <button type="button" class="btn btn-sm {% if periodo == 'week' %}btn-primary{% else %}btn-outline-primary{% endif %}" 
+                            data-periodo="week" onclick="setPeriodo('week')">7d</button>
+                    <button type="button" class="btn btn-sm {% if periodo == 'month' %}btn-primary{% else %}btn-outline-primary{% endif %}" 
+                            data-periodo="month" onclick="setPeriodo('month')">30d</button>
+                    <button type="button" class="btn btn-sm {% if periodo == 'custom' %}btn-primary{% else %}btn-outline-primary{% endif %}" 
+                            data-periodo="custom" onclick="setPeriodo('custom')" id="btn-custom">Personalizado</button>
+                </div>
+                <input type="hidden" name="periodo" id="id_periodo" value="{{ periodo }}">
+            </div>
+            
+            <!-- Selector de fecha personalizado -->
+            <div class="col-auto d-none" id="custom-date-group">
+                <label class="form-label mb-0">Desde:</label>
+                <input type="datetime-local" name="fecha_inicio" id="id_fecha_inicio" class="form-control form-control-sm" 
+                       value="{{ fecha_inicio|date:'Y-m-d\TH:i' }}" required>
+            </div>
+            <div class="col-auto d-none" id="custom-date-group2">
+                <label class="form-label mb-0">Hasta:</label>
+                <input type="datetime-local" name="fecha_fin" id="id_fecha_fin" class="form-control form-control-sm" 
+                       value="{{ fecha_fin|date:'Y-m-d\TH:i' }}" required>
+            </div>
+            
+            <div class="col-auto">
+                <button type="submit" class="btn btn-sm btn-success" id="btn-aplicar">Aplicar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="row g-3">
+    <!-- Gráfica: Sistema (CPU, RAM, Temperatura) - Selector como tráfico -->
+    <div class="col-12">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-cpu" aria-hidden="true"></i> Sistema</h5>
+                <div class="d-flex gap-2">
+                    <select class="form-select form-select-sm" id="sistema-metric-select" style="width: auto;" onchange="renderSistemaChart()">
+                        <option value="cpu">CPU %</option>
+                        <option value="ram">RAM %</option>
+                        <option value="temperature">Temperatura °C</option>
+                    </select>
+                </div>
+            </div>
+            <div class="card-body">
+                <canvas id="sistema-chart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráfica: Radio (CCQ, Power, Señal, Ruido, Capacidad) - Selector como tráfico -->
+    {% if dispositivo.tipo.clave in dispositivos_antenas %}
+    <div class="col-12">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-wifi" aria-hidden="true"></i> Radio</h5>
+                <div class="d-flex gap-2">
+                    <select class="form-select form-select-sm" id="radio-metric-select" style="width: auto;" onchange="renderRadioChart()">
+                        <option value="ccq">CCQ %</option>
+                        <option value="power">Potencia (dBm)</option>
+                        <option value="signal">Señal (dBm)</option>
+                        <option value="noise">Ruido (dBm)</option>
+                        <option value="capacity">Capacidad RX/TX (Mbps)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="card-body">
+                <canvas id="radio-chart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Gráfica: Latencia (Ping) -->
+    <div class="col-12">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-speedometer2" aria-hidden="true"></i> Latencia (Ping)</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="latencia-chart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráfica: Tráfico interfaces (con cálculo de bps) -->
+    <div class="col-12">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-ethernet" aria-hidden="true"></i> Tráfico Interfaces (bps)</h5>
+                <div class="d-flex gap-2">
+                    <select class="form-select form-select-sm" id="interface-select" style="width: auto;" onchange="renderTraficoChart()">
+                        <option value="">Seleccionar interfaz</option>
+                    </select>
+                </div>
+            </div>
+            <div class="card-body">
+                <canvas id="trafico-chart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/date-fns@3.6.0/cdn.min.js"></script>
+
+<script>
+// Datos inyectados desde Django
+const metricasData = {{ metricas_data|safe }};
+const latenciasData = {{ latencias_data|safe }};
+const traficoInterfaces = {{ trafico_interfaces|safe }};
+let currentPeriodo = '{{ periodo }}';
+
+// Configuración común de gráficas
+const commonOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: {
+        mode: 'index',
+        intersect: false,
+    },
+    scales: {
+        x: {
+            type: 'time',
+            time: {
+                unit: 'hour',
+                displayFormats: {
+                    hour: 'HH:mm',
+                    day: 'dd/MM',
+                    week: 'dd/MM',
+                    month: 'dd/MM'
+                }
+            },
+            title: { display: true, text: 'Tiempo' },
+            grid: { display: false }
+        },
+        y: {
+            beginAtZero: false,
+            title: { display: true, text: 'Valor' },
+            grid: { color: 'rgba(0,0,0,0.05)' }
+        }
+    },
+    plugins: {
+        legend: { display: true, position: 'top' },
+        tooltip: { mode: 'index', intersect: false }
+    },
+    elements: {
+        line: { tension: 0.3, borderWidth: 2 },
+        point: { radius: 3, hoverRadius: 5 }
+    }
+};
+
+// Colores para datasets
+const colors = {
+    cpu: '#e74c3c',
+    ram: '#3498db',
+    temperature: '#f39c12',
+    signal: '#2ecc71',
+    ccq: '#9b59b6',
+    noise: '#95a5a6',
+    power: '#e67e22',
+    capacity: '#8e44ad',
+    latency: '#e67e22',
+    rx: '#3498db',
+    tx: '#e74c3c'
+};
+
+const labels_es = {
+    cpu: 'CPU %',
+    ram: 'RAM %',
+    temperature: 'Temperatura °C',
+    signal: 'Señal (dBm)',
+    ccq: 'CCQ %',
+    noise: 'Ruido (dBm)',
+    power: 'Potencia (dBm)',
+    capacity: 'Capacidad (Mbps)',
+    latency_ms: 'Latencia (ms)',
+    rx: 'RX (bps)',
+    tx: 'TX (bps)'
+};
+
+// Crear/actualizar gráfica simple (un dataset)
+function createSingleChart(canvasId, labels, values, metricKey, extraOptions = {}) {
+    const ctx = document.getElementById(canvasId).getContext('2d');
+    if (window[canvasId + 'Chart']) {
+        window[canvasId + 'Chart'].destroy();
+    }
+    
+    const color = colors[metricKey] || '#333';
+    
+    window[canvasId + 'Chart'] = new Chart(ctx, {
+        type: 'line',
+        data: {
+            datasets: [{
+                label: labels_es[metricKey] || metricKey,
+                data: labels.map((label, i) => ({ x: label, y: values[i] })),
+                borderColor: color,
+                backgroundColor: color + '33',
+                fill: false,
+                spanGaps: true
+            }]
+        },
+        options: { ...commonOptions, ...extraOptions }
+    });
+}
+
+// Crear gráfica dual (dos datasets, ej: RX/TX o Capacidad RX/TX)
+function createDualChart(canvasId, labels, values1, values2, key1, key2, extraOptions = {}) {
+    const ctx = document.getElementById(canvasId).getContext('2d');
+    if (window[canvasId + 'Chart']) {
+        window[canvasId + 'Chart'].destroy();
+    }
+    
+    window[canvasId + 'Chart'] = new Chart(ctx, {
+        type: 'line',
+        data: {
+            datasets: [
+                {
+                    label: labels_es[key1] || key1,
+                    data: labels.map((label, i) => ({ x: label, y: values1[i] })),
+                    borderColor: colors[key1],
+                    backgroundColor: colors[key1] + '33',
+                    fill: false,
+                    spanGaps: true
+                },
+                {
+                    label: labels_es[key2] || key2,
+                    data: labels.map((label, i) => ({ x: label, y: values2[i] })),
+                    borderColor: colors[key2],
+                    backgroundColor: colors[key2] + '33',
+                    fill: false,
+                    spanGaps: true
+                }
+            ]
+        },
+        options: { ...commonOptions, ...extraOptions }
+    });
+}
+
+// Calcular bps a partir de contadores acumulados
+function calculateBps(data) {
+    // data: array of {timestamp, rx, tx}
+    if (!data || data.length < 2) return { labels: [], rx: [], tx: [] };
+    
+    const labels = [];
+    const rxBps = [];
+    const txBps = [];
+    
+    for (let i = 1; i < data.length; i++) {
+        const prev = data[i - 1];
+        const curr = data[i];
+        
+        const t1 = new Date(prev.timestamp).getTime();
+        const t2 = new Date(curr.timestamp).getTime();
+        const deltaTimeSec = (t2 - t1) / 1000;
+        
+        if (deltaTimeSec <= 0) continue;
+        
+        const deltaRx = (curr.rx ?? 0) - (prev.rx ?? 0);
+        const deltaTx = (curr.tx ?? 0) - (prev.tx ?? 0);
+        
+        // Solo valores positivos (contadores pueden reiniciarse)
+        if (deltaRx < 0 || deltaTx < 0) continue;
+        
+        // Octetos -> bits
+        const rxBpsValue = (deltaRx * 8) / deltaTimeSec;
+        const txBpsValue = (deltaTx * 8) / deltaTimeSec;
+
+        labels.push(curr.timestamp);
+        rxBps.push(rxBpsValue);
+        txBps.push(txBpsValue);
+    }
+    
+    return { labels, rx: rxBps, tx: txBps };
+}
+
+// Render gráfica Sistema
+function renderSistemaChart() {
+    const metric = document.getElementById('sistema-metric-select').value;
+    if (!metricasData.labels || !metricasData.labels.length) return;
+    
+    const values = metricasData.datasets[metric] || [];
+    const extraOpts = metric === 'temperature' 
+        ? { scales: { ...commonOptions.scales, y: { ...commonOptions.scales.y, suggestedMin: 0 } } }
+        : { scales: { ...commonOptions.scales, y: { ...commonOptions.scales.y, suggestedMin: 0, suggestedMax: 100 } } };
+    
+    createSingleChart('sistema-chart', metricasData.labels, values, metric, extraOpts);
+}
+
+// Render gráfica Radio
+function renderRadioChart() {
+    const metric = document.getElementById('radio-metric-select').value;
+    if (!metricasData.labels || !metricasData.labels.length) return;
+    
+    if (metric === 'capacity') {
+        // Dual chart: rx_capacity + tx_capacity
+        const rxValues = metricasData.datasets['rx_capacity'] || [];
+        const txValues = metricasData.datasets['tx_capacity'] || [];
+        const extraOpts = {
+            scales: {
+                ...commonOptions.scales,
+                y: { 
+                    ...commonOptions.scales.y, 
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            if (value >= 1e6) return (value / 1e6).toFixed(1) + ' Mbps';
+                            if (value >= 1e3) return (value / 1e3).toFixed(1) + ' Kbps';
+                            return value + ' bps';
+                        }
+                    }
+                }
+            }
+        };
+        createDualChart('radio-chart', metricasData.labels, rxValues, txValues, 'rx', 'tx', extraOpts);
+    } else {
+        const values = metricasData.datasets[metric] || [];
+        const extraOpts = (metric === 'signal' || metric === 'noise' || metric === 'power')
+            ? { scales: { ...commonOptions.scales, y: { ...commonOptions.scales.y, reverse: true, suggestedMin: -100, suggestedMax: 0 } } }
+            : { scales: { ...commonOptions.scales, y: { ...commonOptions.scales.y, suggestedMin: 0, suggestedMax: 100 } } };
+        
+        createSingleChart('radio-chart', metricasData.labels, values, metric, extraOpts);
+    }
+}
+
+// Render gráfica Latencia
+function renderLatenciaChart() {
+    if (!latenciasData.labels || !latenciasData.labels.length) return;
+    
+    const values = latenciasData.datasets['latency_ms'] || [];
+    createSingleChart('latencia-chart', latenciasData.labels, values, 'latency', {
+        scales: {
+            ...commonOptions.scales,
+            y: { ...commonOptions.scales.y, beginAtZero: true }
+        }
+    });
+}
+
+// Render gráfica Tráfico Interfaces (con cálculo bps)
+function renderTraficoChart() {
+    const iface = document.getElementById('interface-select').value;
+    if (!iface || !traficoInterfaces[iface]) return;
+    
+    const data = traficoInterfaces[iface];
+    if (!data.length) return;
+    
+    // Calcular bps
+    const { labels, rx, tx } = calculateBps(data);
+    if (!labels.length) return;
+    
+    const ctx = document.getElementById('trafico-chart').getContext('2d');
+    if (window['trafico-chartChart']) {
+        window['trafico-chartChart'].destroy();
+    }
+    
+    window['trafico-chartChart'] = new Chart(ctx, {
+        type: 'line',
+        data: {
+            datasets: [
+                {
+                    label: 'RX (bps)',
+                    data: labels.map((l, i) => ({ x: l, y: rx[i] })),
+                    borderColor: colors.rx,
+                    backgroundColor: colors.rx + '33',
+                    fill: true,
+                    tension: 0.3
+                },
+                {
+                    label: 'TX (bps)',
+                    data: labels.map((l, i) => ({ x: l, y: tx[i] })),
+                    borderColor: colors.tx,
+                    backgroundColor: colors.tx + '33',
+                    fill: true,
+                    tension: 0.3
+                }
+            ]
+        },
+        options: {
+            ...commonOptions,
+            scales: {
+                ...commonOptions.scales,
+                y: { 
+                    ...commonOptions.scales.y, 
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            if (value >= 1e9) return (value / 1e9).toFixed(1) + ' Gbps';
+                            if (value >= 1e6) return (value / 1e6).toFixed(1) + ' Mbps';
+                            if (value >= 1e3) return (value / 1e3).toFixed(1) + ' Kbps';
+                            return value + ' bps';
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Selector de periodo
+function setPeriodo(p) {
+    currentPeriodo = p;
+    document.getElementById('id_periodo').value = p;
+    
+    // Actualizar botones
+    document.querySelectorAll('#periodo-buttons button').forEach(btn => {
+        btn.classList.toggle('btn-primary', btn.dataset.periodo === p);
+        btn.classList.toggle('btn-outline-primary', btn.dataset.periodo !== p);
+    });
+    
+    // Mostrar/ocultar fechas personalizadas
+    const customGroup = document.getElementById('custom-date-group');
+    const customGroup2 = document.getElementById('custom-date-group2');
+    const btnAplicar = document.getElementById('btn-aplicar');
+    
+    if (p === 'custom') {
+        customGroup.classList.remove('d-none');
+        customGroup2.classList.remove('d-none');
+        btnAplicar.classList.remove('d-none');
+        
+        // Establecer valores por defecto (últimas 24h)
+        const ahora = new Date();
+        const hace24h = new Date(ahora - 24*60*60*1000);
+        document.getElementById('id_fecha_inicio').value = hace24h.toISOString().slice(0, 16);
+        document.getElementById('id_fecha_fin').value = ahora.toISOString().slice(0, 16);
+    } else {
+        customGroup.classList.add('d-none');
+        customGroup2.classList.add('d-none');
+        btnAplicar.classList.add('d-none');
+        
+        // Auto-submit para periodos predefinidos
+        document.getElementById('periodo-form').submit();
+    }
+}
+
+// Inicializar
+document.addEventListener('DOMContentLoaded', () => {
+    renderSistemaChart();
+    {% if dispositivo.tipo.clave in dispositivos_antenas %}
+    renderRadioChart();
+    {% endif %}
+    renderLatenciaChart();
+    
+    // Poblar selector de interfaces
+    const select = document.getElementById('interface-select');
+    Object.keys(traficoInterfaces).forEach(iface => {
+        if (!Array.from(select.options).some(o => o.value === iface)) {
+            const opt = document.createElement('option');
+            opt.value = iface;
+            opt.textContent = iface;
+            select.appendChild(opt);
+        }
+    });
+    
+    // Seleccionar primera interfaz por defecto
+    if (select.options.length > 1) {
+        select.selectedIndex = 1;
+        renderTraficoChart();
+    }
+    
+    // Inicializar fechas personalizadas si es periodo custom
+    if (currentPeriodo === 'custom') {
+        setPeriodo('custom');
+    }
+});
+</script>
+
+{% endblock %}

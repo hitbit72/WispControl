@@ -86,7 +86,7 @@ def evaluar(dispositivo, metrica, anterior, historico, historico_anterior, confi
                 reglas.append({'regla': 'cambio_frecuencia', 'titulo': f'Cambio de frecuencia {dispositivo.ip_gestion}',
                             'texto': f'Frecuencia {dispositivo.frequency:.0f} → {metrica.frequency:.0f} MHz.'})
                 
-        for metrica_campo, regla, titulo, medida, umbral in (
+        for historico_campo, regla, titulo, medida, umbral in (
             ('signal', 'caida_signal', 'Caída de señal', 'dBm', config.get('caida_signal_dbm')),
             ('power', 'caida_potencia_tx', 'Caída de potencia TX', 'dBm', config.get('caida_potencia_tx')),
         ):
@@ -95,7 +95,7 @@ def evaluar(dispositivo, metrica, anterior, historico, historico_anterior, confi
             if regla == 'caida_signal':
                 if any(r['regla'] == 'sin_clientes_ap' for r in reglas):
                     continue
-            actual, previo = getattr(historico, metrica_campo), getattr(historico_anterior, metrica_campo)
+            actual, previo = getattr(historico, historico_campo), getattr(historico_anterior, historico_campo)
             if actual is not None and previo is not None:
                 caida = previo - actual
                 if caida >= umbral:
