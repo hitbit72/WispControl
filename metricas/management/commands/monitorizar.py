@@ -219,14 +219,15 @@ class Command(BaseCommand):
             DeviceMetrics.objects.filter(device=dispositivo)
             .order_by('-pk').first()
         )
-
         # Version historico, recuperar metricas historicas anteriores para evalua la alerta/alarma
         historico_anterior = (
             DeviceMetricHistory.objects.filter(device=dispositivo)
             .order_by('-timestamp').first()
         )
-
         # guarda los datos en DeviceMetrics y  DeviceMetricHistory
+        # Variables para evaluar la alerta/alarma, si no hay datos anteriores se pasa None
+        metrica = None
+        historico = None
         if self.zonas['general']:
             if datos:
                 metrica, historico = services.guardar_metrica(dispositivo, **datos)
