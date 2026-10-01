@@ -225,16 +225,20 @@ class Command(BaseCommand):
         )
 
         # guarda los datos en DeviceMetrics y  DeviceMetricHistory
-        if datos:
-            metrica, historico = services.guardar_metrica(dispositivo, **datos)
+        if self.zonas['general']:
+            if datos:
+                metrica, historico = services.guardar_metrica(dispositivo, **datos)
         # Actualiza modelo de interfaz (puertos)
-        if puertos:
-            services.guardar_puertos(dispositivo, **datos)
+        if self.zonas['puertos']:
+            if puertos:
+                services.guardar_puertos(dispositivo, **datos)
         # Actizalizar datos estaciones wifi y onus
-        if estaciones:
-            services.guarda_staciones_wifi(dispositivo, **datos)     # <-- Datos wifi de ubiquiti
-        if onus:
-            services.guarda_estaciones_onu(dispositivo, **datos)     # <-- Datos de ONU de OLT ubiquiti
+        if self.zonas['wifi']:
+            if estaciones:
+                services.guarda_staciones_wifi(dispositivo, **datos)     # <-- Datos wifi de ubiquiti
+        if self.zonas['onus']:
+            if onus:
+                services.guarda_estaciones_onu(dispositivo, **datos)     # <-- Datos de ONU de OLT ubiquiti
 
         # evalua la alerta/alarma
         services.evaluar_y_aplicar(dispositivo, metrica, metrica_anterior, historico, historico_anterior)
