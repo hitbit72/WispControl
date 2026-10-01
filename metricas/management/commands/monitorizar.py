@@ -244,7 +244,8 @@ class Command(BaseCommand):
 
         # evalua la alerta/alarma
         if self.zonas['general']:
-            services.evaluar_y_aplicar(dispositivo, metrica, metrica_anterior, historico, historico_anterior)
+            if status == DeviceMetrics.Status.OK:
+                services.evaluar_y_aplicar(dispositivo, metrica, metrica_anterior, historico, historico_anterior)
 
         #self.stdout.write(self.style.SUCCESS(f'[{timezone.now():%d/%m/%Y %H:%M:%S}] {dispositivo.ip_gestion} ({dispositivo.nombre}) {status}'))
         return status == DeviceMetrics.Status.OK
