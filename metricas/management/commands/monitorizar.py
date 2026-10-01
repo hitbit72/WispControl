@@ -102,6 +102,8 @@ class Command(BaseCommand):
         if tipo_zona:
             for zona in self.zonas:
                 self.zonas[zona] = True if zona == tipo_zona else False
+        else:
+            tipo_zona = 'todas'
 
         if ip_filtro:
             dispositivos = (
