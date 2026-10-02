@@ -50,8 +50,9 @@ class Command(BaseCommand):
         parser.add_argument(
             '--rol',
             type=str,
+            nargs='+',  # Acepta 1 o más valores separados por espacio
             choices=['main', 'station', 'mkt'],
-            help='Filtrar dispositivos por su rol (rol del Equipo: main, station, mkt).',
+            help='Filtrar dispositivos por su rol (ej: --rol main mkt).',
         )
         parser.add_argument(
             '--rol_no',
@@ -63,12 +64,9 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         ip_filtro = options.get('ip')
         tipo_filtro = options.get('tipo')
-        tipo_rol = options.get('rol')
+        tipo_roles = options.get('rol')       # Será una lista: ['main', 'mkt'] o None
         tipo_rol_no = options.get('rol_no')
         
-        if tipo_rol:
-            tipo_rol_no = None
-
         if ip_filtro:
             dispositivos = Dispositivo.objects.filter(
                 ip_gestion=ip_filtro,
@@ -82,8 +80,9 @@ class Command(BaseCommand):
         if tipo_filtro:
             dispositivos = dispositivos.filter(tipo__clave=tipo_filtro)
 
-        if tipo_rol:
-            dispositivos = dispositivos.filter(rol=tipo_rol)
+        if tipo_roles:
+            # Usamos rol__in para filtrar por todos los roles pasados
+            dispositivos = dispositivos.filter(rol__in=tipo_roles)
 
         if tipo_rol_no:
             dispositivos = dispositivos.exclude(rol=tipo_rol_no)
