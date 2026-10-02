@@ -180,7 +180,6 @@ def sincronizar_alarmas_ping(dispositivo, detectadas, ping_actual, error_msg):
         alarma.save(update_fields=['estado', 'resuelta_en'])
 
         if dispositivo.alarma_ping:
-            """
             registrar_evento(
                 MODULO,
                 f'Alarma resuelta: {alarma.titulo}',
@@ -194,6 +193,7 @@ def sincronizar_alarmas_ping(dispositivo, detectadas, ping_actual, error_msg):
                 f'{dispositivo.nombre} vuelve a responder a ping (latencia: {ping_actual.latency_ms} ms).',
                 nivel=Evento.Nivel.NOTICE,
             )
+            """
             # Enviar Telegram (async)
             enviar_alerta_telegram(dispositivo, alarma, 'resuelta')
         resultados['resueltas'].append(alarma)
