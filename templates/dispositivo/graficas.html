@@ -177,7 +177,7 @@ const commonOptions = {
     },
     elements: {
         line: { tension: 0.3, borderWidth: 2 },
-        point: { radius: 3, hoverRadius: 5 }
+        point: { radius: 0, hoverRadius: 5 }
     }
 };
 
@@ -421,6 +421,28 @@ function renderTraficoChart() {
         },
         options: {
             ...commonOptions,
+            plugins: {
+                ...commonOptions.plugins,
+                tooltip: {
+                    ...commonOptions.plugins.tooltip,
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            const val = context.parsed.y;
+                            if (val !== null && val !== undefined) {
+                                if (val >= 1e9) return label + (val / 1e9).toFixed(2) + ' Gbps';
+                                if (val >= 1e6) return label + (val / 1e6).toFixed(2) + ' Mbps';
+                                if (val >= 1e3) return label + (val / 1e3).toFixed(2) + ' Kbps';
+                                return label + val.toFixed(0) + ' bps';
+                            }
+                            return label;
+                        }
+                    }
+                }
+            },
             scales: {
                 ...commonOptions.scales,
                 y: { 
