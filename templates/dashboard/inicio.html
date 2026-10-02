@@ -59,5 +59,300 @@
         </a>
     </div>
 </section>
-<p>Mikrotik: {{ mkt_dispositivo.nombre}} {{ mkt_dispositivo.ip_gestion }}</p>
+
+<div class="d-flex justify-content-between align-items-start mb-3">
+    <div>
+        <h2 class="mt-1"> {{ mkt_dispositivo.nombre }}</h2>
+        <div class="text-muted">{{ mkt_dispositivo.marca.nombre }} {{ mkt_dispositivo.marca.modelo }} · {{ mkt_dispositivo.ip_gestion }}</div>
+    </div>
+</div>
+
+<!-- Selector de periodo -->
+<div class="card mb-3">
+    <div class="card-body py-2">
+        <form method="get" class="row g-2 align-items-end" id="periodo-form">
+            <input type="hidden" name="next" value="{{ url_anterior }}">
+            
+            <!-- Botones de periodo rápido -->
+            <div class="col-auto">
+                <label class="form-label mb-0 fw-bold">Periodo:</label>
+                <div class="btn-group" role="group" id="periodo-buttons">
+                    <button type="button" class="btn btn-sm {% if periodo == 'hour' %}btn-primary{% else %}btn-outline-primary{% endif %}" 
+                            data-periodo="hour" onclick="setPeriodo('hour')">6h</button>
+                    <button type="button" class="btn btn-sm {% if periodo == 'day' %}btn-primary{% else %}btn-outline-primary{% endif %}" 
+                            data-periodo="day" onclick="setPeriodo('day')">24h</button>
+                    <button type="button" class="btn btn-sm {% if periodo == 'week' %}btn-primary{% else %}btn-outline-primary{% endif %}" 
+                            data-periodo="week" onclick="setPeriodo('week')">7d</button>
+                    <button type="button" class="btn btn-sm {% if periodo == 'month' %}btn-primary{% else %}btn-outline-primary{% endif %}" 
+                            data-periodo="month" onclick="setPeriodo('month')">30d</button>
+                </div>
+                <input type="hidden" name="periodo" id="id_periodo" value="{{ periodo }}">
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="row g-3">
+    <!-- Gráfica: Tráfico interfaces (con cálculo de bps) -->
+    <div class="col-12">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-ethernet" aria-hidden="true"></i> Tráfico {{ mkt_dispositivo.marca.nombre }} {{ mkt_dispositivo.marca.modelo }} (Mbps)</h5>
+                <div class="d-flex gap-2">
+                    <select class="form-select form-select-sm" id="interface-select" style="width: auto;" onchange="renderTraficoChart()">
+                        <option value="">Seleccionar interfaz</option>
+                    </select>
+                </div>
+            </div>
+            <div class="card-body">
+                <canvas id="trafico-chart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/date-fns@3.6.0/cdn.min.js"></script>
+
+<script>
+// Datos inyectados desde Django
+const traficoInterfaces = {{ trafico_interfaces|safe }};
+let currentPeriodo = '{{ periodo }}';
+
+// Configuración común de gráficas
+const commonOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: {
+        mode: 'index',
+        intersect: false,
+    },
+    scales: {
+        x: {
+            type: 'time',
+            time: {
+                unit: 'hour',
+                displayFormats: {
+                    hour: 'HH:mm',
+                    day: 'dd/MM',
+                    week: 'dd/MM',
+                    month: 'dd/MM'
+                }
+            },
+            title: { display: true, text: 'Tiempo' },
+            grid: { display: false }
+        },
+        y: {
+            beginAtZero: false,
+            title: { display: true, text: 'Mbps' },
+            grid: { color: 'rgba(0,0,0,0.05)' }
+        }
+    },
+    plugins: {
+        legend: { display: true, position: 'top' },
+        tooltip: { 
+            mode: 'index', 
+            intersect: false,
+            callbacks: {
+                label: function(context) {
+                    let label = context.dataset.label || '';
+                    if (label) {
+                        label += ': ';
+                    }
+                    const val = context.parsed.y;
+                    if (val === null || val === undefined) return label;
+
+                    // Si es tráfico en bps (RX / TX bps)
+                    if (context.dataset.label && context.dataset.label.includes('(bps)')) {
+                        if (val >= 1e9) return label + (val / 1e9).toFixed(2) + ' Gbps';
+                        if (val >= 1e6) return label + (val / 1e6).toFixed(2) + ' Mbps';
+                        if (val >= 1e3) return label + (val / 1e3).toFixed(2) + ' Kbps';
+                        return label + val.toFixed(0) + ' bps';
+                    }
+
+                    // Para el resto de métricas (CPU, RAM, dBm, ms, etc.)
+                    return label + val.toFixed(2);
+                }
+            }
+        }
+    },
+    elements: {
+        line: { tension: 0.3, borderWidth: 1 },
+        point: { radius: 0, hoverRadius: 5 }
+    }
+};
+
+// Colores para datasets
+const colors = {
+    rx: '#3498db',
+    tx: '#e74c3c'
+};
+const labels_es = {
+    rx: 'RX (bps)',
+    tx: 'TX (bps)'
+};
+
+
+// Calcular bps a partir de contadores acumulados
+// los contadores SNMP ifHCInOctets / ifHCOutOctets están en bytes, por lo que
+// para obtener bits por segundo tienes que multiplicar por 8
+function calculateBps(data) {
+    // data: array of {timestamp, rx, tx}
+    if (!data || data.length < 2) return { labels: [], rx: [], tx: [] };
+    
+    const labels = [];
+    const rxBps = [];
+    const txBps = [];
+    
+    for (let i = 1; i < data.length; i++) {
+        const prev = data[i - 1];
+        const curr = data[i];
+        
+        const t1 = new Date(prev.timestamp).getTime();
+        const t2 = new Date(curr.timestamp).getTime();
+        const deltaTimeSec = (t2 - t1) / 1000;
+        
+        if (deltaTimeSec <= 0) continue;
+        
+        const deltaRx = (curr.rx ?? 0) - (prev.rx ?? 0);
+        const deltaTx = (curr.tx ?? 0) - (prev.tx ?? 0);
+        
+        // Solo valores positivos (contadores pueden reiniciarse)
+        if (deltaRx < 0 || deltaTx < 0) continue;
+        
+        // Octetos -> bits
+        const rxBpsValue = (deltaRx * 8) / deltaTimeSec;
+        const txBpsValue = (deltaTx * 8) / deltaTimeSec;
+
+        labels.push(curr.timestamp);
+        rxBps.push(rxBpsValue);
+        txBps.push(txBpsValue);
+    }
+    
+    return { labels, rx: rxBps, tx: txBps };
+}
+
+// Render gráfica Tráfico Interfaces (con cálculo bps)
+function renderTraficoChart() {
+    const iface = document.getElementById('interface-select').value;
+    if (!iface || !traficoInterfaces[iface]) return;
+    
+    const data = traficoInterfaces[iface];
+    if (!data.length) return;
+    
+    // Calcular bps
+    const { labels, rx, tx } = calculateBps(data);
+    if (!labels.length) return;
+    
+    const ctx = document.getElementById('trafico-chart').getContext('2d');
+    if (window['trafico-chartChart']) {
+        window['trafico-chartChart'].destroy();
+    }
+    
+    window['trafico-chartChart'] = new Chart(ctx, {
+        type: 'line',
+        data: {
+            datasets: [
+                {
+                    label: 'RX (bps)',
+                    data: labels.map((l, i) => ({ x: l, y: rx[i] })),
+                    borderColor: colors.rx,
+                    backgroundColor: colors.rx + '33',
+                    fill: true,
+                    tension: 0.3
+                },
+                {
+                    label: 'TX (bps)',
+                    data: labels.map((l, i) => ({ x: l, y: tx[i] })),
+                    borderColor: colors.tx,
+                    backgroundColor: colors.tx + '33',
+                    fill: true,
+                    tension: 0.3
+                }
+            ]
+        },
+        options: {
+            ...commonOptions,
+            plugins: {
+                ...commonOptions.plugins,
+                tooltip: {
+                    ...commonOptions.plugins.tooltip,
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            const val = context.parsed.y;
+                            if (val !== null && val !== undefined) {
+                                if (val >= 1e9) return label + (val / 1e9).toFixed(2) + ' Gbps';
+                                if (val >= 1e6) return label + (val / 1e6).toFixed(2) + ' Mbps';
+                                if (val >= 1e3) return label + (val / 1e3).toFixed(2) + ' Kbps';
+                                return label + val.toFixed(0) + ' bps';
+                            }
+                            return label;
+                        }
+                    }
+                }
+            },
+            scales: {
+                ...commonOptions.scales,
+                y: { 
+                    ...commonOptions.scales.y, 
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            if (value >= 1e9) return (value / 1e9).toFixed(1) + ' Gbps';
+                            if (value >= 1e6) return (value / 1e6).toFixed(1) + ' Mbps';
+                            if (value >= 1e3) return (value / 1e3).toFixed(1) + ' Kbps';
+                            return value + ' bps';
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+
+// Selector de periodo
+function setPeriodo(p) {
+    currentPeriodo = p;
+    document.getElementById('id_periodo').value = p;
+    
+    // Actualizar botones
+    document.querySelectorAll('#periodo-buttons button').forEach(btn => {
+        btn.classList.toggle('btn-primary', btn.dataset.periodo === p);
+        btn.classList.toggle('btn-outline-primary', btn.dataset.periodo !== p);
+    });
+    
+    // Auto-submit para periodos predefinidos
+    document.getElementById('periodo-form').submit();
+}
+
+
+// Inicializar
+document.addEventListener('DOMContentLoaded', () => {
+    // Poblar selector de interfaces
+    const select = document.getElementById('interface-select');
+    Object.keys(traficoInterfaces).forEach(iface => {
+        if (!Array.from(select.options).some(o => o.value === iface)) {
+            const opt = document.createElement('option');
+            opt.value = iface;
+            opt.textContent = iface;
+            select.appendChild(opt);
+        }
+    });
+    
+    // Seleccionar primera interfaz por defecto
+    if (select.options.length > 1) {
+        select.selectedIndex = 1;
+        renderTraficoChart();
+    }
+});
+
+</script>
+
 {% endblock %}

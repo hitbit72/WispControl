@@ -173,13 +173,41 @@ const commonOptions = {
     },
     plugins: {
         legend: { display: true, position: 'top' },
-        tooltip: { mode: 'index', intersect: false }
+        tooltip: { 
+            mode: 'index', 
+            intersect: false,
+            callbacks: {
+                label: function(context) {
+                    let label = context.dataset.label || '';
+                    if (label) {
+                        label += ': ';
+                    }
+                    const val = context.parsed.y;
+                    if (val === null || val === undefined) return label;
+
+                    // Si es tráfico en bps (RX / TX bps)
+                    if (context.dataset.label && context.dataset.label.includes('(bps)')) {
+                        if (val >= 1e9) return label + (val / 1e9).toFixed(2) + ' Gbps';
+                        if (val >= 1e6) return label + (val / 1e6).toFixed(2) + ' Mbps';
+                        if (val >= 1e3) return label + (val / 1e3).toFixed(2) + ' Kbps';
+                        return label + val.toFixed(0) + ' bps';
+                    }
+
+                    // Para el resto de métricas (CPU, RAM, dBm, ms, etc.)
+                    return label + val.toFixed(2);
+                }
+            }
+        }
     },
     elements: {
-        line: { tension: 0.3, borderWidth: 2 },
+        line: { tension: 0.3, borderWidth: 1 },
         point: { radius: 0, hoverRadius: 5 }
     }
 };
+
+// plugins: {
+//    tooltip: { mode: 'index', intersect: false }
+//    }
 
 // Colores para datasets
 const colors = {

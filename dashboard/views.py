@@ -16,9 +16,26 @@ def inicio(request):
     """
 
     # Parametros para el gráfico
+    # Parámetros de tiempo
+    periodo = request.GET.get('periodo', 'day')  # day, week, month, custom
     ahora = timezone.now()
-    fecha_inicio = ahora - timedelta(days=1)
-    fecha_fin = ahora
+
+    if periodo == 'hour':
+        fecha_inicio = ahora - timedelta(hours=6)
+        fecha_fin = ahora
+    elif periodo == 'day':
+        fecha_inicio = ahora - timedelta(days=1)
+        fecha_fin = ahora
+    elif periodo == 'week':
+        fecha_inicio = ahora - timedelta(weeks=1)
+        fecha_fin = ahora
+    elif periodo == 'month':
+        fecha_inicio = ahora - timedelta(days=30)
+        fecha_fin = ahora
+    else:
+        fecha_inicio = ahora - timedelta(days=1)
+        fecha_fin = ahora
+        periodo = 'day'
 
 
     clt = Cliente.objects.all()
@@ -65,4 +82,5 @@ def inicio(request):
         'dispositivos': dispositivos,
         'mkt_dispositivo': mkt_dispositivo,
         'trafico_interfaces': json.dumps(trafico_interfaces),
+        'periodo': periodo,
     })
