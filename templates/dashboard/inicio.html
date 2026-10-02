@@ -1,6 +1,63 @@
 {% extends "base.html" %}
 {% block titulo %}Inicio · Portal WISP{% endblock %}
 {% block contenido %}
+
+<div class="page-heading">
+  <div class="page-heading-copy">
+    <span class="page-icon"><i class="bi bi-people" aria-hidden="true"></i></span>
+    <div>
+      <h1 class="h3 mb-1">Gestión · Portal WISP</h1>
+    </div>
+  </div>
+</div>
+
+<section class="row g-3">
+    <div class="col-12 col-sm-6 col-xl-3">
+        <article class="metric-card metric-primary">
+        <div class="metric-top">
+            <span class="metric-label">Clientes</span>
+            <span class="metric-icon"><i class="bi bi-people" aria-hidden="true"></i></span>
+        </div>
+        <div class="metric-value mt-0">{{ clientes.total }}</div>
+        <div class="metric-meta">
+            <span>Suspendidos:</span><span class="text-success">{{ clientes.inactivos }}</span>
+        </div>
+        </article>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+        <article class="metric-card metric-success">
+        <div class="metric-top">
+            <span class="metric-label">Dispositivos</span>
+            <span class="metric-icon"><i class="bi bi-router" aria-hidden="true"></i></span>
+        </div>
+        <div class="metric-value mt-0">{{ dispositivos.total }}</div>
+        <div class="metric-meta">
+            <span>Red:</span><span class="text-success">{{ dispositivos.red }}</span> · 
+            <span>Clientes:</span><span class="text-success">{{ dispositivos.st }}</span> · 
+            <span>MKT:</span><span class="text-success">{{ dispositivos.mkt }}</span>
+        </div>
+        </article>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+        <a href="{% url 'eventos:lista' %}">
+        <article class="metric-card metric-danger">
+        <div class="metric-top">
+            <span class="metric-label">Notificaciones</span>
+            <span class="metric-icon"><i class="bi bi-life-preserver" aria-hidden="true"></i></span>
+        </div>
+        <div class="metric-value mt-0">{{ eventos_no_leidos }}</div>
+        <div class="metric-meta">
+            {% if eventos_urgentes > 0 %}
+            <span class="text-danger">Urgentes: {{ eventos_urgentes }}</span>
+            {% endif %}
+        </div>
+        </article>
+        </a>
+    </div>
+</section>
+<!-- 
 <h2>Bienvenido, {{ usuario.get_full_name|default:usuario.username }}</h2>
 <p class="text-muted">Rol: {{ usuario.get_rol_display }}</p>
 <div class="alert alert-info">
@@ -8,4 +65,5 @@
     Núcleo del sistema funcionando: login, roles y modelo de datos base listos.<br>
     El dashboard con métricas, mapa e inventario visual llega en la siguiente fase.
 </div>
+-->
 {% endblock %}

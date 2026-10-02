@@ -23,7 +23,7 @@ def inicio(request):
         'total': disp.count(),
         'activos': disp.filter(estado='activo').count(),
         'inactivos': disp.filter(estado='inactivo').count(),
-        'ap': disp.filter(rol='main').count(),
+        'red': disp.filter(rol='main').count(),
         'st': disp.filter(rol='station').count(),
         'mkt': disp.filter(rol='mkt').count(),
         }

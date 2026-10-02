@@ -14,8 +14,10 @@ def notificaciones(request):
         }
 
     sin_leer = Evento.objects.filter(leido=False)
+    urgente = sin_leer.filter(nivel__in=[0, 1, 2, 3])
     return {
         'eventos_notif': sin_leer[:6],
         'eventos_no_leidos': sin_leer.count(),
+        'eventos_urgentes': urgente.count(),
         'puede_marcar_eventos': request.user.rol in ROLES_PUEDEN_MARCAR,
     }

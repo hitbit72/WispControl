@@ -141,14 +141,12 @@ def evaluar_alarma(dispositivo, ping_actual, ping_anterior):
         })
 
     # Regla: recuperado (estaba inactivo y ahora responde)
-    """
     elif ping_anterior.success == False:
         reglas.append({
             'regla': 'ping_recuperado',
             'titulo': f'Ping recuperado {dispositivo.ip_gestion}',
             'texto': f'{dispositivo.nombre} vuelve a responder a ping (latencia: {ping_actual.latency_ms} ms).',
         })
-    """
     return reglas
 
 
@@ -173,7 +171,7 @@ def sincronizar_alarmas_ping(dispositivo, detectadas, ping_actual, error_msg):
             continue
         if regla not in ('ping_sin_respuesta', 'ping_recuperado'):
             continue
-            
+
         alarma = Alarma.objects.get(pk=pk)
         alarma.estado = Alarma.Estado.RESUELTA
         alarma.resuelta_en = timezone.now()
@@ -186,14 +184,6 @@ def sincronizar_alarmas_ping(dispositivo, detectadas, ping_actual, error_msg):
                 f'{dispositivo.nombre} · {alarma.texto}',
                 nivel=Evento.Nivel.NOTICE,
             )
-            """
-            registrar_evento(
-                MODULO,
-                f'Ping recuperado: {dispositivo.ip_gestion}',
-                f'{dispositivo.nombre} vuelve a responder a ping (latencia: {ping_actual.latency_ms} ms).',
-                nivel=Evento.Nivel.NOTICE,
-            )
-            """
             # Enviar Telegram (async)
             enviar_alerta_telegram(dispositivo, alarma, 'resuelta')
         resultados['resueltas'].append(alarma)
