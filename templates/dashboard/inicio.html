@@ -15,12 +15,12 @@
     <div class="col-12 col-sm-6 col-xl-3">
         <article class="metric-card metric-primary">
         <div class="metric-top">
-            <span class="metric-label">Clientes</span>
+            <span class="metric-label">Clientes </span>
             <span class="metric-icon"><i class="bi bi-people" aria-hidden="true"></i></span>
         </div>
         <div class="metric-value mt-0">{{ clientes.total }}</div>
         <div class="metric-meta">
-            <span>Suspendidos:</span><span class="text-success">{{ clientes.inactivos }}</span>
+            <span>Suspendidos:</span><span class="text-primary">{{ clientes.inactivos }}</span>
         </div>
         </article>
     </div>
@@ -33,9 +33,9 @@
         </div>
         <div class="metric-value mt-0">{{ dispositivos.total }}</div>
         <div class="metric-meta">
-            <span>Red:</span><span class="text-success">{{ dispositivos.red }}</span> · 
-            <span>Clientes:</span><span class="text-success">{{ dispositivos.st }}</span> · 
-            <span>MKT:</span><span class="text-success">{{ dispositivos.mkt }}</span>
+            <span>Red: </span><span class="text-success">{{ dispositivos.red }}</span> · 
+            <span>Clientes: </span><span class="text-success">{{ dispositivos.st }}</span> · 
+            <span>MKT: </span><span class="text-success">{{ dispositivos.mkt }}</span>
         </div>
         </article>
     </div>
@@ -50,20 +50,14 @@
         <div class="metric-value mt-0">{{ eventos_no_leidos }}</div>
         <div class="metric-meta">
             {% if eventos_urgentes > 0 %}
-            <span class="text-danger">Urgentes: {{ eventos_urgentes }}</span>
+            <span>Urgentes: </span><span class="text-danger">{{ eventos_urgentes }}</span>
+            {% else %}
+            <span class="text-success">No hay notificaciones urgentes</span>
             {% endif %}
         </div>
         </article>
         </a>
     </div>
 </section>
-<!-- 
-<h2>Bienvenido, {{ usuario.get_full_name|default:usuario.username }}</h2>
-<p class="text-muted">Rol: {{ usuario.get_rol_display }}</p>
-<div class="alert alert-info">
-    Dshsboard<br>
-    Núcleo del sistema funcionando: login, roles y modelo de datos base listos.<br>
-    El dashboard con métricas, mapa e inventario visual llega en la siguiente fase.
-</div>
--->
+<p>Mikrotik: {{ mkt_dispositivo.nombre}} {{ mkt_dispositivo.ip_gestion }}</p>
 {% endblock %}

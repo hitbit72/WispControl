@@ -67,8 +67,13 @@
       </div>
 
       <div class="sidebar-footer">
-        <span class="status-dot" id="footer_dot"></span>
-        <span class="sidebar-footer-text" id="footer_info">El sistema funciona sin problemas</span>
+        {% if eventos_urgentes > 0 %}
+          <span class="status-fail-dot" id="footer_dot"></span>
+          <span class="sidebar-footer-text" id="footer_info">Hay notificaciones urgentes</span>
+        {% else %}
+          <span class="status-dot" id="footer_dot"></span>
+          <span class="sidebar-footer-text" id="footer_info">El sistema funciona sin problemas</span>
+        {% endif %}
       </div>
     </aside>
 

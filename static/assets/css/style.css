@@ -213,6 +213,7 @@ a {
 }
 
 .status-dot,
+.status-fail-dot,
 .notification-dot {
   width: 9px;
   height: 9px;
@@ -222,6 +223,11 @@ a {
 .status-dot {
   flex: 0 0 auto;
   background: #22c55e;
+}
+
+.status-fail-dot {
+  flex: 0 0 auto;
+  background: #ff0000;
 }
 
 .sidebar-backdrop {

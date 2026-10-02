@@ -233,3 +233,7 @@ TELEGRAM = {
     'TIMEOUT': 10,
     'SOUND': 0,
 }
+
+# --- Dashboard -----------------------------------------------------------------
+# Nombre del Mikrotik que se mostrará en el dashboard (solo uno, el principal)
+MKT_DASHBOARD_NAME = os.environ.get('MKT_DASHBOARD_NAME', 'RB5009 Jimena')
