@@ -574,8 +574,11 @@ def graficas_dispositivo(request, pk):
     fecha_fin_str = request.GET.get('fecha_fin')
     
     ahora = timezone.now()
-    
-    if periodo == 'day':
+
+    if periodo == 'hour':
+        fecha_inicio = ahora - timedelta(hours=1)
+        fecha_fin = ahora
+    elif periodo == 'day':
         fecha_inicio = ahora - timedelta(days=1)
         fecha_fin = ahora
     elif periodo == 'week':
