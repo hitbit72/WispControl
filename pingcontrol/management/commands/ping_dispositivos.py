@@ -21,8 +21,8 @@ Uso manual:
     -- Combinado tipo con IP (aunque IP ya es único)
     python manage.py ping_dispositivos --ip=192.168.1.10 --tipo=ap
 
-    -- Para filtrar por rol de dispositivo:
-    python manage.py ping_dispositivos --rol=main   (solo acepta: main y station)
+    -- Para filtrar por rol de dispositivo, acepta uno o más roles separados por espacio:
+    python manage.py ping_dispositivos --rol=main   (solo acepta: main, station y mky)
 
 """
 
@@ -54,18 +54,11 @@ class Command(BaseCommand):
             choices=['main', 'station', 'mkt'],
             help='Filtrar dispositivos por su rol (ej: --rol main mkt).',
         )
-        parser.add_argument(
-            '--rol_no',
-            type=str,
-            choices=['main', 'station', 'mkt'],
-            help='Excluir dispositivos por su rol (rol del Equipo: main, station, mkt).',
-        )
 
     def handle(self, *args, **options):
         ip_filtro = options.get('ip')
         tipo_filtro = options.get('tipo')
         tipo_roles = options.get('rol')       # Será una lista: ['main', 'mkt'] o None
-        tipo_rol_no = options.get('rol_no')
         
         if ip_filtro:
             dispositivos = Dispositivo.objects.filter(
@@ -83,9 +76,6 @@ class Command(BaseCommand):
         if tipo_roles:
             # Usamos rol__in para filtrar por todos los roles pasados
             dispositivos = dispositivos.filter(rol__in=tipo_roles)
-
-        if tipo_rol_no:
-            dispositivos = dispositivos.exclude(rol=tipo_rol_no)
 
         total = dispositivos.count()
         ok = 0
