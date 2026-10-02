@@ -75,14 +75,16 @@ class Command(BaseCommand):
         parser.add_argument(
             '--rol',
             type=str,
+            nargs='+',  # Acepta 1 o más valores separados por espacio
             choices=['main', 'station', 'mkt'],
-            help='Filtrar dispositivos por su rol (rol disponibles: main, station).',
+            help='Filtrar dispositivos por su rol (ej: --rol main mkt).',
         )
         parser.add_argument(
             '--zona',
             type=str,
+            nargs='+',  # Acepta 1 o más valores separados por espacio
             choices=['general', 'puertos', 'wifi', 'onus', 'puertos_pon'],
-            help='Filtrar y procesar únicamente el tipo de sonculta (general, puertos, wifi, onus).',
+            help='Filtrar y procesar únicamente la zona selecioanda (ej: --zona general wifi).',
         )
 
     def handle(self, *args, **options):
@@ -100,8 +102,11 @@ class Command(BaseCommand):
         
         # Filtrar por tipo de zona si se paso el argumento
         if tipo_zona:
-            for zona in self.zonas:
-                self.zonas[zona] = True if zona == tipo_zona else False
+            #for zona in self.zonas:
+                #self.zonas[zona] = True if zona == tipo_zona else False
+            
+            # Mantiene True solo para las claves que existen dentro de la lista tipo_zona
+            self.zonas = {zona: (zona in tipo_zona) for zona in self.zonas}
         else:
             tipo_zona = 'todas'
 
@@ -123,7 +128,9 @@ class Command(BaseCommand):
 
         # Si se pasó un ROL, filtramos el queryset para que solo devuelva esos registros
         if tipo_rol:
-            dispositivos = dispositivos.filter(rol=tipo_rol)
+            # Usamos rol__in para filtrar por todos los roles pasados
+            dispositivos = dispositivos.filter(rol__in=tipo_rol)
+            #dispositivos = dispositivos.filter(rol=tipo_rol)
         else:
             tipo_rol = 'todos'
 
