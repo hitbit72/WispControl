@@ -213,7 +213,7 @@ const commonOptions = {
 // Colores para datasets
 const colors = {
     rx: '#3498db',
-    tx: '#e74c3c'
+    tx: '#259b33'
 };
 const labels_es = {
     rx: 'RX (bps)',
@@ -372,9 +372,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
-    // Seleccionar primera interfaz por defecto
+    // Seleccionar segundo interfaz por defecto
     if (select.options.length > 1) {
-        select.selectedIndex = 1;
+        select.selectedIndex = 2;
         renderTraficoChart();
     }
 });
