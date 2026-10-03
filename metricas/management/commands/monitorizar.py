@@ -18,10 +18,10 @@ Uso manual:
     python manage.py monitorizar --ip=192.168.25.50 // python manage.py monitorizar --ip 192.168.25.50
 
     -- Para filtrar por rol de dispositivo:
-    python manage.py monitorizar --rol=main   (solo acepta: main y station)
+    python manage.py monitorizar --rol main mkt   (solo acepta: main, station y mkt)
 
     -- para fgiltrar por tipo de consulta y rol:
-    python manage.py monitorizar --zona=puertos --rol=main
+    python manage.py monitorizar --zona general puertos --rol main
 
 Si quieres confirmar qué hay realmente en esa columna:
     uv run manage.py shell -c "from dispositivos.models import Dispositivo; [print(d.nombre, repr(d.snmp_community)) for d in Dispositivo.objects.all()]"

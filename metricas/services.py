@@ -263,6 +263,7 @@ def _sincronizar_alarmas(dispositivo, detectadas):
         )
         if not creada:
             continue
+        
         registrar_evento(
             MODULO, alarma.titulo,
             f'{dispositivo.nombre} · {alarma.texto}',
