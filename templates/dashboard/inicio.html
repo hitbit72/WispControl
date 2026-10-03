@@ -99,7 +99,7 @@
     <div class="col-12">
         <div class="card h-100">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0"><i class="bi bi-ethernet" aria-hidden="true"></i> Tráfico {{ mkt_dispositivo.marca.nombre }} {{ mkt_dispositivo.marca.modelo }} (Mbps)</h5>
+                <h5 class="mb-0"><i class="bi bi-ethernet" aria-hidden="true"></i> <a href="{% url 'dispositivos:graficas' mkt_dispositivo.pk %}?next={{ request.path }}" style="color: black;">Tráfico {{ mkt_dispositivo.marca.nombre }} {{ mkt_dispositivo.marca.modelo }} (Mbps)</a></h5>
                 <div class="d-flex gap-2">
                     <select class="form-select form-select-sm" id="interface-select" style="width: auto;" onchange="renderTraficoChart()">
                         <option value="">Seleccionar interfaz</option>
