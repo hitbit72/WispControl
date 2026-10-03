@@ -167,6 +167,10 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Para que Django entienda las cabeceras HTTPS/Host que le pasa Apache
+USE_X_FORWARDED_HOST = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 # --- Datos globales de MikroTik ---------------------------------------------
 #
 # Todo lo que puede variar por router o por plan (active_list, ppp_disable,
