@@ -115,9 +115,9 @@
 
 <div class="row g-3 mt-2">
     <div class="col-12">
-        <div class="card h-100">
+        <div class="card h-100 metric-danger">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0"><i class="bi bi-bell" aria-hidden="true"></i> Alarmas </h5>
+                <h5 class="mb-0"><span class="metric-icon"><i class="bi bi-bell" aria-hidden="true"></i></span> Alarmas </h5>
             </div>
             <div class="card-body" style="padding-block: 1rem;">
                 {% for alarma in alarmas %}
@@ -131,6 +131,8 @@
                         <small class="text-muted">{{ alarma.texto }}</small>
                         </div>
                     </div>
+                    {% empty %}
+                    <div class="dropdown-item text-muted" style="padding: 0.5rem;">No hay alarmas.</div>
                 {% endfor %}
             </div>
         </div>
