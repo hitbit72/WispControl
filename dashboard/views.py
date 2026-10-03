@@ -3,7 +3,7 @@ from django.shortcuts import render
 
 from clientes.models import Cliente
 from dispositivos.models import Dispositivo, Interfaz
-from metricas.models import InterfaceMetricHistory
+from metricas.models import InterfaceMetricHistory, Alarma
 from eventos.models import Evento
 
 from django.conf import settings
@@ -79,13 +79,18 @@ def inicio(request):
                     for t in trafico.values('timestamp', 'rx', 'tx')
                 ]
 
-    eventos = Evento.objects.filter(leido=False).order_by('nivel', '-fecha').all()
+    #eventos = Evento.objects.filter(leido=False).order_by('nivel', '-fecha').all()
+    alarmas = Alarma.objects.filter(
+        estado='activa'
+        ).filter(
+            device__rol__in=['main', 'mkt']
+        ).order_by('-creada_en').all()
 
     return render(request, 'dashboard/inicio.html', {
         'usuario': request.user,
         'clientes': clientes,
         'dispositivos': dispositivos,
-        'eventos': eventos,
+        'alarmas': alarmas,
         'mkt_dispositivo': mkt_dispositivo,
         'trafico_interfaces': json.dumps(trafico_interfaces),
         'periodo': periodo,

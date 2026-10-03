@@ -186,6 +186,27 @@ class Alarma(models.Model):
         ACTIVA = 'activa', 'Activa'
         RESUELTA = 'resuelta', 'Resuelta'
 
+
+    class Nivel(models.IntegerChoices):
+        EMERG = 0, 'Emerg'
+        ALERT = 1, 'Alert'
+        CRITICAL = 2, 'Critical'
+        ERROR = 3, 'Error'
+        WARNING = 4, 'Warning'
+        NOTICE = 5, 'Notice'
+        INFO = 6, 'Info'
+
+    # Clase de badge Bootstrap por nivel (para las plantillas).
+    NIVEL_BADGE = {
+        Nivel.EMERG: 'danger',
+        Nivel.ALERT: 'danger',
+        Nivel.CRITICAL: 'danger',
+        Nivel.ERROR: 'danger',
+        Nivel.WARNING: 'warning text-dark',
+        Nivel.NOTICE: 'info text-dark',
+        Nivel.INFO: 'secondary',
+    }
+
     device = models.ForeignKey('dispositivos.Dispositivo', on_delete=models.CASCADE, related_name='alarmas',)
 
     tipo = models.CharField(max_length=20, choices=Tipo.choices, default=Tipo.SNMP, blank=True, null=True, verbose_name='Tipo de alarma')
@@ -194,6 +215,10 @@ class Alarma(models.Model):
     texto = models.TextField(blank=True, verbose_name='Detalle')
     estado = models.CharField(
         max_length=20, choices=Estado.choices, default=Estado.ACTIVA, verbose_name='Estado',
+    )
+
+    nivel = models.PositiveSmallIntegerField(
+        choices=Nivel.choices, default=Nivel.INFO, verbose_name='Nivel',
     )
     sys_error = models.CharField(max_length=255, blank=True, null=True, verbose_name='Error sistema')
     creada_en = models.DateTimeField(auto_now_add=True, verbose_name='Detectada')
@@ -212,7 +237,13 @@ class Alarma(models.Model):
         ]
 
     def __str__(self):
-        return f'{self.device.nombre} · {self.regla} · {self.get_estado_display()}'
+        return f'{self.titulo} · {self.regla} · {self.get_estado_display()}'
+
+    @property
+    def color_badge(self):
+        return self.NIVEL_BADGE.get(self.nivel, 'secondary')
+
+
 
 
 class OIDmetric(models.Model):

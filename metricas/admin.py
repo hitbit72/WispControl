@@ -22,7 +22,7 @@ class DeviceHistoryAdmin(admin.ModelAdmin):
 
 @admin.register(Alarma)
 class AlarmaAdmin(admin.ModelAdmin):
-    list_display = ('device', 'titulo', 'tipo', 'regla', 'estado', 'creada_en', 'resuelta_en')
+    list_display = ('device', 'titulo', 'tipo', 'nivel', 'regla', 'estado', 'creada_en', 'resuelta_en')
     list_filter = ('estado', 'tipo', 'regla', 'device__tipo')
     search_fields = ('device__nombre', 'titulo', 'texto')
     list_select_related = ('device',)

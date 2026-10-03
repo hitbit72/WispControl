@@ -5,7 +5,7 @@ from django.conf import settings
 from django.utils import timezone
 from django.db.models import Q
 
-from dispositivos.models import Dispositivo
+from dispositivos.models import Dispositivo, reglas_ap
 from metricas.models import Alarma, DeviceLatencyHistory
 from eventos.services import registrar_evento
 from eventos.models import Evento
@@ -177,6 +177,7 @@ def sincronizar_alarmas_ping(dispositivo, detectadas, ping_actual, error_msg):
         alarma = Alarma.objects.get(pk=pk)
         alarma.estado = Alarma.Estado.RESUELTA
         alarma.resuelta_en = timezone.now()
+        alarma.nivel = Alarma.Nivel.NOTICE,
         alarma.save(update_fields=['estado', 'resuelta_en'])
 
         if dispositivo.alarma_ping:
@@ -200,13 +201,17 @@ def sincronizar_alarmas_ping(dispositivo, detectadas, ping_actual, error_msg):
             continue
             
         # Determinar nivel según la regla
-        nivel = Evento.Nivel.CRITICAL if regla == 'ping_sin_respuesta' else Evento.Nivel.NOTICE
+        nivel = Alarma.Nivel.CRITICAL if regla == 'ping_sin_respuesta' else Alarma.Nivel.NOTICE
+
+        if dispositivo.rol == 'station' and regla == 'ping_sin_respuesta':
+            nivel = Alarma.Nivel.WARNING
 
         alarma, creada = Alarma.objects.get_or_create(
             device=dispositivo,
             regla=regla,
             estado=Alarma.Estado.ACTIVA,
             tipo=Alarma.Tipo.PING,
+            nivel=nivel,
             sys_error=error_msg,
             defaults={'titulo': datos['titulo'], 'texto': datos['texto']},
         )

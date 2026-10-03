@@ -114,34 +114,26 @@
 </div>
 
 <div class="row g-3 mt-2">
-    <!-- Gráfica: Tráfico interfaces (con cálculo de bps) -->
     <div class="col-12">
         <div class="card h-100">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0"><i class="bi bi-bell" aria-hidden="true"></i> Notificaciones </h5>
+                <h5 class="mb-0"><i class="bi bi-bell" aria-hidden="true"></i> Alarmas </h5>
             </div>
-            <!-- <a href="{% url 'eventos:lista' %}"> -->
             <div class="card-body" style="padding-block: 1rem;">
-                {% for evento in eventos %}
-                <div class="dropdown-item d-flex justify-content-between align-items-start gap-2" style="padding: 0.5rem;">
-                    <div>
-                        <span class="badge bg-{{ evento.color_badge }}">{{ evento.get_nivel_display }}</span>
-                        {% if evento.id_dispositivo %}
-                        <a href="{% url 'dispositivos:detalle' evento.id_dispositivo %}?next={{ request.path }}">
-                            <div class="notification-title-base" style="color: black; font-size: 0.9em">{{ evento.titulo }}</div>
+                {% for alarma in alarmas %}
+                    <div class="dropdown-item d-flex justify-content-between align-items-start gap-2" style="padding: 0.5rem;">
+                        <div>
+                        <span class="badge bg-{{ alarma.color_badge }}">{{ alarma.get_nivel_display }}</span>
+                        <a href="{% url 'dispositivos:detalle' alarma.device.pk %}?next={{ request.path }}">
+                            <div class="notification-title-base" style="color: black; font-size: 0.9em">{{ alarma.titulo }}</div>
                         </a>
-                        {% else %}
-                        <div class="notification-title-base">{{ evento.titulo }}</div>
-                        {% endif %}
-                        <div class="notification-time">{{ evento.fecha|date:"d/m/Y H:i" }} · {{ evento.modulo }}</div>
-                        {% if evento.texto %}<small class="text-muted">{{ evento.texto }}</small>{% endif %}
+                        <div class="notification-time">{{ alarma.creada_en|date:"d/m/Y H:i" }} · {{ alarma.tipo }}</div>
+                        <small class="text-muted">{{ alarma.texto }}</small>
+                        </div>
                     </div>
-                </div>
-                {% empty %}
-                <div class="dropdown-item text-muted" style="padding: 0.5rem;">No hay notificaciones.</div>
                 {% endfor %}
             </div>
-            <!-- </a> -->
+        </div>
     </div>
 </div>
 

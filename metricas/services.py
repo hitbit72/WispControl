@@ -235,6 +235,7 @@ def _sincronizar_alarmas(dispositivo, detectadas):
         alarma = Alarma.objects.get(pk=pk)
         alarma.estado = Alarma.Estado.RESUELTA
         alarma.resuelta_en = timezone.now()
+        alarma.nivel = Alarma.Nivel.NOTICE,
         alarma.save(update_fields=['estado', 'resuelta_en'])
         registrar_evento(
             MODULO,
@@ -250,11 +251,14 @@ def _sincronizar_alarmas(dispositivo, detectadas):
     for regla, datos in detectadas.items():
         if regla in reglas_activas:
             continue
+
+        nivel=REGLA_NIVEL.get(regla, Alarma.Nivel.WARNING)
         alarma, creada = Alarma.objects.get_or_create(
             device=dispositivo,
             regla=regla,
             tipo=Alarma.Tipo.SNMP,
             estado=Alarma.Estado.ACTIVA,
+            nivel=nivel,
             defaults={'titulo': datos['titulo'], 'texto': datos['texto']},
         )
         if not creada:
@@ -262,7 +266,7 @@ def _sincronizar_alarmas(dispositivo, detectadas):
         registrar_evento(
             MODULO, alarma.titulo,
             f'{dispositivo.nombre} · {alarma.texto}',
-            nivel=REGLA_NIVEL.get(regla, Evento.Nivel.WARNING),
+            nivel=nivel,
             id_dispositivo=dispositivo.pk,
         )
         # Enviar Telegram (async)
