@@ -13,9 +13,11 @@ from .models import Evento
 def lista_eventos(request):
     """Listado de eventos. Los permisos para marcar como leído los valida
     cada vista de marcado; aquí solo se controla la sesión."""
+    
+    #eventos = Evento.objects.order_by('nivel', '-fecha').all()
     eventos = Evento.objects.all()
 
-    filtro = request.GET.get('filtro', '').strip()
+    filtro = request.GET.get('filtro', 'no_leidos').strip()
     if filtro == 'no_leidos':
         eventos = eventos.filter(leido=False)
 

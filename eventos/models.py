@@ -36,6 +36,7 @@ class Evento(models.Model):
     titulo = models.CharField(max_length=255, verbose_name='Título')
     texto = models.TextField(blank=True, verbose_name='Texto')
     modulo = models.CharField(max_length=100, blank=True, verbose_name='Módulo')
+    id_dispositivo = models.PositiveIntegerField(null=True, blank=True, verbose_name='Id dispositivo')
     leido = models.BooleanField(default=False, verbose_name='Leído')
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,

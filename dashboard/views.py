@@ -4,6 +4,8 @@ from django.shortcuts import render
 from clientes.models import Cliente
 from dispositivos.models import Dispositivo, Interfaz
 from metricas.models import InterfaceMetricHistory
+from eventos.models import Evento
+
 from django.conf import settings
 from django.utils import timezone
 from datetime import timedelta
@@ -37,7 +39,7 @@ def inicio(request):
         fecha_fin = ahora
         periodo = 'day'
 
-
+    # Clientes
     clt = Cliente.objects.all()
     clientes = {
         'total': clt.count(),
@@ -46,6 +48,7 @@ def inicio(request):
         }
     clt = None
 
+    # Dispositivos
     disp = Dispositivo.objects.all()
     # .first() devuelve un objeto Dispositivo (o None si no existe)
     mkt_dispositivo = Dispositivo.objects.filter(nombre__iexact='RB5009 Borde').first()
@@ -75,11 +78,14 @@ def inicio(request):
                     {'timestamp': t['timestamp'].isoformat(), 'rx': t['rx'], 'tx': t['tx']}
                     for t in trafico.values('timestamp', 'rx', 'tx')
                 ]
-    
+
+    eventos = Evento.objects.filter(leido=False).order_by('nivel', '-fecha').all()
+
     return render(request, 'dashboard/inicio.html', {
         'usuario': request.user,
         'clientes': clientes,
         'dispositivos': dispositivos,
+        'eventos': eventos,
         'mkt_dispositivo': mkt_dispositivo,
         'trafico_interfaces': json.dumps(trafico_interfaces),
         'periodo': periodo,

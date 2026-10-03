@@ -18,7 +18,13 @@
             <td class="text-nowrap">{{ evento.fecha|date:"d/m/Y H:i" }}</td>
             <td><span class="badge bg-{{ evento.color_badge }}">{{ evento.get_nivel_display }}</span></td>
             <td>
+                {% if evento.id_dispositivo %}
+                <a href="{% url 'dispositivos:detalle' evento.id_dispositivo %}?next={{ request.path }}">
+                    <div style="color: black;">{{ evento.titulo }}</div>
+                </a>
+                {% else %}
                 <div>{{ evento.titulo }}</div>
+                {% endif %}
                 {% if evento.texto %}<small class="text-muted">{{ evento.texto|truncatechars:120 }}</small>{% endif %}
             </td>
             <td>{{ evento.modulo|default:"—" }}</td>
@@ -45,7 +51,6 @@
         {% endfor %}
     </tbody>
 </table>
-
 {% if pagina.paginator.num_pages > 1 %}
 <nav aria-label="Paginación de eventos">
     <ul class="pagination pagination-sm mb-0">

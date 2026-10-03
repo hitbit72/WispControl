@@ -241,6 +241,7 @@ def _sincronizar_alarmas(dispositivo, detectadas):
             f'Alarma resuelta: {alarma.titulo}',
             f'{dispositivo.nombre} · {alarma.texto}',
             nivel=Evento.Nivel.NOTICE,
+            id_dispositivo=dispositivo.pk,
         )
         # Enviar Telegram (async)
         enviar_alerta_telegram(dispositivo, alarma, 'resuelta')
@@ -262,6 +263,7 @@ def _sincronizar_alarmas(dispositivo, detectadas):
             MODULO, alarma.titulo,
             f'{dispositivo.nombre} · {alarma.texto}',
             nivel=REGLA_NIVEL.get(regla, Evento.Nivel.WARNING),
+            id_dispositivo=dispositivo.pk,
         )
         # Enviar Telegram (async)
         enviar_alerta_telegram(dispositivo, alarma, 'nueva')
