@@ -2,9 +2,9 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
 from clientes.models import Cliente
-from dispositivos.models import Dispositivo, Interfaz
+from dispositivos.models import Dispositivo
 from metricas.models import InterfaceMetricHistory, Alarma
-from eventos.models import Evento
+
 
 from django.conf import settings
 from django.utils import timezone
@@ -51,7 +51,11 @@ def inicio(request):
     # Dispositivos
     disp = Dispositivo.objects.all()
     # .first() devuelve un objeto Dispositivo (o None si no existe)
-    mkt_dispositivo = Dispositivo.objects.filter(nombre__iexact='RB5009 Borde').first()
+
+    mkt_dispositivo = None
+    if settings.MKT_DASHBOARD_NAME:
+        mkt_dispositivo = Dispositivo.objects.filter(nombre__iexact=settings.MKT_DASHBOARD_NAME).first()
+        
     dispositivos = {
         'total': disp.count(),
         'activos': disp.filter(estado='activo').count(),

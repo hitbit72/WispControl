@@ -3,7 +3,7 @@
   --sidebar-mini-width: 84px;
   --admin-bg: #f5f7fb;
   --admin-surface: #ffffff;
-  --admin-surface-soft: #f8fafc;
+  --admin-surface-soft: #f1f1f1;
   --admin-border: #dbe4ef;
   --admin-text: #1f2937;
   --form-label: #1f2937;
@@ -716,7 +716,7 @@ html[data-theme="dark"] .profile-button .avatar-sm {
 }
 
 .table tbody tr:hover {
-  background: #f8fbff;
+  background: var(--admin-surface-soft);
 }
 
 .badge {
@@ -1337,6 +1337,7 @@ html[data-theme="dark"] .auth-body {
 .accordion-button:not(.collapsed) {
   background-color: var(--admin-surface-soft);
   color: var(--admin-text);
+  border-radius: 5px;
 }
 
 .dropdown-shadow {
