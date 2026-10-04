@@ -15,7 +15,7 @@ class DeviceMetricsAdmin(admin.ModelAdmin):
 
 @admin.register(DeviceMetricHistory)
 class DeviceHistoryAdmin(admin.ModelAdmin):
-    list_display = ('device', 'cpu', 'ram', 'timestamp')
+    list_display = ('device', 'cpu', 'ram', 'signal', 'timestamp')
     date_hierarchy = 'timestamp'
     search_fields = ('device__nombre',)
     readonly_fields = ('device', 'timestamp')
