@@ -246,7 +246,8 @@ function calculateBps(data) {
         
         const deltaRx = (curr.rx ?? 0) - (prev.rx ?? 0);
         const deltaTx = (curr.tx ?? 0) - (prev.tx ?? 0);
-        
+        //console.log(curr.rx)
+
         // Solo valores positivos (contadores pueden reiniciarse)
         if (deltaRx < 0 || deltaTx < 0) continue;
         
