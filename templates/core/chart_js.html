@@ -1,0 +1,87 @@
+// Configuración común de gráficas
+const commonOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: {
+        mode: 'index',
+        intersect: false,
+    },
+    scales: {
+        x: {
+            type: 'time',
+            time: {
+                unit: 'hour',
+                displayFormats: {
+                    hour: 'HH:mm',
+                    day: 'dd/MM',
+                    week: 'dd/MM',
+                    month: 'dd/MM'
+                }
+            },
+            title: { display: true, text: 'Tiempo' },
+            grid: { display: false }
+        },
+        y: {
+            beginAtZero: false,
+            title: { display: true, text: 'Mbps' },
+            grid: { color: 'rgba(0,0,0,0.05)' }
+        }
+    },
+    plugins: {
+        legend: { display: true, position: 'top' },
+        tooltip: { 
+            mode: 'index', 
+            intersect: false,
+            callbacks: {
+                // Personaliza el título del tooltip para forzar el formato 24 horas
+                title: function(tooltipItems) {
+                    if (!tooltipItems.length) return '';
+                    
+                    // Obtiene la fecha/timestamp del punto
+                    const timestamp = tooltipItems[0].parsed.x;
+                    const date = new Date(timestamp);
+                    
+                    // Formatea a 24 horas (ej: 04/10/2026, 13:35:05)
+                    const fecha = date.toLocaleDateString('es-ES', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric'
+                    });
+                    
+                    const hora = date.toLocaleTimeString('es-ES', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit',
+                        hour12: false // Forzar formato 24h
+                    });
+
+                    return `${fecha} ${hora}`;
+                },
+                // formateador de etiquetas (Mbps, Kbps, etc.)
+                label: function(context) {
+                    let label = context.dataset.label || '';
+                    if (label) {
+                        label += ': ';
+                    }
+                    const val = context.parsed.y;
+                    if (val === null || val === undefined) return label;
+
+                    // Si es tráfico en bps (RX / TX bps)
+                    if (context.dataset.label && context.dataset.label.includes('(bps)')) {
+                        if (val >= 1e9) return label + (val / 1e9).toFixed(2) + ' Gbps';
+                        if (val >= 1e6) return label + (val / 1e6).toFixed(2) + ' Mbps';
+                        if (val >= 1e3) return label + (val / 1e3).toFixed(2) + ' Kbps';
+                        return label + val.toFixed(0) + ' bps';
+                    }
+
+                    // Para el resto de métricas (CPU, RAM, dBm, ms, etc.)
+                    return label + val.toFixed(2);
+                }
+            }
+        }
+    },
+    elements: {
+        line: { tension: 0.3, borderWidth: 1 },
+        point: { radius: 0, hoverRadius: 5 }
+    }
+};
