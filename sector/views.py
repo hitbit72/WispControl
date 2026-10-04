@@ -16,7 +16,8 @@ def lista_sectores(request):
     busqueda = request.GET.get('q', '').strip()
     if busqueda:
         sectores = sectores.filter(
-            Q(nombre__icontains=busqueda) | Q(poblacion__icontains=busqueda)
+            Q(nombre__icontains=busqueda) 
+            | Q(poblacion__nombre__icontains=busqueda)
         )
 
     paginator = Paginator(sectores, 25)
