@@ -96,8 +96,8 @@ def evaluar(dispositivo, metrica, anterior, historico, historico_anterior, confi
                 if any(r['regla'] == 'sin_clientes_ap' for r in reglas):
                     continue
             
-            actual = None
-            previo = None    
+            actual = 0
+            previo = 0    
             if historico:
                 actual = getattr(historico, historico_campo)
             if historico_anterior:
