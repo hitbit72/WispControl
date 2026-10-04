@@ -54,6 +54,7 @@
     </div>
 </div>
 <div class="row g-3">
+    {% if metrcias_len > 0 %}
     <!-- Gráfica: Sistema (CPU, RAM, Temperatura) - Selector como tráfico -->
     <div class="col-12">
         <div class="card h-100">
@@ -72,6 +73,7 @@
             </div>
         </div>
     </div>
+    {% endif %}
     <!-- Gráfica: Radio (CCQ, Power, Señal, Ruido, Capacidad) - Selector como tráfico -->
     {% if dispositivo.tipo.clave in dispositivos_antenas %}
     <div class="col-12">
@@ -143,35 +145,6 @@ let currentPeriodo = '{{ periodo }}';
 
 // Configuración común de gráficas
 {% include "core/chart_js.html" %}
-
-// Colores para datasets
-const colors = {
-    cpu: '#e74c3c',
-    ram: '#3498db',
-    temperature: '#f39c12',
-    signal: '#2ecc71',
-    ccq: '#9b59b6',
-    noise: '#95a5a6',
-    power: '#e67e22',
-    capacity: '#8e44ad',
-    latency: '#e67e22',
-    rx: '#3498db',
-    tx: '#e74c3c'
-};
-
-const labels_es = {
-    cpu: 'CPU %',
-    ram: 'RAM %',
-    temperature: 'Temperatura °C',
-    signal: 'Señal (dBm)',
-    ccq: 'CCQ %',
-    noise: 'Ruido (dBm)',
-    power: 'Potencia (dBm)',
-    capacity: 'Capacidad (Mbps)',
-    latency_ms: 'Latencia (ms)',
-    rx: 'RX (bps)',
-    tx: 'TX (bps)'
-};
 
 // Crear/actualizar gráfica simple (un dataset)
 function createSingleChart(canvasId, labels, values, metricKey, extraOptions = {}) {
@@ -447,7 +420,9 @@ function setPeriodo(p) {
 
 // Inicializar
 document.addEventListener('DOMContentLoaded', () => {
+    {% if metrcias_len > 0 %}
     renderSistemaChart();
+    {% endif %}
     {% if dispositivo.tipo.clave in dispositivos_antenas %}
     renderRadioChart();
     {% endif %}

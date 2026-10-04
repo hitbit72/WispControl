@@ -62,15 +62,16 @@
     </div>
 </section>
 
-<div class="d-flex justify-content-between align-items-start mb-3">
+<!--
+<div class="d-flex justify-content-between align-items-start mb-3 mt-4">
     <div>
-        <h2 class="mt-1"> {{ mkt_dispositivo.nombre }}</h2>
-        <div class="text-muted">{{ mkt_dispositivo.marca.nombre }} {{ mkt_dispositivo.marca.modelo }} · {{ mkt_dispositivo.ip_gestion }}</div>
+        <h5>{{ mkt_dispositivo.marca.nombre }} {{ mkt_dispositivo.marca.modelo }} · {{ mkt_dispositivo.ip_gestion }}</h5>
     </div>
 </div>
+-->
 
 <!-- Selector de periodo -->
-<div class="card mb-3">
+<div class="card mb-3 mt-4">
     <div class="card-body py-2">
         <form method="get" class="row g-2 align-items-end" id="periodo-form">
             <input type="hidden" name="next" value="{{ url_anterior }}">
@@ -151,16 +152,6 @@ let currentPeriodo = '{{ periodo }}';
 
 // Configuración común de gráficas
 {% include "core/chart_js.html" %}
-
-// Colores para datasets
-const colors = {
-    rx: '#3498db',
-    tx: '#259b33'
-};
-const labels_es = {
-    rx: 'RX (bps)',
-    tx: 'TX (bps)'
-};
 
 
 // Calcular bps a partir de contadores acumulados
