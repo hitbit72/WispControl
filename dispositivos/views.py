@@ -142,7 +142,11 @@ def nuevo_dispositivo(request, pk=0):
         if sector:
             form = DispositivoForm(initial={'sector': sector})
         if cliente:
-            form = DispositivoForm(initial={'cliente': cliente})
+            form = DispositivoForm(initial={
+                'cliente': cliente,
+                'latitud': cliente.latitud,
+                'longitud': cliente.latitud})
+
 
     return render(request, 'dispositivo/form_dispositivo_solo.html', {
         'form': form,
