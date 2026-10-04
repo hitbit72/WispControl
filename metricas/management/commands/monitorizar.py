@@ -164,7 +164,7 @@ class Command(BaseCommand):
         resultado = {}
         puertos, puertos_pon, estaciones, onus = [], [], [], []
 
-        escalares = oids_dispositivo(dispositivo, 'general')
+        escalares_general = oids_dispositivo(dispositivo, 'general')
         escalares_puerto = oids_dispositivo(dispositivo, 'puertos')
 
         # Solo los dispositivos main y tipo antenas
@@ -179,7 +179,7 @@ class Command(BaseCommand):
 
         try:
             if self.zonas['general']:
-                resultado = snmp_client.consultar_escalares(dispositivo, escalares)
+                resultado = snmp_client.consultar_escalares(dispositivo, escalares_general)
             if self.zonas['puertos']:
                 puertos = snmp_client.consultar_if_table(dispositivo, escalares_puerto, 'puertos')
             if self.zonas['wifi']:
