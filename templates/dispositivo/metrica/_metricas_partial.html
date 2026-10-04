@@ -15,6 +15,7 @@
         {% else %}text-success{% endif %}"> {{ metricas.ram|default:'0' }}%</strong>
       </div>
     </div>
+    {% if dispositivo.escanear %}
     <div class="d-flex gap-2">
       <form>
       {% csrf_token %}
@@ -30,6 +31,7 @@
       </button>
       </form>
     </div>
+    {% endif %}
   </div>
 
   {% if metricas.temperature %}<p class="mb-1"><strong>Temperatura: </strong>{{ metricas.temperature }}º</p>{% endif %}
@@ -88,6 +90,7 @@
 
 {% else %}
   <p class="mb-0">Sin métricas disponibles. Pulse "Actualizar" para consultar SNMP.</p>
+  {% if dispositivo.escanear %}
   <br>
   <div class="d-flex gap-2">
     <form>
@@ -104,6 +107,9 @@
     </button>
     </form>
   </div>
+  {% else %}
+    <p class="mb-0">Este dispositivo tiene desabilitado el escaneo SNMP.</p>
+  {% endif %}
 {% endif %}
 
 
