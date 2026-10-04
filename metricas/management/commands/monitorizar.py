@@ -64,7 +64,7 @@ CAMPO = {
 
 class Command(BaseCommand):
     help = 'Consulta SNMP a cada dispositivo y guarda métricas + alarmas.'
-
+    
     def add_arguments(self, parser):
         # Añadimos un argumento opcional '--ip'
         parser.add_argument(
@@ -102,9 +102,6 @@ class Command(BaseCommand):
         
         # Filtrar por tipo de zona si se paso el argumento
         if tipo_zona:
-            #for zona in self.zonas:
-                #self.zonas[zona] = True if zona == tipo_zona else False
-            
             # Mantiene True solo para las claves que existen dentro de la lista tipo_zona
             self.zonas = {zona: (zona in tipo_zona) for zona in self.zonas}
         else:
