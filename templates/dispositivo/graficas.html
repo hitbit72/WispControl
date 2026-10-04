@@ -53,7 +53,6 @@
         </form>
     </div>
 </div>
-
 <div class="row g-3">
     <!-- Gráfica: Sistema (CPU, RAM, Temperatura) - Selector como tráfico -->
     <div class="col-12">
@@ -73,7 +72,6 @@
             </div>
         </div>
     </div>
-
     <!-- Gráfica: Radio (CCQ, Power, Señal, Ruido, Capacidad) - Selector como tráfico -->
     {% if dispositivo.tipo.clave in dispositivos_antenas %}
     <div class="col-12">
@@ -108,7 +106,6 @@
             </div>
         </div>
     </div>
-
     <!-- Gráfica: Tráfico interfaces (con cálculo de bps) -->
     <div class="col-12">
         <div class="card h-100">
@@ -136,10 +133,12 @@
 <script src="https://cdn.jsdelivr.net/npm/date-fns@3.6.0/cdn.min.js"></script>
 
 <script>
+
 // Datos inyectados desde Django
 const metricasData = {{ metricas_data|safe }};
 const latenciasData = {{ latencias_data|safe }};
 const traficoInterfaces = {{ trafico_interfaces|safe }};
+
 let currentPeriodo = '{{ periodo }}';
 
 // Configuración común de gráficas

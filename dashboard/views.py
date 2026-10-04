@@ -70,6 +70,7 @@ def inicio(request):
     trafico_interfaces = {}
     if mkt_dispositivo:
         interfaces = mkt_dispositivo.interfaces.all()
+        interfaces = interfaces.filter(mostrar=True).all()
         for interfaz in interfaces:
             trafico = InterfaceMetricHistory.objects.filter(
                 interfaz=interfaz,
@@ -78,7 +79,8 @@ def inicio(request):
             ).order_by('timestamp')
             if trafico.exists():
                 # Convert datetime to ISO string for JSON serialization
-                trafico_interfaces[interfaz.nombre] = [
+                nombre = interfaz.nombre2 if interfaz.nombre2 else interfaz.nombre
+                trafico_interfaces[nombre] = [
                     {'timestamp': t['timestamp'].isoformat(), 'rx': t['rx'], 'tx': t['tx']}
                     for t in trafico.values('timestamp', 'rx', 'tx')
                 ]

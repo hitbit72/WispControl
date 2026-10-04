@@ -625,6 +625,7 @@ def graficas_dispositivo(request, pk):
     
     # Tráfico de interfaces
     interfaces = dispositivo.interfaces.all()
+    interfaces = interfaces.filter(mostrar=True).all()
     trafico_interfaces = {}
     for interfaz in interfaces:
         trafico = InterfaceMetricHistory.objects.filter(
@@ -634,7 +635,8 @@ def graficas_dispositivo(request, pk):
         ).order_by('timestamp')
         if trafico.exists():
             # Convert datetime to ISO string for JSON serialization
-            trafico_interfaces[interfaz.nombre] = [
+            nombre = interfaz.nombre2 if interfaz.nombre2 else interfaz.nombre
+            trafico_interfaces[nombre] = [
                 {'timestamp': t['timestamp'].isoformat(), 'rx': t['rx'], 'tx': t['tx']}
                 for t in trafico.values('timestamp', 'rx', 'tx')
             ]
@@ -644,7 +646,8 @@ def graficas_dispositivo(request, pk):
         """Convierte queryset a formato Chart.js"""
         labels = []
         datasets = {field: [] for field in value_fields}
-        
+        contador=0
+
         for obj in queryset:
             ts = getattr(obj, timestamp_field)
             labels.append(ts.isoformat())
@@ -683,6 +686,7 @@ def graficas_dispositivo(request, pk):
         #'ping_success': json.dumps(ping_success),
         'trafico_interfaces': json.dumps(trafico_interfaces),
         'dispositivos_antenas': dispositivos_antenas,
+        'metrcias_len': len(metricas_data.get('labels', [])),
         'url_anterior': request.GET.get('next') or request.META.get('HTTP_REFERER') or '/dispositivos/',
     }
     

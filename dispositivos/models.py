@@ -155,6 +155,7 @@ class Interfaz(models.Model):
     ip_address = models.GenericIPAddressField(null=True, blank=True)
     mac_address = models.CharField(max_length=17, blank=True)
     velocidad_mbps = models.PositiveIntegerField(null=True, blank=True)
+    mostrar = models.BooleanField(default=True)
 
     class Meta:
         verbose_name = 'Interfaz'
