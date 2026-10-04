@@ -72,48 +72,42 @@ def oids_dispositivo(dispositivo, tipos='general'):
     Devuelve el mapa de OIDs combinado para un dispositivo: genéricos + los de su marca.
     """
 
+    oids = {}
     # Obtenemos directamente la instancia
     metric = OIDmetric.objects.filter(marca=dispositivo.marca, tipo=tipos).first()
 
-    # 'general' y 'puertos' tienen codigos genericos
-    if tipos == 'general':
-        # copia limpia del diccionario genérico
-        oids = OIDS_GENERICO.copy()
-        if metric and metric.codigos:
+    if metric and metric.codigos:
+        # 'general' y 'puertos' tienen codigos genericos
+        if tipos == 'general':
+            oids = OIDS_GENERICO.copy()
             oids.update(metric.codigos)  # metric.codigos ya es un dict de Python
 
-        # Atributos extras del dispositivo
-        if dispositivo.atributos_extra:
-            extra = (dispositivo.atributos_extra or {}).get('oids').get('general') or {}
-            oids.update(extra)
-        return oids
-    
-    elif tipos == 'puertos':
-        oids = OIDS_PUERTOS_GENERICO.copy()
-        if metric and metric.codigos:
+            # Atributos extras del dispositivo
+            if dispositivo.atributos_extra:
+                extra = (dispositivo.atributos_extra or {}).get('oids').get('general') or {}
+                oids.update(extra)
+            return oids
+        
+        elif tipos == 'puertos':
+            oids = OIDS_PUERTOS_GENERICO.copy()
             oids.update(metric.codigos)
 
-        # Atributos extras del dispositivo
-        if dispositivo.atributos_extra:
-            extra = (dispositivo.atributos_extra or {}).get('oids').get('puertos') or {}
-            oids.update(extra)
-        return oids
+            # Atributos extras del dispositivo
+            if dispositivo.atributos_extra:
+                extra = (dispositivo.atributos_extra or {}).get('oids').get('puertos') or {}
+                oids.update(extra)
+            return oids
 
-    elif tipos == 'puertos_pon':
-        oids = {}
-        if metric and metric.codigos:
+        elif tipos == 'puertos_pon':
             oids.update(metric.codigos)
 
-        # Atributos extras del dispositivo
-        if dispositivo.atributos_extra:
-            extra = (dispositivo.atributos_extra or {}).get('oids').get('puertos_pon') or {}
-            oids.update(extra)
-        return oids
+            # Atributos extras del dispositivo
+            if dispositivo.atributos_extra:
+                extra = (dispositivo.atributos_extra or {}).get('oids').get('puertos_pon') or {}
+                oids.update(extra)
+            return oids
     
     #Default
-    if metric and metric.codigos:
-        return metric.codigos
-    else:
-        return {}
+    return oids
 
     

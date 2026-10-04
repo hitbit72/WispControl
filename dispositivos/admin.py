@@ -24,7 +24,7 @@ class TipoEquipoAdmin(admin.ModelAdmin):
 class DispositivoAdmin(admin.ModelAdmin):
     list_display = ('ip_gestion','nombre', 'nombre_host', 'rol', 'tipo', 'marca', 'sector', 'estado', 'cliente')
     list_filter = ('rol','tipo', 'marca', 'estado', 'sector')
-    search_fields = ('nombre', 'ip_gestion', 'mac_address', 'cliente')
+    search_fields = ('nombre', 'ip_gestion', 'mac_address', 'cliente', 'tipo__nombre')
     inlines = [InterfazInline]
 
 
