@@ -76,6 +76,8 @@ def lista_dispositivos(request):
     dis_mantenimiento = dispositivos.filter(estado='mantenimiento').count()
     dis_instalacion = dispositivos.filter(estado='instalacion').count()
     dis_retirados = dispositivos.filter(estado='retirado').count()
+    dis_stations = dispositivos.filter(rol='station').count()
+    dis_red = dispositivos.filter(rol='main').count()
 
     paginator = Paginator(dispositivos, 25)
     pagina = paginator.get_page(request.GET.get('page'))
@@ -97,6 +99,8 @@ def lista_dispositivos(request):
             'mantenimiento': dis_mantenimiento,
             'instalacion': dis_instalacion,
             'retirados': dis_retirados,
+            'estaciones': dis_stations,
+            'red': dis_red,
         },
     }
 
