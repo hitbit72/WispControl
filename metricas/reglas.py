@@ -50,41 +50,41 @@ def evaluar(dispositivo, metrica, anterior, historico, historico_anterior, confi
     reglas = []
 
     if metrica.status != DeviceMetrics.Status.OK:
-        texto = f'{dispositivo.ip_gestion} ({dispositivo.nombre}) no responde a SNMP ({metrica.get_status_display()}).'
+        texto = f'{dispositivo.nombre} no responde a SNMP ({metrica.get_status_display()}).'
         return [{'regla': 'sin_respuesta_snmp', 'titulo': f'Sin respuesta SNMP {dispositivo.ip_gestion}', 'texto': texto}]
 
     if historico.cpu is not None and historico.cpu > config['cpu_max']:
         #print(f'CPU alta {dispositivo.ip_gestion}')
         reglas.append({'regla': 'cpu_alta', 'titulo': f'CPU alta {historico.cpu:.0f}% · {dispositivo.ip_gestion}',
-                       'texto': f'La CPU del dispositivo esta al {historico.cpu:.0f}% (máx. {config["cpu_max"]:.0f}%).'})
+                       'texto': f'{dispositivo.nombre}. La CPU del dispositivo esta al {historico.cpu:.0f}% (máx. {config["cpu_max"]:.0f}%).'})
 
     if historico.ram is not None and historico.ram > config['ram_max']:
         #print(f'RAM alta {dispositivo.ip_gestion}')
         reglas.append({'regla': 'ram_alta', 'titulo': f'RAM alta {historico.ram:.0f}% · {dispositivo.ip_gestion}',
-                       'texto': f'La RAM del dispositivo esta al {historico.ram:.0f}% (máx. {config["ram_max"]:.0f}%).'})
+                       'texto': f'{dispositivo.nombre}. La RAM del dispositivo esta al {historico.ram:.0f}% (máx. {config["ram_max"]:.0f}%).'})
         
     if historico.temperature is not None and historico.temperature > config['temp_max']:
         reglas.append({'regla': 'temp_alta', 'titulo': f'Temperatura alta {historico.temperature:.0f} °C · {dispositivo.ip_gestion}',
-                       'texto': f'La Temperatura del dispositivos es alta {historico.temperature:.0f} °C (máx. {config["temp_max"]:.0f} °C).'})
+                       'texto': f'{dispositivo.nombre}. La Temperatura del dispositivos es alta {historico.temperature:.0f} °C (máx. {config["temp_max"]:.0f} °C).'})
 
     if dispositivo.alarma_puerto:
         if config.get('puerto_caido'):
             caidos = [p['nombre'] for p in metrica.puertos if p.get('estado') == 'down']
             if caidos:
                 reglas.append({'regla': 'puerto_caido', 'titulo': f'Puerto caído {dispositivo.ip_gestion}',
-                               'texto': f'Interfaz(es) caída(s): {", ".join(caidos)}.'})
+                               'texto': f'{dispositivo.nombre}. Interfaz(es) caída(s): {", ".join(caidos)}.'})
             
     if config.get('sin_clientes_ap') and dispositivo.tipo.clave in reglas_ap \
             and metrica.clients is not None and metrica.clients == 0:
         reglas.append({'regla': 'sin_clientes_ap', 'titulo': f'AP sin clientes {dispositivo.ip_gestion}',
-                       'texto': 'Ningún cliente asociado al AP.'})
+                       'texto': f'{dispositivo.nombre}. Ningún cliente asociado al AP.'})
 
     if anterior is not None:
         if dispositivo.tipo.clave in reglas_ap:
             if config.get('cambio_frecuencia') and metrica.frequency is not None \
                     and dispositivo.frequency is not None and metrica.frequency != dispositivo.frequency:
                 reglas.append({'regla': 'cambio_frecuencia', 'titulo': f'Cambio de frecuencia {dispositivo.ip_gestion}',
-                            'texto': f'Frecuencia {dispositivo.frequency:.0f} → {metrica.frequency:.0f} MHz.'})
+                            'texto': f'{dispositivo.nombre}. Frecuencia {dispositivo.frequency:.0f} → {metrica.frequency:.0f} MHz.'})
                 
         for historico_campo, regla, titulo, medida, umbral in (
             ('signal', 'caida_signal', 'Caída de señal', 'dBm', config.get('caida_signal_dbm')),
@@ -100,6 +100,6 @@ def evaluar(dispositivo, metrica, anterior, historico, historico_anterior, confi
                 caida = previo - actual
                 if caida >= umbral:
                     reglas.append({'regla': regla, 'titulo': f'{titulo} {dispositivo.ip_gestion} ({actual:.0f} {medida})',
-                                   'texto': f'{titulo} de {previo:.0f} a {actual:.0f} {medida}.'})
+                                   'texto': f'{dispositivo.nombre}. {titulo} de {previo:.0f} a {actual:.0f} {medida}.'})
     return reglas
 

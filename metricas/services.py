@@ -240,7 +240,7 @@ def _sincronizar_alarmas(dispositivo, detectadas):
         registrar_evento(
             MODULO,
             f'Alarma resuelta: {alarma.titulo}',
-            f'{dispositivo.nombre} · {alarma.texto}',
+            f'{alarma.texto}',
             nivel=Evento.Nivel.NOTICE,
             id_dispositivo=dispositivo.pk,
         )
@@ -266,7 +266,7 @@ def _sincronizar_alarmas(dispositivo, detectadas):
         
         registrar_evento(
             MODULO, alarma.titulo,
-            f'{dispositivo.nombre} · {alarma.texto}',
+            f'{alarma.texto}',
             nivel=nivel,
             id_dispositivo=dispositivo.pk,
         )
