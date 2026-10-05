@@ -92,7 +92,7 @@ def evaluar(dispositivo, metrica, anterior, historico, historico_anterior, confi
         ):
             if not umbral:
                 continue
-            if regla == 'caida_signal' and metrica.clients <=0:
+            if regla == 'caida_signal' and metrica.clients == 0:
                 continue
             
             actual = None
