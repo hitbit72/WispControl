@@ -584,7 +584,7 @@ def graficas_dispositivo(request, pk):
     ahora = timezone.now()
 
     if periodo == 'hour':
-        fecha_inicio = ahora - timedelta(hours=1)
+        fecha_inicio = ahora - timedelta(hours=6)
         fecha_fin = ahora
     elif periodo == 'day':
         fecha_inicio = ahora - timedelta(days=1)
