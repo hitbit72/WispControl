@@ -142,6 +142,7 @@ class Command(BaseCommand):
         # Bucle para consultar SNMP
         for dispositivo in dispositivos:
             if self._procesar(dispositivo):
+                print(dispositivo)
                 ok += 1
             else:
                 errores += 1

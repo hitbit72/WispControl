@@ -100,7 +100,9 @@ def guardar_puertos(dispositivo, **datos):
             defaults=uData,
         )
 
-        # guardamos las metrcias históricas
+        # guardamos las metrcias históricas solo de dispositivos MAIN
+        #if dispositivo.rol == Dispositivo.Rol.MAIN:
+        
         if interfaz:
             if puerto["estado"] == 'up':
                 InterfaceMetricHistory.objects.create(
@@ -142,17 +144,24 @@ def guarda_staciones_wifi(dispositivo, **datos):
     Guarda los datos básicos de los dispositivos 'Antena de cliente'.
     Pone en activo la estación
     """
-
     # Extraer la lista de estaciones del diccionario (si no existe, usa lista vacía)
     estaciones = datos.get("estaciones", [])
     ssid = datos.get('ssid')
     frequency = datos.get('frequency')
 
+    ultima_ip = ''
     for estacion in estaciones:
         # buscamos la IP de la estación
         ip = estacion.get('ip')
         if not ip:
             continue
+
+        # Evitar duplicados en estaciones
+        if ultima_ip == ip:
+            ultima_ip = ''
+            continue
+
+        ultima_ip = ip
 
         # Obtenemos la INSTANCIA única del dispositivo por su IP de gestión
         estacion_dev = Dispositivo.objects.filter(ip_gestion=ip).first()
@@ -179,18 +188,24 @@ def guarda_staciones_wifi(dispositivo, **datos):
 
             # -------- METRICA DE LA ESTACIÓN PROPORCIONADA POR EL AP
             # Guardamos esta métrica porque se proporciona con Counter64, más fiable
-
+            
             if dispositivo.rol != Dispositivo.Rol.MAIN:
                 continue
 
-            # Creamos la interfaz Enlace-ap de las estacion
-            interfaz, created = Interfaz.objects.update_or_create(
-                dispositivo=estacion_dev,
-                nombre='Wifi-AP',
-                tipo=Interfaz.Tipo.WIRELESS,
-                estado=Interfaz.Estado.ARRIBA,
-                descripcion='Enlace con AP',
-            )
+            interfaz = Interfaz.objects.filter(
+                dispositivo=estacion_dev
+                ).filter(nombre='Wifi-AP').first()
+
+            if not interfaz:
+                # Creamos la interfaz Enlace-ap de las estacion
+                interfaz, created = Interfaz.objects.update_or_create(
+                    dispositivo=estacion_dev,
+                    nombre='Wifi-AP',
+                    tipo=Interfaz.Tipo.WIRELESS,
+                    estado=Interfaz.Estado.ARRIBA,
+                    descripcion='Enlace con AP',
+                )
+
             if interfaz:
                 # guardamos las metrcias históricas
                 InterfaceMetricHistory.objects.create(
