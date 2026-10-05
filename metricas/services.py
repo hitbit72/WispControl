@@ -102,7 +102,7 @@ def guardar_puertos(dispositivo, **datos):
 
         # guardamos las metrcias históricas solo de dispositivos MAIN
         #if dispositivo.rol == Dispositivo.Rol.MAIN:
-        
+
         if interfaz:
             if puerto["estado"] == 'up':
                 InterfaceMetricHistory.objects.create(
@@ -198,7 +198,7 @@ def guarda_staciones_wifi(dispositivo, **datos):
 
             if not interfaz:
                 # Creamos la interfaz Enlace-ap de las estacion
-                interfaz, created = Interfaz.objects.update_or_create(
+                interfaz = Interfaz.objects.create(
                     dispositivo=estacion_dev,
                     nombre='Wifi-AP',
                     tipo=Interfaz.Tipo.WIRELESS,
