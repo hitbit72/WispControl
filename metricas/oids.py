@@ -67,7 +67,42 @@ Ejemplo de OID en el campo 'atributos_extra' de un dispositivo:
 """
 
 
-def oids_dispositivo(dispositivo, tipos='general'):
+def oids_dispositivo(dispositivo, tipos=OIDmetric.Tipo.GENERAL):
+    """
+    Devuelve el mapa de OIDs para un dispositivo, combinando:
+        1. OIDs genéricos (GENERAL y PUERTOS)
+        2. OIDs definidos para la marca
+        3. OIDs específicos del dispositivo
+    """
+
+    # Diccionarios genéricos según el tipo
+    genericos = {
+        OIDmetric.Tipo.GENERAL: OIDS_GENERICO,
+        OIDmetric.Tipo.PUERTOS: OIDS_PUERTOS_GENERICO,
+    }
+
+    # Partimos de una copia para no modificar los diccionarios originales
+    oids = genericos.get(tipos, {}).copy()
+
+    # OIDs definidos para la marca
+    metric = OIDmetric.objects.filter(
+        marca=dispositivo.marca,
+        tipo=tipos
+    ).first()
+
+    if metric and metric.codigos:
+        oids.update(metric.codigos)
+
+    # OIDs específicos del dispositivo
+    atributos = dispositivo.atributos_extra or {}
+    oids_extra = atributos.get('oids', {}).get(tipos, {})
+
+    if oids_extra:
+        oids.update(oids_extra)
+
+    return oids
+
+def oids_dispositivo2(dispositivo, tipos='general'):
     """
     Devuelve el mapa de OIDs combinado para un dispositivo: genéricos + los de su marca.
     """
@@ -85,7 +120,7 @@ def oids_dispositivo(dispositivo, tipos='general'):
 
         # Atributos extras del dispositivo
         if dispositivo.atributos_extra:
-            extra = (dispositivo.atributos_extra or {}).get('oids').get(OIDmetric.Tipo.GENERAL) or {}
+            extra = (dispositivo.atributos_extra or {}).get('oids').get(tipos) or {}
             oids.update(extra)
         return oids
     
@@ -96,7 +131,7 @@ def oids_dispositivo(dispositivo, tipos='general'):
 
         # Atributos extras del dispositivo
         if dispositivo.atributos_extra:
-            extra = (dispositivo.atributos_extra or {}).get('oids').get(OIDmetric.Tipo.PUERTOS) or {}
+            extra = (dispositivo.atributos_extra or {}).get('oids').get(tipos) or {}
             oids.update(extra)
         return oids
 
@@ -106,7 +141,7 @@ def oids_dispositivo(dispositivo, tipos='general'):
 
         # Atributos extras del dispositivo
         if dispositivo.atributos_extra:
-            extra = (dispositivo.atributos_extra or {}).get('oids').get(OIDmetric.Tipo.WIFI) or {}
+            extra = (dispositivo.atributos_extra or {}).get('oids').get(tipos) or {}
             oids.update(extra)
         return oids
     
@@ -116,7 +151,17 @@ def oids_dispositivo(dispositivo, tipos='general'):
 
         # Atributos extras del dispositivo
         if dispositivo.atributos_extra:
-            extra = (dispositivo.atributos_extra or {}).get('oids').get(OIDmetric.Tipo.PUERTOS_PON) or {}
+            extra = (dispositivo.atributos_extra or {}).get('oids').get(tipos) or {}
+            oids.update(extra)
+        return oids
+
+    elif tipos == OIDmetric.Tipo.ONUS:
+        if metric and metric.codigos:
+            oids.update(metric.codigos)
+
+        # Atributos extras del dispositivo
+        if dispositivo.atributos_extra:
+            extra = (dispositivo.atributos_extra or {}).get('oids').get(tipos) or {}
             oids.update(extra)
         return oids
     
