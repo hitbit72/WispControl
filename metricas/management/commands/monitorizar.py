@@ -242,7 +242,8 @@ class Command(BaseCommand):
         # Actizalizar datos estaciones wifi y onus
         if self.zonas['wifi']:
             if estaciones:
-                services.guarda_staciones_wifi(dispositivo, **datos)     # <-- Datos wifi de ubiquiti
+                #services.guarda_staciones_wifi(dispositivo, **datos)     # <-- Datos wifi de ubiquiti
+                services.guarda_staciones_wifi(dispositivo, **estaciones)     # <-- Datos wifi de ubiquiti
         if self.zonas['onus']:
             if onus:
                 services.guarda_estaciones_onu(dispositivo, **datos)     # <-- Datos de ONU de OLT ubiquiti

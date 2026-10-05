@@ -10,7 +10,7 @@ from django.db.models import Q
 from eventos.models import Evento
 from eventos.services import registrar_evento
 
-from dispositivos.models import Dispositivo, Interfaz
+from dispositivos.models import Dispositivo, Interfaz, dispositivos_ap
 
 from .models import Alarma, DeviceMetrics, DeviceMetricHistory, InterfaceMetricHistory
 from .reglas import REGLA_NIVEL, evaluar
@@ -137,16 +137,16 @@ def guardar_puertos(dispositivo, **datos):
 
 
 
-def guarda_staciones_wifi(dispositivo, **datos):
+def guarda_staciones_wifi(dispositivo, **estaciones):
     """ 
     Guarda los datos básicos de los dispositivos 'Antena de cliente'.
     Pone en activo la estación
     """
 
     # Extraer la lista de estaciones del diccionario (si no existe, usa lista vacía)
-    estaciones = datos.get("estaciones", [])
-    ssid = datos.get('ssid')
-    frequency = datos.get('frequency')
+    #estaciones = datos.get("estaciones", [])
+    ssid = estaciones.get('ssid')
+    frequency = estaciones.get('frequency')
 
     for estacion in estaciones:
         # buscamos la IP de la estación
@@ -179,6 +179,9 @@ def guarda_staciones_wifi(dispositivo, **datos):
 
             # -------- METRICA DE LA ESTACIÓN PROPORCIONADA POR EL AP
             # Guardamos esta métrica porque se proporciona con Counter64, más fiable
+
+            if dispositivo.rol != Dispositivo.Rol.MAIN:
+                continue
 
             interfaz = Interfaz.objects.filter(dispositivo=estacion_dev).filter(nombre='Enlace-AP').first()
 
