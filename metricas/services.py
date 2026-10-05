@@ -152,7 +152,6 @@ def guarda_staciones_wifi(dispositivo, **datos):
         # buscamos la IP de la estación
         ip = estacion.get('ip')
         if not ip:
-            print(f'no ip, {ssid}')
             continue
 
         # Obtenemos la INSTANCIA única del dispositivo por su IP de gestión
@@ -184,17 +183,14 @@ def guarda_staciones_wifi(dispositivo, **datos):
             if dispositivo.rol != Dispositivo.Rol.MAIN:
                 continue
 
-            interfaz = Interfaz.objects.filter(dispositivo=estacion_dev).filter(nombre='Enlace-AP').first()
-
-            if not interfaz:
-                # Creamos la interfaz Enlace-ap de las estacion
-                interfaz, created = Interfaz.objects.create(
-                    dispositivo=estacion_dev,
-                    nombre='Enlace-AP',
-                    tipo=Interfaz.Tipo.WIRELESS,
-                    estado=Interfaz.Estado.ARRIBA,
-                    descripcion='Enlace con AP',
-                )
+            # Creamos la interfaz Enlace-ap de las estacion
+            interfaz, created = Interfaz.objects.update_or_create(
+                dispositivo=estacion_dev,
+                nombre='Wifi-AP',
+                tipo=Interfaz.Tipo.WIRELESS,
+                estado=Interfaz.Estado.ARRIBA,
+                descripcion='Enlace con AP',
+            )
             if interfaz:
                 # guardamos las metrcias históricas
                 InterfaceMetricHistory.objects.create(
