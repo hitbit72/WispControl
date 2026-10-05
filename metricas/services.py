@@ -182,7 +182,7 @@ def guarda_staciones_wifi(dispositivo, **datos):
 
             # Buscamos o creamos la interfaz wifi-ap de las estacion
             interfaz, created = Interfaz.objects.update_or_create(
-                dispositivo=dispositivo,
+                dispositivo=estacion_dev,
                 nombre='Wifi-AP',
                 tipo=Interfaz.Tipo.WIRELESS,
                 estado=Interfaz.Estado.ARRIBA,
