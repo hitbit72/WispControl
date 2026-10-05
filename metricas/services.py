@@ -152,6 +152,7 @@ def guarda_staciones_wifi(dispositivo, **datos):
         # buscamos la IP de la estación
         ip = estacion.get('ip')
         if not ip:
+            print(f'no ip, {ssid}')
             continue
 
         # Obtenemos la INSTANCIA única del dispositivo por su IP de gestión
