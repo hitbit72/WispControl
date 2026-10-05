@@ -175,6 +175,28 @@ def guarda_staciones_wifi(dispositivo, **datos):
                 device=estacion_dev,
                 defaults=uData,
             )
+
+            # -------- METRICA DE LA ESTACIÓN PROPORCIONADA POR EL AP
+
+            # Buscamos o creamos la interfaz wifi-ap de las estacion
+            interfaz, created = Interfaz.objects.update_or_create(
+                dispositivo=dispositivo,
+                nombre='Wifi-AP',
+                tipo='wireless',
+                estado='up',
+                descripcion='Enlace con AP',
+                mostrar=True
+            )
+            if interfaz:
+                # guardamos las metrcias históricas
+                InterfaceMetricHistory.objects.create(
+                    interfaz = interfaz,
+                    timestamp = timezone.now(),
+                    rx = estacion.get('rx_rate'),
+                    tx = estacion.get('tx_rate'),
+                )
+
+
         # Si el dispositivo no existe, se puede crear cómo Discover. (Queda pendiente)
 
 
