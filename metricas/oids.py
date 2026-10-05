@@ -74,9 +74,10 @@ def oids_dispositivo(dispositivo, tipos='general'):
 
     # Obtenemos directamente la instancia
     metric = OIDmetric.objects.filter(marca=dispositivo.marca, tipo=tipos).first()
+    oids = {}
 
     # 'general' y 'puertos' tienen codigos genericos
-    if tipos == 'general':
+    if tipos == OIDmetric.Tipo.GENERAL:
         # copia limpia del diccionario genérico
         oids = OIDS_GENERICO.copy()
         if metric and metric.codigos:
@@ -84,29 +85,38 @@ def oids_dispositivo(dispositivo, tipos='general'):
 
         # Atributos extras del dispositivo
         if dispositivo.atributos_extra:
-            extra = (dispositivo.atributos_extra or {}).get('oids').get('general') or {}
+            extra = (dispositivo.atributos_extra or {}).get('oids').get(OIDmetric.Tipo.GENERAL) or {}
             oids.update(extra)
         return oids
     
-    elif tipos == 'puertos':
+    elif tipos == OIDmetric.Tipo.PUERTOS:
         oids = OIDS_PUERTOS_GENERICO.copy()
         if metric and metric.codigos:
             oids.update(metric.codigos)
 
         # Atributos extras del dispositivo
         if dispositivo.atributos_extra:
-            extra = (dispositivo.atributos_extra or {}).get('oids').get('puertos') or {}
+            extra = (dispositivo.atributos_extra or {}).get('oids').get(OIDmetric.Tipo.PUERTOS) or {}
             oids.update(extra)
         return oids
 
-    elif tipos == 'puertos_pon':
-        oids = {}
+    elif tipos == OIDmetric.Tipo.WIFI:
         if metric and metric.codigos:
             oids.update(metric.codigos)
 
         # Atributos extras del dispositivo
         if dispositivo.atributos_extra:
-            extra = (dispositivo.atributos_extra or {}).get('oids').get('puertos_pon') or {}
+            extra = (dispositivo.atributos_extra or {}).get('oids').get(OIDmetric.Tipo.WIFI) or {}
+            oids.update(extra)
+        return oids
+    
+    elif tipos == OIDmetric.Tipo.PUERTOS_PON:
+        if metric and metric.codigos:
+            oids.update(metric.codigos)
+
+        # Atributos extras del dispositivo
+        if dispositivo.atributos_extra:
+            extra = (dispositivo.atributos_extra or {}).get('oids').get(OIDmetric.Tipo.PUERTOS_PON) or {}
             oids.update(extra)
         return oids
     

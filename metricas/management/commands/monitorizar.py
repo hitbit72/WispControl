@@ -34,7 +34,7 @@ from django.utils import timezone
 from dispositivos.models import Dispositivo, dispositivos_ap
 
 from metricas import snmp_client
-from metricas.models import DeviceMetrics, DeviceMetricHistory
+from metricas.models import DeviceMetrics, DeviceMetricHistory, OIDmetric
 from metricas.oids import oids_dispositivo
 from metricas import services
 
@@ -161,33 +161,33 @@ class Command(BaseCommand):
         resultado = {}
         puertos, puertos_pon, estaciones, onus = [], [], [], []
 
-        escalares_general = oids_dispositivo(dispositivo, 'general')
-        escalares_puerto = oids_dispositivo(dispositivo, 'puertos')
+        escalares_general = oids_dispositivo(dispositivo, OIDmetric.Tipo.GENERAL)
+        escalares_puerto = oids_dispositivo(dispositivo, OIDmetric.Tipo.PUERTOS)
 
         # Solo los dispositivos main y tipo antenas
         if dispositivo.rol == 'main':
             if dispositivo.tipo.clave in dispositivos_ap:
-                escalares_st = oids_dispositivo(dispositivo, 'wifi')
+                escalares_st = oids_dispositivo(dispositivo, OIDmetric.Tipo.WIFI)
 
         # Puertos, OID especiales para OLT
         if dispositivo.tipo.clave == 'olt':
-            escalares_puerto_pon = oids_dispositivo(dispositivo, 'puertos_pon')
-            escalares_onu = oids_dispositivo(dispositivo, 'onus')
+            escalares_puerto_pon = oids_dispositivo(dispositivo, OIDmetric.Tipo.PUERTOS_PON)
+            escalares_onu = oids_dispositivo(dispositivo, OIDmetric.Tipo.ONUS)
 
         try:
             if self.zonas['general']:
                 resultado = snmp_client.consultar_escalares(dispositivo, escalares_general)
             if self.zonas['puertos']:
-                puertos = snmp_client.consultar_if_table(dispositivo, escalares_puerto, 'puertos')
+                puertos = snmp_client.consultar_if_table(dispositivo, escalares_puerto, OIDmetric.Tipo.PUERTOS)
             if self.zonas['wifi']:
                 if escalares_st:
-                    estaciones = snmp_client.consultar_if_table(dispositivo, escalares_st, 'wifi')
+                    estaciones = snmp_client.consultar_if_table(dispositivo, escalares_st, OIDmetric.Tipo.WIFI)
             if self.zonas['puertos_pon']:
                 if escalares_puerto_pon:
-                    puertos_pon = snmp_client.consultar_if_table(dispositivo, escalares_puerto_pon, 'puertos')
+                    puertos_pon = snmp_client.consultar_if_table(dispositivo, escalares_puerto_pon, OIDmetric.Tipo.PUERTOS)
             if self.zonas['onus']:
                 if escalares_onu:
-                    onus = snmp_client.consultar_if_table(dispositivo, escalares_onu, 'onus')
+                    onus = snmp_client.consultar_if_table(dispositivo, escalares_onu, OIDmetric.Tipo.ONUS)
             status = DeviceMetrics.Status.OK
 
         except snmp_client.SnmpError as exc:
