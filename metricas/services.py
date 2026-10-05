@@ -194,8 +194,8 @@ def guarda_staciones_wifi(dispositivo, **datos):
                 InterfaceMetricHistory.objects.create(
                     interfaz = interfaz,
                     timestamp = timezone.now(),
-                    rx = estacion.get('rx_rate'),
-                    tx = estacion.get('tx_rate'),
+                    rx = estacion.get('rx_counter'),
+                    tx = estacion.get('tx_counter'),
                 )
 
 
