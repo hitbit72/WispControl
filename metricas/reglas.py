@@ -100,7 +100,7 @@ def evaluar(dispositivo, metrica, anterior, historico, historico_anterior, confi
             if historico and historico_anterior:
                 actual, previo = getattr(historico, historico_campo), getattr(historico_anterior, historico_campo)
             if actual is not None and previo is not None and actual != 0 and  previo != 0:
-                if caida == previo:
+                if actual == previo:
                     continue
                 caida = previo - actual
                 if caida >= umbral:
