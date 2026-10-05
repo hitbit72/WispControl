@@ -137,16 +137,16 @@ def guardar_puertos(dispositivo, **datos):
 
 
 
-def guarda_staciones_wifi(dispositivo, **estaciones):
+def guarda_staciones_wifi(dispositivo, **datos):
     """ 
     Guarda los datos básicos de los dispositivos 'Antena de cliente'.
     Pone en activo la estación
     """
 
     # Extraer la lista de estaciones del diccionario (si no existe, usa lista vacía)
-    #estaciones = datos.get("estaciones", [])
-    ssid = estaciones.get('ssid')
-    frequency = estaciones.get('frequency')
+    estaciones = datos.get("estaciones", [])
+    ssid = datos.get('ssid')
+    frequency = datos.get('frequency')
 
     for estacion in estaciones:
         # buscamos la IP de la estación
