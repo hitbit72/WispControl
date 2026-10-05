@@ -178,6 +178,7 @@ def guarda_staciones_wifi(dispositivo, **datos):
             )
 
             # -------- METRICA DE LA ESTACIÓN PROPORCIONADA POR EL AP
+            # Guardamos esta métrica porque se proporciona con Counter64, más fiable
 
             # Buscamos o creamos la interfaz wifi-ap de las estacion
             interfaz, created = Interfaz.objects.update_or_create(
