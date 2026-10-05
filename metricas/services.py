@@ -169,7 +169,8 @@ def guarda_staciones_wifi(dispositivo, **datos):
             'ssid': ssid,
             'frequency': frequency,
         }
-        
+
+        # Guardamos la metrica estática
         if estacion_dev:
             st, created = DeviceMetrics.objects.update_or_create(
                 device=estacion_dev,
@@ -182,8 +183,8 @@ def guarda_staciones_wifi(dispositivo, **datos):
             interfaz, created = Interfaz.objects.update_or_create(
                 dispositivo=dispositivo,
                 nombre='Wifi-AP',
-                tipo='wireless',
-                estado='up',
+                tipo=Interfaz.Tipo.WIRELESS,
+                estado=Interfaz.Estado.ARRIBA,
                 descripcion='Enlace con AP',
                 mostrar=True
             )
