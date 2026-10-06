@@ -99,6 +99,7 @@ class Dispositivo(models.Model):
     
     latitud = models.DecimalField(max_digits=10, decimal_places=7, null=True, blank=True)
     longitud = models.DecimalField(max_digits=10, decimal_places=7, null=True, blank=True)
+    zona_cobertura = models.CharField(max_length=250, null=True, blank=True, verbose_name='Zona cobertura')
 
     estado = models.CharField(max_length=20, choices=Estado.choices, default=Estado.ACTIVO)
     fecha_instalacion = models.DateField(null=True, blank=True)
