@@ -74,6 +74,8 @@ def guardar_puertos(dispositivo, **datos):
     for puerto in puertos:
         # update_or_create busca por los kwargs principales (dispositivo + nombre)
         # y actualiza o establece los campos definidos en defaults.
+
+        """
         uData = {
             "estado": puerto["estado"],
             "velocidad_mbps": puerto["speed"],
@@ -84,14 +86,18 @@ def guardar_puertos(dispositivo, **datos):
             uData = {
                 "estado": puerto["estado"],
             }
+        """
 
         # Tipo de interface según su nombre (802.1Q=trunk VLAN)
         if any(exclude.lower() in puerto['nombre'].lower() for exclude in ('ath', 'wifi', 'wlan')):
-            uData.update({'tipo': Interfaz.Tipo.WIRELESS})
+            #uData.update({'tipo': Interfaz.Tipo.WIRELESS})
+            puerto.update({'tipo': Interfaz.Tipo.WIRELESS})
         elif any(exclude.lower() in puerto['nombre'].lower() for exclude in ('eth', 'br')):
-            uData.update({'tipo': Interfaz.Tipo.ETHERNET})
+            #uData.update({'tipo': Interfaz.Tipo.ETHERNET})
+            puerto.update({'tipo': Interfaz.Tipo.ETHERNET})
         elif any(exclude.lower() in puerto['nombre'].lower() for exclude in ('ppp',)):
-            uData.update({'tipo': Interfaz.Tipo.PPPOE})
+            #uData.update({'tipo': Interfaz.Tipo.PPPOE})
+            puerto.update({'tipo': Interfaz.Tipo.PPPOE})
 
         # Buscamos el interface
         interfaz = Interfaz.objects.filter(
@@ -106,7 +112,7 @@ def guardar_puertos(dispositivo, **datos):
                 nombre=puerto["nombre"],
                 estado=puerto["estado"],
                 velocidad_mbps=puerto["speed"],
-                tipo=uData['tipo']
+                tipo=puerto['tipo']
             )
 
         if interfaz:
@@ -133,6 +139,8 @@ def guardar_puertos(dispositivo, **datos):
         for puerto in puertos:
             # update_or_create busca por los kwargs principales (dispositivo + nombre)
             # y actualiza o establece los campos definidos en defaults.
+
+            """
             uData = {
                 "estado": puerto["estado"],
                 "velocidad_mbps": puerto["speed"],
@@ -141,7 +149,8 @@ def guardar_puertos(dispositivo, **datos):
                 uData = {
                     "estado": puerto["estado"],
                 }
-
+            """
+            
             # Buscamos el interface
             interfaz = Interfaz.objects.filter(
                 dispositivo=dispositivo,
