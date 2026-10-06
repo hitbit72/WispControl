@@ -138,12 +138,25 @@ def guardar_puertos(dispositivo, **datos):
                 uData = {
                     "estado": puerto["estado"],
                 }
-            # Actualizamos o registramos el puero si no existe
-            interfaz, created = Interfaz.objects.update_or_create(
-                dispositivo=dispositivo,
-                nombre=puerto["nombre"],
-                defaults=uData,
-            )
+
+            # Buscamos el interface
+            interfaz = Interfaz.objects.filter(
+                dispositivo=dispositivo
+                ).filter(nombre=puerto["nombre"]).first()
+
+            if not interfaz:
+                # Registramos el puero si no existe
+                interfaz = Interfaz.objects.create(
+                    dispositivo=dispositivo,
+                    nombre=puerto["nombre"],
+                    defaults=uData,
+                )
+
+            if interfaz:
+                # Actualizamos el estado del puerto si es necesario
+                if interfaz.estado != puerto["estado"]:
+                    interfaz.objects.update(estado = puerto["estado"])
+            
 
 
 
