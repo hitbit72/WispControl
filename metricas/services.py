@@ -95,8 +95,9 @@ def guardar_puertos(dispositivo, **datos):
 
         # Buscamos el interface
         interfaz = Interfaz.objects.filter(
-            dispositivo=dispositivo
-            ).filter(nombre=puerto["nombre"]).first()
+            dispositivo=dispositivo,
+            nombre=puerto["nombre"]
+            ).first()
 
         # Registramos el puero si no existe
         if not interfaz:
@@ -141,8 +142,9 @@ def guardar_puertos(dispositivo, **datos):
 
             # Buscamos el interface
             interfaz = Interfaz.objects.filter(
-                dispositivo=dispositivo
-                ).filter(nombre=puerto["nombre"]).first()
+                dispositivo=dispositivo,
+                nombre=puerto["nombre"]
+                ).first()
 
             if not interfaz:
                 # Registramos el puero si no existe
@@ -219,8 +221,9 @@ def guarda_staciones_wifi(dispositivo, **datos):
                 continue
 
             interfaz = Interfaz.objects.filter(
-                dispositivo=estacion_dev
-                ).filter(nombre='Wifi-AP').first()
+                dispositivo=estacion_dev,
+                nombre='Wifi-AP'
+                ).first()
 
             if not interfaz:
                 # Creamos la interfaz Enlace-ap de las estacion
