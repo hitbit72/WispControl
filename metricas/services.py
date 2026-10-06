@@ -104,7 +104,8 @@ def guardar_puertos(dispositivo, **datos):
             interfaz = Interfaz.objects.create(
                 dispositivo=dispositivo,
                 nombre=puerto["nombre"],
-                defaults=uData,
+                estado=puerto["estado"],
+                velocidad_mbps=puerto["speed"]
             )
 
         if interfaz:
@@ -151,7 +152,8 @@ def guardar_puertos(dispositivo, **datos):
                 interfaz = Interfaz.objects.create(
                     dispositivo=dispositivo,
                     nombre=puerto["nombre"],
-                    defaults=uData,
+                    estado=puerto["estado"],
+                    velocidad_mbps=puerto["speed"]
                 )
 
             if interfaz:
