@@ -92,9 +92,6 @@ def guardar_puertos(dispositivo, **datos):
         if any(exclude.lower() in puerto['nombre'].lower() for exclude in ('ath', 'wifi', 'wlan')):
             #uData.update({'tipo': Interfaz.Tipo.WIRELESS})
             puerto.update({'tipo': Interfaz.Tipo.WIRELESS})
-        elif any(exclude.lower() in puerto['nombre'].lower() for exclude in ('eth', 'br')):
-            #uData.update({'tipo': Interfaz.Tipo.ETHERNET})
-            puerto.update({'tipo': Interfaz.Tipo.ETHERNET})
         elif any(exclude.lower() in puerto['nombre'].lower() for exclude in ('ppp',)):
             #uData.update({'tipo': Interfaz.Tipo.PPPOE})
             puerto.update({'tipo': Interfaz.Tipo.PPPOE})
@@ -150,7 +147,7 @@ def guardar_puertos(dispositivo, **datos):
                     "estado": puerto["estado"],
                 }
             """
-            
+
             # Buscamos el interface
             interfaz = Interfaz.objects.filter(
                 dispositivo=dispositivo,
