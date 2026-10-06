@@ -188,7 +188,9 @@ def guarda_staciones_wifi(dispositivo, **datos):
 
             if estacion_dev:
                 # Si la encontramos, actualizamos su ip pública, si procede
-                estacion_dev.objects.update(ip_publica=ip)
+                #estacion_dev.objects.update(ip_publica=ip)
+                estacion_dev.ip_publica = ip
+                estacion_dev.save(update_fields=['ip_publica'])  # update_fields optimiza la consulta SQL
 
 
         # Actualización de datos. Se tiene que usar las keys de OID
