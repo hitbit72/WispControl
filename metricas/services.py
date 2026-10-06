@@ -106,15 +106,14 @@ def guardar_puertos(dispositivo, **datos):
                 defaults=uData,
             )
 
-        # Actualizamos el estado del puerto si es necesario
-        if interfaz.estado != puerto["estado"]:
-            interfaz.objects.update(estado = puerto["estado"])
-
-        # guardamos las metrcias históricas solo de dispositivos MAIN
-        #if dispositivo.rol != Dispositivo.Rol.MAIN:
-        #   continue
-
         if interfaz:
+            # Actualizamos el estado del puerto si es necesario
+            if interfaz.estado != puerto["estado"]:
+                interfaz.objects.update(estado = puerto["estado"])
+
+            # guardamos las metrcias históricas solo de dispositivos MAIN
+            #if dispositivo.rol != Dispositivo.Rol.MAIN:
+            #   continue
             if puerto["estado"] == 'up':
                 InterfaceMetricHistory.objects.create(
                     interfaz = interfaz,
