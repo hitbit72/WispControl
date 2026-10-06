@@ -75,27 +75,13 @@ def guardar_puertos(dispositivo, **datos):
         # update_or_create busca por los kwargs principales (dispositivo + nombre)
         # y actualiza o establece los campos definidos en defaults.
 
-        """
-        uData = {
-            "estado": puerto["estado"],
-            "velocidad_mbps": puerto["speed"],
-        }
-
-        #if not puerto["speed"]:
-        if puerto["estado"] == 'down':
-            uData = {
-                "estado": puerto["estado"],
-            }
-        """
         # Tipo por defecto
         puerto.update({'tipo': Interfaz.Tipo.ETHERNET})
-        
+
         # Tipo de interface según su nombre (802.1Q=trunk VLAN)
         if any(exclude.lower() in puerto['nombre'].lower() for exclude in ('ath', 'wifi', 'wlan')):
-            #uData.update({'tipo': Interfaz.Tipo.WIRELESS})
             puerto.update({'tipo': Interfaz.Tipo.WIRELESS})
         elif any(exclude.lower() in puerto['nombre'].lower() for exclude in ('ppp',)):
-            #uData.update({'tipo': Interfaz.Tipo.PPPOE})
             puerto.update({'tipo': Interfaz.Tipo.PPPOE})
 
         # Buscamos el interface
@@ -139,17 +125,6 @@ def guardar_puertos(dispositivo, **datos):
             # update_or_create busca por los kwargs principales (dispositivo + nombre)
             # y actualiza o establece los campos definidos en defaults.
 
-            """
-            uData = {
-                "estado": puerto["estado"],
-                "velocidad_mbps": puerto["speed"],
-            }
-            if not puerto["speed"]:
-                uData = {
-                    "estado": puerto["estado"],
-                }
-            """
-
             # Buscamos el interface
             interfaz = Interfaz.objects.filter(
                 dispositivo=dispositivo,
@@ -170,9 +145,6 @@ def guardar_puertos(dispositivo, **datos):
                 if interfaz.estado != puerto["estado"]:
                     interfaz.objects.update(estado = puerto["estado"])
             
-
-
-
 
 
 def guarda_staciones_wifi(dispositivo, **datos):
