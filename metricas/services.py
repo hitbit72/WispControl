@@ -87,7 +87,9 @@ def guardar_puertos(dispositivo, **datos):
                 "estado": puerto["estado"],
             }
         """
-
+        # Tipo por defecto
+        puerto.update({'tipo': Interfaz.Tipo.ETHERNET})
+        
         # Tipo de interface según su nombre (802.1Q=trunk VLAN)
         if any(exclude.lower() in puerto['nombre'].lower() for exclude in ('ath', 'wifi', 'wlan')):
             #uData.update({'tipo': Interfaz.Tipo.WIRELESS})
@@ -109,7 +111,7 @@ def guardar_puertos(dispositivo, **datos):
                 nombre=puerto["nombre"],
                 estado=puerto["estado"],
                 velocidad_mbps=puerto["speed"],
-                tipo=puerto['tipo']
+                tipo=puerto["tipo"]
             )
 
         if interfaz:
