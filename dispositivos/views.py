@@ -27,6 +27,7 @@ def buscar_dispositivo(request, query):
         | Q(nombre_host__icontains=query)
         | Q(ip_gestion__icontains=query)
         | Q(ip_publica__icontains=query)
+        | Q(mac_address__icontains=query)
     ).first()
 
     if not dispositivo:
