@@ -93,15 +93,26 @@ def guardar_puertos(dispositivo, **datos):
         elif any(exclude.lower() in puerto['nombre'].lower() for exclude in ('ppp',)):
             uData.update({'tipo': Interfaz.Tipo.PPPOE})
 
-        # Actualizamos o registramos el puero si no existe
-        interfaz, created = Interfaz.objects.update_or_create(
-            dispositivo=dispositivo,
-            nombre=puerto["nombre"],
-            defaults=uData,
-        )
+        # Buscamos el interface
+        interfaz = Interfaz.objects.filter(
+            dispositivo=dispositivo
+            ).filter(nombre=puerto["nombre"]).first()
+
+        # Registramos el puero si no existe
+        if not interfaz:
+            interfaz = Interfaz.objects.create(
+                dispositivo=dispositivo,
+                nombre=puerto["nombre"],
+                defaults=uData,
+            )
+
+        # Actualizamos el estado del puerto si es necesario
+        if interfaz.estado != puerto["estado"]:
+            interfaz.objects.update(estado = puerto["estado"])
 
         # guardamos las metrcias históricas solo de dispositivos MAIN
-        #if dispositivo.rol == Dispositivo.Rol.MAIN:
+        #if dispositivo.rol != Dispositivo.Rol.MAIN:
+        #   continue
 
         if interfaz:
             if puerto["estado"] == 'up':
@@ -143,6 +154,7 @@ def guarda_staciones_wifi(dispositivo, **datos):
     """ 
     Guarda los datos básicos de los dispositivos 'Antena de cliente'.
     Pone en activo la estación
+    Registra el puerto Wifi-AP para metricas historicas, enlace de la estación con su AP
     """
     # Extraer la lista de estaciones del diccionario (si no existe, usa lista vacía)
     estaciones = datos.get("estaciones", [])
@@ -189,6 +201,8 @@ def guarda_staciones_wifi(dispositivo, **datos):
             # -------- METRICA DE LA ESTACIÓN PROPORCIONADA POR EL AP
             # Guardamos esta métrica porque se proporciona con Counter64, más fiable
             
+
+            # Si no es MAIN saltamos
             if dispositivo.rol != Dispositivo.Rol.MAIN:
                 continue
 
