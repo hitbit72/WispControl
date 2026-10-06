@@ -79,6 +79,9 @@
                 {% if dispositivo.sector %}
                 <p class="mb-1"><strong>Sector:</strong>
                 <a href="{% url 'sectores:detalle' dispositivo.sector.pk %}?next={{ request.path }}">{{ dispositivo.sector.nombre }}</a>{% endif %}</p>
+                {% if dispositivo.zona_cobertura %}
+                <p class="mb-1"><strong>Zona Coertura:</strong>{{ dispositivo.zona_cobertura }}</p>
+                {% endif %}
                 {% if dispositivo.cliente %}
                 <p class="mb-1"><strong>Cliente:</strong> 
                 <a href="{% url 'clientes:detalle' dispositivo.cliente.pk %}?next={{ request.path }}">{{ dispositivo.cliente.nombre_completo }}</a><br>
