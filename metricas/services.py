@@ -199,7 +199,12 @@ def guarda_staciones_wifi(dispositivo, **datos):
         ultima_ip = ip
 
         # Obtenemos la INSTANCIA única del dispositivo por su IP de gestión
-        estacion_dev = Dispositivo.objects.filter(ip_gestion=ip).first()
+        #estacion_dev = Dispositivo.objects.filter(ip_gestion=ip).first()
+        
+        # Busca el dispositivo si coincide la IP de gestión O la IP pública
+        estacion_dev = Dispositivo.objects.filter(
+            Q(ip_gestion=ip) | Q(ip_publica=ip)
+        ).first()
 
         # Actualización de datos. Se tiene que usar las keys de OID
         uData = {
@@ -214,8 +219,9 @@ def guarda_staciones_wifi(dispositivo, **datos):
             'frequency': frequency,
         }
 
-        # Guardamos la metrica estática
+        
         if estacion_dev:
+            # Guardamos la metrica estática
             st, created = DeviceMetrics.objects.update_or_create(
                 device=estacion_dev,
                 defaults=uData,
@@ -224,7 +230,6 @@ def guarda_staciones_wifi(dispositivo, **datos):
             # -------- METRICA DE LA ESTACIÓN PROPORCIONADA POR EL AP
             # Guardamos esta métrica porque se proporciona con Counter64, más fiable
             
-
             # Si no es MAIN saltamos
             if dispositivo.rol != Dispositivo.Rol.MAIN:
                 continue
