@@ -173,25 +173,6 @@ def detalle_dispositivo(request, pk):
         ),
         pk=pk,
     )
-    """
-    dispositivo = get_object_or_404(
-        Dispositivo.objects.prefetch_related(
-            Prefetch(
-                'interfaces',
-                queryset=Interfaz.objects.order_by('id')
-            ),
-            'metricas',
-            Prefetch(
-                'alarmas',
-                queryset=Alarma.objects.filter(
-                    estado='activa',
-                    tipo='snmp'
-                )
-            )
-        ),
-        pk=pk,
-    )
-    """
 
     # Capturamos la URL de redirección (si viene en el GET o en el POST)
     url_anterior = request.POST.get('next') or request.GET.get('next')

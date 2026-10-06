@@ -162,6 +162,7 @@ def guarda_staciones_wifi(dispositivo, **datos):
     for estacion in estaciones:
         # buscamos la IP de la estación
         ip = estacion.get('ip')
+        host = estacion.get('host')
         if not ip:
             continue
 
@@ -172,13 +173,23 @@ def guarda_staciones_wifi(dispositivo, **datos):
 
         ultima_ip = ip
 
-        # Obtenemos la INSTANCIA única del dispositivo por su IP de gestión
+        # Obtenemos la INSTANCIA única del dispositivo por su IP
         #estacion_dev = Dispositivo.objects.filter(ip_gestion=ip).first()
-        
+
         # Busca el dispositivo si coincide la IP de gestión O la IP pública
         estacion_dev = Dispositivo.objects.filter(
             Q(ip_gestion=ip) | Q(ip_publica=ip)
         ).first()
+
+        if not estacion_dev and host:
+            # Si no la encontramos, puede ser que la IP que recibimos es la pública y no la tenemos registrada.
+            # Buscar la estación por su host
+            estacion_dev = Dispositivo.objects.filter(nombre_host=host).first()
+
+            if estacion_dev:
+                # Si la encontramos, actualizamos su ip pública, si procede
+                estacion_dev.objects.update(ip_publica=ip)
+
 
         # Actualización de datos. Se tiene que usar las keys de OID
         uData = {
