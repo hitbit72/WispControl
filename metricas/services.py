@@ -105,7 +105,8 @@ def guardar_puertos(dispositivo, **datos):
                 dispositivo=dispositivo,
                 nombre=puerto["nombre"],
                 estado=puerto["estado"],
-                velocidad_mbps=puerto["speed"]
+                velocidad_mbps=puerto["speed"],
+                tipo=uData['tipo']
             )
 
         if interfaz:
