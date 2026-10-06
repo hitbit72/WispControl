@@ -103,7 +103,8 @@ def guardar_puertos(dispositivo, **datos):
         if interfaz:
             # Actualizamos el estado del puerto si es necesario
             if interfaz.estado != puerto["estado"]:
-                interfaz.objects.update(estado = puerto["estado"])
+                interfaz.estado = puerto["estado"]
+                interfaz.save(update_fields=['estado'])
 
             # guardamos las metrcias históricas solo de dispositivos MAIN
             #if dispositivo.rol != Dispositivo.Rol.MAIN:
@@ -143,7 +144,8 @@ def guardar_puertos(dispositivo, **datos):
             if interfaz:
                 # Actualizamos el estado del puerto si es necesario
                 if interfaz.estado != puerto["estado"]:
-                    interfaz.objects.update(estado = puerto["estado"])
+                    interfaz.estado = puerto["estado"]
+                    interfaz.save(update_fields=['estado'])
             
 
 
@@ -188,7 +190,6 @@ def guarda_staciones_wifi(dispositivo, **datos):
 
             if estacion_dev:
                 # Si la encontramos, actualizamos su ip pública, si procede
-                #estacion_dev.objects.update(ip_publica=ip)
                 estacion_dev.ip_publica = ip
                 estacion_dev.save(update_fields=['ip_publica'])  # update_fields optimiza la consulta SQL
 
