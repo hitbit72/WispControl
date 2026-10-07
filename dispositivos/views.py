@@ -1,4 +1,4 @@
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.core.paginator import Paginator
 from django.db.models import Q, Prefetch
 from django.http import Http404, JsonResponse
@@ -463,6 +463,7 @@ def editar_interfaz(request, pk):
 
 
 @login_required
+@permission_required('interfaz.delete_interfaz', raise_exception=True)
 def eliminar_interfaz(request, pk):
     interfaz = get_object_or_404(Interfaz, pk=pk)
     dispositivo_pk = interfaz.dispositivo_id
