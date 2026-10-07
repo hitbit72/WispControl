@@ -141,125 +141,15 @@
 </div>
 
 <!-- Chart.js CDN -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/date-fns@3.6.0/cdn.min.js"></script>
+<script src="/static/assets/js/chart/chart.umd.min.js"></script>
+<script src="/static/assets/js/chart/chartjs-adapter-date-fns.bundle.min.js"></script>
+<script src="/static/assets/js/chart/cdn.min.js"></script>
+<script src="/static/assets/js/chart/comun.js"></script>
 
 <script>
 // Datos inyectados desde Django
 const traficoInterfaces = {{ trafico_interfaces|safe }};
 let currentPeriodo = '{{ periodo }}';
-
-// Configuración común de gráficas
-{% include "core/chart_js.html" %}
-
-
-// Calcular bps a partir de contadores acumulados
-// los contadores SNMP ifHCInOctets / ifHCOutOctets están en bytes, por lo que
-// para obtener bits por segundo tienes que multiplicar por 8
-function calculateBps(data) {
-    // data: array of {timestamp, rx, tx}
-    if (!data || data.length < 2) return { labels: [], rx: [], tx: [] };
-    
-    const labels = [];
-    const rxBps = [];
-    const txBps = [];
-    
-    for (let i = 1; i < data.length; i++) {
-        const prev = data[i - 1];
-        const curr = data[i];
-        
-        const t1 = new Date(prev.timestamp).getTime();
-        const t2 = new Date(curr.timestamp).getTime();
-        const deltaTimeSec = (t2 - t1) / 1000;
-        
-        if (deltaTimeSec <= 0) continue;
-        
-        const deltaRx = (curr.rx ?? 0) - (prev.rx ?? 0);
-        const deltaTx = (curr.tx ?? 0) - (prev.tx ?? 0);
-        //console.log(curr.rx)
-
-        // Solo valores positivos (contadores pueden reiniciarse)
-        if (deltaRx < 0 || deltaTx < 0) continue;
-        
-        // Octetos -> bits
-        const rxBpsValue = (deltaRx * 8) / deltaTimeSec;
-        const txBpsValue = (deltaTx * 8) / deltaTimeSec;
-
-        labels.push(curr.timestamp);
-        rxBps.push(rxBpsValue);
-        txBps.push(txBpsValue);
-    }
-    
-    return { labels, rx: rxBps, tx: txBps };
-}
-
-// Render gráfica Tráfico Interfaces (con cálculo bps)
-function renderTraficoChart() {
-    const iface = document.getElementById('interface-select').value;
-    if (!iface || !traficoInterfaces[iface]) return;
-    
-    const data = traficoInterfaces[iface];
-    if (!data.length) return;
-    
-    // Calcular bps
-    const { labels, rx, tx } = calculateBps(data);
-    if (!labels.length) return;
-    
-    const ctx = document.getElementById('trafico-chart').getContext('2d');
-    if (window['trafico-chartChart']) {
-        window['trafico-chartChart'].destroy();
-    }
-    
-    window['trafico-chartChart'] = new Chart(ctx, {
-        type: 'line',
-        data: {
-            datasets: [
-                {
-                    label: 'RX (bps)',
-                    data: labels.map((l, i) => ({ x: l, y: rx[i] })),
-                    borderColor: colors.rx,
-                    backgroundColor: colors.rx + '33',
-                    fill: true,
-                    tension: 0.3
-                },
-                {
-                    label: 'TX (bps)',
-                    data: labels.map((l, i) => ({ x: l, y: tx[i] })),
-                    borderColor: colors.tx,
-                    backgroundColor: colors.tx + '33',
-                    fill: true,
-                    tension: 0.3
-                }
-            ]
-        },
-        options: {
-            ...commonOptions,
-            plugins: {
-                ...commonOptions.plugins,
-                tooltip: {
-                    ...commonOptions.plugins.tooltip,
-                }
-            },
-            scales: {
-                ...commonOptions.scales,
-                y: { 
-                    ...commonOptions.scales.y, 
-                    beginAtZero: true,
-                    ticks: {
-                        callback: function(value) {
-                            if (value >= 1e9) return (value / 1e9).toFixed(1) + ' Gbps';
-                            if (value >= 1e6) return (value / 1e6).toFixed(1) + ' Mbps';
-                            if (value >= 1e3) return (value / 1e3).toFixed(1) + ' Kbps';
-                            return value + ' bps';
-                        }
-                    }
-                }
-            }
-        }
-    });
-}
-
 
 // Selector de periodo
 function setPeriodo(p) {

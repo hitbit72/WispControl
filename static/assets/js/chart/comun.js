@@ -1,3 +1,4 @@
+
 // Configuración común de gráficas
 const commonOptions = {
     responsive: true,
