@@ -236,9 +236,11 @@ def detalle_dispositivo(request, pk):
             for metrica in estaciones
         }
         # Después añadimos los dispositivos que no están en estaciones registradas
+        las_ip='' # guaramos la última ip añadida, si la lista tiene repetidias con esto la descartamos
         for device in metricas.estaciones:
             if device['ip'] not in ips_estaciones \
-            and device['ip'] not in ips_publicas:
+            and device['ip'] not in ips_publicas \
+            and device['ip'] != las_ip:
                 devices.append({
                     'registrado': False,
                     'estado': 'activo',
@@ -255,6 +257,7 @@ def detalle_dispositivo(request, pk):
                     'tx': device['tx_rate'],
                     'rx': device['rx_rate'],
                 })
+                las_ip = device['ip']
     
         # ----------- FIN COMBINACION DE LISTAS ---------------------
 
