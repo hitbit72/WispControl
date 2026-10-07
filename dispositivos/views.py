@@ -335,6 +335,7 @@ def editar_dispositivo(request, pk):
 
 
 @login_required
+@permission_required('dispositivos.delete_dispositivo', raise_exception=True)
 def eliminar_dispositivo(request, pk):
     dispositivo = get_object_or_404(Dispositivo, pk=pk)
 
