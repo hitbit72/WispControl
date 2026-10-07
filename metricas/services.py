@@ -106,9 +106,11 @@ def guardar_puertos(dispositivo, **datos):
                 interfaz.estado = puerto["estado"]
                 interfaz.save(update_fields=['estado'])
 
-            # guardamos las metrcias históricas solo de dispositivos MAIN
-            #if dispositivo.rol != Dispositivo.Rol.MAIN:
-            #   continue
+            # guardamos las metrcias históricas solo de dispositivos MAIN y MKT
+            if dispositivo.rol == Dispositivo.Rol.STATION:
+               # Si es stacion, salimos
+               continue
+            
             if puerto["estado"] == 'up':
                 InterfaceMetricHistory.objects.create(
                     interfaz = interfaz,
