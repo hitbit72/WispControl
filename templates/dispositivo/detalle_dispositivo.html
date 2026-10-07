@@ -14,7 +14,9 @@
     <div class="d-flex gap-2">
         <a href="{% url 'dispositivos:graficas' dispositivo.pk %}?next={{ request.path }}" class="btn btn-outline-info"><i class="bi bi-graph-up"></i> Gráficas</a>
         <a href="{% url 'dispositivos:editar' dispositivo.pk %}?next={{ request.path }}" class="btn btn-primary">Editar</a>
+        {% if perms.dispositivos.delete_dispositivo %}
         <button class="btn btn-outline-danger" onclick="DelMsgModal('deleteModal', '{% url 'dispositivos:eliminar' dispositivo.pk %}', '{{ dispositivo.ip_gestion }}', '{{ dispositivo.interfaces.count }}', 'dispositivo')">Eliminar</button>
+        {% endif %}
     </div>
 </div>
 

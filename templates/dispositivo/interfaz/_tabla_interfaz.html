@@ -36,7 +36,9 @@
             <td style="max-width: 190px;"><span title ="{{ interfaz.descripcion|default:'' }}">{{ interfaz.descripcion|default:''|truncatechars:20 }}</span></td>
             <td class="text-end" style="width: 160px;">
                 <a href="{% url 'dispositivos:editar_interfaz' interfaz.pk %}" class="btn btn-sm btn-outline-primary">Editar</a>
+                {% if perms.interfaz.delete_interfaz %}
                 <button class="btn btn-sm btn-outline-danger" onclick="DelMsgModal('deleteModal', '{% url 'dispositivos:eliminar_interfaz' interfaz.pk %}', '{{ interfaz.nombre }}', '0', 'interfaz')">Eliminar</button>
+                {% endif %}
             </td>
         </tr>
         {% empty %}
