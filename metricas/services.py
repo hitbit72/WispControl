@@ -76,13 +76,14 @@ def guardar_puertos(dispositivo, **datos):
         # y actualiza o establece los campos definidos en defaults.
 
         # Tipo por defecto
-        puerto.update({'tipo': Interfaz.Tipo.ETHERNET})
+        puerto['tipo'] = Interfaz.Tipo.ETHERNET
+        puerto['descripcion'] = ''
 
         # Tipo de interface según su nombre (802.1Q=trunk VLAN)
         if any(exclude.lower() in puerto['nombre'].lower() for exclude in ('ath', 'wifi', 'wlan')):
-            puerto.update({'tipo': Interfaz.Tipo.WIRELESS})
+            puerto['tipo'] = Interfaz.Tipo.WIRELESS
         elif any(exclude.lower() in puerto['nombre'].lower() for exclude in ('ppp',)):
-            puerto.update({'tipo': Interfaz.Tipo.PPPOE})
+            puerto['tipo'] =  Interfaz.Tipo.PPPOE
 
         # Buscamos el interface
         interfaz = Interfaz.objects.filter(
@@ -92,12 +93,16 @@ def guardar_puertos(dispositivo, **datos):
 
         # Registramos el puero si no existe
         if not interfaz:
+            if puerto["nombre"] == 'eth0':
+                puerto["descripcion"]='LAN'
+
             interfaz = Interfaz.objects.create(
                 dispositivo=dispositivo,
                 nombre=puerto["nombre"],
-                estado=puerto["estado"],
-                velocidad_mbps=puerto["speed"],
-                tipo=puerto["tipo"]
+                estado=puerto.get("estado", "down"),
+                velocidad_mbps=puerto.get("speed", 0),
+                tipo=puerto["tipo"],
+                descripcion=puerto["descripcion"]
             )
 
         if interfaz:
@@ -112,8 +117,8 @@ def guardar_puertos(dispositivo, **datos):
                     InterfaceMetricHistory.objects.create(
                         interfaz = interfaz,
                         timestamp = timezone.now(),
-                        rx = puerto["rx_counter"],
-                        tx = puerto["tx_counter"],
+                        rx = puerto.get("rx_counter", 0),
+                        tx = puerto.get("tx_counter", 0),
                     )
 
 
