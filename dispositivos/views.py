@@ -148,7 +148,7 @@ def nuevo_dispositivo(request, pk=0):
             form = DispositivoForm(initial={
                 'cliente': cliente,
                 'latitud': cliente.latitud,
-                'longitud': cliente.latitud})
+                'longitud': cliente.longitud})
 
 
     return render(request, 'dispositivo/form_dispositivo_solo.html', {
@@ -196,7 +196,8 @@ def detalle_dispositivo(request, pk):
             )
 
         
-        # ---- a partir de aqui, es para crear una lista combinada de estaciones registradas y estaciones detectadas por el AP
+        # ---- a partir de aqui, es para crear una lista combinada
+        # ---- de estaciones registradas y estaciones detectadas por el AP
         
         # Primero las estaciones registradas
         for metrica in estaciones:
@@ -227,7 +228,7 @@ def detalle_dispositivo(request, pk):
             metrica.device.ip_gestion
             for metrica in estaciones
         }
-        ips_estaciones.add('0.0.0.0')
+        ips_estaciones.add('0.0.0.0')   # al AP, a veces, no detecta la IP
         ips_estaciones.add('')
         # IPs publicas que ya tienes
         ips_publicas = {
@@ -264,7 +265,6 @@ def detalle_dispositivo(request, pk):
     # metrica actual
     # metrica_actual = dispositivo.metrica_historica.order_by('-timestamp').first()
 
-
     return render(request, 'dispositivo/detalle_dispositivo.html', {
         'dispositivo': dispositivo,
         'metricas': metricas,
@@ -279,6 +279,7 @@ def detalle_dispositivo(request, pk):
 
 @login_required
 def detalle_dispositivo2(request, pk):
+    # Detalle del dispositivo con los enlaces entre puertos (pendiente)
     dispositivo = get_object_or_404(
         Dispositivo.objects.prefetch_related(
             'interfaces', 

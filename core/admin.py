@@ -8,5 +8,5 @@ class ProvinciaAdmin(admin.ModelAdmin):
 
 @admin.register(Poblacion)
 class PoblacionAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'provincia',)
+    list_display = ('nombre', 'provincia', 'latitud', 'longitud')
     search_fields = ('nombre', 'provincia__nombre',)

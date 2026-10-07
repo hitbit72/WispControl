@@ -20,6 +20,9 @@ class Poblacion(models.Model):
     nombre = models.CharField(max_length=255, verbose_name='Población')
     provincia = models.ForeignKey(Provincia,null=True, blank=True, on_delete=models.SET_NULL, related_name='poblaciones')
 
+    latitud = models.DecimalField(max_digits=10, decimal_places=7, null=True, blank=True)
+    longitud = models.DecimalField(max_digits=10, decimal_places=7, null=True, blank=True)
+    
     class Meta:
         verbose_name = 'Población'
         verbose_name_plural = 'Poblaciones'

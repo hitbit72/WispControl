@@ -3,6 +3,7 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 
+from core.models import Poblacion
 from .forms import ClienteForm, ContratoForm
 from .models import Cliente, Contrato
 
@@ -94,7 +95,11 @@ def form_cliente(request, pk=None):
     if request.method == 'POST':
         form = ClienteForm(request.POST, instance=cliente)
         if form.is_valid():
-            cliente = form.save()
+            cliente = form.save(commit=False)
+            if not cliente.latitud or not cliente.longitud:
+                posicion = buscarGPS(cliente.poblacion.pk)
+                cliente.latitud, cliente.longitud = posicion[0], posicion[1]
+            cliente.save()
             return redirect('clientes:detalle', pk=cliente.pk)
         else:
             # si el formlario no es válido.
@@ -109,6 +114,16 @@ def form_cliente(request, pk=None):
         'error_msg': error_msg,
         })
 
+
+def buscarGPS(pk=0):
+    # funcion que busca las coordenadas lat/long de una poblacion
+    # Usado por form_cliente
+    if pk <= 0:
+        return None, None
+    poblacion = Poblacion.objects.filter(pk=pk).first()
+    if poblacion:
+        return poblacion.latitud, poblacion.longitud
+    return None, None
 
 
 @login_required
