@@ -272,7 +272,13 @@ def procesar_dispositivo(dispositivo):
     """
 
     ping_actual = None
-    if exitoso:
+    guardar = True
+
+    # Si falla el ping en las estacionas, no se guarda el histórico
+    if exitoso == False and dispositivo.rol == Dispositivo.Rol.STATION:
+        guardar = False
+
+    if guardar:
         #Guarda el historico de latencia del dispositivo
         ping_actual = DeviceLatencyHistory.objects.create(
             device=dispositivo,

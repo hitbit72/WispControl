@@ -636,7 +636,7 @@ def graficas_dispositivo(request, pk):
             ]
     
     # Preparar datos para Chart.js (formato: labels + datasets)
-    def prepare_chart_data(queryset, timestamp_field, value_fields):
+    def prepare_chart_data(queryset, timestamp_field, value_fields, default_value):
         """Convierte queryset a formato Chart.js"""
         labels = []
         datasets = {field: [] for field in value_fields}
@@ -647,7 +647,7 @@ def graficas_dispositivo(request, pk):
             labels.append(ts.isoformat())
             for field in value_fields:
                 val = getattr(obj, field)
-                datasets[field].append(val if val is not None else None)
+                datasets[field].append(val if val is not None else default_value)
         
         return {
             'labels': labels,
@@ -658,13 +658,15 @@ def graficas_dispositivo(request, pk):
     metricas_data = prepare_chart_data(
         metricas_hist, 
         'timestamp', 
-        ['cpu', 'ram', 'temperature', 'ccq', 'power', 'signal', 'noise', 'rx_capacity', 'tx_capacity']
+        ['cpu', 'ram', 'temperature', 'ccq', 'power', 'signal', 'noise', 'rx_capacity', 'tx_capacity'],
+        0
     )
     
     latencias_data = prepare_chart_data(
         latencias_hist,
         'timestamp',
-        ['latency_ms']
+        ['latency_ms'],
+        0
     )
     
     # Datos de éxito/fallo de ping
