@@ -71,7 +71,7 @@ def ping_dispositivo(dispositivo):
             return True, 0.0, None
         else:
             # f"[{timezone.now():%d/%m/%Y %H:%M:%S}] {dispositivo.ip_gestion} ({dispositivo.nombre}) Sin respuesta tras {count} pings"
-            return False, None, None
+            return False, None, 'Sin repuesta'
             
     except Exception as e:
         return False, None, f"[{timezone.localtime():%d/%m/%Y %H:%M:%S}] {dispositivo.ip_gestion} ({dispositivo.nombre}) Error en ping: {str(e)}"
@@ -125,7 +125,7 @@ def ping_detalles(dispositivo):
         return False, None, None, f"[{timezone.localtime():%d/%m/%Y %H:%M:%S}] Error en ping: {str(e)}"
 
 
-def evaluar_alarma(dispositivo, ping_actual, ping_anterior):
+def evaluar_alarma(dispositivo, exitoso):
     """
     Evalúa el resultado del ping y genera alarmas si corresponde.
     Retorna lista de alarmas detectadas.
@@ -133,7 +133,7 @@ def evaluar_alarma(dispositivo, ping_actual, ping_anterior):
     reglas = []
 
     # Regla: sin respuesta a ping
-    if ping_actual.success == False:
+    if exitoso == False:
         reglas.append({
             'regla': 'ping_sin_respuesta',
             'titulo': f'Ping sin respuesta {dispositivo.ip_gestion} ({dispositivo.nombre})',
@@ -153,7 +153,7 @@ def evaluar_alarma(dispositivo, ping_actual, ping_anterior):
 
 
 
-def sincronizar_alarmas_ping(dispositivo, detectadas, ping_actual, error_msg):
+def sincronizar_alarmas_ping(dispositivo, detectadas, error_msg):
     """
     Sincroniza alarmas de ping: crea nuevas, resuelve las que ya no aplican. regla='ping_sin_respuesta'
     """
@@ -265,25 +265,29 @@ def procesar_dispositivo(dispositivo):
         print(error_msg)
 
     # Obtener historico anterior
+    """
     ping_anterior = DeviceLatencyHistory.objects.filter(
         device = dispositivo,
     ).order_by('-timestamp').first()
+    """
 
-    #Guarda el historico de latencia del dispositivo
-    ping_actual = DeviceLatencyHistory.objects.create(
-        device=dispositivo,
-        timestamp = timezone.now(),
-        latency_ms = latencia,
-        success = exitoso
-    )
+    ping_actual = None
+    if exitoso:
+        #Guarda el historico de latencia del dispositivo
+        ping_actual = DeviceLatencyHistory.objects.create(
+            device=dispositivo,
+            timestamp = timezone.now(),
+            latency_ms = latencia,
+            success = exitoso
+        )
   
     # Evaluar alarmas de ping
-    detectadas = evaluar_alarma(dispositivo, ping_actual, ping_anterior)
+    detectadas = evaluar_alarma(dispositivo, exitoso)
 
     # Sincronizar alarmas
-    sincronizar_alarmas_ping(dispositivo, detectadas, ping_actual, error_msg)
+    sincronizar_alarmas_ping(dispositivo, detectadas, error_msg)
     
     # Actualizar estado del dispositivo
     actualizar_estado_dispositivo(dispositivo, detectadas)
     
-    return ping_actual, detectadas
+    return ping_actual

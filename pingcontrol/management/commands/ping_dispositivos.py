@@ -89,14 +89,15 @@ class Command(BaseCommand):
         # Bucle por los dispositivos
         for dispositivo in dispositivos:
             try:
-                ping_actual, detectadas = procesar_dispositivo(dispositivo)
-                if ping_actual.success:
+                ping_actual = procesar_dispositivo(dispositivo)
+                if ping_actual and ping_actual.success:
                     ok += 1
                     # self.stdout.write(self.style.SUCCESS(f'[{timezone.now():%d/%m/%Y %H:%M:%S}] 'f'[{dispositivo.ip_gestion}] Ping OK · {ping_actual.latency_ms} ms'))
                 else:
                     errores += 1
                     self.stdout.write(self.style.ERROR(
                         f'[{timezone.localtime():%d/%m/%Y %H:%M:%S}] {dispositivo.ip_gestion} ({dispositivo.nombre}) Ping FALLÓ'))
+
             except Exception as e:
                 errores += 1
                 self.stdout.write(self.style.ERROR(
