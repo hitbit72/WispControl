@@ -11,7 +11,7 @@ from .models import Dispositivo, Enlace, Interfaz, TipoEquipo, dispositivos_ap, 
 from clientes.models import Cliente
 from sector.models import Sector
 
-from metricas.models import DeviceMetrics, Alarma, DeviceMetricHistory, DeviceLatencyHistory, InterfaceMetricHistory
+from metricas.models import DeviceMetrics, Alarma, DeviceMetricHistory, DeviceLatencyHistory, InterfaceMetricHistory, DeviceLatencyHistory
 from eventos.models import Evento
 from eventos.services import registrar_evento
 
@@ -180,6 +180,12 @@ def detalle_dispositivo(request, pk):
     # Capturamos la URL de redirección (si viene en el GET o en el POST)
     url_anterior = request.POST.get('next') or request.GET.get('next')
 
+    # Obtenemos el últipo fallo de ping, latencia
+    ping_fallo = DeviceLatencyHistory.objects.filter(
+        device = dispositivo,
+        success = True
+    ).order_by('-timestamp').first()
+
     # Obtener las métricas asociada al dispositivo
     metricas = dispositivo.metricas.first()
 
@@ -277,6 +283,7 @@ def detalle_dispositivo(request, pk):
         'ping_actual': ping_actual,
         'dispositivos_ap': dispositivos_ap,
         'dispositivos_antenas': dispositivos_antenas,
+        'ping_fallo': ping_fallo,
     })
 
 
@@ -666,7 +673,7 @@ def graficas_dispositivo(request, pk):
         latencias_hist,
         'timestamp',
         ['latency_ms'],
-        0
+        -1
     )
     
     # Datos de éxito/fallo de ping

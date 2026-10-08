@@ -45,6 +45,9 @@
                 {% if dispositivo.ip_publica %}<p class="mb-1"><strong>IP pública: </strong>{{ dispositivo.ip_publica }}</p>{% endif %}
                 <p class="mb-1"><strong>MAC: </strong>{{ dispositivo.mac_address|default:"—" }}</p>
                 <p class="mb-3"><strong>Firmware: </strong>{{ dispositivo.firmware_version|default:"—" }}</p>
+                {% if dispositivo.estado == 'inactivo' and ping_fallo %}
+                <p class="bm-2">Última vez visto el {{ ping_fallo.timestamp }}<p>
+                {% endif %}
             </div>
         </div>
     </div>
