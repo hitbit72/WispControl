@@ -271,22 +271,23 @@ def procesar_dispositivo(dispositivo):
     ).order_by('-timestamp').first()
     """
 
+    """
     ping_actual = None
     guardar = True
 
     # Si falla el ping en las estacionas, no se guarda el histórico
     if exitoso == False and dispositivo.rol == Dispositivo.Rol.STATION:
         guardar = False
+    """
 
-    if guardar:
-        #Guarda el historico de latencia del dispositivo
-        ping_actual = DeviceLatencyHistory.objects.create(
-            device=dispositivo,
-            timestamp = timezone.now(),
-            latency_ms = latencia,
-            success = exitoso
-        )
-  
+    #Guarda el historico de latencia del dispositivo
+    ping_actual = DeviceLatencyHistory.objects.create(
+        device=dispositivo,
+        timestamp = timezone.now(),
+        latency_ms = latencia,
+        success = exitoso
+    )
+
     # Evaluar alarmas de ping
     detectadas = evaluar_alarma(dispositivo, exitoso)
 
