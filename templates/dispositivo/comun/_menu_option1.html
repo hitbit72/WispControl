@@ -2,7 +2,7 @@
     
         <div class="dropdown">
             <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenuPing1" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="bi bi-gear" aria-hidden="true" title="opciones"></i> Menú
+                <i class="bi bi-gear" aria-hidden="true" title="opciones"></i> Menú 
             </button>
             <ul class="dropdown-menu dropdown-shadow" aria-labelledby="dropdownMenuPing1">
                 <li>
@@ -16,7 +16,7 @@
                             id="ping_dispositivo"
                             data-bs-toggle="modal" data-bs-target="#pingModal"
                             class="dropdown-item">
-                        <i class="bi bi-arrow-left-right"></i> · Ping
+                        <span class="metric-icon"><i class="bi bi-arrow-left-right"></i></span> · Ping 
                     </button>
                     </div>
                     </form>
@@ -25,11 +25,12 @@
                     <button id="alertas_dispositivo"
                             data-bs-toggle="modal" data-bs-target="#alertOptModal"
                             class="dropdown-item">
-                        <i class="bi bi-list-check"></i> · Escaner y alertas
+                        <span class="metric-icon"><i class="bi bi-list-check"></i></span> · Escaner y alertas 
                     </button>
                 </li>
                 <li>
-                    <a href="{% url 'dispositivos:graficas' dispositivo.pk %}?next={{ request.path }}" class="dropdown-item"><i class="bi bi-graph-up"></i> Gráficas</a>
+                    <a href="{% url 'dispositivos:graficas' dispositivo.pk %}?next={{ request.path }}" class="dropdown-item">
+                    <span class="metric-icon"><i class="bi bi-graph-up"></i></span> · Gráficas </a>
                 </li>
             </ul>
         </div>

@@ -117,7 +117,8 @@ function  mostrarModal(id, ver=false) {
 
     function updateThemeControls(theme) {
       var nextTheme = theme === "dark" ? "light" : "dark";
-      var label = "Switch to " + nextTheme + " mode";
+      var labelTheme = nextTheme === "dark" ? "claro" : "oscuro";
+      var label = "Cambiar al modo " + labelTheme;
       var iconClass = theme === "dark" ? "bi bi-sun" : "bi bi-moon-stars";
 
       Array.prototype.forEach.call(themeToggles, function (button) {
