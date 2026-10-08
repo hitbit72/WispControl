@@ -131,9 +131,15 @@ def nuevo_dispositivo(request, pk=0):
             cliente = get_object_or_404(Cliente, pk=pk)
 
     if request.method == 'POST':
+        # recibimos el formulario
         form = DispositivoForm(request.POST)
         if form.is_valid():
-            dispositivo = form.save()
+            dispositivo = form.save(commit=False)
+            # Cambia el rol del dispositivo si es una antena de cliente
+            if dispositivo.tipo.clave == 'antena_cliente' or dispositivo.tipo.clave == 'st':
+                dispositivo.rol = Dispositivo.Rol.STATION
+            dispositivo.save()
+
             if url_anterior:
                 return redirect(url_anterior)
             return redirect('dispositivos:lista')
@@ -180,7 +186,7 @@ def detalle_dispositivo(request, pk):
     # Capturamos la URL de redirección (si viene en el GET o en el POST)
     url_anterior = request.POST.get('next') or request.GET.get('next')
 
-    # Obtenemos el últipo fallo de ping, latencia
+    # Obtenemos el últipo ping, latencia
     ping_fallo = DeviceLatencyHistory.objects.filter(
         device = dispositivo,
         success = True
@@ -330,7 +336,13 @@ def editar_dispositivo(request, pk):
     if request.method == 'POST':
         form = DispositivoForm(request.POST, instance=dispositivo)
         if form.is_valid():
-            dispositivo = form.save()
+            # Recibimos el formulario
+            dispositivo = form.save(commit=False)
+            # Cambia el rol del dispositivo si es una antena de cliente
+            if dispositivo.tipo.clave == 'antena_cliente' or dispositivo.tipo.clave == 'st':
+                dispositivo.rol = Dispositivo.Rol.STATION
+            dispositivo.save()
+
             if url_anterior:
                 return redirect(url_anterior)
             return redirect('dispositivos:lista')
