@@ -227,7 +227,7 @@ def guarda_staciones_wifi(dispositivo, **datos):
             # -------- METRICA DE LA ESTACIÓN PROPORCIONADA POR EL AP
             # Guardamos esta métrica porque se proporciona con Counter64, más fiable
             
-            # Si no es MAIN saltamos
+            # Si no es MAIN saltamos.
             if dispositivo.rol != Dispositivo.Rol.MAIN:
                 continue
 

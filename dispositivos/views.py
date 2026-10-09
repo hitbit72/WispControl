@@ -212,12 +212,14 @@ def detalle_dispositivo(request, pk):
         # ---- de estaciones registradas y estaciones detectadas por el AP
         
         # Primero las estaciones registradas
+        #print('Estaciones registradas:')
         for metrica in estaciones:
             cl_pk = 0
             cl_name = metrica.device.nombre
             if metrica.device.cliente:
                 cl_pk = metrica.device.cliente.pk
                 cl_name = metrica.device.cliente.nombre_completo
+            #print(f'IP: {metrica.device.ip_gestion} - {metrica.device.nombre_host} - {metrica.device.nombre}')
             devices.append({
                 'registrado': True,
                 'estado': metrica.device.estado,
@@ -247,6 +249,8 @@ def detalle_dispositivo(request, pk):
             metrica.device.ip_publica
             for metrica in estaciones
         }
+        #print('----------------------------')
+        #print('Estaciones no registradas:')
         # Después añadimos los dispositivos que no están en estaciones registradas
         las_ip='' # guaramos la última ip añadida, si la lista tiene repetidias con esto la descartamos
         for device in metricas.estaciones:
@@ -270,6 +274,7 @@ def detalle_dispositivo(request, pk):
                     'rx': device['rx_rate'],
                 })
                 las_ip = device['ip']
+                #print(f"ip: {device['ip']} - {device['host']}")
     
         # ----------- FIN COMBINACION DE LISTAS ---------------------
 
