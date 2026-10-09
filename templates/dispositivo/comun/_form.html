@@ -75,12 +75,10 @@
             {{ form.mac_address }}
             <div class="invalid-feedback">La dirección MAC es obligatoria.</div>
         </div>
-        {% if form.rol.value == 'main' %}
         <div class="col-md-12">
             <label class="form-label" for="{{ form.zona_cobertura.id_for_label }}">Zona de cobertura</label>
             {{ form.zona_cobertura }}
         </div>
-        {% endif %}
         <div class="col-md-6">
             <label class="form-label" for="{{ form.latitud.id_for_label }}">Latitud</label>
             {{ form.latitud }}
