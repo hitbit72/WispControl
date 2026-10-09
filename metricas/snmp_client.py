@@ -87,7 +87,7 @@ from pysnmp.hlapi import (
 MODO_IPV4 = 0  # CommunityData(mpModel=0) mpModel=0 para SNMPv1, 1 para SNMPv2c
 
 # Nombre de puertos que no se guardarán en la base de datos
-EXCLUDE_PORT = ('wifi0','wifi1','lo','ubond','lag','teql','gre','airview','rif','tunl','sit','802.1Q','system','encapsulation','vlanMgmt', '<pppoe-')
+EXCLUDE_PORT = ('wifi0','wifi1','lo','ubond','br0','lag','teql','gre','airview','rif','tunl','sit','802.1Q','system','encapsulation','vlanMgmt', '<pppoe-')
 EXCLUDE_PON_PORT = ('eth0','ubond','lag','teql','gre','airview')
 EXCLUDE_MK_PORT = ('<pppoe-,')
 
