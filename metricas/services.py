@@ -202,7 +202,7 @@ def guarda_staciones_wifi(dispositivo, **datos):
                 estacion_dev.save(update_fields=['ip_publica'])  # update_fields optimiza la consulta SQL
 
 
-        # Actualización de datos. Se tiene que usar las keys de OID
+        # Actualización de datos. Se tiene que usar las keys del modelo y de OID
         uData = {
             'ccq': estacion.get('ccq'),
             'noise': estacion.get('noise'),
