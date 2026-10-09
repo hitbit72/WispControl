@@ -175,8 +175,12 @@ def guarda_staciones_wifi(dispositivo, **datos):
             continue
 
         # Evitar duplicados en estaciones
-        if ultima_ip == ip or ultimo_host == host:
+        if ultima_ip == ip:
             ultima_ip = None
+            continue
+
+        # Evitar duplicados en estaciones
+        if ultimo_host == host:
             ultimo_host = None
             continue
 
