@@ -198,7 +198,7 @@ def guarda_staciones_wifi(dispositivo, **datos):
 
             if estacion_dev:
                 # Si la encontramos, actualizamos su ip pública, si procede
-                if ip != '0.0.0.0':
+                if ip and ip != '0.0.0.0':
                     estacion_dev.ip_publica = ip
                     estacion_dev.save(update_fields=['ip_publica'])  # update_fields optimiza la consulta SQL
 
@@ -227,10 +227,12 @@ def guarda_staciones_wifi(dispositivo, **datos):
             # -------- METRICA DE LA ESTACIÓN PROPORCIONADA POR EL AP
             # Guardamos esta métrica porque se proporciona con Counter64, más fiable
             
-            # Si no es MAIN saltamos.
+            # ----- SI NO ES MAIN saltamos.
+            #  MAIN es el dispositivo que proporciona los datos. Las estaciones no pasan de aqui
             if dispositivo.rol != Dispositivo.Rol.MAIN:
                 continue
 
+            # Puerto enlace AP
             interfaz = Interfaz.objects.filter(
                 dispositivo=estacion_dev,
                 nombre='Wifi-AP'
