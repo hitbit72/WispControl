@@ -164,8 +164,8 @@ def guarda_staciones_wifi(dispositivo, **datos):
     ssid = datos.get('ssid')
     frequency = datos.get('frequency')
 
-    ultima_ip = ''
-    ultimo_host = ''
+    ultima_ip = None
+    ultimo_host = None
 
     for estacion in estaciones:
         # buscamos la IP de la estación
@@ -176,8 +176,8 @@ def guarda_staciones_wifi(dispositivo, **datos):
 
         # Evitar duplicados en estaciones
         if ultima_ip == ip or ultimo_host == host:
-            ultima_ip = ''
-            ultimo_host = ''
+            ultima_ip = None
+            ultimo_host = None
             continue
 
         ultima_ip = ip
