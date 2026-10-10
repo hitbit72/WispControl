@@ -207,28 +207,58 @@ def guarda_staciones_wifi(dispositivo, **datos):
                     estacion_dev.save(update_fields=['ip_publica'])  # update_fields optimiza la consulta SQL
 
 
-        # Actualización de datos. Se tiene que usar las keys del modelo y de OID
-        uData = {
-            'ccq': estacion.get('ccq'),
-            'noise': estacion.get('noise'),
-            'signal': estacion.get('signal'),
-            'rx': estacion.get('rx_rate'),
-            'tx': estacion.get('tx_rate'),
-            'distancia': estacion.get('distancia'),
-            'uptime': estacion.get('uptime'),
-            'ssid': ssid,
-            'frequency': frequency,
-        }
-
-        
+       
         if estacion_dev:
+
+            # Actualización de datos estáticos (no métrica). Se tiene que usar las keys del modelo y de OID
+            uData = {
+                'ccq': estacion.get('ccq'),
+                'noise': estacion.get('noise'),
+                'signal': estacion.get('signal'),
+                'rx': estacion.get('rx_rate'),
+                'tx': estacion.get('tx_rate'),
+                'distancia': estacion.get('distancia'),
+                'uptime': estacion.get('uptime'),
+                'ssid': ssid,
+                'frequency': frequency,
+            }
             # Guardamos la metrica estática
             st, created = DeviceMetrics.objects.update_or_create(
                 device=estacion_dev,
                 defaults=uData,
             )
 
-            # -------- METRICA DE LA ESTACIÓN PROPORCIONADA POR EL AP
+
+            # ------- Si no se puede escanear la estacion directamente, usamos las métricas
+            #         proporcionadas por sl AP
+
+            #    Se debe actualiar datos generales a partir del AP
+            if estacion_dev.escanear_ap:
+
+                #    Lista de campos relevantes para el histórico, para evitar guardar metricas vacias
+                campos_historico = ['ccq', 'signal', 'noise', 'tx_rate', 'rx_rate']
+                #    Comprobamos si al menos una métrica viene en 'estacion' con un valor distinto de None
+                tiene_datos = any(estacion.get(campo) is not None for campo in campos_historico)
+
+                if tiene_datos:
+                    #    Guardamos el hístórico general
+                    DeviceMetricHistory.objects.create(
+                        device = estacion_dev,
+                        timestamp = timezone.now(),
+                        cpu = 0,
+                        ram = 0,
+                        temperature = 0,
+                        ccq = estacion.get('ccq', 0),
+                        power = 0,
+                        signal = estacion.get('signal', 0),
+                        noise = estacion.get('noise',0 ),
+                        tx_capacity  = estacion.get('tx_rate', 0),
+                        rx_capacity = estacion.get('rx_rate', 0),
+                    )
+
+
+
+            # -------- METRICA PUERTOS DE LA ESTACIÓN PROPORCIONADA POR EL AP
             # Guardamos esta métrica porque se proporciona con Counter64, más fiable
             
             # ----- SI NO ES MAIN saltamos.
