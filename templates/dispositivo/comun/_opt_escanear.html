@@ -4,6 +4,10 @@
             <label class="form-check-label" for="snmp"> Escaner SNMP</label>
         </div>
         <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" role="switch" id="snmp" name="escanear_ap" {% if dispositivo.escanear_ap %}checked{% endif %}>
+            <label class="form-check-label" for="snmp"> Escaner SNMP por AP</label>
+        </div>
+        <div class="form-check form-switch">
             <input class="form-check-input" type="checkbox" role="switch" id="snmp_alarm" name="alarma" {% if dispositivo.alarma %}checked{% endif %}>
             <label class="form-check-label" for="snmp_alarm"> Alarma SNMP</label>
         </div>

@@ -98,7 +98,12 @@
                     <div class="row">
                         <label class="form-label" for="{{ form.escanear.id_for_label }}">Escanear SNMP</label>
                         <span>{{ form.escanear }}</span>
-                        <!-- div class="form-text">Escaneo SNMP del dispositivo</div -->
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="row">
+                        <label class="form-label" for="{{ form.escanear_ap.id_for_label }}">Escanear por AP</label>
+                        <span>{{ form.escanear_ap }}</span>
                     </div>
                 </div>
                 <div class="col-md-2">
@@ -108,7 +113,7 @@
                         <!-- div class="form-text">Alarmas de estado</div -->
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <div class="row">
                         <label class="form-label" for="{{ form.alarma_puerto.id_for_label }}">Alarma Puertos SNMP</label>
                         <span>{{ form.alarma_puerto }}</span>

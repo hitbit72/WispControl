@@ -92,6 +92,7 @@ class Dispositivo(models.Model):
     snmp_community = models.CharField(max_length=100, default='public', blank=True, null=True, verbose_name='Comunidad SNMP', help_text='Solo aplica a dispositivos que soporten SNMP. Ej. "public"')
 
     escanear = models.BooleanField(default=False, null=True, blank=True, verbose_name='Escanear SNMP')
+    escanear_ap = models.BooleanField(default=False, null=True, blank=True, verbose_name='Escanear SNMP por AP')
     alarma = models.BooleanField(default=False, null=True, blank=True, verbose_name='Alarma SNMP')
     alarma_puerto = models.BooleanField(default=False, null=True, blank=True, verbose_name='Alarma puertos SNMP')
     ping = models.BooleanField(default=True, null=True, blank=True, verbose_name='Escanear PING')

@@ -7,7 +7,7 @@
 <div class="dropdown-item d-flex justify-content-between align-items-start gap-2">
     <div>
         <span class="badge bg-{{ evento.color_badge }}">{{ evento.get_nivel_display }}</span>
-        <div class="notification-title-base">{{ evento.titulo|truncatechars:60 }}</div>
+        <div class="notification-title-base">{{ evento.titulo|truncatechars:80 }}</div>
         <div class="notification-time">{{ evento.fecha|date:"d/m/Y H:i" }} · {{ evento.modulo }}</div>
     </div>
     {% if puede_marcar_eventos and not evento.leido %}

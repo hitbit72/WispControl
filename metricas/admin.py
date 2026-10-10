@@ -47,4 +47,5 @@ class DeviceLatency(admin.ModelAdmin):
 class InterfaceMetrica(admin.ModelAdmin):
     list_display = ('interfaz', 'timestamp', 'rx', 'tx')
     search_fields = ('interfaz__nombre', 'interfaz__nombre2', 'interfaz__dispositivo__nombre')
+    list_filter = ('interfaz__nombre',)
     readonly_fields = ('interfaz',)
