@@ -75,7 +75,12 @@
             {{ form.mac_address }}
             <div class="invalid-feedback">La dirección MAC es obligatoria.</div>
         </div>
-        <div class="col-md-12">
+        <div class="col-md-4">
+            <label class="form-label" for="{{ form.modo_red.id_for_label }}">Modo de Red</label>
+            {{ form.modo_red }}
+            <div class="invalid-feedback">Seleccione el modo de Red.</div>
+        </div>
+        <div class="col-md-8">
             <label class="form-label" for="{{ form.zona_cobertura.id_for_label }}">Zona de cobertura</label>
             {{ form.zona_cobertura }}
         </div>
@@ -86,6 +91,10 @@
         <div class="col-md-6">
             <label class="form-label" for="{{ form.longitud.id_for_label }}">Longitud</label>
             {{ form.longitud }}
+        </div>
+        <div class="col-12">
+            <label class="form-label" for="{{ form.direccion.id_for_label }}">Dirección</label>
+            {{ form.direccion }}
         </div>
         <div class="col-6">
             <label class="form-label" for="{{ form.firmware_version.id_for_label }}">Versión de firmware</label>
@@ -98,12 +107,6 @@
                     <div class="row">
                         <label class="form-label" for="{{ form.escanear.id_for_label }}">Escanear SNMP</label>
                         <span>{{ form.escanear }}</span>
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <div class="row">
-                        <label class="form-label" for="{{ form.escanear_ap.id_for_label }}">Escanear por AP</label>
-                        <span>{{ form.escanear_ap }}</span>
                     </div>
                 </div>
                 <div class="col-md-2">

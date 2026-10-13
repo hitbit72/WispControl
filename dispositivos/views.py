@@ -154,7 +154,8 @@ def nuevo_dispositivo(request, pk=0):
             form = DispositivoForm(initial={
                 'cliente': cliente,
                 'latitud': cliente.latitud,
-                'longitud': cliente.longitud})
+                'longitud': cliente.longitud,
+                'direccion': cliente.direccion})
 
 
     return render(request, 'dispositivo/form_dispositivo_solo.html', {
@@ -395,7 +396,7 @@ def alternar_escaneo_dispositivo(request, pk):
 
     if request.method == 'POST':
         dispositivo.escanear = 'escanear' in request.POST
-        dispositivo.escanear_ap = 'escanear_ap' in request.POST
+        #dispositivo.escanear_ap = 'escanear_ap' in request.POST
         dispositivo.alarma = 'alarma' in request.POST
         dispositivo.alarma_puerto = 'alarma_puerto' in request.POST
         dispositivo.ping = 'ping' in request.POST

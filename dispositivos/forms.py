@@ -60,16 +60,15 @@ class DispositivoForm(BootstrapFormMixin, forms.ModelForm):
     class Meta:
         model = Dispositivo
         fields = [
-            'nombre', 'nombre_host', 'rol', 'tipo', 'marca', 'onu_ref', 'sector', 'cliente', 'frequency',
-            'ip_gestion', 'ip_publica', 'mac_address', 'firmware_version', 'snmp_community', 'escanear', 'escanear_ap', 'alarma', 
-            'alarma_puerto', 'ping', 'alarma_ping', 'estado', 'fecha_instalacion', 'latitud', 'longitud', 
+            'nombre', 'nombre_host', 'rol', 'tipo', 'marca', 'onu_ref', 'sector', 'cliente', 'frequency', 'modo_red',
+            'ip_gestion', 'ip_publica', 'mac_address', 'firmware_version', 'snmp_community', 'escanear', 'alarma', 
+            'alarma_puerto', 'ping', 'alarma_ping', 'estado', 'fecha_instalacion', 'latitud', 'longitud', 'direccion', 
             'zona_cobertura', 'atributos_extra', 'notas',
         ]
         widgets = {
             'fecha_instalacion': forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date'}),
             'notas': forms.Textarea(attrs={'rows': 3}),
             'escanear': forms.CheckboxInput(),
-            'escanear_ap': forms.CheckboxInput(),
             'alarma': forms.CheckboxInput(),
             'alarma_puerto': forms.CheckboxInput(),
             'ping': forms.CheckboxInput(),

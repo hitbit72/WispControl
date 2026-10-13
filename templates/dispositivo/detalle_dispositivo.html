@@ -41,7 +41,8 @@
                 <p class="mb-1"><strong>Modo: </strong>{{ dispositivo.tipo.nombre }} · {{ dispositivo.get_rol_display|default:"—" }} 
                 {% if dispositivo.tipo.clave in dispositivos_ap %}( <span>{{ dispositivo.frequency|default:"—" }} MHz</span> ){% endif %}</p>
                 <p class="mb-1"><strong>Host: </strong>{{ dispositivo.nombre_host }}</p>
-                <p class="mb-1"><strong>IP de gestión: </strong><a href="http://{{ dispositivo.ip_gestion|default:"—" }}" target="_blank">{{ dispositivo.ip_gestion|default:"—" }}</a></p>
+                <p class="mb-1"><strong>IP de gestión: </strong>
+                <a href="http://{{ dispositivo.ip_gestion|default:"—" }}" target="_blank">{{ dispositivo.ip_gestion|default:"—" }}</a> · {{ dispositivo.get_modo_red_display }}</p>
                 {% if dispositivo.ip_publica %}<p class="mb-1"><strong>IP pública: </strong>{{ dispositivo.ip_publica }}</p>{% endif %}
                 <p class="mb-1"><strong>MAC: </strong>{{ dispositivo.mac_address|default:"—" }}</p>
                 <p class="mb-3"><strong>Firmware: </strong>{{ dispositivo.firmware_version|default:"—" }}</p>
@@ -66,8 +67,11 @@
                 {% if dispositivo.zona_cobertura %}
                 <p class="mb-1"><strong>Zona Cobertura: </strong>{{ dispositivo.zona_cobertura }}</p>
                 {% endif %}
+                {% if dispositivo.direccion %}
+                <p class="mb-1"><strong>Dirección: </strong>{{ dispositivo.direccion }}</p>
+                {% endif %}
                 {% if dispositivo.cliente %}
-                <p class="mb-1"><strong>Cliente: </strong>
+                <p class="mb-1 mt-2"><strong>Cliente: </strong>
                 <a href="{% url 'clientes:detalle' dispositivo.cliente.pk %}?next={{ request.path }}">{{ dispositivo.cliente.nombre_completo }}</a><br>
                 {{ dispositivo.cliente.direccion|default:"" }}
                 </p>
