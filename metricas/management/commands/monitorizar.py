@@ -150,6 +150,7 @@ class Command(BaseCommand):
             f'[{timezone.localtime():%d/%m/%Y %H:%M:%S}] Procesados {total} dispositivos: {ok} OK, {errores} fallos. Zona: {tipo_zona} - Rol: {tipo_rol}\n'))
 
 
+    # Funcion para la vista actualizar_metricas_snmp
     def _zonas(self, t_zona=None):
         # Zonas de escaneo, por defecto todas activas
         self.zonas = {'general': True,
