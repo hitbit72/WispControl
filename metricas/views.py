@@ -22,7 +22,8 @@ def actualizar_metricas_snmp(request, pk):
     cmd = MonitorizarCommand()
     cmd.stdout = StringIO()
     try:
-        cmd._procesar(dispositivo)
+        cmd._zonas()
+        cmd._procesar(dispositivo, False)
     except Exception:
         print('Error actualizar snmp')
         # En caso de error, igual intentamos devolver la métrica actual

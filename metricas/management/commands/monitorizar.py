@@ -141,7 +141,7 @@ class Command(BaseCommand):
 
         # Bucle para consultar SNMP
         for dispositivo in dispositivos:
-            if self._procesar(dispositivo):
+            if self._procesar(dispositivo, True):
                 ok += 1
             else:
                 errores += 1
@@ -150,7 +150,21 @@ class Command(BaseCommand):
             f'[{timezone.localtime():%d/%m/%Y %H:%M:%S}] Procesados {total} dispositivos: {ok} OK, {errores} fallos. Zona: {tipo_zona} - Rol: {tipo_rol}\n'))
 
 
-    def _procesar(self, dispositivo):
+    def _zonas(self, t_zona=None):
+        # Zonas de escaneo, por defecto todas activas
+        self.zonas = {'general': True,
+                      'puertos': True,
+                      'wifi': True,
+                      'onus': True,
+                      'puertos_pon': True}
+
+        # Filtrar por tipo de zona si se paso el argumento
+        if t_zona:
+            # Mantiene True solo para las claves que existen dentro de la lista tipo_zona
+            self.zonas = {zona: (zona in t_zona) for zona in self.zonas}
+
+
+    def _procesar(self, dispositivo, updtade=True):
 
         # Cargar los códigos OID para cada tipo de escaneo
         datos = {}
@@ -232,20 +246,22 @@ class Command(BaseCommand):
         # Variables para evaluar la alerta/alarma, si no hay datos anteriores se pasa None
         metrica = None
         historico = None
-        if self.zonas['general']:
-            if datos:
-                metrica, historico = services.guardar_metrica(dispositivo, **datos)
-        # Actualiza modelo de interfaz (puertos)
-        if self.zonas['puertos']:
-            if puertos:
-                services.guardar_puertos(dispositivo, **datos)
-        # Actizalizar datos estaciones wifi y onus
-        if self.zonas['wifi']:
-            if estaciones:
-                services.guarda_staciones_wifi(dispositivo, **datos)     # <-- Datos wifi de ubiquiti
-        if self.zonas['onus']:
-            if onus:
-                services.guarda_estaciones_onu(dispositivo, **datos)     # <-- Datos de ONU de OLT ubiquiti
+        if updtade:
+            # Guarda metrica general
+            if self.zonas['general']:
+                if datos:
+                    metrica, historico = services.guardar_metrica(dispositivo, **datos)
+            # Actualiza modelo de interfaz (puertos)
+            if self.zonas['puertos']:
+                if puertos:
+                    services.guardar_puertos(dispositivo, **datos)
+            # Actizalizar datos estaciones wifi y onus
+            if self.zonas['wifi']:
+                if estaciones:
+                    services.guarda_staciones_wifi(dispositivo, **datos)     # <-- Datos wifi de ubiquiti
+            if self.zonas['onus']:
+                if onus:
+                    services.guarda_estaciones_onu(dispositivo, **datos)     # <-- Datos de ONU de OLT ubiquiti
 
         # evalua la alerta/alarma
         if self.zonas['general']:
