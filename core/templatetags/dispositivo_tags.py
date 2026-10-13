@@ -9,6 +9,17 @@ from dispositivos.models import Dispositivo
 
 register = template.Library()
 
+
+@register.simple_tag
+def map_url(lat, lon):
+    # URL de google maps a partir de las coordenadas lat/lon
+    xlat = str(lat)
+    xlon = str(lon)
+    xlat = xlat.replace(",", ".")
+    xlon = xlon.replace(",", ".")
+    url=f"https://www.google.com/maps/place/{xlat},{xlon}/@{xlat},{xlon}"
+    return url
+
 @register.filter
 def timestamp_a_transcurrido(value):
     try:

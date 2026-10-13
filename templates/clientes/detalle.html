@@ -1,9 +1,13 @@
 {% extends "base.html" %}
 {% block titulo %}{{ cliente.nombre_completo }} · Portal WISP{% endblock %}
 {% block contenido %}
+{% load dispositivo_tags %}
 <div class="d-flex justify-content-between align-items-start mb-3">
     <div>
-        <h2 class="mb-0 {% if not cliente.activo %}text-danger{% endif %}"><i class="bi bi-person" aria-hidden="true"></i> {{ cliente.nombre_completo }}</h2>
+        <h2 class="mb-0 {% if not cliente.activo %}text-danger{% endif %}"><i class="bi bi-person" aria-hidden="true"></i> {{ cliente.nombre_completo }}
+        {% if cliente.latitud and cliente.longitud %}
+        <a target="_blank" title="Mapa de situación" href="{% map_url cliente.latitud cliente.longitud %}"><i class="bi bi-geo-alt"></i></a>
+        {% endif %}</h2>
         <h5>{% if cliente.apodo %}({{ cliente.apodo }}){% endif %}</h5>
     </div>
     <div class="d-flex gap-2">

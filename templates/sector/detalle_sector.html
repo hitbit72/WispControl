@@ -1,9 +1,13 @@
 {% extends "base.html" %}
 {% block titulo %}{{ sector.nombre }} · Portal WISP{% endblock %}
 {% block contenido %}
+{% load dispositivo_tags %}
 <div class="d-flex justify-content-between align-items-start mb-3">
     <div>
-        <h2 class="mb-0"><i class="bi bi-pin-map" aria-hidden="true"></i> {{ sector.nombre }}</h2>
+        <h2 class="mb-0"><i class="bi bi-pin-map" aria-hidden="true"></i> {{ sector.nombre }}
+        {% if sector.latitud and sector.longitud %}
+        <a target="_blank" title="Mapa de situación" href="{% map_url sector.latitud sector.longitud %}"><i class="bi bi-geo-alt"></i></a>
+        {% endif %}</h2>
         <div class="text-muted">{{ sector.poblacion|default:"" }} {% if sector.direccion %}· {{ sector.direccion }}{% endif %}</div>
     </div>
     <div class="d-flex gap-2">
