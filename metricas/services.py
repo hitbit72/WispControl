@@ -19,7 +19,7 @@ from telegram.services import enviar_alerta_telegram
 MODULO = 'metricas'
 
 
-def guardar_metrica(dispositivo, **datos):
+def guardar_metrica(dispositivo,  guardar_historico=True, **datos):
     """ Crea la fila DeviceMetrics.
         Se actualiza siempre el mismo registro, ya que se refiere siempre al
         mismo dispositivo y no necesitamos datos a lo largo del tiempo.
@@ -30,32 +30,31 @@ def guardar_metrica(dispositivo, **datos):
         defaults=datos
     )[0]
 
+    if guardar_historico:
+        # Lista de campos relevantes para el histórico, para evitar guardar metricas vacias
+        campos_historico = [
+            'cpu', 'ram', 'temperature', 'ccq', 'power', 
+            'signal', 'noise', 'tx', 'rx'
+        ]
+        # Comprobamos si al menos una métrica viene en 'datos' con un valor distinto de None
+        tiene_datos = any(datos.get(campo) is not None for campo in campos_historico)
 
-    # Lista de campos relevantes para el histórico, para evitar guardar metricas vacias
-    campos_historico = [
-        'cpu', 'ram', 'temperature', 'ccq', 'power', 
-        'signal', 'noise', 'tx', 'rx'
-    ]
-    # Comprobamos si al menos una métrica viene en 'datos' con un valor distinto de None
-    tiene_datos = any(datos.get(campo) is not None for campo in campos_historico)
-
-    if tiene_datos:
-        # Guardamos el hístórico general
-        historico = DeviceMetricHistory.objects.create(
-            device = dispositivo,
-            timestamp = timezone.now(),
-            cpu = datos.get('cpu', 0),
-            ram = datos.get('ram', 0),
-            temperature = datos.get('temperature', 0),
-            ccq = datos.get('ccq', 0),
-            power = datos.get('power', 0),
-            signal = datos.get('signal', 0),
-            noise = datos.get('noise',0 ),
-            tx_capacity  = datos.get('tx', 0),
-            rx_capacity = datos.get('rx', 0),
-        )
-    else:
         historico = None
+        if tiene_datos:
+            # Guardamos el hístórico general
+            historico = DeviceMetricHistory.objects.create(
+                device = dispositivo,
+                timestamp = timezone.now(),
+                cpu = datos.get('cpu', 0),
+                ram = datos.get('ram', 0),
+                temperature = datos.get('temperature', 0),
+                ccq = datos.get('ccq', 0),
+                power = datos.get('power', 0),
+                signal = datos.get('signal', 0),
+                noise = datos.get('noise',0 ),
+                tx_capacity  = datos.get('tx', 0),
+                rx_capacity = datos.get('rx', 0),
+            )
 
     return metricas, historico
 

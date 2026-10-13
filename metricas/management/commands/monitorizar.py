@@ -248,10 +248,10 @@ class Command(BaseCommand):
         metrica = None
         historico = None
         if updtade:
-            # Guarda metrica general
+            # Guarda metrica general e hisotrico
             if self.zonas['general']:
                 if datos:
-                    metrica, historico = services.guardar_metrica(dispositivo, **datos)
+                    metrica, historico = services.guardar_metrica(dispositivo, True, **datos)
             # Actualiza modelo de interfaz (puertos)
             if self.zonas['puertos']:
                 if puertos:
@@ -263,6 +263,11 @@ class Command(BaseCommand):
             if self.zonas['onus']:
                 if onus:
                     services.guarda_estaciones_onu(dispositivo, **datos)     # <-- Datos de ONU de OLT ubiquiti
+        else:
+            # Guarda metrica general, sin historico
+            if self.zonas['general']:
+                if datos:
+                    metrica, historico = services.guardar_metrica(dispositivo, False, **datos)
 
         # evalua la alerta/alarma
         if self.zonas['general']:
