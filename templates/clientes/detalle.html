@@ -4,10 +4,7 @@
 {% load dispositivo_tags %}
 <div class="d-flex justify-content-between align-items-start mb-3">
     <div>
-        <h2 class="mb-0 {% if not cliente.activo %}text-danger{% endif %}"><i class="bi bi-person" aria-hidden="true"></i> {{ cliente.nombre_completo }}
-        {% if cliente.latitud and cliente.longitud %}
-        <a target="_blank" title="Mapa de situación" href="{% map_url cliente.latitud cliente.longitud %}"><i class="bi bi-geo-alt"></i></a>
-        {% endif %}</h2>
+        <h2 class="mb-0 {% if not cliente.activo %}text-danger{% endif %}"><i class="bi bi-person" aria-hidden="true"></i> {{ cliente.nombre_completo }}</h2>
         <h5>{% if cliente.apodo %}({{ cliente.apodo }}){% endif %}</h5>
     </div>
     <div class="d-flex gap-2">
@@ -24,7 +21,9 @@
                 <p class="mb-1"><strong>Teléfono:</strong> {{ cliente.telefono|default:"—" }}</p>
                 {% if cliente.telefono_alternativo %}<p class="mb-1"><strong>Teléfono alternativo:</strong> {{ cliente.telefono_alternativo }}</p>{% endif %}
                 <p class="mb-1"><strong>Email:</strong> {{ cliente.email|default:"—" }}</p>
+                {% if cliente.numero_documento %}
                 <p class="mb-0"><strong>Documento:</strong> {{ cliente.get_tipo_documento_display }} {{ cliente.numero_documento|default:"" }}</p>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -32,6 +31,10 @@
         <div class="card h-100">
             <div class="card-body">
                 <h5 class="card-title">Ubicación</h5>
+                {% if cliente.latitud and cliente.longitud %}
+                <p class="mb-1"><strong>Localización (lat/lon): 
+                <a target="_blank" href="{% map_url cliente.latitud cliente.longitud %}"></strong>{{ cliente.latitud }} / {{ cliente.longitud }}</a></p>
+                {% endif %}
                 <p class="mb-1"><strong>Población:</strong> {{ cliente.poblacion|default:"—" }}</p>
                 <p class="mb-0"><strong>Dirección:</strong> {{ cliente.direccion|default:"—" }}</p>
             </div>
