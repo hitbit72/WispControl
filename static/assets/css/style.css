@@ -505,7 +505,7 @@ html[data-theme="dark"] .profile-button .avatar-sm {
 .metric-card {
   position: relative;
   min-height: 164px;
-  padding: 1.35rem;
+  padding: 1.0rem;
   overflow: hidden;
   transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
 }
