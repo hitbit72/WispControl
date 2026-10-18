@@ -822,6 +822,22 @@ html[data-theme="dark"] .profile-button .avatar-sm {
   text-align: right;
 }
 
+.colw-2 {
+  width: 50%;
+}
+
+.colw-3 {
+  width: 33%;
+}
+
+.colw-4 {
+  width: 25%;
+}
+
+.colw-5 {
+  width: 20%;
+}
+
 .mini-card {
   display: grid;
   gap: 0.35rem;
