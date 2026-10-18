@@ -22,6 +22,7 @@
         <span class="badge
             {% if metrica.estado == 'activo' %}bg-success
             {% elif metrica.estado == 'inactivo' %}bg-danger
+            {% elif metrica.estado == 'baja' %}bg-danger
             {% elif metrica.estado == 'mantenimiento' %}bg-warning text-dark
             {% elif metrica.estado == 'instalacion' %}bg-info text-dark
             {% elif metrica.estado == 'retirado' %}bg-warning text-dark{% else %}bg-secondary{% endif %}">
@@ -29,13 +30,13 @@
         </span>
         </td>
         <td>{% if metrica.registrado %}
-        <a href="{% url 'dispositivos:detalle' metrica.device_pk %}?next={{ request.path }}">{{ metrica.ip_gestion }}</a>
+        <a {% if metrica.device_status != 'activo' %}class="text-danger"{% endif %} href="{% url 'dispositivos:detalle' metrica.device_pk %}?next={{ request.path }}">{{ metrica.ip_gestion }}</a>
         {% else %}
         {{ metrica.ip_gestion }}
         {% endif %}
         </td>
         <td>{% if metrica.cliente_pk > 0 %}
-        <a href="{% url 'clientes:detalle' metrica.cliente_pk %}?next={{ request.path }}">{{ metrica.cliente }}</a>
+        <a {% if not metrica.cliente_activo %}class="text-danger"{% endif %} href="{% url 'clientes:detalle' metrica.cliente_pk %}?next={{ request.path }}">{{ metrica.cliente }}</a>
         {% else %}
         {{ metrica.cliente }}
         {% endif %}

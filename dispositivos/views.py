@@ -220,6 +220,7 @@ def detalle_dispositivo(request, pk):
             if metrica.device.cliente:
                 cl_pk = metrica.device.cliente.pk
                 cl_name = metrica.device.cliente.nombre_completo
+                cl_activo = metrica.device.cliente.activo
             #print(f'IP: {metrica.device.ip_gestion} - {metrica.device.nombre_host} - {metrica.device.nombre}')
             devices.append({
                 'registrado': True,
@@ -227,8 +228,10 @@ def detalle_dispositivo(request, pk):
                 'ip_gestion': metrica.device.ip_gestion,
                 'ip_publica': metrica.device.ip_publica,
                 'device_pk': metrica.device.pk,
+                'device_status': metrica.device.estado,
                 'cliente': cl_name,
                 'cliente_pk': cl_pk,
+                'cliente_activo': cl_activo,
                 'nombre_host': metrica.device.nombre_host,
                 'signal': metrica.signal,
                 'power': metrica.power,
@@ -265,8 +268,10 @@ def detalle_dispositivo(request, pk):
                     'ip_gestion': device['ip'],
                     'ip_publica': '',
                     'device_pk': 0,
+                    'device_status': 'discover',
                     'cliente': '—',
                     'cliente_pk': 0,
+                    'cliente_activo': False,
                     'nombre_host': device['host'],
                     'signal': device['signal'],
                     'power': '—',

@@ -121,7 +121,9 @@ def find_station(ip, current_path=None):
     dispositivo = Dispositivo.objects.filter(ip_gestion=ip).first()
     url_cliente = ''
     nombre_cliente = '—'
+    activo_cliente = False
     url_stacion = ''
+    cls="class='text-danger'"
 
     if dispositivo:
         # Valore por defecto, si no existe el cliente, usamos el dispositivo ya que puede ser una estacion PtP
@@ -131,6 +133,7 @@ def find_station(ip, current_path=None):
         if dispositivo.cliente:
             url_cliente = reverse('clientes:detalle', args=[dispositivo.cliente.pk])
             nombre_cliente = dispositivo.cliente.nombre_completo
+            activo_cliente = dispositivo.cliente.activo
         url_stacion = reverse('dispositivos:detalle', args=[dispositivo.pk])
 
         # Si nos pasaron la ruta actual, añadimos el ?next=
@@ -141,7 +144,9 @@ def find_station(ip, current_path=None):
             url_stacion = f"{url_stacion}?{querystring}"
 
         # Envolvemos el string con mark_safe para renderizar como HTML real
-        html = f'<td><a href="{url_stacion}">{ip}</a></td><td><a href="{url_cliente}">{nombre_cliente}</a></td>'
+        if activo_cliente:
+            cls=""
+        html = f'<td><a href="{url_stacion}">{ip}</a></td><td><a {cls} href="{url_cliente}">{nombre_cliente}</a></td>'
         return mark_safe(html)
 
     html = f'<td>{ip}</td><td>—</td>'

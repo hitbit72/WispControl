@@ -60,6 +60,7 @@ class Dispositivo(models.Model):
         INSTALACION = 'instalacion', 'En instalación',
         RETIRADO = 'retirado', 'Retirado'
         DISCOVER = 'discover', 'Descubierto'
+        BAJA = 'baja', 'Baja'
 
     # Permite identificar dispositivos principales o estaciones de clientes
     class Rol(models.TextChoices):
