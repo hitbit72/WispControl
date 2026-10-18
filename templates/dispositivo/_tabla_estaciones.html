@@ -8,8 +8,8 @@
             <th>Cliente</th>
             <th>Host</th>
             <th>Señal</th>
+            <th>Power</th>
             <th>Ruido</th>
-            <th>CCQ</th>
             <th>Distancia</th>
             <th>TX rate</th>
             <th>RX rate</th>
@@ -47,8 +47,8 @@
         {% elif metrica.signal > -70 %}bg-success
         {% else %}bg-secondary{% endif %}">
         {{ metrica.signal|floatformat:"0" }}</span></td>
+        <td>{{ metrica.power|default:"—" }}</td>
         <td>{{ metrica.noise|default:"—" }}</td>
-        <td>{{ metrica.ccq|default:"—" }}%</td>
         <td>{{ metrica.distancia|metros_a_km }} </td>
         <td>{{ metrica.tx|format_bitrate }} </td>
         <td>{{ metrica.rx|format_bitrate }} </td>
