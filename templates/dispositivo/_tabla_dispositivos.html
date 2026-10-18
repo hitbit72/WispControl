@@ -3,9 +3,8 @@
     <thead>
         <tr>
             <th>Estado</th>
-            <th>Dispositivo/SSID</th>
-            <th>Marca</th>
             <th>IP gestión</th>
+            <th>Marca</th>
             <th>Cliente</td>
             <th>Tipo</th>
             <th>Sector</th>
@@ -24,17 +23,16 @@
             <td style="width: 30px; min-width:20px;">{% include "dispositivo/comun/_estado.html" %}</td>
             <td>
             <i class="bi bi-exclamation-triangle-fill alert-dot" aria-hidden="true" {% if not dispositivo.alarmas.all.0 %}style="display:none"{% endif %} title="Alerta en el dispositivo"></i>
-            <a href="{% url 'dispositivos:detalle' dispositivo.pk %}">{{ dispositivo.nombre }}</a>
+            <a href="{% url 'dispositivos:detalle' dispositivo.pk %}">{{ dispositivo.ip_gestion }}</a>
             </td>
-            <td>{{ dispositivo.marca.nombre }} {{ dispositivo.marca.modelo|default:'' }}</td>
-            <td><a href="http://{{ dispositivo.ip_gestion|default:"—" }}" target="_blank">{{ dispositivo.ip_gestion|default:"—" }}</a></td>
+            <td>{{ dispositivo.marca.nombre }} {{ dispositivo.marca.modelo|default:"" }}</td>
             <td>{% if dispositivo.cliente.nombre_completo %}
                 <a href="{% url 'clientes:detalle' dispositivo.cliente.pk %}">{{ dispositivo.cliente.nombre_completo }}</a>
                 {% else %}
                 ——
                 {% endif %}
             </td>
-            <td>{{ dispositivo.tipo.nombre }} {{ dispositivo.get_rol_display }}</td>
+            <td>{{ dispositivo.tipo.nombre }}</td>
             <td>{% if dispositivo.sector %}<a href="{% url 'sectores:detalle' dispositivo.sector.pk %}">{{ dispositivo.sector.nombre }}</a>{% else %}—{% endif %}</td>
             <td>{{ dispositivo.metricas.all.0.ssid|default:"—" }}</td>
             <td style="max-width: 5px;">{{ dispositivo.metricas.all.0.clients|default:'0' }}</td>
@@ -60,7 +58,7 @@
             </td>
         </tr>
         {% empty %}
-        <tr><td colspan="13" class="text-center text-muted py-4">No se encontraron dispositivos.</td></tr>
+        <tr><td colspan="12" class="text-center text-muted py-4">No se encontraron dispositivos.</td></tr>
         {% endfor %}
     </tbody>
 </table>
