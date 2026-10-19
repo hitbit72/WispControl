@@ -454,6 +454,42 @@ def alternar_escaneo_dispositivo_noUsada(request, pk):
         })
 
 
+# --- Frecuencias ----------------------------------------------------------------
+
+@login_required
+def mapa_frecuemcias(request):
+    print('Mapa de frecuencias')
+
+    dispositivos = Dispositivo.objects.select_related(
+        'sector',
+        'tipo',
+        ).prefetch_related(
+            'metricas',
+        ).filter(
+            rol='main',
+            tipo__clave__in=dispositivos_ap,  # Utilizamos __in para listas
+        ).all()
+
+    busqueda = request.GET.get('q', '').strip()
+    if busqueda:
+        dispositivos = dispositivos.filter(
+            Q(nombre__icontains=busqueda)
+            | Q(nombre_host__icontains=busqueda)
+            | Q(ip_gestion__icontains=busqueda)
+            | Q(mac_address__icontains=busqueda)
+            | Q(ip_publica__icontains=busqueda)
+        )
+    
+    sector_seleccionado = request.GET.get('sector', '').strip()
+    if sector_seleccionado:
+        dispositivos = dispositivos.filter(sector_id=sector_seleccionado)
+
+    return render(request, 'dispositivo/frecuencias/frecuencias.html', {
+        'dispositivos': dispositivos,
+        })
+
+
+
 # --- Interfaces ----------------------------------------------------------------
 # 1bsp = 0,000001 mbps
 

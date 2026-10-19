@@ -8,6 +8,7 @@ urlpatterns = [
     # Dispositivos
     path('', views.lista_dispositivos, name='lista'),
     path('nuevo/', views.nuevo_dispositivo, name='nuevo'),
+    path('frecuencias/', views.mapa_frecuemcias, name='frecuencias'),
     path('<int:pk>/nuevo/', views.nuevo_dispositivo, name='nuevo_dispositivo'),
     path('<int:pk>/', views.detalle_dispositivo, name='detalle'),
     path('<int:pk>/graficas/', views.graficas_dispositivo, name='graficas'),

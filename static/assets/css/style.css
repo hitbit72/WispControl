@@ -1709,6 +1709,10 @@ html[data-theme="dark"] {
   color: var(--admin-sidebar-text);
 }
 
+.collapse-left {
+	padding-left: 1.5rem;
+}
+
 .oculto{
   display: hidden;
 }
