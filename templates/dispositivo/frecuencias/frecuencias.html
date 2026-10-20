@@ -17,7 +17,7 @@
 <form class="row g-2 mb-3"
       hx-get="{% url 'dispositivos:frecuencias' %}"
       hx-target="#tabla-frecuencias"
-      hx-trigger="input changed delay:500ms from:#id_q, change from:#id_sector"
+      hx-trigger="input changed delay:500ms from:#id_q, change from:#id_sector, change from:#id_sector2"
       hx-push-url="true">
 
     <div class="col-md-5">

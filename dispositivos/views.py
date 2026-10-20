@@ -217,6 +217,7 @@ def detalle_dispositivo(request, pk):
         for metrica in estaciones:
             cl_pk = 0
             cl_name = metrica.device.nombre
+            cl_activo = False
             if metrica.device.cliente:
                 cl_pk = metrica.device.cliente.pk
                 cl_name = metrica.device.cliente.nombre_completo
@@ -478,20 +479,25 @@ def mapa_frecuemcias(request):
             | Q(mac_address__icontains=busqueda)
             | Q(ip_publica__icontains=busqueda)
         )
-    
-    sector_seleccionado = request.GET.get('sector', '').strip()
-    sector_seleccionado2 = request.GET.get('sector2', '').strip()
 
-    if sector_seleccionado:
-        if sector_seleccionado2:
-            dispositivos = dispositivos.filter(sector_id=sector_seleccionado)
-        else:
-            dispositivos = dispositivos.filter(sector_id=sector_seleccionado)
+
+    # 1. Obtenemos los valores y los metemos en una lista si no están vacíos
+    sectores = [
+        request.GET.get('sector', '').strip(),
+        request.GET.get('sector2', '').strip(),
+    ]
+    # Filtramos para eliminar strings vacíos ('') en caso de que uno de los dos no se haya enviado
+    sectores_validos = [s for s in sectores if s]
+
+    # Si hay sectores seleccionados, filtramos por ellos
+    if sectores_validos:
+        dispositivos = dispositivos.filter(sector_id__in=sectores_validos)
 
     contexto = {
-        'dispositivos': dispositivos,
+        'dispositivos': dispositivos.all(),
         'busqueda': busqueda,
-        'sector_seleccionado': sector_seleccionado,
+        'sector_seleccionado': sectores[0],
+        'sector_seleccionado2': sectores[1],
         'todos_sectores': Sector.objects.all().values_list('pk', 'nombre').order_by('nombre'),
         'rango_freq': list(range(5170, 5870, 5)), # Genera las frecuencias de 5 en 5 MHz
         }
