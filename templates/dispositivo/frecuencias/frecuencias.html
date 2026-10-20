@@ -33,12 +33,22 @@
             {% endfor %}
         </select>
     </div>
+
+    <div class="col-md-3">
+        <select name="sector2" id="id_sector2" class="form-select">
+            <option value="">Todos los sectores</option>
+            {% for valor, etiqueta in todos_sectores %}
+            <option value="{{ valor }}" {% if valor == sector_seleccionado2 %}selected{% endif %}>{{ etiqueta }}</option>
+            {% endfor %}
+        </select>
+    </div>
 </form>
 
-<section class="panel mt-1">
-<div id="tabla-frecuencias" class="table-responsive">
+<!-- <section class="panel mt-1"> -->
+<div id="tabla-frecuencias" class="table-responsive mt-1">
+{% include "dispositivo/frecuencias/_tabla_frecuancia.html" %}
 </div>
-</section>
+<!-- </section> -->
 
 </section>
 {% endblock %}

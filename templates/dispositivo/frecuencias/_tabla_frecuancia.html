@@ -1,0 +1,117 @@
+{% load frecuancias_tags %}
+
+<style>
+    /* Estilos para congelar las 3 primeras columnas al hacer scroll horizontal */
+    .table-frecuencias {
+        table-layout: fixed;
+    }
+
+    .table>:not(caption)>*>* {
+        padding: 0.2rem;
+    }
+
+    .col-sticky-1 {
+        position: sticky;
+        left: 0px;
+        width: 110px;
+        min-width: 110px;
+        max-width: 110px;
+        z-index: 5;
+    }
+
+    .col-sticky-2 {
+        position: sticky;
+        left: 110px; /* Ancho de col 1 */
+        width: 140px;
+        min-width: 140px;
+        max-width: 140px;
+        z-index: 5;
+    }
+
+    .col-sticky-3 {
+        position: sticky;
+        left: 250px; /* 110px + 140px */
+        width: 60px;
+        min-width: 60px;
+        max-width: 60px;
+        z-index: 5;
+        border-right: 2px solid #ccc !important; /* Separa los datos de la gráfica */
+    }
+
+    /* Asegura que la cabecera quede por encima al hacer scroll vertical y horizontal */
+    thead th.col-sticky-1,
+    thead th.col-sticky-2,
+    thead th.col-sticky-3 {
+        z-index: 10;
+    }
+
+    /* Formato de las columnas del espectro de frecuencias */
+    .col-freq-header {
+        writing-mode: vertical-rl;
+        transform: rotate(180deg);
+        padding: 4px 2px !important;
+        height: 50px;
+        width: 18px;
+        min-width: 18px;
+        max-width: 18px;
+        font-size: 0.7rem;
+    }
+
+    .cell-freq {
+        width: 18px;
+        min-width: 18px;
+        max-width: 18px;
+        padding: 0 !important;
+    }
+</style>
+
+<div class="table-responsive" style="max-height: 55vh; overflow: auto;">
+    <table class="table table-bordered table-sm text-center align-middle table-frecuencias" style="font-size: 0.75rem; white-space: nowrap;">
+        <thead class="table-light sticky-top">
+            <tr>
+                <th class="col-sticky-1 bg-light text-start ps-2">IP</th>
+                <th class="col-sticky-2 bg-light text-start ps-2">SSID</th>
+                <th class="col-sticky-3 bg-light text-center">FREQ</th>
+                
+                {% for freq in rango_freq %}
+                <th class="col-freq-header bg-light">
+                    {{ freq }}
+                </th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for disp in dispositivos %}
+            <tr>
+                <!-- IP -->
+                <td class="col-sticky-1 bg-white text-start ps-2 fw-bold text-truncate" title="{{ disp.ip_gestion }}">
+                    {{ disp.ip_gestion }}
+                </td>
+                
+                <!-- SSID -->
+                <td class="col-sticky-2 bg-white text-start ps-2 text-truncate" title="{{ disp|obtener_metrica:'ssid' }} . {{ disp.mac_address }} . {{ disp.zona_cobertura }}">
+                    {{ disp|obtener_metrica:'ssid' }}
+                </td>
+                
+                <!-- FREQ (fuerza conversión a entero en el template para evitar decimales como .0) -->
+                <td class="col-sticky-3 bg-light fw-bold text-center">
+                    {{ disp|obtener_metrica:'frequency'|floatformat:0 }}
+                </td>
+
+                <!-- Celdas de la cuadrícula -->
+                {% for freq in rango_freq %}
+                    {% if disp|cubre_frecuencia:freq %}
+                        <td class="bg-primary cell-freq" title="{{ freq }}"></td>
+                    {% else %}
+                        <td class="cell-freq"></td>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="100" class="text-center py-4 text-muted">No se encontraron dispositivos.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

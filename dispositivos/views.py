@@ -458,7 +458,6 @@ def alternar_escaneo_dispositivo_noUsada(request, pk):
 
 @login_required
 def mapa_frecuemcias(request):
-    print('Mapa de frecuencias')
 
     dispositivos = Dispositivo.objects.select_related(
         'sector',
@@ -467,8 +466,8 @@ def mapa_frecuemcias(request):
             'metricas',
         ).filter(
             rol='main',
-            tipo__clave__in=dispositivos_ap,  # Utilizamos __in para listas
-        ).all()
+            tipo__clave__in=('ap', 'nodo', 'ptp_main'),  # Utilizamos __in para listas
+        ).order_by('frequency').all()
 
     busqueda = request.GET.get('q', '').strip()
     if busqueda:
@@ -481,12 +480,25 @@ def mapa_frecuemcias(request):
         )
     
     sector_seleccionado = request.GET.get('sector', '').strip()
-    if sector_seleccionado:
-        dispositivos = dispositivos.filter(sector_id=sector_seleccionado)
+    sector_seleccionado2 = request.GET.get('sector2', '').strip()
 
-    return render(request, 'dispositivo/frecuencias/frecuencias.html', {
+    if sector_seleccionado:
+        if sector_seleccionado2:
+            dispositivos = dispositivos.filter(sector_id=sector_seleccionado)
+        else:
+            dispositivos = dispositivos.filter(sector_id=sector_seleccionado)
+
+    contexto = {
         'dispositivos': dispositivos,
-        })
+        'busqueda': busqueda,
+        'sector_seleccionado': sector_seleccionado,
+        'todos_sectores': Sector.objects.all().values_list('pk', 'nombre').order_by('nombre'),
+        'rango_freq': list(range(5170, 5870, 5)), # Genera las frecuencias de 5 en 5 MHz
+        }
+
+    if request.headers.get('HX-Request'):
+        return render(request, 'dispositivo/frecuencias/_tabla_frecuancia.html', contexto)
+    return render(request, 'dispositivo/frecuencias/frecuencias.html', contexto)
 
 
 

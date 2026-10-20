@@ -1716,3 +1716,28 @@ html[data-theme="dark"] {
 .oculto{
   display: hidden;
 }
+
+.table_freq {
+  border-spacing: 0px;
+  white-space: nowrap;
+  table-layout: fixed;
+  font-size: 9px;
+}
+.thfreq {
+	width: 4px;
+	border-bottom-width: 1px;
+	border-bottom-color: #BDBDBD;
+	border-bottom-style: solid;
+	}
+
+.vertical-tx {
+	/* float: left; */
+	/* width: 9px; */
+	height: 30px;
+	font-size: 10px;
+	font-weight: normal;
+	transform: rotate(90deg);
+	/* transform-origin: left top 0; */
+	transform-origin: left 10px;
+	text-transform: uppercase;
+	}
