@@ -10,6 +10,7 @@
         padding: 0.2rem;
     }
 
+
     .col-sticky-1 {
         position: sticky;
         left: 0px;
@@ -49,24 +50,28 @@
     .col-freq-header {
         writing-mode: vertical-rl;
         transform: rotate(180deg);
-        padding: 4px 2px !important;
-        height: 50px;
-        width: 18px;
-        min-width: 18px;
+        padding: 4px 0px !important;
+        height: 40px;
+        width: 14px;
+        min-width: 14px;
         max-width: 18px;
         font-size: 0.7rem;
     }
 
     .cell-freq {
-        width: 18px;
-        min-width: 18px;
+        width: 14px;
+        min-width: 14px;
         max-width: 18px;
         padding: 0 !important;
+    }
+
+    .table thead th {
+        font-size: 0.6rem;
     }
 </style>
 
 <div class="table-responsive" style="max-height: 55vh; overflow: auto;">
-    <table class="table table-bordered table-sm text-center align-middle table-frecuencias" style="font-size: 0.75rem; white-space: nowrap;">
+    <table class="table table-bordered table-sm text-center align-middle table-frecuencias" style="font-size: 0.7rem; white-space: nowrap;">
         <thead class="table-light sticky-top">
             <tr>
                 <th class="col-sticky-1 bg-light text-start ps-2">IP</th>
@@ -89,7 +94,7 @@
                 </td>
                 
                 <!-- SSID -->
-                <td class="col-sticky-2 bg-white text-start ps-2 text-truncate" title="{{ disp|obtener_metrica:'ssid' }} . {{ disp.mac_address }} . {{ disp.zona_cobertura }}">
+                <td class="col-sticky-2 bg-white text-start ps-2 text-truncate" title="{{ disp.sector.nombre }}: {{ disp.zona_cobertura }}">
                     {{ disp|obtener_metrica:'ssid' }}
                 </td>
                 
