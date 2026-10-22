@@ -43,7 +43,7 @@ class ContratoForm(BootstrapFormMixin, forms.ModelForm):
     class Meta:
         model = Contrato
         fields = [
-            'nombre', 'plan', 'precio_mensual', 'estado', 'fecha_inicio', 'fecha_cancelacion',
+            'sincronizar', 'nombre', 'plan', 'precio_mensual', 'estado', 'fecha_inicio', 'fecha_cancelacion',
             'conexion', 'identificador_mikrotik', 'pppoe_clave', 'ip_asignada', 'notas',
         ]
         widgets = {

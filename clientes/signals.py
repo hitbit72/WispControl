@@ -97,7 +97,7 @@ def _sincronizar_al_eliminar(sender, instance, **kwargs):
 
 def _sincronizar_tarea():
     # Ejecuta el Command de sincronización, actulizando todas las tareas pendientes.
-    # Se ha optado por esta opción porque puede haber otras tareas pendientes antes de la instancia actual.
+    # Se ha optado por esta opción porque puede haber otras tareas pendientes de la instancia actual.
 
     #DEBUG -> desactivado, solo en producción
     return
@@ -111,7 +111,8 @@ def _sincronizar_tarea():
     call_command('sincronizar_mikrotik', stdout=out, stderr=out)
 
 
-# No usado por ahora, ejecuta solo la tarea de la instancia actual
+# No usado por ahora.
+# Ejecuta solo la tarea de la instancia actual
 def _sincronizar_mk(tarea, contrato):
     """ Procesamos una tarea inmediatamente 
         si falla, al estar encolada, se intentará más adelante en sincronizar_mikrotik.py

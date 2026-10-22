@@ -15,8 +15,16 @@
     {% csrf_token %}
     <fieldset id="datosFormulario" {% if not cliente.activo %}disabled{% endif %} class="border-0 p-0 m-0">
         <div class="row g-3">
+
+            <div class="col-md-8 d-flex align-items-end pb-2">
+                <div class="form-check form-switch">
+                    {{ form.sincronizar }}
+                    <label class="form-check-label" for="{{ form.sincronizar.id_for_label }}"> Sincronizar</label>
+                </div>
+            </div>
+
             <div class="col-md-12">
-                <label class="form-label" for="id_nombre">Nombre</label>
+                <label class="form-label" for="id_nombre">Nombre </label>
                 {{ form.nombre }}
                 <div class="form-text">Nombre corto descriptivo del contrato.</div>
                 <div class="invalid-feedback">El nombre es obligatorio.</div>

@@ -26,6 +26,9 @@ def encolar_tarea(contrato, operacion, identificador_anterior='', vincular_contr
     el FK a una fila que ya no existe, así que la tarea queda sin vínculo
     pero conserva el identificador y el tipo de conexión como copia.
     """
+
+    if not contrato.sincronizar:
+        return None
     if contrato.conexion not in CONEXIONES_SINCRONIZABLES:
         return None
     if not contrato.identificador_mikrotik:
