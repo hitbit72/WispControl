@@ -12,15 +12,10 @@ def cubre_frecuencia(dispositivo, freq_columna):
     """
     try:
         metrica = dispositivo.metricas.first()
-        if not metrica or not metrica.frequency or not metrica.w_channel:
+        if not dispositivo.frequency or not metrica or not metrica.w_channel:
             return False
 
-        f_central = int(metrica.frequency)
-        """
-        if metrica.center_frequency > 0:
-            print(metrica.center_frequency)
-            f_central = int(metrica.center_frequency)
-        """
+        f_central = int(dispositivo.center_frequency) if dispositivo.center_frequency else int(dispositivo.frequency)
         ancho = int(metrica.w_channel)+1
         
         # El rango abarca desde la mitad del ancho hacia abajo hasta la mitad hacia arriba
@@ -31,6 +26,7 @@ def cubre_frecuencia(dispositivo, freq_columna):
     except (AttributeError, ValueError, TypeError):
         return False
 
+    
 @register.filter
 def obtener_metrica(dispositivo, atributo):
     """Obtiene de forma segura el atributo de la métrica relacionada."""
