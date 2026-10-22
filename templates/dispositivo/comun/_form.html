@@ -141,15 +141,15 @@
             </div>
         </div>
         <div class="col-12">
+            <label class="form-label" for="id_notas">Notas</label>
+            {{ form.notas }}
+        </div>
+        <div class="col-12">
             <label class="form-label" for="{{ form.atributos_extra.id_for_label }}">Atributos del dispositivo</label>
             {{ form.atributos_extra }}
             {% for error in form.atributos_extra.errors %}
             <div class="text-danger small">{{ error }}</div>
             {% endfor %}
             <div class="form-text">OIDs específicos de la marca/modelo. Puedes escribir un objeto JSON, p. ej. <code>{&quot;banda&quot;: 5}</code>.</div>
-        </div>
-        <div class="col-12">
-            <label class="form-label" for="id_notas">Notas</label>
-            {{ form.notas }}
         </div>
     </div>
