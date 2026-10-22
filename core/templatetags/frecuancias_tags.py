@@ -16,7 +16,7 @@ def cubre_frecuencia(dispositivo, freq_columna):
             return False
         
         f_central = int(metrica.frequency)
-        ancho = int(metrica.w_channel)
+        ancho = int(metrica.w_channel)+1
         
         # El rango abarca desde la mitad del ancho hacia abajo hasta la mitad hacia arriba
         inicio = f_central - (ancho / 2)
