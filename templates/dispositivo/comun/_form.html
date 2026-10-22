@@ -20,13 +20,14 @@
             {{ form.marca }}
             <div class="invalid-feedback">Seleccione una marca</div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-6 mb-1">
             <label class="form-label" for="{{ form.estado.id_for_label }}">Estado</label>
             {{ form.estado }}
             <div class="invalid-feedback">Seleccione el estado</div>
         </div>
 
-        <div class="col-md-6">
+        <hr>
+        <div class="col-md-3">
             <label class="form-label" for="{{ form.tipo.id_for_label }}">Tipo</label>
             {{ form.tipo }}
             <div class="invalid-feedback">Seleccione un tipo</div>
@@ -39,6 +40,10 @@
         <div class="col-3">
             <label class="form-label" for="{{ form.frequency.id_for_label }}">Frecuencia (MHz)</label>
             {{ form.frequency }}
+        </div>
+        <div class="col-3">
+            <label class="form-label" for="{{ form.center_frequency.id_for_label }}">Frecuencia central (MHz)</label>
+            {{ form.center_frequency }}
         </div>
 
         <hr>
