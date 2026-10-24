@@ -30,6 +30,7 @@ Si quieres confirmar qué hay realmente en esa columna:
 
 from django.core.management.base import BaseCommand
 from django.utils import timezone
+from tplink_tool import make_switch, PortSpeed      # https://pypi.org/project/tplink-tool/
 
 from dispositivos.models import Dispositivo, dispositivos_ap
 
@@ -127,7 +128,6 @@ class Command(BaseCommand):
         if tipo_rol:
             # Usamos rol__in para filtrar por todos los roles pasados
             dispositivos = dispositivos.filter(rol__in=tipo_rol)
-            #dispositivos = dispositivos.filter(rol=tipo_rol)
         else:
             tipo_rol = 'todos'
 
@@ -141,10 +141,19 @@ class Command(BaseCommand):
 
         # Bucle para consultar SNMP
         for dispositivo in dispositivos:
-            if self._procesar(dispositivo, True):
-                ok += 1
+            modelo = dispositivo.marca.modelo
+
+            # ¿es un switch TP-Link sg108?
+            if modelo.lower() == 'tl-sg108e':
+                if (self._procesar_tl(dispositivo)):
+                    ok += 1
+                else:
+                    errores += 1
             else:
-                errores += 1
+                if self._procesar(dispositivo, True):
+                    ok += 1
+                else:
+                    errores += 1
 
         self.stdout.write(self.style.SUCCESS(
             f'[{timezone.localtime():%d/%m/%Y %H:%M:%S}] Procesados {total} dispositivos: {ok} OK, {errores} fallos. Zona: {tipo_zona} - Rol: {tipo_rol}\n'))
@@ -164,6 +173,13 @@ class Command(BaseCommand):
             # Mantiene True solo para las claves que existen dentro de la lista tipo_zona
             self.zonas = {zona: (zona in t_zona) for zona in self.zonas}
 
+
+    def _procesar_tl(self, dispositivo, psw, update=True):
+        # datos de los switch TP-Link sg108
+        return
+        with make_switch(dispositivo.ip_gestion, password=psw) as sw:
+            # Read system info
+            print(sw.get_system_info())
 
     def _procesar(self, dispositivo, updtade=True):
 
