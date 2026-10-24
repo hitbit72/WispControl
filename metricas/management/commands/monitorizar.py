@@ -141,6 +141,7 @@ class Command(BaseCommand):
 
         # Bucle para consultar SNMP
         for dispositivo in dispositivos:
+            """
             modelo = dispositivo.marca.modelo
 
             # ¿es un switch TP-Link sg108?
@@ -150,10 +151,11 @@ class Command(BaseCommand):
                 else:
                     errores += 1
             else:
-                if self._procesar(dispositivo, True):
-                    ok += 1
-                else:
-                    errores += 1
+            """
+            if self._procesar(dispositivo, True):
+                ok += 1
+            else:
+                errores += 1
 
         self.stdout.write(self.style.SUCCESS(
             f'[{timezone.localtime():%d/%m/%Y %H:%M:%S}] Procesados {total} dispositivos: {ok} OK, {errores} fallos. Zona: {tipo_zona} - Rol: {tipo_rol}\n'))
@@ -176,7 +178,6 @@ class Command(BaseCommand):
 
     def _procesar_tl(self, dispositivo, psw, update=True):
         # datos de los switch TP-Link sg108
-        return
         with make_switch(dispositivo.ip_gestion, password=psw) as sw:
             # Read system info
             print(sw.get_system_info())
