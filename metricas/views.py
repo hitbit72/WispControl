@@ -26,10 +26,10 @@ def actualizar_metricas_snmp(request, pk):
         if dispositivo.modo_metrica == Dispositivo.Modulo_Scan.SNMP:
             cmd._procesar(dispositivo, False)
         elif dispositivo.modo_metrica == Dispositivo.Modulo_Scan.TPL1:
-            cmd._procesar_tpl1(dispositivo, False)
+            cmd._procesar_tpl1(dispositivo, True)
             
-    except Exception:
-        print('Error actualizar snmp')
+    except Exception as e:
+        print(f'Error actualizar snmp: {e}')
         # En caso de error, igual intentamos devolver la métrica actual
         pass
 

@@ -139,7 +139,7 @@ class Command(BaseCommand):
             self.stdout.write(self.style.WARNING(
                 f'[{timezone.localtime():%d/%m/%Y %H:%M:%S}] No hay dispositivos para comprobar.'))
 
-        # Bucle para consultar SNMP
+        # Bucle para consultar SNMP ***************************************************
         for dispositivo in dispositivos:
             
             if dispositivo.modo_metrica == Dispositivo.Modulo_Scan.SNMP:
@@ -174,22 +174,50 @@ class Command(BaseCommand):
 
     # datos de los switch TP-Link sg108e
     def _procesar_tpl1(self, dispositivo, update=True):
+
+        print('Procensando: procesar_tpl1')
+        resultado = {}
+        puertos = []
+        resultado['status'] = "error"
+        final = False
+
         with make_switch(dispositivo.ip_gestion, password=dispositivo.password) as sw:
             # Read system info
-            print(sw.get_system_info())
+            sys=sw.get_system_info()
+            resultado = {
+                'version': sys.firmware,
+                'sys_name': sys.hardware,
+                'sys_descr': sys.description,
+                }
 
-            # Port status
             for port in sw.get_port_settings():
-                print(port)
+                vel = 0
+                if port.speed_act:
+                    v1 = str(port.speed_act)
+                    velocidad = v1.split("M")
+                    vel = int(velocidad[0])
 
-            for port in sw.get_port_statistics():
-                print(port)
+                puertos.append({
+                    'nombre': f'eth{port.port}',
+                    'speed': vel,
+                    'estado': "up" if port.speed_act else "down",
+                    'rx_counter': 0,
+                    'tx_counter': 0
+                    })
+            resultado['status'] = "ok"
+            final = True
 
-            return True
-        
-        return False
+        resultado['puertos'] = puertos
+        resultado['timescan'] = timezone.now()
+        if update:
+            # Guarda metrica general e hisotrico
+            services.guardar_metrica(dispositivo, False, **resultado)
+            if puertos:
+                services.guardar_puertos(dispositivo, **resultado)
 
-    def _procesar(self, dispositivo, updtade=True):
+        return final
+
+    def _procesar(self, dispositivo, uptade=True):
 
         # Cargar los códigos OID para cada tipo de escaneo
         datos = {}
@@ -271,7 +299,7 @@ class Command(BaseCommand):
         # Variables para evaluar la alerta/alarma, si no hay datos anteriores se pasa None
         metrica = None
         historico = None
-        if updtade:
+        if uptade:
             # Guarda metrica general e hisotrico
             if self.zonas['general']:
                 if datos:

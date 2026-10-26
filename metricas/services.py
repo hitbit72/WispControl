@@ -30,6 +30,7 @@ def guardar_metrica(dispositivo,  guardar_historico=True, **datos):
         defaults=datos
     )[0]
 
+    historico = None
     if guardar_historico:
         # Lista de campos relevantes para el histórico, para evitar guardar metricas vacias
         campos_historico = [
@@ -39,7 +40,6 @@ def guardar_metrica(dispositivo,  guardar_historico=True, **datos):
         # Comprobamos si al menos una métrica viene en 'datos' con un valor distinto de None
         tiene_datos = any(datos.get(campo) is not None for campo in campos_historico)
 
-        historico = None
         if tiene_datos:
             # Guardamos el hístórico general
             historico = DeviceMetricHistory.objects.create(
