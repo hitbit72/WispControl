@@ -174,8 +174,6 @@ class Command(BaseCommand):
 
     # datos de los switch TP-Link sg108e
     def _procesar_tpl1(self, dispositivo, update=True):
-
-        print('Procensando: procesar_tpl1')
         resultado = {}
         puertos = []
         resultado['status'] = "error"
