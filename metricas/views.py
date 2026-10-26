@@ -23,7 +23,11 @@ def actualizar_metricas_snmp(request, pk):
     cmd.stdout = StringIO()
     try:
         cmd._zonas()
-        cmd._procesar(dispositivo, False)
+        if dispositivo.modo_metrica == Dispositivo.Modulo_Scan.SNMP:
+            cmd._procesar(dispositivo, False)
+        elif dispositivo.modo_metrica == Dispositivo.Modulo_Scan.TPL1:
+            cmd._procesar_tpl1(dispositivo, False)
+            
     except Exception:
         print('Error actualizar snmp')
         # En caso de error, igual intentamos devolver la métrica actual

@@ -141,21 +141,17 @@ class Command(BaseCommand):
 
         # Bucle para consultar SNMP
         for dispositivo in dispositivos:
-            """
-            modelo = dispositivo.marca.modelo
-
-            # ¿es un switch TP-Link sg108?
-            if modelo.lower() == 'tl-sg108e':
-                if (self._procesar_tl(dispositivo)):
+            
+            if dispositivo.modo_metrica == Dispositivo.Modulo_Scan.SNMP:
+                if self._procesar(dispositivo, True):
                     ok += 1
                 else:
                     errores += 1
-            else:
-            """
-            if self._procesar(dispositivo, True):
-                ok += 1
-            else:
-                errores += 1
+            elif dispositivo.modo_metrica == Dispositivo.Modulo_Scan.TPL1:
+                if self._procesar_tpl1(dispositivo, True):
+                    ok += 1
+                else:
+                    errores += 1
 
         self.stdout.write(self.style.SUCCESS(
             f'[{timezone.localtime():%d/%m/%Y %H:%M:%S}] Procesados {total} dispositivos: {ok} OK, {errores} fallos. Zona: {tipo_zona} - Rol: {tipo_rol}\n'))
@@ -176,11 +172,22 @@ class Command(BaseCommand):
             self.zonas = {zona: (zona in t_zona) for zona in self.zonas}
 
 
-    def _procesar_tl(self, dispositivo, psw, update=True):
-        # datos de los switch TP-Link sg108
-        with make_switch(dispositivo.ip_gestion, password=psw) as sw:
+    # datos de los switch TP-Link sg108e
+    def _procesar_tpl1(self, dispositivo, update=True):
+        with make_switch(dispositivo.ip_gestion, password=dispositivo.password) as sw:
             # Read system info
             print(sw.get_system_info())
+
+            # Port status
+            for port in sw.get_port_settings():
+                print(port)
+
+            for port in sw.get_port_statistics():
+                print(port)
+
+            return True
+        
+        return False
 
     def _procesar(self, dispositivo, updtade=True):
 

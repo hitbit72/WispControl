@@ -75,6 +75,12 @@ class Dispositivo(models.Model):
         PTP = 'ptp', 'Punto a Punto'
         SOHO = 'soho', 'Soho Ruter'
 
+    # Modo en que extraremos las metricas de los dispositivos
+    class Modulo_Scan(models.TextChoices):
+        SNMP = 'snmp', 'Conexión SNMP'
+        TPL1 = 'tpl1', 'TL-SG108E'
+        OLT1 = 'uolt1', 'Ubiquiti OLT 4P'
+        SSH1 = 'ssh1', 'Conexión SSH'
 
     # nombre o SSID es unico
     nombre = models.CharField(max_length=100, null=False, blank=False, help_text='Nombre identificativo del eqipo',)
@@ -101,6 +107,7 @@ class Dispositivo(models.Model):
     mac_address = models.CharField(max_length=17, blank=True, verbose_name='Dirección MAC')
     firmware_version = models.CharField(max_length=50, blank=True)
     snmp_community = models.CharField(max_length=100, default='public', blank=True, null=True, verbose_name='Comunidad SNMP', help_text='Solo aplica a dispositivos que soporten SNMP. Ej. "public"')
+    password = models.CharField(max_length=100, blank=True, null=True, verbose_name='Contraseña')
 
     escanear = models.BooleanField(default=False, null=True, blank=True, verbose_name='Escanear SNMP')
     escanear_ap = models.BooleanField(default=False, null=True, blank=True, verbose_name='Escanear SNMP por AP')
@@ -108,13 +115,14 @@ class Dispositivo(models.Model):
     alarma_puerto = models.BooleanField(default=False, null=True, blank=True, verbose_name='Alarma puertos SNMP')
     ping = models.BooleanField(default=True, null=True, blank=True, verbose_name='Escanear PING')
     alarma_ping = models.BooleanField(default=True, null=True, blank=True, verbose_name='Alarma PING')
+    modo_metrica = models.CharField(max_length=40, choices=Modulo_Scan.choices, default=Modulo_Scan.SNMP, verbose_name='Conexión para métricas')
     
     latitud = models.DecimalField(max_digits=10, decimal_places=7, null=True, blank=True)
     longitud = models.DecimalField(max_digits=10, decimal_places=7, null=True, blank=True)
     direccion = models.CharField(max_length=255, null=True, blank=True)
     zona_cobertura = models.CharField(max_length=250, null=True, blank=True, verbose_name='Zona cobertura')
 
-    estado = models.CharField(max_length=20, choices=Estado.choices, default=Estado.ACTIVO)
+    estado = models.CharField(max_length=40, choices=Estado.choices, default=Estado.ACTIVO)
     fecha_instalacion = models.DateField(null=True, blank=True)
 
     atributos_extra = models.JSONField(
