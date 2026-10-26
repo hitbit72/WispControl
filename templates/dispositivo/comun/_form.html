@@ -111,21 +111,21 @@
         </div>
         <div class="card h-100">
             <div class="card-body">
-                <div class="row text-center">
+                <div class="row text-center g-3">
                     <div class="col-md-2">
                         <div class="row">
-                            <label class="form-label" for="{{ form.escanear.id_for_label }}">Escanear SNMP</label>
-                            <span>{{ form.escanear }}</span>
+                            <label class="form-label" for="{{ form.escanear.id_for_label }}">Escanear</label>
+                            <span>{{ form.escanear }}<span>
                         </div>
                     </div>
                     <div class="col-md-2">
                         <div class="row">
-                            <label class="form-label" for="{{ form.alarma.id_for_label }}">Alarma SNMP</label>
+                            <label class="form-label" for="{{ form.alarma.id_for_label }}">Alarma</label>
                             <span>{{ form.alarma }}</span>
                             <!-- div class="form-text">Alarmas de estado</div -->
                         </div>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-3">
                         <div class="row">
                             <label class="form-label" for="{{ form.alarma_puerto.id_for_label }}">Alarma Puertos</label>
                             <span>{{ form.alarma_puerto }}</span>
@@ -139,7 +139,7 @@
                         <!-- div class="form-text">Dispositivo online</div -->
                         </div>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-3">
                         <div class="row">
                             <label class="form-label" for="{{ form.alarma_ping.id_for_label }}">Alarma Ping</label>
                             <span>{{ form.alarma_ping }}</span>
@@ -148,7 +148,7 @@
                     </div>
                 </div>
 
-                    <div class="col-md-12 mt-3">
+                    <div class="col-md-12 mt-4">
                         <label class="form-label" for="{{ form.modo_metrica.id_for_label }}">Conexión métricas</label>
                         {{ form.modo_metrica }}
                         <div class="form-text">Seleccione el modo de conexión para cosultar las métricas.</div>
