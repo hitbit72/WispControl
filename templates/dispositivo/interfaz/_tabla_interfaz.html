@@ -15,6 +15,9 @@
         {% for interfaz in dispositivo.interfaces.all %}
         <tr>
             <td>
+                {% if not interfaz.mostrar %}
+                    <img src="/static/assets/images/system/red.png" title="Sin métricas">
+                {% endif %}
             {% if interfaz.nombre2 %}
                 {{ interfaz.nombre2 }}
             {% else %}
