@@ -22,6 +22,7 @@ __pycache__/
 staticfiles/
 migrations/
 test_snmp/
+test.py
 
 *.sqlite3
 .DS_Store
