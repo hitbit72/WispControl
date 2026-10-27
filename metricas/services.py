@@ -112,7 +112,7 @@ def guardar_puertos(dispositivo, **datos):
 
             # guardamos las metrcias históricas solo de dispositivos MAIN y MKT
             if dispositivo.rol != Dispositivo.Rol.STATION:
-                if puerto["estado"] == 'up':
+                if interfaz.mostrar and puerto["estado"] == 'up':
                     InterfaceMetricHistory.objects.create(
                         interfaz = interfaz,
                         timestamp = timezone.now(),
