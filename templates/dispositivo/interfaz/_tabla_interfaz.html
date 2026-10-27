@@ -33,7 +33,7 @@
             <td>{{ interfaz.ip_address|default:"—" }}</td>
             <td>{{ interfaz.mac_address|default:"—" }}</td>
             <td>{% firstof interfaz.velocidad_mbps "—" %} {% if interfaz.velocidad_mbps %}Mbps{% endif %}</td>
-            <td style="max-width: 190px;"><span title ="{{ interfaz.descripcion|default:'' }}">{{ interfaz.descripcion|default:''|truncatechars:20 }}</span></td>
+            <td style="max-width: 190px;"><span title ="{{ interfaz.descripcion|default:'' }}">{{ interfaz.descripcion|default:''|truncatechars:50 }}</span></td>
             <td class="text-end" style="width: 160px;">
                 <a href="{% url 'dispositivos:editar_interfaz' interfaz.pk %}" class="btn btn-sm btn-outline-primary">Editar</a>
                 {% if perms.interfaz.delete_interfaz %}
