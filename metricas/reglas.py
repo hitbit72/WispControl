@@ -8,7 +8,7 @@ la gravedad para `Evento`.
 """
 
 from eventos.models import Evento
-from dispositivos.models import Dispositivo
+from dispositivos.models import Dispositivo, Interfaz
 
 from .models import DeviceMetrics
 from dispositivos.models import reglas_ap # Dispositivos que son AP, para cambio de canala
@@ -24,6 +24,7 @@ REGLA_NIVEL = {
     'ram_alta': Evento.Nivel.WARNING,
     'temp_alta': Evento.Nivel.ERROR,
     'puerto_caido': Evento.Nivel.WARNING,
+    'puerto_recuperado': Evento.Nivel.NOTICE,
     'sin_clientes_ap': Evento.Nivel.NOTICE,
     'cambio_frecuencia': Evento.Nivel.WARNING,
     'caida_potencia_rx': Evento.Nivel.WARNING,
@@ -36,13 +37,13 @@ REGLA_NIVEL = {
 def _texto_conectividad(tipo):
     return f'Dispositivo {tipo} sin respuesta SNMP'
 
-def evaluar(dispositivo, metrica, anterior, historico, historico_anterior, config):
+def evaluar(dispositivo, metrica, metrica_anterior, historico, historico_anterior, config):
     """
     Devuelve la lista de alarmas 'activas' según la métrica dada.
 
     - dispositivo: `dispositivos.Dispositivo` monitorizado.
     - metrica: `metricas.DeviceMetrics` recién creada (la actual).
-    - anterior: métrica anterior del mismo dispositivo (o None).
+    - metrica_anterior: métrica anterior del mismo dispositivo (o None).
     - historico: metrica historica altual
     - hisotrico_anterior: metrica historica anterior
     - config: dict `settings.METRICAS_ALARMAS`.
@@ -67,19 +68,58 @@ def evaluar(dispositivo, metrica, anterior, historico, historico_anterior, confi
         reglas.append({'regla': 'temp_alta', 'titulo': f'Temperatura alta {historico.temperature:.0f} °C · {dispositivo.ip_gestion}',
                        'texto': f'{dispositivo.nombre}. La Temperatura del dispositivos es alta {historico.temperature:.0f} °C (máx. {config["temp_max"]:.0f} °C).'})
 
+    """
     if dispositivo.alarma_puerto:
         if config.get('puerto_caido'):
             caidos = [p['nombre'] for p in metrica.puertos if p.get('estado') == 'down']
             if caidos:
                 reglas.append({'regla': 'puerto_caido', 'titulo': f'Puerto caído {dispositivo.ip_gestion}',
                                'texto': f'{dispositivo.nombre}. Interfaz(es) caída(s): {", ".join(caidos)}.'})
+    """
+
+    # Comprobación de los puertos del dispositivo
+    if dispositivo.alarma_puerto and metrica_anterior is not None and getattr(metrica_anterior, 'puertos', None):
+
+        # 1. Creamos el diccionario de forma más limpia usando un diccionario por comprensión
+        nPuerto = {
+            mport['nombre']: {'estado': mport['estado'], 'speed': mport['speed']} 
+            for mport in metrica_anterior.puertos
+        }
+        
+        # 2. Obtenemos las interfaces con alarma, filtramos directamente de la BD
+        interfaces = Interfaz.objects.filter(dispositivo=dispositivo, alarma_cambio=True)
+        
+        # 3. Comprobamos los cambios recorriendo solo las que tienen la alarma activa
+        for iface in interfaces:
+            # Usamos .get() para evitar un KeyError si el nombre de la interfaz no existía previamente
+            port_anterior = nPuerto.get(iface.nombre)
             
+            if port_anterior and port_anterior['estado'] != iface.estado:
+                if iface.estado == 'down': # O comparando con port_anterior['estado'] == 'up' dependiendo de la lógica de cambio
+                    regla_tipo = 'puerto_caido'
+                    titulo = f'Interface caido {dispositivo.ip_gestion}'
+                    texto = f'{dispositivo.nombre}. Interfaz desconectado: {iface.nombre}'
+                else:
+                    regla_tipo = 'puerto_recuperado' # O 'puerto_recuperado' según tu app
+                    titulo = f'Interface recuperado {dispositivo.ip_gestion}'
+                    texto = f'{dispositivo.nombre}. Interfaz conectado: {iface.nombre}'
+                    
+                reglas.append({'regla': regla_tipo, 'titulo': titulo, 'texto': texto})
+
+            elif port_anterior and iface.estado == 'up':
+                if iface.velocidad_mbps != port_anterior['speed']:
+                    regla_tipo = 'puerto_caido'
+                    titulo = f'Error en Interface {dispositivo.ip_gestion}'
+                    texto = f'{dispositivo.nombre}. Interfaz con velocidad incorrecta: {iface.nombre} - {iface.velocidad_mbps} Mbps'
+                    reglas.append({'regla': regla_tipo, 'titulo': titulo, 'texto': texto})
+
+
     if config.get('sin_clientes_ap') and dispositivo.tipo.clave in reglas_ap \
             and metrica.clients is not None and metrica.clients == 0:
         reglas.append({'regla': 'sin_clientes_ap', 'titulo': f'AP sin clientes {dispositivo.ip_gestion}',
                        'texto': f'{dispositivo.nombre}. Ningún cliente asociado al AP.'})
 
-    if anterior is not None:
+    if metrica_anterior is not None:
         if dispositivo.tipo.clave in reglas_ap:
             if config.get('cambio_frecuencia') and metrica.frequency is not None \
                     and dispositivo.frequency is not None and metrica.frequency != dispositivo.frequency:

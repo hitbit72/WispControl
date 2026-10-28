@@ -160,15 +160,6 @@ class Interfaz(models.Model):
         DESCONOCIDO = 'desconocido', 'Desconocido'
 
     dispositivo = models.ForeignKey(Dispositivo, on_delete=models.CASCADE, related_name='interfaces')
-
-    """
-    router = models.ForeignKey(
-        'mikrotik.Router',
-        on_delete=models.CASCADE,
-        related_name='interfaces',
-        blank=True, null=True
-    )
-    """
     nombre = models.CharField(max_length=100, help_text="Ej. 'eth1', 'wlan0', 'eth1.100'")
     nombre2 = models.CharField(max_length=200, null=True, blank=True, help_text="Nombre alternativo")
     descripcion = models.CharField(max_length=200, null=True, blank=True)
@@ -177,7 +168,8 @@ class Interfaz(models.Model):
     ip_address = models.GenericIPAddressField(null=True, blank=True)
     mac_address = models.CharField(max_length=17, blank=True)
     velocidad_mbps = models.PositiveIntegerField(null=True, blank=True)
-    mostrar = models.BooleanField(default=True)
+    mostrar = models.BooleanField(default=True, verbose_name='Guardar métrica')
+    alarma_cambio = models.BooleanField(default=False, verbose_name='Alarma')
 
     class Meta:
         verbose_name = 'Interfaz'

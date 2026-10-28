@@ -30,8 +30,8 @@ class DispositivoAdmin(admin.ModelAdmin):
 
 @admin.register(Interfaz)
 class InterfazAdmin(admin.ModelAdmin):
-    list_display = ('dispositivo', 'nombre', 'nombre2', 'mostrar', 'tipo', 'estado', 'velocidad_mbps', 'ip_address')
-    list_filter = ('tipo', 'estado')
+    list_display = ('mostrar', 'alarma_cambio', 'dispositivo', 'nombre', 'nombre2', 'tipo', 'estado', 'velocidad_mbps', 'ip_address')
+    list_filter = ('mostrar', 'alarma_cambio', 'tipo', 'estado')
     search_fields = ('nombre', 'nombre2', 'dispositivo__nombre', 'ip_address')
     readonly_fields = ('dispositivo',)
 
