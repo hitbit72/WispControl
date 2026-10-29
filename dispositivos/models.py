@@ -49,8 +49,7 @@ class Dispositivo(models.Model):
     """
     Cualquier equipo de la red: nodo, router, switch, AP, OLT, ONU o antena de cliente.
 
-    Se pueden crear atributos específicos de cada marca o modelo en 'atributos_extra'
-    (ej. modo de radio de un AP Ubiquiti, o el tipo de licencia RouterOS)
+    Se pueden crear OID específicos en 'atributos_extra'
     """
 
     class Estado(models.TextChoices):
@@ -128,7 +127,7 @@ class Dispositivo(models.Model):
     atributos_extra = models.JSONField(
         default=dict, blank=True, null=True,
         verbose_name='Atributos adicionales',
-        help_text='OIDs específicos de la marca/modelo que no aplican a todos los dispositivos.',
+        help_text='OIDs específicos del dispositivo que no aplica a la marca/modelo.',
     )
     notas = models.TextField(blank=True)
 

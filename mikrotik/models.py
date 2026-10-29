@@ -21,14 +21,6 @@ class Router(models.Model):
 
     nombre = models.CharField(max_length=100, verbose_name='Nombre identificativo')
     modelo = models.CharField(max_length=100, blank=True, null=True)
-
-    """
-    marca = models.ForeignKey(
-        'dispositivos.Marca',
-        on_delete=models.PROTECT,
-        related_name='routers', null=True, blank=True
-    )
-    """
     numero_serie  = models.CharField(max_length=100, null=True, blank=True)
     
     usuario = models.CharField(max_length=100, verbose_name='Usuario API')

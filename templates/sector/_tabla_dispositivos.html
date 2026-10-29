@@ -1,0 +1,33 @@
+        <table class="table table-hover align-middle" id="tablaDispositivos" data-searchable-table>
+            <thead>
+                <tr>
+                    <th>Estado</th>
+                    <th>Nombre</th>
+                    <th>Marca</th>
+                    <th>IP gestión</th>
+                    <th>Tipo</th>
+                    <th>Modo</th>
+                    <th>Estaciones</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for dispositivo in dispositivos %}
+                <tr>
+                    <td>{% include "dispositivo/comun/_estado.html" %}</td>
+                    <td><a href="{% url 'dispositivos:detalle' dispositivo.pk %}?next={{ request.path }}">{{ dispositivo.nombre }}</a></td>
+                    <td>{{ dispositivo.marca.nombre }} {{ dispositivo.marca.modelo }}</td>
+                    <td><a href="http://{{ dispositivo.ip_gestion|default:"—" }}" target="_blank">{{ dispositivo.ip_gestion|default:"—" }}</a></td>
+                    <td>{{ dispositivo.tipo.nombre }}</td>
+                    <td>{{ dispositivo.get_rol_display }}</td>
+                    <td style="max-width: 5px;">{{ dispositivo.metricas.all.0.clients|default:'0' }}</td>
+                    <td class="text-end">
+                        <a href="{% url 'dispositivos:editar' dispositivo.pk %}?next={{ request.path }}" class="btn btn-sm btn-outline-primary">Editar</a>
+                        <button class="btn btn-sm btn-outline-danger" onclick="DelMsgModal('deleteModal', '{% url 'dispositivos:eliminar' dispositivo.pk %}?next={{ request.path }}', '{{ dispositivo.ip_gestion }}', '{{ dispositivo.interfaces.count }}', 'dispositivo')">Eliminar</button>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="8" class="text-center text-muted py-3">Este sector todavía no tiene dispositivos.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>

@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import SectorForm
 from .models import Sector
+from dispositivos.models import Dispositivo, TipoEquipo
 
 MODULO = 'sector'
 
@@ -32,6 +33,51 @@ def lista_sectores(request):
 
 @login_required
 def detalle_sector(request, pk):
+    sector = get_object_or_404(Sector, pk=pk)
+    router_total = sector.routers_mikrotik.count()
+    dispositivos = sector.dispositivos.all()
+
+    # Capturamos la URL de redirección (si viene en el GET o en el POST)
+    url_anterior = request.POST.get('next') or request.GET.get('next')
+
+    busqueda = request.GET.get('q', '').strip()
+    if busqueda:
+        dispositivos = dispositivos.filter(
+            Q(nombre__icontains=busqueda)
+            | Q(nombre_host__icontains=busqueda)
+            | Q(ip_gestion__icontains=busqueda)
+            | Q(mac_address__icontains=busqueda)
+            | Q(ip_publica__icontains=busqueda)
+        )
+
+    tipo_seleccionado = request.GET.get('tipo', '').strip()
+    if tipo_seleccionado:
+        dispositivos = dispositivos.filter(tipo=tipo_seleccionado)
+
+    estado_seleccionado = request.GET.get('estado', '').strip()
+    if estado_seleccionado:
+        dispositivos = dispositivos.filter(estado=estado_seleccionado)
+
+    contexto = {
+        'sector': sector, 
+        'routers': router_total,
+        'dispositivos': dispositivos,
+        'url_anterior': url_anterior,
+        'busqueda': busqueda,
+        'tipo_seleccionado': tipo_seleccionado,
+        'estado_seleccionado': estado_seleccionado,
+        'todos_tipos': TipoEquipo.objects.all().values_list('pk', 'nombre').order_by('nombre'),
+        'tipos_estado': Dispositivo.Estado.choices,
+    }
+
+    if request.headers.get('HX-Request'):
+        return render(request, 'sector/_tabla_dispositivos.html', contexto)
+    return render(request, 'sector/detalle_sector.html', contexto)
+
+
+
+@login_required
+def detalle_sector2(request, pk):
     sector = get_object_or_404(Sector, pk=pk)
     router_total = sector.routers_mikrotik.count()
 
