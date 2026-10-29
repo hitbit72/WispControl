@@ -768,6 +768,7 @@ def graficas_dispositivo(request, pk):
         'latencias_data': json.dumps(latencias_data),
         #'ping_success': json.dumps(ping_success),
         'trafico_interfaces': json.dumps(trafico_interfaces),
+        'interfaces_len': len(trafico_interfaces),
         'dispositivos_antenas': dispositivos_antenas,
         'metrcias_len': len(metricas_data.get('labels', [])),
         'url_anterior': request.GET.get('next') or request.META.get('HTTP_REFERER') or '/dispositivos/',

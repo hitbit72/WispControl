@@ -54,6 +54,7 @@
     </div>
 </div>
 <div class="row g-3">
+    {% if interfaces_len > 0 %}
     <!-- Gráfica: Tráfico interfaces (con cálculo de bps) -->
     <div class="col-12">
         <div class="card h-100">
@@ -70,6 +71,7 @@
             </div>
         </div>
     </div>
+    {% endif %}
     {% if metrcias_len > 0 %}
     <!-- Gráfica: Sistema (CPU, RAM, Temperatura) - Selector como tráfico -->
     <div class="col-12">
@@ -327,6 +329,7 @@ document.addEventListener('DOMContentLoaded', () => {
     {% endif %}
     renderLatenciaChart();
     
+    {% if interfaces_len > 0 %}
     // Poblar selector de interfaces
     const select = document.getElementById('interface-select');
     Object.keys(traficoInterfaces).forEach(iface => {
@@ -337,12 +340,13 @@ document.addEventListener('DOMContentLoaded', () => {
             select.appendChild(opt);
         }
     });
-    
+
     // Seleccionar primera interfaz por defecto
     if (select.options.length > 1) {
         select.selectedIndex = 1;
         renderTraficoChart();
     }
+    {% endif %}
     
     // Inicializar fechas personalizadas si es periodo custom
     if (currentPeriodo === 'custom') {
