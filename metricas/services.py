@@ -317,6 +317,7 @@ def guarda_estaciones_onu(dispositivo, **datos):
             'signal': onu.get('signal', 0),
             'power': onu.get('power', 0),
             'ssid': ssid,
+            'timescan': timezone.now()
         }
 
         # Guarda las metricas en cada estacion ONU, los dispotivos Ubiquiti no tienen SNMP
@@ -332,15 +333,15 @@ def guarda_estaciones_onu(dispositivo, **datos):
             DeviceMetricHistory.objects.create(
                 device = estacion_dev,
                 timestamp = timezone.now(),
-                cpu = 0,
-                ram = 0,
-                temperature = 0,
-                ccq = 0,
+                cpu = None,
+                ram = None,
+                temperature = None,
+                ccq = None,
                 power = onu.get('power', 0),
                 signal = onu.get('signal', 0),
                 noise = 0,
-                tx_capacity  = 0,
-                rx_capacity = 0,
+                tx_capacity  = None,
+                rx_capacity = None,
             )
         
 

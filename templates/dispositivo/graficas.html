@@ -92,8 +92,7 @@
         </div>
     </div>
     {% endif %}
-    <!-- Gráfica: Radio (CCQ, Power, Señal, Ruido, Capacidad) - Selector como tráfico -->
-    {% if dispositivo.tipo.clave in dispositivos_antenas %}
+    {% if dispositivo.tipo.clave in dispositivos_antenas or metrcias_len > 0 %}
     <div class="col-12">
         <div class="card h-100">
             <div class="card-header d-flex justify-content-between align-items-center">
