@@ -333,15 +333,9 @@ def guarda_estaciones_onu(dispositivo, **datos):
             DeviceMetricHistory.objects.create(
                 device = estacion_dev,
                 timestamp = timezone.now(),
-                cpu = None,
-                ram = None,
-                temperature = None,
-                ccq = None,
                 power = onu.get('power', 0),
                 signal = onu.get('signal', 0),
                 noise = 0,
-                tx_capacity  = None,
-                rx_capacity = None,
             )
         
 
