@@ -314,8 +314,8 @@ def guarda_estaciones_onu(dispositivo, **datos):
 
         # Se tiene que relacionar las keys de OID con el modelo.
         uData = {
-            'signal': onu.get('signal'),
-            'power': onu.get('power'),
+            'signal': onu.get('signal', 0),
+            'power': onu.get('power', 0),
             'ssid': ssid,
         }
 
@@ -326,6 +326,21 @@ def guarda_estaciones_onu(dispositivo, **datos):
             st, created = DeviceMetrics.objects.update_or_create(
                 device=estacion_dev,
                 defaults=uData,
+            )
+
+            # Guardamos la metricas históricas
+            DeviceMetricHistory.objects.create(
+                device = estacion_dev,
+                timestamp = timezone.now(),
+                cpu = 0,
+                ram = 0,
+                temperature = 0,
+                ccq = 0,
+                power = onu.get('power', 0),
+                signal = onu.get('signal', 0),
+                noise = 0,
+                tx_capacity  = 0,
+                rx_capacity = 0,
             )
         
 
