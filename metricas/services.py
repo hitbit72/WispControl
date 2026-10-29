@@ -220,6 +220,7 @@ def guarda_staciones_wifi(dispositivo, **datos):
                 'uptime': estacion.get('uptime'),
                 'ssid': ssid,
                 'frequency': frequency,
+                'timescan': timezone.now(),
             }
             # Guardamos la metrica estática
             st, created = DeviceMetrics.objects.update_or_create(
