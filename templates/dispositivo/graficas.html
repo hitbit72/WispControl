@@ -323,7 +323,7 @@ document.addEventListener('DOMContentLoaded', () => {
     {% if metrcias_len > 0 %}
     renderSistemaChart();
     {% endif %}
-    {% if dispositivo.tipo.clave in dispositivos_antenas %}
+    {% if dispositivo.tipo.clave in dispositivos_antenas or metrcias_len > 0 %}
     renderRadioChart();
     {% endif %}
     renderLatenciaChart();
