@@ -83,6 +83,14 @@
     <div class="col-auto d-flex gap-1">
       <p class="mb-0"><strong>Latencia: </strong>{{ ping_actual.latency_ms|default:'—' }} ms</p>
     </div>
+    <div class="row g-2 align-items-start mb-1">
+      <div class="col-auto d-flex gap-1">
+        <p class="mb-0"><strong>Señal: </strong>{% include "dispositivo/comun/_signal_tx.html" %}</p> ·
+      </div>
+      <div class="col-auto d-flex gap-1">
+        <p class="mb-0"><strong>Potencia: </strong>{{ metricas.power|default:'0' }} dbm</p>
+      </div>
+    </div>
   </div>
   {% endif %}
   {% if metricas.uptime %}<p class="mb-1"><strong>Funcionando: </strong>{{ metricas.uptime|formatear_uptime }}</p>{% endif %}
