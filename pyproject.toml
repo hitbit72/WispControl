@@ -14,6 +14,7 @@ dependencies = [
     "pythonping>=1.1.4",
     "gunicorn>=26.2.0",
     "tplink-tool==0.2.1",
+    "paramiko==5.1.0"
 ]
 
 [tool.uv]

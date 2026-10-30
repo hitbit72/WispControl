@@ -8,3 +8,4 @@ pyasn1==0.6.0
 mysqlclient==2.2.8
 pythonping>=1.1.4
 tplink-tool==0.2.1
+paramiko==5.1.0

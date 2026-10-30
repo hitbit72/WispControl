@@ -48,7 +48,7 @@
       {% endif %}
     {% else %}
       <a href="{% url 'dispositivos:buscar_dispositivo'  metricas.ssid %}?next={{ request.path }}">{{ metricas.ssid }}</a>
-      (<span>{{ metricas.frequency }} MHz</span>)
+      {% if metricas.frequency %}(<span>{{ metricas.frequency }} MHz</span>){% endif %}
     {% endif %}
   </p>
   {% endif %}

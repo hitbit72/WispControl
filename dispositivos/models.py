@@ -79,6 +79,7 @@ class Dispositivo(models.Model):
         SNMP = 'snmp', 'Conexión SNMP'
         TPL1 = 'tpl1', 'TL-SG108E'
         OLT1 = 'uolt1', 'Ubiquiti OLT 4P'
+        ONU1 = 'onu1', 'Ubiquiti ONU'
         SSH1 = 'ssh1', 'Conexión SSH'
 
     # nombre o SSID es unico
