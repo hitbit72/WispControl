@@ -29,7 +29,7 @@
             <td>{% if dispositivo.cliente.nombre_completo %}
                 <a href="{% url 'clientes:detalle' dispositivo.cliente.pk %}">{{ dispositivo.cliente.nombre_completo }}</a>
                 {% else %}
-                ——
+                {{ dispositivo.nombre }}
                 {% endif %}
             </td>
             <td>{{ dispositivo.tipo.nombre }}</td>

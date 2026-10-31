@@ -224,9 +224,6 @@ class Command(BaseCommand):
 
     def _procesar_onu_ubnt(self, dispositivo, update=True):
         # Recoleccion de datos de la onus UBNT.
-        # modelo LOCO: sysinfo
-        # modelo WIFI: uptime, free -h
-        # Tdoso los modelos: ip addr show
 
         final = False
 
@@ -251,7 +248,7 @@ class Command(BaseCommand):
             sistema = stdout.read().decode('utf-8')
 
             # Puertos: estado, ip
-            stdin, stdout, stderr = client.exec_command('ip addr show')
+            stdin, stdout, stderr = client.exec_command('ip -o addr show')
             puertos = stdout.read().decode('utf-8')
 
             print(f'Result: {sistema}')
