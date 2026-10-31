@@ -35,7 +35,7 @@ import paramiko
 
 from dispositivos.models import Dispositivo, dispositivos_ap
 
-from metricas import snmp_client
+from metricas import snmp_client, ssh_client
 from metricas.models import DeviceMetrics, DeviceMetricHistory, OIDmetric
 from metricas.oids import oids_dispositivo
 from metricas import services
@@ -222,44 +222,28 @@ class Command(BaseCommand):
         return final
 
 
+    
     def _procesar_onu_ubnt(self, dispositivo, update=True):
         # Recoleccion de datos de la onus UBNT.
+        # Estas onus no tienen SNMP, accedmos a ellas mediante ssh
 
-        final = False
+        procesado = False
+        datos = {}
+        procesado, datos = ssh_client.procesar_sistema(dispositivo)
+        
+        if procesado:
+            if update:
+                datos['timescan'] = timezone.now()
+                if self.zonas['general']:
+                    # Guarda metrica general e hisotrico
+                    services.guardar_metrica(dispositivo, True, **datos)
+                if self.zonas['puertos']:
+                    services.guardar_puertos(dispositivo, **datos)
 
-        # 1. Crear el cliente SSH
-        client = paramiko.SSHClient()
+        return procesado
 
-        # Opcional: Aceptar automáticamente la clave del servidor (host key)
-        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
-        try:
-            # Connect to the remote server
-            client.connect(
-                hostname=dispositivo.ip_gestion,
-                port=22,
-                username='ubnt',
-                password=dispositivo.password,
-                # Alternatively, use key_filename='/path/to/id_rsa'
-            )
 
-            # Sistems: mem, cpu load
-            stdin, stdout, stderr = client.exec_command('uptime')
-            sistema = stdout.read().decode('utf-8')
-
-            # Puertos: estado, ip
-            stdin, stdout, stderr = client.exec_command('ip -o addr show')
-            puertos = stdout.read().decode('utf-8')
-
-            print(f'Result: {sistema}')
-            print('*'*20)
-            print(f'Result: {puertos}')
-
-            final = True
-        finally:
-            client.close()
-
-        return final
 
     def _procesar(self, dispositivo, uptade=True):
 
