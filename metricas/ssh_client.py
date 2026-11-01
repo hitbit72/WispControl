@@ -9,6 +9,7 @@ def procesar_sistema(dispositivo):
     final = False
     datos = {}
     datos['status'] = "error"
+    conectado = False
 
     # conexion cliente SSH
     client = paramiko.SSHClient()
@@ -26,7 +27,19 @@ def procesar_sistema(dispositivo):
             banner_timeout=10,  # Tiempo máximo para esperar el banner SSH del equipo
             # Alternatively, use key_filename='/path/to/id_rsa'
         )
+        conectado = True
 
+    except Exception as e:
+        print(f"SSH Error al conectar a {dispositivo.ip_gestion}: {e}")
+        datos['status'] = "error"
+        return final, datos
+
+    
+    if not conectado:
+        return final, datos
+
+    # Consulta de datos
+    try:
         # Sistems: mem, cpu load
         #stdin, stdout, stderr = client.exec_command('top -b -n 1')
         stdin, stdout, stderr = client.exec_command("top -b -n 1 | sed '3q'", timeout=timewait)
@@ -47,9 +60,11 @@ def procesar_sistema(dispositivo):
 
         final = True
         datos['status'] = "ok"
+
     except Exception as e:
-        print(f"SSH Error al conectar o ejecutar comandos en {dispositivo.ip_gestion}: {e}")
+        print(f"SSH Error ejecutar comandos en {dispositivo.ip_gestion}: {e}")
         datos['status'] = "error"
+
     finally:
         client.close()
 
