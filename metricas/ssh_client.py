@@ -37,6 +37,7 @@ def procesar_sistema(dispositivo):
         # Puertos: nombre, mac, estado, ip
         #stdin, stdout, stderr = client.exec_command('ip -o addr show')
         #stdin, stdout, stderr = client.exec_command('ip addr show')
+        #stdin, stdout, stderr = client.exec_command('ip -s link')
 
         stdin, stdout, stderr = client.exec_command('/sbin/ifconfig -a', timeout=timewaith)
         p1 = stdout.read().decode('utf-8')
