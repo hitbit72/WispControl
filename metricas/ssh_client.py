@@ -33,9 +33,12 @@ def procesar_sistema(dispositivo):
     
         # Puertos: nombre, mac, estado, ip
         #stdin, stdout, stderr = client.exec_command('ip -o addr show')
+        #stdin, stdout, stderr = client.exec_command('/sbin/ifconfig')
         stdin, stdout, stderr = client.exec_command('ip addr show')
         p1 = stdout.read().decode('utf-8')
-        
+        P1_stdin = stdin
+        P1_stderr = stderr
+
         final = True
         datos['status'] = "ok"
     finally:
@@ -88,7 +91,7 @@ def sistema(p1, p2):
 
 def puertos(p1):
     # busca dstos de los puertos del comando ip addr show
-    
+
     interfaces_info = []
     linea = 1
 
@@ -142,64 +145,47 @@ def puertos(p1):
 
 
 
-def puertos1(p1):
-    # Busca datos de los puertos de ifconfig
+def puerto_ifconfig(p1):
+
     interfaces_info = []
-    
-    iface_name = ''
-    mac = ''
-    ip = ''
-    state = ''
 
-    linea=1
-    next_linea=0
+    # Separar por dos o más saltos de línea (bloques individuales)
+    # Usamos strip() para limpiar posibles saltos de línea vacíos al inicio o final
+    interfaces = [bloque.strip() for bloque in re.split(r'\n\s*\n', p1.strip())]
 
-    for line in p1.splitlines():
-        parts = line.split()
-        if len(parts) < 1:
-            continue
+    # Mostrar el resultado estructurado en una lista como pedías
+    for i, interfaz in enumerate(interfaces):
+        match_header = re.search(r'^([A-Za-z0-9.]+)\s+Link', interfaz)
+        iface_name = match_header.group(1) if match_header else ''
 
-        if len(parts)>3:
-            if parts[3].lower() == 'hwaddr':
-                iface_name = parts[0]
-                mac = parts[4]
-                next_linea = linea+1
-            elif parts[3].lower() == 'protocol':
-                iface_name = parts[0]
-                mac = ''
-                next_linea = linea+1
+        match_mac = re.search(r'HWaddr\s+([0-9a-fA-F:]+)', interfaz)
+        mac = match_mac.group(1) if match_mac else ''
 
-        if linea == next_linea:
-            if parts[0] == 'inet':
-                ip = parts[1].split(':')[1]
-                next_linea = linea+1
-            elif parts[0] == 'inet6':
-                next_linea = linea+1
-            else:
-                state = parts[0].lower()
-                next_linea = 0
+        match_ip = re.search(r'inet addr:([0-9.]+)\s+', interfaz)
+        ip = match_ip.group(1) if match_ip else ''
 
-        if linea == next_linea:
-            state = parts[0].lower()
-            next_linea = 0
+        match_state = re.search(r'([A-Z]+)\s([A-Z]+)\sRUNNING\s+', interfaz)
+        state = match_state.group(1) if match_state else 'down'
+        state = state.lower()
 
-        if next_linea == 0:
-            # Guardar los datos estructurados
-            if iface_name != '':
-                if not any(exclude.lower() in iface_name.lower() for exclude in EXCLUDE_PORT):
-                    interfaces_info.append(
-                        {
-                            'nombre': iface_name,
-                            'estado': state,
-                            'mac': mac,
-                            'ip': ip,
-                        }
-                    )
-            iface_name = ''
-            mac = ''
-            ip = ''
-            state = ''
+        match_rx = re.search(r'RX bytes:([0-9]+)\s+', interfaz)
+        rx_bytes = match_rx.group(1) if match_rx else ''
 
-        linea +=1
+        match_tx = re.search(r'TX bytes:([0-9]+)\s+', interfaz)
+        tx_bytes = match_tx.group(1) if match_tx else ''
+
+        # Guardar los datos estructurados
+        if iface_name != '':
+            if not any(exclude.lower() in iface_name.lower() for exclude in EXCLUDE_PORT):
+                interfaces_info.append(
+                    {
+                        'nombre': iface_name,
+                        'estado': state,
+                        'mac': mac,
+                        'ip': ip,
+                        'rx': rx_bytes,
+                        'tx': tx_bytes
+                    }
+                )
 
     return interfaces_info
