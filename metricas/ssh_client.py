@@ -22,6 +22,8 @@ def procesar_sistema(dispositivo):
             port=22,
             username='ubnt',
             password=dispositivo.password,
+            timeout=5,  # Tiempo máximo para la conexión TCP
+            banner_timeout=10,  # Tiempo máximo para esperar el banner SSH del equipo
             # Alternatively, use key_filename='/path/to/id_rsa'
         )
 
