@@ -5,7 +5,7 @@ import re
 EXCLUDE_PORT = ('veip','sit','nas','apcli','ip6tnl','gpondef','bcmsw','pon','wifi0','wifi1','lo','ubond','lag','teql','gre','rif','tunl','ppp1','ppp2','ppp3','ppp4','ppp5','ppp6','ppp7')
 
 def procesar_sistema(dispositivo):
-    timewaith = 2
+    timewaith = 3
     final = False
     datos = {}
     datos['status'] = "error"
@@ -45,11 +45,15 @@ def procesar_sistema(dispositivo):
 
         final = True
         datos['status'] = "ok"
+    except Exception as e:
+        print(f"SSH Error al conectar o ejecutar comandos en {dispositivo.ip_gestion}: {e}")
+        datos['status'] = "error"
     finally:
         client.close()
 
-    datos = sistema(data1, data2)
-    datos['puertos'] = puerto_ifconfig(p1)
+    if final:
+        datos = sistema(data1, data2)
+        datos['puertos'] = puerto_ifconfig(p1)
     return final, datos
 
 
