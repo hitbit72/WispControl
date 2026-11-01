@@ -5,7 +5,7 @@ import re
 EXCLUDE_PORT = ('veip','sit','nas','apcli','ip6tnl','gpondef','bcmsw','pon','wifi0','wifi1','lo','ubond','lag','teql','gre','rif','tunl','ppp1','ppp2','ppp3','ppp4','ppp5','ppp6','ppp7')
 
 def procesar_sistema(dispositivo):
-    timewaith = 3
+    timewait = 3
     final = False
     datos = {}
     datos['status'] = "error"
@@ -27,10 +27,10 @@ def procesar_sistema(dispositivo):
 
         # Sistems: mem, cpu load
         #stdin, stdout, stderr = client.exec_command('top -b -n 1')
-        stdin, stdout, stderr = client.exec_command("top -b -n 1 | sed '3q'", timeout=timewaith)
+        stdin, stdout, stderr = client.exec_command("top -b -n 1 | sed '3q'", timeout=timewait)
         data1 = stdout.read().decode('utf-8')
         salida_stderr = stderr.read().decode('utf-8')
-        stdin, stdout, stderr = client.exec_command('cat /proc/uptime', timeout=timewaith)
+        stdin, stdout, stderr = client.exec_command('cat /proc/uptime', timeout=timewait)
         data2 = stdout.read().decode('utf-8')
         salida_stderr = stderr.read().decode('utf-8')
 
@@ -39,7 +39,7 @@ def procesar_sistema(dispositivo):
         #stdin, stdout, stderr = client.exec_command('ip addr show')
         #stdin, stdout, stderr = client.exec_command('ip -s link')
 
-        stdin, stdout, stderr = client.exec_command('/sbin/ifconfig -a', timeout=timewaith)
+        stdin, stdout, stderr = client.exec_command('/sbin/ifconfig -a', timeout=timewait)
         p1 = stdout.read().decode('utf-8')
         salida_stderr = stderr.read().decode('utf-8')
 
