@@ -104,6 +104,8 @@ def guardar_puertos(dispositivo, **datos):
                 estado=puerto.get("estado", "down"),
                 velocidad_mbps=puerto.get("speed", 0),
                 tipo=puerto["tipo"],
+                ip_address=puerto.get("ip_address", ''),
+                mac_address=puerto.get("mac_address", ''),
                 descripcion=puerto["descripcion"]
             )
 

@@ -136,8 +136,8 @@ def puertos(p1):
                             {
                                 'nombre': iface_name,
                                 'estado': state,
-                                'mac': mac,
-                                'ip': ip,
+                                'mac_address': mac,
+                                'ip_address': ip,
                                 'rx_counter': 0,
                                 'tx_counter': 0
                             }
@@ -184,8 +184,8 @@ def puerto_ifconfig(p1):
                     {
                         'nombre': iface_name,
                         'estado': state,
-                        'mac': mac,
-                        'ip': ip,
+                        'mac_address': mac,
+                        'ip_address': ip,
                         'rx_counter': rx_bytes,
                         'tx_counter': tx_bytes
                     }
