@@ -213,11 +213,24 @@ class Command(BaseCommand):
 
         resultado['puertos'] = puertos
         resultado['timescan'] = timezone.now()
+
+        # recuperar el estado anterio para evalua la alerta/alarma
+        metrica_anterior = (
+        DeviceMetrics.objects.filter(device=dispositivo)
+            .order_by('-pk').first()
+        )
+        
         if update:
             # Guarda metrica general e hisotrico
-            services.guardar_metrica(dispositivo, False, **resultado)
+            metrica, historico = services.guardar_metrica(dispositivo, False, **resultado)
             if puertos:
                 services.guardar_puertos(dispositivo, **resultado)
+
+        # evalua la alerta/alarma
+        if self.zonas['general']:
+            if metrica and historico:
+                services.evaluar_y_aplicar(dispositivo, metrica, metrica_anterior, None, None)
+
 
         return final
 
@@ -232,13 +245,24 @@ class Command(BaseCommand):
         procesado, datos = ssh_client.procesar_sistema(dispositivo)
         
         if procesado:
+            # recuperar el estado anterio para evalua la alerta/alarma
+            metrica_anterior = (
+            DeviceMetrics.objects.filter(device=dispositivo)
+                .order_by('-pk').first()
+            )
+
             if update:
                 datos['timescan'] = timezone.now()
                 if self.zonas['general']:
                     # Guarda metrica general e hisotrico
-                    services.guardar_metrica(dispositivo, True, **datos)
+                    metrica, historico = services.guardar_metrica(dispositivo, False, **datos)
                 if self.zonas['puertos']:
                     services.guardar_puertos(dispositivo, **datos)
+
+        # evalua la alerta/alarma
+        if self.zonas['general']:
+            if metrica and historico:
+                services.evaluar_y_aplicar(dispositivo, metrica, metrica_anterior, None, None)
 
         return procesado
 

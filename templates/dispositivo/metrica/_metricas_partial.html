@@ -15,7 +15,7 @@
         {% else %}text-success{% endif %}"> {{ metricas.ram|default:'0' }}%</strong>
       </div>
     </div>
-    {% if dispositivo.escanear %}
+    {% if not dispositivo.escanear %}
     <div class="d-flex gap-2">
       <form>
       {% csrf_token %}

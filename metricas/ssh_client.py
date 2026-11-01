@@ -33,8 +33,9 @@ def procesar_sistema(dispositivo):
     
         # Puertos: nombre, mac, estado, ip
         #stdin, stdout, stderr = client.exec_command('ip -o addr show')
-        #stdin, stdout, stderr = client.exec_command('/sbin/ifconfig')
-        stdin, stdout, stderr = client.exec_command('ip addr show')
+        #stdin, stdout, stderr = client.exec_command('ip addr show')
+
+        stdin, stdout, stderr = client.exec_command('/sbin/ifconfig -a')
         p1 = stdout.read().decode('utf-8')
         P1_stdin = stdin
         P1_stderr = stderr
@@ -45,7 +46,7 @@ def procesar_sistema(dispositivo):
         client.close()
 
     datos = sistema(data1, data2)
-    datos['puertos'] = puertos(p1)
+    datos['puertos'] = puerto_ifconfig(p1)
     return final, datos
 
 
@@ -81,7 +82,7 @@ def sistema(p1, p2):
 
     # Uptime
     if p2:
-        upt = p2.split()[0]
+        upt = int(float(p2.split()[0]))
 
     datos['ram'] = round((1 - mem_free / mem_total) * 100, 2)
     datos['cpu'] = cpu
@@ -137,6 +138,8 @@ def puertos(p1):
                                 'estado': state,
                                 'mac': mac,
                                 'ip': ip,
+                                'rx_counter': 0,
+                                'tx_counter': 0
                             }
                         )
 
@@ -183,8 +186,8 @@ def puerto_ifconfig(p1):
                         'estado': state,
                         'mac': mac,
                         'ip': ip,
-                        'rx': rx_bytes,
-                        'tx': tx_bytes
+                        'rx_counter': rx_bytes,
+                        'tx_counter': tx_bytes
                     }
                 )
 

@@ -24,7 +24,10 @@ def guardar_metrica(dispositivo,  guardar_historico=True, **datos):
         Se actualiza siempre el mismo registro, ya que se refiere siempre al
         mismo dispositivo y no necesitamos datos a lo largo del tiempo.
         Usamos timescan solo para saber cuando se actualizó.
+
+        DeviceMetricHistory: Actualiza el histórico de métricas.
     """
+
     metricas = DeviceMetrics.objects.update_or_create(
         device=dispositivo,
         defaults=datos
@@ -110,7 +113,7 @@ def guardar_puertos(dispositivo, **datos):
                 interfaz.estado = puerto["estado"]
                 interfaz.save(update_fields=['estado'])
 
-            # guardamos las metrcias históricas solo de dispositivos MAIN y MKT
+            # guardamos las metrcias históricas solo de dispositivos MAIN y MKT, 
             if dispositivo.rol != Dispositivo.Rol.STATION:
                 if interfaz.mostrar and puerto["estado"] == 'up':
                     InterfaceMetricHistory.objects.create(
@@ -120,9 +123,21 @@ def guardar_puertos(dispositivo, **datos):
                         tx = puerto.get("tx_counter", 0),
                     )
 
+            # Metricas de los dispositivos ONU
+            # Se actualiza a partir de la conexion con la ONU mediante SSH, ya que no tiene SNMP.
+            if dispositivo.modo_metrica == Dispositivo.Modulo_Scan.ONU1:
+                if any(puerto in interfaz.nombre for puerto in ['ppp0','ppp0.1','gpon0']):
+                    if interfaz.mostrar and puerto["estado"] == 'up':
+                        InterfaceMetricHistory.objects.create(
+                            interfaz = interfaz,
+                            timestamp = timezone.now(),
+                            rx = puerto.get("rx_counter", 0),
+                            tx = puerto.get("tx_counter", 0),
+                        )
 
 
-    # Puertos especiales de la olt ubiquiti
+
+    # Puertos especiales de la OLT ubiquiti
     if datos.get("puertos_pon"):
         puertos = datos.get("puertos", [])
         for puerto in puertos:
