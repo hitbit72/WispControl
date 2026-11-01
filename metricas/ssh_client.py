@@ -26,19 +26,20 @@ def procesar_sistema(dispositivo):
 
         # Sistems: mem, cpu load
         #stdin, stdout, stderr = client.exec_command('top -b -n 1')
-        stdin, stdout, stderr = client.exec_command("top -b -n 1 | sed '3q'")
+        stdin, stdout, stderr = client.exec_command("top -b -n 1 | sed '3q'", timeout=2)
         data1 = stdout.read().decode('utf-8')
-        stdin, stdout, stderr = client.exec_command('cat /proc/uptime')
+        salida_stderr = stderr.read().decode('utf-8')
+        stdin, stdout, stderr = client.exec_command('cat /proc/uptime', timeout=2)
         data2 = stdout.read().decode('utf-8')
-    
+        salida_stderr = stderr.read().decode('utf-8')
+
         # Puertos: nombre, mac, estado, ip
         #stdin, stdout, stderr = client.exec_command('ip -o addr show')
         #stdin, stdout, stderr = client.exec_command('ip addr show')
 
-        stdin, stdout, stderr = client.exec_command('/sbin/ifconfig -a')
+        stdin, stdout, stderr = client.exec_command('/sbin/ifconfig -a', timeout=2)
         p1 = stdout.read().decode('utf-8')
-        P1_stdin = stdin
-        P1_stderr = stderr
+        salida_stderr = stderr.read().decode('utf-8')
 
         final = True
         datos['status'] = "ok"
