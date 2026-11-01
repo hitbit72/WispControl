@@ -54,19 +54,20 @@ def evaluar(dispositivo, metrica, metrica_anterior, historico, historico_anterio
         texto = f'{dispositivo.nombre} no responde a SNMP ({metrica.get_status_display()}).'
         return [{'regla': 'sin_respuesta_snmp', 'titulo': f'Sin respuesta SNMP {dispositivo.ip_gestion}', 'texto': texto}]
 
-    if historico.cpu is not None and historico.cpu > config['cpu_max']:
-        #print(f'CPU alta {dispositivo.ip_gestion}')
-        reglas.append({'regla': 'cpu_alta', 'titulo': f'CPU alta {historico.cpu:.0f}% · {dispositivo.ip_gestion}',
-                       'texto': f'{dispositivo.nombre}. La CPU del dispositivo esta al {historico.cpu:.0f}% (máx. {config["cpu_max"]:.0f}%).'})
+    if historico:
+        if historico.cpu is not None and historico.cpu > config['cpu_max']:
+            #print(f'CPU alta {dispositivo.ip_gestion}')
+            reglas.append({'regla': 'cpu_alta', 'titulo': f'CPU alta {historico.cpu:.0f}% · {dispositivo.ip_gestion}',
+                        'texto': f'{dispositivo.nombre}. La CPU del dispositivo esta al {historico.cpu:.0f}% (máx. {config["cpu_max"]:.0f}%).'})
 
-    if historico.ram is not None and historico.ram > config['ram_max']:
-        #print(f'RAM alta {dispositivo.ip_gestion}')
-        reglas.append({'regla': 'ram_alta', 'titulo': f'RAM alta {historico.ram:.0f}% · {dispositivo.ip_gestion}',
-                       'texto': f'{dispositivo.nombre}. La RAM del dispositivo esta al {historico.ram:.0f}% (máx. {config["ram_max"]:.0f}%).'})
-        
-    if historico.temperature is not None and historico.temperature > config['temp_max']:
-        reglas.append({'regla': 'temp_alta', 'titulo': f'Temperatura alta {historico.temperature:.0f} °C · {dispositivo.ip_gestion}',
-                       'texto': f'{dispositivo.nombre}. La Temperatura del dispositivos es alta {historico.temperature:.0f} °C (máx. {config["temp_max"]:.0f} °C).'})
+        if historico.ram is not None and historico.ram > config['ram_max']:
+            #print(f'RAM alta {dispositivo.ip_gestion}')
+            reglas.append({'regla': 'ram_alta', 'titulo': f'RAM alta {historico.ram:.0f}% · {dispositivo.ip_gestion}',
+                        'texto': f'{dispositivo.nombre}. La RAM del dispositivo esta al {historico.ram:.0f}% (máx. {config["ram_max"]:.0f}%).'})
+            
+        if historico.temperature is not None and historico.temperature > config['temp_max']:
+            reglas.append({'regla': 'temp_alta', 'titulo': f'Temperatura alta {historico.temperature:.0f} °C · {dispositivo.ip_gestion}',
+                        'texto': f'{dispositivo.nombre}. La Temperatura del dispositivos es alta {historico.temperature:.0f} °C (máx. {config["temp_max"]:.0f} °C).'})
 
     """
     if dispositivo.alarma_puerto:
