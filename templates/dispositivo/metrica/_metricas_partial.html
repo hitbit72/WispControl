@@ -35,7 +35,7 @@
     {% endif %}
   </div>
 
-  {% if metricas.temperature %}<p class="mb-1"><strong>Temperatura: </strong>{{ metricas.temperature }}º</p>{% endif %}
+  {% if metricas.temperature %}<p class="mb-1"><strong>Temperatura: </strong>{{ metricas.temperature|floatformat:"2" }}º</p>{% endif %}
   {% if metricas.antena %}<p class="mb-1"><strong>Antena: </strong>{{ metricas.antena }}</p>{% endif %}
   
   {% if metricas.ssid %}
