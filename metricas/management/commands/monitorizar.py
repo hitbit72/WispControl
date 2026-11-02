@@ -183,11 +183,11 @@ class Command(BaseCommand):
             self.zonas = {zona: (zona in t_zona) for zona in self.zonas}
 
 
-    # datos de los switch TP-Link sg108e
+    # datos de los switch TP-Link sg108e, gestión via WEB
     def _procesar_tpl1(self, dispositivo, update_historic=True):
         resultado = {}
         puertos = []
-        resultado['status'] = "error"
+        resultado['status'] = DeviceMetrics.Status.ERROR
         final = False
 
         try:
@@ -214,7 +214,7 @@ class Command(BaseCommand):
                         'rx_counter': 0,
                         'tx_counter': 0
                         })
-                resultado['status'] = "ok"
+                resultado['status'] = DeviceMetrics.Status.OK
                 final = True
         except Exception as e:
             self.stdout.write(
