@@ -273,6 +273,9 @@ class Command(BaseCommand):
                 if metrica and metrica_anterior:
                     services.evaluar_y_aplicar(dispositivo, metrica, metrica_anterior, None, None)
 
+        return procesado
+
+
 
     def _procesar_onu_ubnt(self, dispositivo, update_historic=True):
         # Recoleccion de datos de la onus UBNT.
