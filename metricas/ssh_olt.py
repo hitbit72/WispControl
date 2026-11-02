@@ -1,6 +1,8 @@
 import paramiko
 import re, json
 
+from mikrotik import client
+
 def procesar_sistema(dispositivo):
     final = False
     datos = {}
@@ -47,7 +49,7 @@ def procesar_sistema(dispositivo):
         salida_stderr = stderr.read().decode('utf-8')
 
         # Temepratura CPU
-        stdin, stdout, stderr = client.exec_command('cat /sys/class/hwmon/hwmon1/device/temp1_input')
+        stdin, stdout, stderr = client.exec_command('cat /sys/class/hwmon/hwmon1/device/temp1_input; cat /sys/class/hwmon/hwmon1/device/temp2_input; cat /sys/class/hwmon/hwmon1/device/temp3_input')
         data3 = stdout.read().decode('utf-8')
         salida_stderr = stderr.read().decode('utf-8')
 
@@ -80,8 +82,8 @@ def procesar_sistema(dispositivo):
     return final, datos
 
 
-
-def sistema(p1, p2, p3):
+# Procesa los datos SSH de la OLT 4P de ubiquiti
+def sistema(sistema, uptime, cpuTemp):
     datos = {}
     linea=1
     mem_total = 1
@@ -90,10 +92,10 @@ def sistema(p1, p2, p3):
     cpu = 0
     upt = 0
 
-    # Procesar la salida línea por línea de top: mem, cpu, load average
+    # Procesar la salida línea por línea: mem, cpu, load average
     linea = 1
-    if p1:
-        for line in p1.splitlines():
+    if sistema:
+        for line in sistema.splitlines():
             print(line)
             print('-'*20)
             if linea == 1:
@@ -108,12 +110,19 @@ def sistema(p1, p2, p3):
             linea += 1
 
     # Uptime
-    if p2:
-        upt = int(float(p2.split()[0]))
+    if uptime:
+        upt = int(float(uptime.split()[0]))
 
     # CPU Temp
-    if p3:
-        cpu_temp = float(p3) / 100.0
+    if cpuTemp:
+        t1 = 0
+        linea = 0
+        for line in cpuTemp.splitlines():
+            t1 += (float(line) /1000)
+            linea += 1
+
+        t1 = t1 / linea
+        cpu_temp = t1
 
     datos['ram'] = round((mem_used / mem_total) * 100, 2)
     datos['cpu'] = float(cpu)
