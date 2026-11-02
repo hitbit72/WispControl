@@ -1,10 +1,6 @@
 import paramiko
 import re, json
 
-# Nombre de puertos que no se guardarán en la base de datos
-EXCLUDE_PORT = ('veip','sit','nas','apcli','ip6tnl','gpondef','bcmsw','pon','wifi0','wifi1','lo','ubond','lag','teql','gre','rif','tunl','ppp1','ppp2','ppp3','ppp4','ppp5','ppp6','ppp7')
-
-
 def procesar_sistema(dispositivo):
     final = False
     datos = {}
@@ -50,14 +46,19 @@ def procesar_sistema(dispositivo):
         data2 = stdout.read().decode('utf-8')
         salida_stderr = stderr.read().decode('utf-8')
 
+        # Temepratura CPU
+        stdin, stdout, stderr = client.exec_command('cat /sys/class/hwmon/hwmon1/device/temp1_input')
+        data3 = stdout.read().decode('utf-8')
+        salida_stderr = stderr.read().decode('utf-8')
+
         # Puertos PON
         stdin, stdout, stderr = client.exec_command('sudo olt_ifctl get-gpon-port-stat')
-        data3 = stdout.read().decode('utf-8')
+        data4 = stdout.read().decode('utf-8')
         salida_stderr = stderr.read().decode('utf-8')
 
         # ONUS LIST STATUS
         stdin, stdout, stderr = client.exec_command('sudo olt_ifctl onu-list')
-        data4 = stdout.read().decode('utf-8')
+        data5 = stdout.read().decode('utf-8')
         salida_stderr = stderr.read().decode('utf-8')
 
         final = True
@@ -72,14 +73,15 @@ def procesar_sistema(dispositivo):
         client.close()
 
     if final:
-        datos = sistema(data1, data2)
-        datos['puertos'] = gpon_port(data3)
+        datos = sistema(data1, data2, data3)
+        datos['puertos'] = gpon_port(data4)
+        datos['onus'] = onu_list(data5)
 
     return final, datos
 
 
 
-def sistema(p1, p2):
+def sistema(p1, p2, p3):
     datos = {}
     linea=1
     mem_total = 1
@@ -109,9 +111,14 @@ def sistema(p1, p2):
     if p2:
         upt = int(float(p2.split()[0]))
 
+    # CPU Temp
+    if p3:
+        cpu_temp = float(p3) / 100.0
+
     datos['ram'] = round((mem_used / mem_total) * 100, 2)
     datos['cpu'] = float(cpu)
     datos['uptime'] = upt
+    datos['temperature'] = cpu_temp
 
     return datos
 
@@ -150,3 +157,75 @@ def gpon_port(p1):
         )
 
     return gpon_info
+
+
+def onu_list(p1):
+    onu_info = []
+    data = json.loads(p1)
+    onus_status = data.get("GET_ONU_LIST", [])
+
+    for onu in onus_status:
+        port_info = []
+
+        # Crea la lista de Puertos de la ONU
+        puertos = onu.get("ports", [])
+        nPort = 1
+        for puerto in puertos:
+            # Extraer información de cada puerto
+            port_state = puerto.get("plugged", "down")
+            if port_state == True:
+                port_state = "up"
+            else:
+                port_state = "down"
+            speed = puerto.get("speed", "auto")
+            if speed != "auto":
+                speed = speed.split("-")[0]
+
+            port_info.append(
+                {
+                    'nombre': f'eth{puerto.get("id", {nPort})}',
+                    'estado': port_state,
+                    'speed': speed,
+                }
+            )
+            nPort += 1
+
+        # Extraer stadisticas puerto PON
+        portsStat = onu.get("statistics", {})
+        rxBytes = portsStat.get("rxBytes", 0)
+        txBytes = portsStat.get("txBytes", 0)
+
+        # Sistema
+        sysStat = onu.get("system", {})
+        cpu = sysStat.get("cpu", 0)
+        mem = sysStat.get("mem", 0)
+        uptime = sysStat.get("uptime", 0)
+        temperature = sysStat.get("temperature", {})
+        cpuTemp = temperature.get("cpu", 0)
+
+        # IP de puerto PON
+        wanStat = onu.get("router", {})
+        wanIP = wanStat.get("wanAddress", "")
+        if wanIP != "":
+            wanIP = wanIP.split("/")[0]
+
+        onu_info.append(
+            {
+                'serial': onu.get("serial", ""),
+                'signal': onu.get("rxPower", ""),
+                'power': onu.get("txPower", ""),
+                'pon': onu.get("oltPort", ""),
+                'distance': onu.get("distance", ""),
+                'connected': onu.get("connected", ""),
+                'uptime': uptime,
+                'cpu': cpu,
+                'mem': mem,
+                'cpu_temp': cpuTemp,
+                'ip': wanIP,
+                'rx_counter': rxBytes,
+                'tx_counter': txBytes,
+                'puertos': port_info
+            }
+        )
+
+    return onu_info

@@ -35,7 +35,7 @@ import paramiko
 
 from dispositivos.models import Dispositivo, dispositivos_ap
 
-from metricas import snmp_client, ssh_client
+from metricas import snmp_client, ssh_client, ssh_olt
 from metricas.models import DeviceMetrics, DeviceMetricHistory, OIDmetric
 from metricas.oids import oids_dispositivo
 from metricas import services
@@ -153,6 +153,11 @@ class Command(BaseCommand):
                     ok += 1
                 else:
                     errores += 1
+            elif dispositivo.modo_metrica == Dispositivo.Modulo_Scan.OLT1:
+                if self._procesar_olt_ubnt(dispositivo, True):
+                    ok += 1
+                else:
+                    errores += 1
             elif dispositivo.modo_metrica == Dispositivo.Modulo_Scan.ONU1:
                 if self._procesar_onu_ubnt(dispositivo, True):
                     ok += 1
@@ -235,7 +240,28 @@ class Command(BaseCommand):
         return final
 
 
-    
+    def _procesar_olt_ubnt(self, dispositivo, update=True):
+        # Recoleccion de datos de la OLT UBNT.
+        # Tiene pocos datos SNMP, accedmos a ellas mediante ssh
+        procesado = False
+        datos = {}
+        procesado, datos = ssh_olt.procesar_sistema(dispositivo)
+        if procesado:
+            if update:
+                # recuperar el estado anterio para evalua la alerta/alarma
+                metrica_anterior = (
+                DeviceMetrics.objects.filter(device=dispositivo)
+                    .order_by('-pk').first()
+                )
+                datos['timescan'] = timezone.now()
+                if self.zonas['general']:
+                    # Guarda metrica general e hisotrico
+                    metrica, historico = services.guardar_metrica(dispositivo, False, **datos)
+                if self.zonas['puertos']:
+                    services.guardar_puertos(dispositivo, **datos)
+
+
+
     def _procesar_onu_ubnt(self, dispositivo, update=True):
         # Recoleccion de datos de la onus UBNT.
         # Estas onus no tienen SNMP, accedmos a ellas mediante ssh
