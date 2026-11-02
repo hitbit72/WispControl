@@ -107,8 +107,8 @@ def sistema(sistema, uptime, cpuTemp, host_name):
     linea = 1
     if sistema:
         for line in sistema.splitlines():
-            print(line)
-            print('-'*20)
+            #print(line)
+            #print('-'*20)
             if linea == 1:
                 match_cpu = re.search(r'load average:\s+([0-9.]+),\s+([0-9.]+),\s+([0-9.]+)', line)
                 cpu = match_cpu.group(2) if match_cpu else 0
@@ -141,6 +141,7 @@ def sistema(sistema, uptime, cpuTemp, host_name):
     datos['sys_name'] = host_name.strip()
     datos['temperature'] = cpu_temp
 
+    #print(datos)
     return datos
 
 
@@ -148,14 +149,14 @@ def gpon_port(p1):
     gpon_info = []
     data = json.loads(p1)
     ports_status = data.get("GET_PORT_STATUS", {})
-
+    
     # Iterar sobre cada puerto (clave y valor)
     for nombre_puerto, info in ports_status.items():
-        
-        current_speed = info.get("currentSpeed", "")
+
+        current_speed = info.get("currentSpeed", 0)
         if current_speed == "auto":
-            current_speed = ""
-        if current_speed != "":
+            current_speed = 0
+        if current_speed != 0:
             current_speed = current_speed.split("-")[0]
 
         current_state = info.get("plugged", False)
@@ -177,11 +178,12 @@ def gpon_port(p1):
         if any(optic in nombre_puerto for optic in OPTIC_PORTS):
             tipo_puerto = "Óptico"
 
+        #print(f"velocidad speed: {current_speed}")
         gpon_info.append(
             {
                 'nombre': nombre_puerto,
                 'estado': current_state,
-                'speed': current_speed,
+                'speed': int(current_speed),
                 'tipo': tipo_puerto,
                 'rx_counter': rx_bytes,
                 'tx_counter': tx_bytes
@@ -210,7 +212,9 @@ def onu_list(p1):
             else:
                 port_state = "down"
             speed = puerto.get("speed", "auto")
-            if speed != "auto":
+            if speed == "auto":
+                speed = 0
+            else:
                 speed = speed.split("-")[0]
 
             port_info.append(
@@ -233,7 +237,7 @@ def onu_list(p1):
         mem = sysStat.get("mem", 0)
         uptime = sysStat.get("uptime", 0)
         temperature = sysStat.get("temperature", {})
-        cpuTemp = temperature.get("cpu", 0)
+        cpuTemp = float(temperature.get("cpu", 0))
 
         # IP de puerto PON
         wanStat = onu.get("router", {})
@@ -245,10 +249,10 @@ def onu_list(p1):
             {
                 'serial': onu.get("serial", ""),
                 'version': onu.get("firmwareVersion", ""),
-                'signal': onu.get("rxPower", ""),
-                'power': onu.get("txPower", ""),
-                'pon': onu.get("oltPort", ""),
-                'distancia': onu.get("distance", ""),
+                'signal': float(onu.get("rxPower", 0)),
+                'power': float(onu.get("txPower", 0)),
+                'pon': int(onu.get("oltPort", 0)),
+                'distancia': int(onu.get("distance", 0)),
                 'connected': onu.get("connected", ""),
                 'uptime': uptime,
                 'cpu': cpu,

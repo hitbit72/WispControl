@@ -14,7 +14,7 @@
     {% for onu in metricas.onus %}
     <tr>
         <td style="width: 25px;">{{ onu.pon }}</td>
-        {% find_onu onu.serial onu.name request.path %}
+        {% find_onu onu.serial onu.ip request.path %}
         <td>{{ onu.model }}</td>
         <td><span class="badge 
         {% if onu.signal <= -20 %}bg-danger

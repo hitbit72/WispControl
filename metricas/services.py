@@ -86,6 +86,8 @@ def guardar_puertos(dispositivo, guardar_historico=True, **datos):
             puerto['tipo'] = Interfaz.Tipo.WIRELESS
         elif any(exclude.lower() in puerto['nombre'].lower() for exclude in ('ppp',)):
             puerto['tipo'] =  Interfaz.Tipo.PPPOE
+        elif any(exclude.lower() in puerto['nombre'].lower() for exclude in ('pon', 'sfp')):
+            puerto['tipo'] = Interfaz.Tipo.OPTICO
 
         # Buscamos el interface
         interfaz = Interfaz.objects.filter(
@@ -126,7 +128,7 @@ def guardar_puertos(dispositivo, guardar_historico=True, **datos):
                             tx = puerto.get("tx_counter", 0),
                         )
 
-	# Puertos especiales de la OLT ubiquiti
+	# Puertos especiales de la OLT ubiquiti, solo si es una consulta SNMP
     if datos.get("puertos_pon"):
         puertos = datos.get("puertos", [])
         for puerto in puertos:
@@ -350,31 +352,32 @@ def guarda_estaciones_onu(dispositivo, guardar_historico=True, **datos):
                     noise = 0,
                 )
 
-                # -------- METRICA PUERTOS DE LA ONU PROPORCIONADA POR POR LA OLT
-                # -------- SI NO ES MAIN saltamos.
-                #  MAIN es el dispositivo OLT.
-                #  Las ONT no pasan de aqui
-                if dispositivo.rol != Dispositivo.Rol.MAIN:
-                    continue
+            # -------- METRICA PUERTOS DE LA ONU PROPORCIONADA POR POR LA OLT
+            # -------- SI NO ES MAIN saltamos.
+            #  MAIN es el dispositivo OLT.
+            #  Las ONT no pasan de aqui
+            if dispositivo.rol != Dispositivo.Rol.MAIN:
+                continue
 
-                # Puerto optico que conecta la ONU con la OLT
-                interfaz = Interfaz.objects.filter(
+            # Puerto optico que conecta la ONU con la OLT
+            interfaz = Interfaz.objects.filter(
+                dispositivo=estacion_dev,
+                nombre='PON1'
+                ).first()
+
+            if not interfaz:
+                # Creamos la interfaz Enlace-olt de la ont, Puerto WAN
+                interfaz = Interfaz.objects.create(
                     dispositivo=estacion_dev,
-                    nombre='PON1'
-                    ).first()
+                    nombre='PON1',
+                    tipo=Interfaz.Tipo.OPTICO,
+                    estado=Interfaz.Estado.ARRIBA,
+                    ip_address=onu.get("ip", ""),
+                    mac_address=onu.get("mac", ""),
+                    descripcion='Enlace con OLT',
+                )
 
-                if not interfaz:
-                    # Creamos la interfaz Enlace-olt de la ont
-                    interfaz = Interfaz.objects.create(
-                        dispositivo=estacion_dev,
-                        nombre='PON1',
-                        tipo=Interfaz.Tipo.OPTICO,
-                        estado=Interfaz.Estado.ARRIBA,
-                        ip_address=onu.get("ip", ""),
-                        mac_address=onu.get("mac", ""),
-                        descripcion='Enlace con OLT',
-                    )
-
+            if guardar_historico:
                 if interfaz:
                     # guardamos las metrcias históricas
                     InterfaceMetricHistory.objects.create(
@@ -383,6 +386,19 @@ def guarda_estaciones_onu(dispositivo, guardar_historico=True, **datos):
                         rx = onu.get('rx_counter', 0),
                         tx = onu.get('tx_counter', 0),
                     )
+
+            # Gauardar o actualizar puertos LAN
+            puertos = onu.get("puertos", [])
+            for puerto in puertos:
+                nombre = puerto.get("nombre", None)
+                if nombre:
+                    interfaz = Interfaz.objects.update_or_create(
+                        dispositivo=estacion_dev,
+                        nombre=nombre,
+                        estado=puerto.get("estado", "down"),
+                        velocidad_mbps=puerto.get("speed", 0)
+                        )
+
 
 
 
