@@ -125,21 +125,7 @@ def guardar_puertos(dispositivo, **datos):
                         tx = puerto.get("tx_counter", 0),
                     )
 
-            # Metricas de los dispositivos ONU
-            # Se actualiza a partir de la conexion con la ONU mediante SSH, ya que no tiene SNMP.
-            if dispositivo.modo_metrica == Dispositivo.Modulo_Scan.ONU1:
-                if any(puerto in interfaz.nombre for puerto in ['ppp0','ppp0.1','gpon0']):
-                    if interfaz.mostrar and puerto["estado"] == 'up':
-                        InterfaceMetricHistory.objects.create(
-                            interfaz = interfaz,
-                            timestamp = timezone.now(),
-                            rx = puerto.get("rx_counter", 0),
-                            tx = puerto.get("tx_counter", 0),
-                        )
-
-
-
-    # Puertos especiales de la OLT ubiquiti
+	# Puertos especiales de la OLT ubiquiti
     if datos.get("puertos_pon"):
         puertos = datos.get("puertos", [])
         for puerto in puertos:
@@ -166,7 +152,6 @@ def guardar_puertos(dispositivo, **datos):
                 if interfaz.estado != puerto["estado"]:
                     interfaz.estado = puerto["estado"]
                     interfaz.save(update_fields=['estado'])
-            
 
 
 def guarda_staciones_wifi(dispositivo, **datos):
@@ -316,11 +301,10 @@ def guarda_staciones_wifi(dispositivo, **datos):
 def guarda_estaciones_onu(dispositivo, **datos):
     """ 
         Guarda los datos básicos de los dispositivos 'onu' de ubiquiti.
-        Estos dispositivos no tiene servicio SNMP.
-
+        Estos dispositivos no tiene servicio SNMP, los extraemos de la OLT.
     """
 
-    # Extraer la lista de estaciones del diccionario (si no existe, usa lista vacía)
+    # Extraer la lista de estaciones (si no existe, usa lista vacía)
     onus = datos.get("onus", [])
     ssid = datos.get('sys_name')
 
@@ -332,15 +316,21 @@ def guarda_estaciones_onu(dispositivo, **datos):
 
         # Se tiene que relacionar las keys de OID con el modelo.
         uData = {
+            'cpu': onu.get('cpu', 0),
+            'ram': onu.get('ram', 0),
+            'temperature': onu.get('temperature', 0),
             'signal': onu.get('signal', 0),
             'power': onu.get('power', 0),
             'ssid': ssid,
+            'uptime': onu.get('uptime', 0),
+            'version': onu.get('version', ''),
             'timescan': timezone.now()
         }
 
         # Guarda las metricas en cada estacion ONU, los dispotivos Ubiquiti no tienen SNMP
         # Obtenemos la INSTANCIA única del dispositivo por su serial, ya que la OLT no da las IPs
         estacion_dev = Dispositivo.objects.filter(onu_ref=serial).first()
+
         if estacion_dev:
             st, created = DeviceMetrics.objects.update_or_create(
                 device=estacion_dev,
@@ -351,11 +341,48 @@ def guarda_estaciones_onu(dispositivo, **datos):
             DeviceMetricHistory.objects.create(
                 device = estacion_dev,
                 timestamp = timezone.now(),
-                power = onu.get('power', 0),
-                signal = onu.get('signal', 0),
+                cpu = uData['cpu'],
+                ram = uData['ram'],
+                temperature = uData['temperature'],
+                power = uData['power'],
+                signal = uData['signal'],
                 noise = 0,
             )
-        
+
+            # -------- METRICA PUERTOS DE LA ONU PROPORCIONADA POR POR LA OLT
+            # -------- SI NO ES MAIN saltamos.
+            #  MAIN es el dispositivo OLT.
+            #  Las ONT no pasan de aqui
+            if dispositivo.rol != Dispositivo.Rol.MAIN:
+                continue
+
+            # Puerto optico que conecta la ONU con la OLT
+            interfaz = Interfaz.objects.filter(
+                dispositivo=estacion_dev,
+                nombre='PON1'
+                ).first()
+
+            if not interfaz:
+                # Creamos la interfaz Enlace-olt de la ont
+                interfaz = Interfaz.objects.create(
+                    dispositivo=estacion_dev,
+                    nombre='PON1',
+                    tipo=Interfaz.Tipo.OPTICO,
+                    estado=Interfaz.Estado.ARRIBA,
+                    descripcion='Enlace con OLT',
+                )
+
+            if interfaz:
+                # guardamos las metrcias históricas
+                InterfaceMetricHistory.objects.create(
+                    interfaz = interfaz,
+                    timestamp = timezone.now(),
+                    rx = onu.get('rx_counter', 0),
+                    tx = onu.get('tx_counter', 0),
+                )
+
+
+
 
 def evaluar_y_aplicar(dispositivo, metrica, metrica_anterior, historico, historico_anterior):
     """Evalúa las reglas sobre la métrica recién creada y aplica alarmas y

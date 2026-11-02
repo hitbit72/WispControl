@@ -29,6 +29,8 @@ def actualizar_metricas_snmp(request, pk):
             cmd._procesar_tpl1(dispositivo, True)
         elif dispositivo.modo_metrica == Dispositivo.Modulo_Scan.ONU1:
             cmd._procesar_onu_ubnt(dispositivo, True)
+        elif dispositivo.modo_metrica == Dispositivo.Modulo_Scan.OLT1:
+            cmd._procesar_olt_ubnt(dispositivo, True)
         
     except Exception as e:
         print(f'Error actualizar snmp: {e}')

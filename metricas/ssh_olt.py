@@ -3,6 +3,12 @@ import re, json
 
 from mikrotik import client
 
+# Nombre de puertos que no se guardarán en la base de datos
+EXCLUDE_PORT = ('lag','gre')
+# Puetos opticos
+OPTIC_PORTS = ('pon','sfp','gpon')
+
+
 def procesar_sistema(dispositivo):
     final = False
     datos = {}
@@ -45,22 +51,27 @@ def procesar_sistema(dispositivo):
 
         # Tiempo de actividad
         stdin, stdout, stderr = client.exec_command('cat /proc/uptime')
-        data2 = stdout.read().decode('utf-8')
+        uptime = stdout.read().decode('utf-8')
+        salida_stderr = stderr.read().decode('utf-8')
+
+        # Hostname
+        stdin, stdout, stderr = client.exec_command('hostname')
+        host_name = stdout.read().decode('utf-8')
         salida_stderr = stderr.read().decode('utf-8')
 
         # Temepratura CPU
         stdin, stdout, stderr = client.exec_command('cat /sys/class/hwmon/hwmon1/device/temp1_input; cat /sys/class/hwmon/hwmon1/device/temp2_input; cat /sys/class/hwmon/hwmon1/device/temp3_input')
-        data3 = stdout.read().decode('utf-8')
+        cpuTemp = stdout.read().decode('utf-8')
         salida_stderr = stderr.read().decode('utf-8')
 
         # Puertos PON
         stdin, stdout, stderr = client.exec_command('sudo olt_ifctl get-gpon-port-stat')
-        data4 = stdout.read().decode('utf-8')
+        puertosOlt = stdout.read().decode('utf-8')
         salida_stderr = stderr.read().decode('utf-8')
 
         # ONUS LIST STATUS
         stdin, stdout, stderr = client.exec_command('sudo olt_ifctl onu-list')
-        data5 = stdout.read().decode('utf-8')
+        onts = stdout.read().decode('utf-8')
         salida_stderr = stderr.read().decode('utf-8')
 
         final = True
@@ -75,15 +86,15 @@ def procesar_sistema(dispositivo):
         client.close()
 
     if final:
-        datos = sistema(data1, data2, data3)
-        datos['puertos'] = gpon_port(data4)
-        datos['onus'] = onu_list(data5)
+        datos = sistema(data1, uptime, cpuTemp, host_name)
+        datos['puertos'] = gpon_port(puertosOlt)
+        datos['onus'] = onu_list(onts)
 
     return final, datos
 
 
 # Procesa los datos SSH de la OLT 4P de ubiquiti
-def sistema(sistema, uptime, cpuTemp):
+def sistema(sistema, uptime, cpuTemp, host_name):
     datos = {}
     linea=1
     mem_total = 1
@@ -127,6 +138,7 @@ def sistema(sistema, uptime, cpuTemp):
     datos['ram'] = round((mem_used / mem_total) * 100, 2)
     datos['cpu'] = float(cpu)
     datos['uptime'] = upt
+    datos['sys_name'] = host_name.strip()
     datos['temperature'] = cpu_temp
 
     return datos
@@ -139,27 +151,38 @@ def gpon_port(p1):
 
     # Iterar sobre cada puerto (clave y valor)
     for nombre_puerto, info in ports_status.items():
+        
         current_speed = info.get("currentSpeed", "")
-        current_state = info.get("plugged", "down")
         if current_speed == "auto":
             current_speed = ""
+        if current_speed != "":
+            current_speed = current_speed.split("-")[0]
+
+        current_state = info.get("plugged", False)
         if current_state == True:
             current_state = "up"
         else:
             current_state = "down"
-        if current_speed != "":
-            current_speed = current_speed.split("-")[0]
 
         # Extraer rxBytes de forma segura (si no existe statistics o rxBytes, devuelve 0 o N/A)
         statistics = info.get("statistics", {})
         rx_bytes = statistics.get("rxBytes", 0)
         tx_bytes = statistics.get("txBytes", 0)
 
+        # Excluir puertos que contengan palabras clave en EXCLUDE_PORT
+        if any(exclude in nombre_puerto for exclude in EXCLUDE_PORT):
+            continue
+
+        tipo_puerto = "Ethernet"
+        if any(optic in nombre_puerto for optic in OPTIC_PORTS):
+            tipo_puerto = "Óptico"
+
         gpon_info.append(
             {
                 'nombre': nombre_puerto,
                 'estado': current_state,
                 'speed': current_speed,
+                'tipo': tipo_puerto,
                 'rx_counter': rx_bytes,
                 'tx_counter': tx_bytes
             }
@@ -221,15 +244,16 @@ def onu_list(p1):
         onu_info.append(
             {
                 'serial': onu.get("serial", ""),
+                'version': onu.get("firmwareVersion", ""),
                 'signal': onu.get("rxPower", ""),
                 'power': onu.get("txPower", ""),
                 'pon': onu.get("oltPort", ""),
-                'distance': onu.get("distance", ""),
+                'distancia': onu.get("distance", ""),
                 'connected': onu.get("connected", ""),
                 'uptime': uptime,
                 'cpu': cpu,
                 'mem': mem,
-                'cpu_temp': cpuTemp,
+                'temperature': cpuTemp,
                 'ip': wanIP,
                 'rx_counter': rxBytes,
                 'tx_counter': txBytes,

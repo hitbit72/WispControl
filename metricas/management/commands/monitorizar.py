@@ -257,6 +257,8 @@ class Command(BaseCommand):
                 if self.zonas['general']:
                     # Guarda metrica general e hisotrico
                     metrica, historico = services.guardar_metrica(dispositivo, False, **datos)
+                    # Guardar datos de las estaciones ONU
+                    services.guarda_estaciones_onu(dispositivo, **datos)
                 if self.zonas['puertos']:
                     services.guardar_puertos(dispositivo, **datos)
 
