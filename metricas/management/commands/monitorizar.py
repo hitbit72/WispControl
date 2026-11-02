@@ -184,52 +184,89 @@ class Command(BaseCommand):
 
 
     # datos de los switch TP-Link sg108e
-    def _procesar_tpl1(self, dispositivo, update=True):
+    def _procesar_tpl1(self, dispositivo, update_historic=True):
         resultado = {}
         puertos = []
         resultado['status'] = "error"
         final = False
 
-        with make_switch(dispositivo.ip_gestion, password=dispositivo.password) as sw:
-            # Read system info
-            sys=sw.get_system_info()
-            resultado = {
-                'version': sys.firmware,
-                'sys_name': sys.hardware,
-                'sys_descr': sys.description,
-                }
+        try:
+            with make_switch(dispositivo.ip_gestion, password=dispositivo.password) as sw:
+                # Read system info
+                sys=sw.get_system_info()
+                resultado = {
+                    'version': sys.firmware,
+                    'sys_name': sys.hardware,
+                    'sys_descr': sys.description,
+                    }
 
-            for port in sw.get_port_settings():
-                vel = 0
-                if port.speed_act:
-                    v1 = str(port.speed_act)
-                    velocidad = v1.split("M")
-                    vel = int(velocidad[0])
+                for port in sw.get_port_settings():
+                    vel = 0
+                    if port.speed_act:
+                        v1 = str(port.speed_act)
+                        velocidad = v1.split("M")
+                        vel = int(velocidad[0])
 
-                puertos.append({
-                    'nombre': f'eth{port.port}',
-                    'speed': vel,
-                    'estado': "up" if port.speed_act else "down",
-                    'rx_counter': 0,
-                    'tx_counter': 0
-                    })
-            resultado['status'] = "ok"
-            final = True
+                    puertos.append({
+                        'nombre': f'eth{port.port}',
+                        'speed': vel,
+                        'estado': "up" if port.speed_act else "down",
+                        'rx_counter': 0,
+                        'tx_counter': 0
+                        })
+                resultado['status'] = "ok"
+                final = True
+        except Exception as e:
+            self.stdout.write(
+                self.style.ERROR(
+                    f'[{timezone.localtime():%d/%m/%Y %H:%M:%S}] {dispositivo.ip_gestion} Error: {e}'))
+            return final
+        
 
         resultado['puertos'] = puertos
         resultado['timescan'] = timezone.now()
 
-      
-        if update:
+        # recuperar el estado anterio para evalua la alerta/alarma
+        metrica_anterior = (
+        DeviceMetrics.objects.filter(device=dispositivo)
+            .order_by('-pk').first()
+        )
+        # Guarda metrica general e hisotrico
+        metrica, historico = services.guardar_metrica(dispositivo, update_historic, **resultado)
+        if puertos:
+            services.guardar_puertos(dispositivo, update_historic, **resultado)
+
+        # evalua la alerta/alarma
+        if self.zonas['general']:
+            if metrica and metrica_anterior:
+                services.evaluar_y_aplicar(dispositivo, metrica, metrica_anterior, None, None)
+
+        return final
+
+
+    def _procesar_olt_ubnt(self, dispositivo, update_historic=True):
+        # Recoleccion de datos de la OLT UBNT.
+        # Tiene pocos datos SNMP, accedmos a ellas mediante ssh
+        
+        procesado = False
+        datos = {}
+        
+        procesado, datos = ssh_olt.procesar_sistema(dispositivo)
+
+        if procesado:
             # recuperar el estado anterio para evalua la alerta/alarma
             metrica_anterior = (
             DeviceMetrics.objects.filter(device=dispositivo)
                 .order_by('-pk').first()
             )
-            # Guarda metrica general e hisotrico
-            metrica, historico = services.guardar_metrica(dispositivo, False, **resultado)
-            if puertos:
-                services.guardar_puertos(dispositivo, **resultado)
+            datos['timescan'] = timezone.now()
+            if self.zonas['general']:
+                # Guarda metrica general e hisotrico
+                metrica, historico = services.guardar_metrica(dispositivo, update_historic, **datos)
+                # Guardar datos de las estaciones ONU
+                services.guarda_estaciones_onu(dispositivo, update_historic, **datos)
+            if self.zonas['puertos']:
+                services.guardar_puertos(dispositivo, update_historic, **datos)
 
             # evalua la alerta/alarma
             if self.zonas['general']:
@@ -237,34 +274,7 @@ class Command(BaseCommand):
                     services.evaluar_y_aplicar(dispositivo, metrica, metrica_anterior, None, None)
 
 
-        return final
-
-
-    def _procesar_olt_ubnt(self, dispositivo, update=True):
-        # Recoleccion de datos de la OLT UBNT.
-        # Tiene pocos datos SNMP, accedmos a ellas mediante ssh
-        procesado = False
-        datos = {}
-        procesado, datos = ssh_olt.procesar_sistema(dispositivo)
-        if procesado:
-            if update:
-                # recuperar el estado anterio para evalua la alerta/alarma
-                metrica_anterior = (
-                DeviceMetrics.objects.filter(device=dispositivo)
-                    .order_by('-pk').first()
-                )
-                datos['timescan'] = timezone.now()
-                if self.zonas['general']:
-                    # Guarda metrica general e hisotrico
-                    metrica, historico = services.guardar_metrica(dispositivo, False, **datos)
-                    # Guardar datos de las estaciones ONU
-                    services.guarda_estaciones_onu(dispositivo, **datos)
-                if self.zonas['puertos']:
-                    services.guardar_puertos(dispositivo, **datos)
-
-
-
-    def _procesar_onu_ubnt(self, dispositivo, update=True):
+    def _procesar_onu_ubnt(self, dispositivo, update_historic=True):
         # Recoleccion de datos de la onus UBNT.
         # Estas onus no tienen SNMP, accedmos a ellas mediante ssh
 
@@ -273,31 +283,30 @@ class Command(BaseCommand):
         procesado, datos = ssh_client.procesar_sistema(dispositivo)
 
         if procesado:
-            if update:
-                # recuperar el estado anterio para evalua la alerta/alarma
-                metrica_anterior = (
-                DeviceMetrics.objects.filter(device=dispositivo)
-                    .order_by('-pk').first()
-                )
+            # recuperar el estado anterio para evalua la alerta/alarma
+            metrica_anterior = (
+            DeviceMetrics.objects.filter(device=dispositivo)
+                .order_by('-pk').first()
+            )
 
-                datos['timescan'] = timezone.now()
-                if self.zonas['general']:
-                    # Guarda metrica general e hisotrico
-                    metrica, historico = services.guardar_metrica(dispositivo, False, **datos)
-                if self.zonas['puertos']:
-                    services.guardar_puertos(dispositivo, **datos)
+            datos['timescan'] = timezone.now()
+            if self.zonas['general']:
+                # Guarda metrica general e hisotrico
+                metrica, historico = services.guardar_metrica(dispositivo, update_historic, **datos)
+            if self.zonas['puertos']:
+                services.guardar_puertos(dispositivo, update_historic, **datos)
 
-                # evalua la alerta/alarma
-                if self.zonas['general']:
-                    if metrica and metrica_anterior:
-                        services.evaluar_y_aplicar(dispositivo, metrica, metrica_anterior, None, None)
+            # evalua la alerta/alarma
+            if self.zonas['general']:
+                if metrica and metrica_anterior:
+                    services.evaluar_y_aplicar(dispositivo, metrica, metrica_anterior, None, None)
 
         return procesado
 
 
 
 
-    def _procesar(self, dispositivo, uptade=True):
+    def _procesar(self, dispositivo, update_historic=True):
 
         # Cargar los códigos OID para cada tipo de escaneo
         datos = {}
@@ -379,27 +388,22 @@ class Command(BaseCommand):
         # Variables para evaluar la alerta/alarma, si no hay datos anteriores se pasa None
         metrica = None
         historico = None
-        if uptade:
-            # Guarda metrica general e hisotrico
-            if self.zonas['general']:
-                if datos:
-                    metrica, historico = services.guardar_metrica(dispositivo, True, **datos)
-            # Actualiza modelo de interfaz (puertos)
-            if self.zonas['puertos']:
-                if puertos:
-                    services.guardar_puertos(dispositivo, **datos)
-            # Actizalizar datos estaciones wifi y onus
-            if self.zonas['wifi']:
-                if estaciones:
-                    services.guarda_staciones_wifi(dispositivo, **datos)     # <-- Datos wifi de ubiquiti
-            if self.zonas['onus']:
-                if onus:
-                    services.guarda_estaciones_onu(dispositivo, **datos)     # <-- Datos de ONU de OLT ubiquiti
-        else:
-            # Guarda metrica general, sin historico
-            if self.zonas['general']:
-                if datos:
-                    metrica, historico = services.guardar_metrica(dispositivo, False, **datos)
+
+        # Guarda metrica general e hisotrico
+        if self.zonas['general']:
+            if datos:
+                metrica, historico = services.guardar_metrica(dispositivo, update_historic, **datos)
+        # Actualiza modelo de interfaz (puertos)
+        if self.zonas['puertos']:
+            if puertos:
+                services.guardar_puertos(dispositivo, update_historic, **datos)
+        # Actizalizar datos estaciones wifi y onus
+        if self.zonas['wifi']:
+            if estaciones:
+                services.guarda_staciones_wifi(dispositivo, update_historic,**datos)     # <-- Datos wifi de ubiquiti
+        if self.zonas['onus']:
+            if onus:
+                services.guarda_estaciones_onu(dispositivo, update_historic, **datos)     # <-- Datos de ONU de OLT ubiquiti
 
         # evalua la alerta/alarma
         if self.zonas['general']:

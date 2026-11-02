@@ -64,7 +64,7 @@ def guardar_metrica(dispositivo,  guardar_historico=True, **datos):
 
 
 
-def guardar_puertos(dispositivo, **datos):
+def guardar_puertos(dispositivo, guardar_historico=True, **datos):
     """
     Guarda o actualiza las interfaces/puertos recibidos en el diccionario de métricas.
     :param dispositivo: Instancia del modelo Dispositivo (o su objeto/ID)
@@ -115,15 +115,16 @@ def guardar_puertos(dispositivo, **datos):
                 interfaz.estado = puerto["estado"]
                 interfaz.save(update_fields=['estado'])
 
-            # guardamos las metrcias históricas solo de dispositivos MAIN y MKT, 
-            if dispositivo.rol != Dispositivo.Rol.STATION:
-                if interfaz.mostrar and puerto["estado"] == 'up':
-                    InterfaceMetricHistory.objects.create(
-                        interfaz = interfaz,
-                        timestamp = timezone.now(),
-                        rx = puerto.get("rx_counter", 0),
-                        tx = puerto.get("tx_counter", 0),
-                    )
+            if guardar_historico:
+                # guardamos las metrcias históricas solo de dispositivos MAIN y MKT, 
+                if dispositivo.rol != Dispositivo.Rol.STATION:
+                    if interfaz.mostrar and puerto["estado"] == 'up':
+                        InterfaceMetricHistory.objects.create(
+                            interfaz = interfaz,
+                            timestamp = timezone.now(),
+                            rx = puerto.get("rx_counter", 0),
+                            tx = puerto.get("tx_counter", 0),
+                        )
 
 	# Puertos especiales de la OLT ubiquiti
     if datos.get("puertos_pon"):
@@ -154,7 +155,7 @@ def guardar_puertos(dispositivo, **datos):
                     interfaz.save(update_fields=['estado'])
 
 
-def guarda_staciones_wifi(dispositivo, **datos):
+def guarda_staciones_wifi(dispositivo, guardar_historico=True, **datos):
     """ 
     Guarda los datos básicos de los dispositivos 'Antena de cliente'.
     Pone en activo la estación
@@ -233,32 +234,30 @@ def guarda_staciones_wifi(dispositivo, **datos):
 
             # ------- Si no se puede escanear la estacion directamente, usamos las métricas
             #         proporcionadas por sl AP
-
             #    Se debe actualiar datos generales a partir del AP
             if estacion_dev.escanear_ap:
 
-                #    Lista de campos relevantes para el histórico, para evitar guardar metricas vacias
-                campos_historico = ['ccq', 'signal', 'noise', 'tx_rate', 'rx_rate']
-                #    Comprobamos si al menos una métrica viene en 'estacion' con un valor distinto de None
-                tiene_datos = any(estacion.get(campo) is not None for campo in campos_historico)
+                if guardar_historico:
+                    #    Lista de campos relevantes para el histórico, para evitar guardar metricas vacias
+                    campos_historico = ['ccq', 'signal', 'noise', 'tx_rate', 'rx_rate']
+                    #    Comprobamos si al menos una métrica viene en 'estacion' con un valor distinto de None
+                    tiene_datos = any(estacion.get(campo) is not None for campo in campos_historico)
 
-                if tiene_datos:
-                    #    Guardamos el hístórico general
-                    DeviceMetricHistory.objects.create(
-                        device = estacion_dev,
-                        timestamp = timezone.now(),
-                        cpu = 0,
-                        ram = 0,
-                        temperature = 0,
-                        ccq = estacion.get('ccq', 0),
-                        power = 0,
-                        signal = estacion.get('signal', 0),
-                        noise = estacion.get('noise',0 ),
-                        tx_capacity  = estacion.get('tx_rate', 0),
-                        rx_capacity = estacion.get('rx_rate', 0),
-                    )
-
-
+                    if tiene_datos:
+                        #    Guardamos el hístórico general
+                        DeviceMetricHistory.objects.create(
+                            device = estacion_dev,
+                            timestamp = timezone.now(),
+                            cpu = 0,
+                            ram = 0,
+                            temperature = 0,
+                            ccq = estacion.get('ccq', 0),
+                            power = 0,
+                            signal = estacion.get('signal', 0),
+                            noise = estacion.get('noise',0 ),
+                            tx_capacity  = estacion.get('tx_rate', 0),
+                            rx_capacity = estacion.get('rx_rate', 0),
+                        )
 
             # -------- METRICA PUERTOS DE LA ESTACIÓN PROPORCIONADA POR EL AP
             # Guardamos esta métrica porque se proporciona con Counter64, más fiable
@@ -284,21 +283,22 @@ def guarda_staciones_wifi(dispositivo, **datos):
                     descripcion='Enlace con AP',
                 )
 
-            if interfaz:
-                # guardamos las metrcias históricas
-                InterfaceMetricHistory.objects.create(
-                    interfaz = interfaz,
-                    timestamp = timezone.now(),
-                    rx = estacion.get('rx_counter', 0),
-                    tx = estacion.get('tx_counter', 0),
-                )
+            if guardar_historico:
+                if interfaz:
+                    # guardamos las metrcias históricas
+                    InterfaceMetricHistory.objects.create(
+                        interfaz = interfaz,
+                        timestamp = timezone.now(),
+                        rx = estacion.get('rx_counter', 0),
+                        tx = estacion.get('tx_counter', 0),
+                    )
 
 
         # Si el dispositivo no existe, se puede crear cómo Discover. (Queda pendiente)
 
 
 
-def guarda_estaciones_onu(dispositivo, **datos):
+def guarda_estaciones_onu(dispositivo, guardar_historico=True, **datos):
     """ 
         Guarda los datos básicos de los dispositivos 'onu' de ubiquiti.
         Estos dispositivos no tiene servicio SNMP, los extraemos de la OLT.
@@ -337,49 +337,52 @@ def guarda_estaciones_onu(dispositivo, **datos):
                 defaults=uData,
             )
 
-            # Guardamos la metricas históricas
-            DeviceMetricHistory.objects.create(
-                device = estacion_dev,
-                timestamp = timezone.now(),
-                cpu = uData['cpu'],
-                ram = uData['ram'],
-                temperature = uData['temperature'],
-                power = uData['power'],
-                signal = uData['signal'],
-                noise = 0,
-            )
-
-            # -------- METRICA PUERTOS DE LA ONU PROPORCIONADA POR POR LA OLT
-            # -------- SI NO ES MAIN saltamos.
-            #  MAIN es el dispositivo OLT.
-            #  Las ONT no pasan de aqui
-            if dispositivo.rol != Dispositivo.Rol.MAIN:
-                continue
-
-            # Puerto optico que conecta la ONU con la OLT
-            interfaz = Interfaz.objects.filter(
-                dispositivo=estacion_dev,
-                nombre='PON1'
-                ).first()
-
-            if not interfaz:
-                # Creamos la interfaz Enlace-olt de la ont
-                interfaz = Interfaz.objects.create(
-                    dispositivo=estacion_dev,
-                    nombre='PON1',
-                    tipo=Interfaz.Tipo.OPTICO,
-                    estado=Interfaz.Estado.ARRIBA,
-                    descripcion='Enlace con OLT',
-                )
-
-            if interfaz:
-                # guardamos las metrcias históricas
-                InterfaceMetricHistory.objects.create(
-                    interfaz = interfaz,
+            if guardar_historico:
+                # Guardamos la metricas históricas
+                DeviceMetricHistory.objects.create(
+                    device = estacion_dev,
                     timestamp = timezone.now(),
-                    rx = onu.get('rx_counter', 0),
-                    tx = onu.get('tx_counter', 0),
+                    cpu = uData['cpu'],
+                    ram = uData['ram'],
+                    temperature = uData['temperature'],
+                    power = uData['power'],
+                    signal = uData['signal'],
+                    noise = 0,
                 )
+
+                # -------- METRICA PUERTOS DE LA ONU PROPORCIONADA POR POR LA OLT
+                # -------- SI NO ES MAIN saltamos.
+                #  MAIN es el dispositivo OLT.
+                #  Las ONT no pasan de aqui
+                if dispositivo.rol != Dispositivo.Rol.MAIN:
+                    continue
+
+                # Puerto optico que conecta la ONU con la OLT
+                interfaz = Interfaz.objects.filter(
+                    dispositivo=estacion_dev,
+                    nombre='PON1'
+                    ).first()
+
+                if not interfaz:
+                    # Creamos la interfaz Enlace-olt de la ont
+                    interfaz = Interfaz.objects.create(
+                        dispositivo=estacion_dev,
+                        nombre='PON1',
+                        tipo=Interfaz.Tipo.OPTICO,
+                        estado=Interfaz.Estado.ARRIBA,
+                        ip_address=onu.get("ip", ""),
+                        mac_address=onu.get("mac", ""),
+                        descripcion='Enlace con OLT',
+                    )
+
+                if interfaz:
+                    # guardamos las metrcias históricas
+                    InterfaceMetricHistory.objects.create(
+                        interfaz = interfaz,
+                        timestamp = timezone.now(),
+                        rx = onu.get('rx_counter', 0),
+                        tx = onu.get('tx_counter', 0),
+                    )
 
 
 

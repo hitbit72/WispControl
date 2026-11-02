@@ -255,6 +255,7 @@ def onu_list(p1):
                 'mem': mem,
                 'temperature': cpuTemp,
                 'ip': wanIP,
+                'mac': onu.get("mac", ""),
                 'rx_counter': rxBytes,
                 'tx_counter': txBytes,
                 'puertos': port_info

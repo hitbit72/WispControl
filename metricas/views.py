@@ -26,11 +26,11 @@ def actualizar_metricas_snmp(request, pk):
         if dispositivo.modo_metrica == Dispositivo.Modulo_Scan.SNMP:
             cmd._procesar(dispositivo, False)
         elif dispositivo.modo_metrica == Dispositivo.Modulo_Scan.TPL1:
-            cmd._procesar_tpl1(dispositivo, True)
+            cmd._procesar_tpl1(dispositivo, False)
         elif dispositivo.modo_metrica == Dispositivo.Modulo_Scan.ONU1:
-            cmd._procesar_onu_ubnt(dispositivo, True)
+            cmd._procesar_onu_ubnt(dispositivo, False)
         elif dispositivo.modo_metrica == Dispositivo.Modulo_Scan.OLT1:
-            cmd._procesar_olt_ubnt(dispositivo, True)
+            cmd._procesar_olt_ubnt(dispositivo, False)
         
     except Exception as e:
         print(f'Error actualizar snmp: {e}')
