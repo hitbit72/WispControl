@@ -1,11 +1,14 @@
 {% load onu_tags %}
+{% load dispositivo_tags %}
 <div id="tabla_onus" class="table-responsive">
 <table class="table table-hover align-middle" id="table_onus">
     <thead>
         <tr>
-            <th>PON</th>
+            <th>Estado</th>
             <th>Serial / IP</th>
             <th>Cliente</th>
+            <th>Puerto</th>
+            <th>Distancia</th>
             <th>Power</th>
             <th>Señal</th>
         </tr>
@@ -13,8 +16,10 @@
     <tbody>
     {% for onu in metricas.onus %}
     <tr>
-        <td style="width: 25px;">{{ onu.pon }}</td>
+        <td>{% if onu.signal == 0 %}<span class="badge bg-danger">inactivo</span>{% else %}<span class="badge bg-success">activo</span>{% endif %}</td>
         {% find_onu onu.serial onu.ip request.path %}
+        <td style="width: 30px;">{{ onu.pon }}</td>
+        <td>{{ onu.distancia|metros_a_km }}</td>
         <td>{{ onu.power|floatformat:"2" }}</td>
         <td><span class="badge 
         {% if onu.signal <= -20 %}bg-danger
