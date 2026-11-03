@@ -387,17 +387,20 @@ def guarda_estaciones_onu(dispositivo, guardar_historico=True, **datos):
                         tx = onu.get('tx_counter', 0),
                     )
 
-            # Gauardar o actualizar puertos LAN
-            puertos = onu.get("puertos", [])
-            for puerto in puertos:
-                nombre = puerto.get("nombre", None)
-                if nombre:
-                    interfaz = Interfaz.objects.update_or_create(
-                        dispositivo=estacion_dev,
-                        nombre=nombre,
-                        estado=puerto.get("estado", "down"),
-                        velocidad_mbps=puerto.get("speed", 0)
-                        )
+            try:
+                # Gauardar o actualizar puertos LAN
+                puertos = onu.get("puertos", [])
+                for puerto in puertos:
+                    nombre = puerto.get("nombre", None)
+                    if nombre:
+                        interfaz = Interfaz.objects.update_or_create(
+                            dispositivo=estacion_dev,
+                            nombre=nombre,
+                            estado=puerto.get("estado", "down"),
+                            velocidad_mbps=puerto.get("speed", 0)
+                            )
+            except Exception as e:
+                print(f'services(guarda_estaciones_onu) * Error al guardar: puerto duplicado {nombre}, {estacion_dev.ip_gestion}\n{e}')
 
 
 

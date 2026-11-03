@@ -181,7 +181,7 @@ def gpon_port(p1):
         #print(f"velocidad speed: {current_speed}")
         gpon_info.append(
             {
-                'nombre': nombre_puerto,
+                'nombre': nombre_puerto.strip(),
                 'estado': current_state,
                 'speed': int(current_speed),
                 'tipo': tipo_puerto,
