@@ -308,7 +308,6 @@ def guarda_estaciones_onu(dispositivo, guardar_historico=True, **datos):
 
     # Extraer la lista de estaciones (si no existe, usa lista vacía)
     onus = datos.get("onus", [])
-    ssid = datos.get('sys_name')
 
     for onu in onus:
         # buscamos el serial de al ONU, ya que no disponemos de la IP
@@ -323,9 +322,10 @@ def guarda_estaciones_onu(dispositivo, guardar_historico=True, **datos):
             'temperature': onu.get('temperature', 0),
             'signal': onu.get('signal', 0),
             'power': onu.get('power', 0),
-            'ssid': ssid,
+            'ssid': onu.get('ssid',''),
             'uptime': onu.get('uptime', 0),
             'version': onu.get('version', ''),
+            'puertos': onu.get("puertos", []),
             'timescan': timezone.now()
         }
 

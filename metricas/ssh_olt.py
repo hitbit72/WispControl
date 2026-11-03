@@ -88,7 +88,7 @@ def procesar_sistema(dispositivo):
     if final:
         datos = sistema(data1, uptime, cpuTemp, host_name)
         datos['puertos'] = gpon_port(puertosOlt)
-        datos['onus'] = onu_list(onts)
+        datos['onus'] = onu_list(onts, host_name)
 
     return final, datos
 
@@ -139,6 +139,7 @@ def sistema(sistema, uptime, cpuTemp, host_name):
     datos['cpu'] = float(cpu)
     datos['uptime'] = upt
     datos['sys_name'] = host_name.strip()
+    datos['ssid'] = host_name.strip()
     datos['temperature'] = cpu_temp
 
     #print(datos)
@@ -193,7 +194,7 @@ def gpon_port(p1):
     return gpon_info
 
 
-def onu_list(p1):
+def onu_list(p1, host_name):
     onu_info = []
     data = json.loads(p1)
     onus_status = data.get("GET_ONU_LIST", [])
@@ -249,6 +250,7 @@ def onu_list(p1):
             {
                 'serial': onu.get("serial", ""),
                 'version': onu.get("firmwareVersion", ""),
+                'ssid': host_name.strip(),
                 'signal': float(onu.get("rxPower", 0)),
                 'power': float(onu.get("txPower", 0)),
                 'pon': int(onu.get("oltPort", 0)),
