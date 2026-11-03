@@ -1,34 +1,52 @@
-{% load onu_tags %}
 {% load dispositivo_tags %}
-<div id="tabla_onus" class="table-responsive">
-<table class="table table-hover align-middle" id="table_onus">
+<div id="tabla-estaciones" class="table-responsive">
+<table class="table table-hover align-middle" id="table_estaciones">
     <thead>
         <tr>
-            <th>Estado</th>
-            <th>Serial / IP</th>
+            <th>st</th>
+            <th>IP Gestión</th>
             <th>Cliente</th>
-            <th>Puerto</th>
-            <th>Distancia</th>
-            <th>Power</th>
+            <th>Host</th>
             <th>Señal</th>
+            <th>Power</th>
+            <th>Distancia</th>
         </tr>
     </thead>
     <tbody>
-    {% for onu in metricas.onus %}
+    {% for metrica in estaciones %}
     <tr>
-        <td>{% if onu.signal == 0 %}<span class="badge bg-danger">inactivo</span>{% else %}<span class="badge bg-success">activo</span>{% endif %}</td>
-        {% find_onu onu.serial onu.ip request.path %}
-        <td style="width: 30px;">{{ onu.pon }}</td>
-        <td>{{ onu.distancia|metros_a_km }}</td>
-        <td>{{ onu.power|floatformat:"2" }}</td>
+        <td>
+        <span class="badge
+            {% if metrica.estado == 'activo' %}bg-success
+            {% elif metrica.estado == 'inactivo' %}bg-danger
+            {% elif metrica.estado == 'baja' %}bg-danger
+            {% elif metrica.estado == 'mantenimiento' %}bg-warning text-dark
+            {% elif metrica.estado == 'instalacion' %}bg-info text-dark
+            {% elif metrica.estado == 'retirado' %}bg-warning text-dark{% else %}bg-secondary{% endif %}">
+            {{ metrica.estado }}
+        </span>
+        </td>
+        <td>{% if metrica.registrado %}
+        <a {% if metrica.device_status != 'activo' %}class="text-danger"{% endif %} href="{% url 'dispositivos:detalle' metrica.device_pk %}?next={{ request.path }}">{{ metrica.ip_gestion }}</a>
+        {% else %}
+        {{ metrica.ip_gestion }}
+        {% endif %}
+        </td>
+        <td>{% if metrica.cliente_pk > 0 %}
+        <a {% if not metrica.cliente_activo %}class="text-danger"{% endif %} href="{% url 'clientes:detalle' metrica.cliente_pk %}?next={{ request.path }}">{{ metrica.cliente }}</a>
+        {% else %}
+        {{ metrica.cliente }}
+        {% endif %}
+        </td>
+        <td>{{ metrica.nombre_host }}</td>
         <td><span class="badge 
-        {% if onu.signal <= -20 %}bg-danger
-        {% elif onu.signal <= -18 %}bg-warning
-        {% elif onu.signal > -18 and onu.signal < 0 %}bg-success
-        {% else %}bg-secondary{% endif %}"> {{ onu.signal|floatformat:"2" }} </span></td>
+        {% if metrica.signal <= -20 %}bg-danger
+        {% elif metrica.signal <= -18 %}bg-warning
+        {% elif metrica.signal > -18 and metrica.signal < 0 %}bg-success
+        {% else %}bg-secondary{% endif %}"> {{ metrica.signal|floatformat:"2" }} </span></td>
+        <td>{{ metrica.power|floatformat:"2" }}</td>
+        <td>{{ metrica.distancia|metros_a_km }} </td>
     </tr>
-    {% empty %}
-        <tr><td colspan="7" class="text-center text-muted py-3">Este dispositivo no tiene ONUs.</td></tr>
     {% endfor %}
     </tbody>
 </table>

@@ -1,0 +1,35 @@
+{% load onu_tags %}
+{% load dispositivo_tags %}
+<div id="tabla_onus" class="table-responsive">
+<table class="table table-hover align-middle" id="table_onus">
+    <thead>
+        <tr>
+            <th>Estado</th>
+            <th>Serial / IP</th>
+            <th>Cliente</th>
+            <th>Puerto</th>
+            <th>Distancia</th>
+            <th>Power</th>
+            <th>Señal</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for onu in metricas.onus %}
+    <tr>
+        <td>{% if onu.signal == 0 %}<span class="badge bg-danger">inactivo</span>{% else %}<span class="badge bg-success">activo</span>{% endif %}</td>
+        {% find_onu onu.serial onu.ip request.path %}
+        <td style="width: 30px;">{{ onu.pon }}</td>
+        <td>{{ onu.distancia|metros_a_km }}</td>
+        <td>{{ onu.power|floatformat:"2" }}</td>
+        <td><span class="badge 
+        {% if onu.signal <= -20 %}bg-danger
+        {% elif onu.signal <= -18 %}bg-warning
+        {% elif onu.signal > -18 and onu.signal < 0 %}bg-success
+        {% else %}bg-secondary{% endif %}"> {{ onu.signal|floatformat:"2" }} </span></td>
+    </tr>
+    {% empty %}
+        <tr><td colspan="7" class="text-center text-muted py-3">Este dispositivo no tiene ONUs.</td></tr>
+    {% endfor %}
+    </tbody>
+</table>
+</div>

@@ -323,6 +323,7 @@ def guarda_estaciones_onu(dispositivo, guardar_historico=True, **datos):
             'signal': onu.get('signal', 0),
             'power': onu.get('power', 0),
             'ssid': onu.get('ssid',''),
+            'distancia': onu.get('distancia', 0),
             'uptime': onu.get('uptime', 0),
             'version': onu.get('version', ''),
             'puertos': onu.get("puertos", []),

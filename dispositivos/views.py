@@ -298,6 +298,7 @@ def detalle_dispositivo(request, pk):
         'dispositivo': dispositivo,
         'metricas': metricas,
         'estaciones': devices,
+        'estaciones_count': len(devices),
         'url_anterior': url_anterior,
         'hay_alarmas': hay_alarmas,
         'ping_actual': ping_actual,
