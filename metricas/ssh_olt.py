@@ -232,6 +232,15 @@ def onu_list(p1, host_name):
         rxBytes = portsStat.get("rxBytes", 0)
         txBytes = portsStat.get("txBytes", 0)
 
+        # Modelo
+        tipo = onu.get("bom", "0")
+        if tipo == "2449-14":
+            modelo = "UF-LOCO"
+        elif tipo == "2665-11":
+            modelo = "UF-WIFI"
+        else:
+            modelo = ""
+
         # Sistema
         sysStat = onu.get("system", {})
         cpu = sysStat.get("cpu", 0)
@@ -239,7 +248,7 @@ def onu_list(p1, host_name):
         uptime = sysStat.get("uptime", 0)
         temperature = sysStat.get("temperature", {})
         cpuTemp = float(temperature.get("cpu", 0))
-
+        
         # IP de puerto PON
         wanStat = onu.get("router", {})
         wanIP = wanStat.get("wanAddress", "")
@@ -250,6 +259,7 @@ def onu_list(p1, host_name):
             {
                 'serial': onu.get("serial", ""),
                 'version': onu.get("firmwareVersion", ""),
+                'sys_descr': modelo,
                 'ssid': host_name.strip(),
                 'signal': float(onu.get("rxPower", 0)),
                 'power': float(onu.get("txPower", 0)),
