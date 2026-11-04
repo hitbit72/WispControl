@@ -406,7 +406,7 @@ def guarda_estaciones_onu(dispositivo, guardar_historico=True, **datos):
                     if nombre:
                         interfaz = Interfaz.objects.update_or_create(
                             dispositivo=estacion_dev,
-                            nombre=nombre,
+                            nombre=nombre.strip(),
                             estado=puerto.get("estado", "down"),
                             velocidad_mbps=puerto.get("speed", 0)
                             )
