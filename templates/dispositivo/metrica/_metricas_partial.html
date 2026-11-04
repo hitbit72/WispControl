@@ -51,7 +51,6 @@
       {% if metricas.frequency %}(<span>{{ metricas.frequency }} MHz</span>){% endif %}
     {% endif %}
   </p>
-  {% if metricas.puerto_pon %}<p class="mb-1"><strong>Puerto PON: </strong>{{ metricas.puerto_pon }}</p>{% endif %}
   {% endif %}
   {% if dispositivo.tipo.clave in dispositivos_antenas %}
     <div class="row g-2 align-items-start mb-1">
@@ -75,24 +74,25 @@
     {% endif %}
   {% endif %}
   {% if not dispositivo.tipo.clave in dispositivos_antenas %}
-  <div class="row g-2 align-items-start mb-1">
-    {% if dispositivo.tipo.clave == 'mkt' %}
-    <div class="col-auto d-flex gap-1">
-      <p class="mb-0"><strong>CPU Frecuencia: </strong>{{ metricas.frequency |default:'0' }} MHz</p> ·
-    </div>
-    {% endif %}
-    <div class="col-auto d-flex gap-1">
-      <p class="mb-0"><strong>Latencia: </strong>{{ ping_actual.latency_ms|default:'—' }} ms</p>
-    </div>
+    {% if metricas.puerto_pon %}<p class="mb-1"><strong>Puerto PON: </strong>{{ metricas.puerto_pon }}</p>{% endif %}
     <div class="row g-2 align-items-start mb-1">
+      {% if dispositivo.tipo.clave == 'mkt' %}
       <div class="col-auto d-flex gap-1">
-        <p class="mb-0"><strong>Señal: </strong>{% include "dispositivo/comun/_signal_tx.html" %}</p> ·
+        <p class="mb-0"><strong>CPU Frecuencia: </strong>{{ metricas.frequency |default:'0' }} MHz</p> ·
       </div>
+      {% endif %}
       <div class="col-auto d-flex gap-1">
-        <p class="mb-0"><strong>Potencia: </strong>{{ metricas.power|default:'0' }} dbm</p>
+        <p class="mb-0"><strong>Latencia: </strong>{{ ping_actual.latency_ms|default:'—' }} ms</p>
+      </div>
+      <div class="row g-2 align-items-start mb-1">
+        <div class="col-auto d-flex gap-1">
+          <p class="mb-0"><strong>Señal: </strong>{% include "dispositivo/comun/_signal_tx.html" %}</p> ·
+        </div>
+        <div class="col-auto d-flex gap-1">
+          <p class="mb-0"><strong>Potencia: </strong>{{ metricas.power|default:'0' }} dbm</p>
+        </div>
       </div>
     </div>
-  </div>
   {% endif %}
   {% if metricas.uptime %}<p class="mb-1"><strong>Funcionando: </strong>{{ metricas.uptime|formatear_uptime }}</p>{% endif %}
   {% if metricas.timescan %}<p class="mb-0"><strong>Actualizado: </strong>{{ metricas.timescan }}</p>{% endif %}

@@ -386,7 +386,7 @@ def guarda_estaciones_onu(dispositivo, guardar_historico=True, **datos):
             if _IP != "" and interfaz.ip_address != _IP:
                 interfaz.ip_address = _IP
                 interfaz.save(update_fields=['ip_address'])
-                
+                print(f'IP PON1 actualizada {estacion_dev.nombre}: {_IP}')
 
             if guardar_historico:
                 if interfaz:
