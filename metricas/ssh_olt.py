@@ -233,7 +233,7 @@ def onu_list(p1, host_name):
         txBytes = portsStat.get("txBytes", 0)
 
         # Modelo
-        tipo = onu.get("bom", "0")
+        tipo = onu.get("bom", "")
         if tipo == "2449-14":
             modelo = "UF-LOCO"
         elif tipo == "2665-11":
@@ -261,6 +261,7 @@ def onu_list(p1, host_name):
                 'version': onu.get("firmwareVersion", ""),
                 'sys_descr': modelo,
                 'ssid': host_name.strip(),
+                'puerto_pon': onu.get("oltPort", 0),
                 'signal': float(onu.get("rxPower", 0)),
                 'power': float(onu.get("txPower", 0)),
                 'pon': int(onu.get("oltPort", 0)),

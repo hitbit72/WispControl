@@ -234,6 +234,7 @@ def detalle_dispositivo(request, pk):
                 'cliente_pk': cl_pk,
                 'cliente_activo': cl_activo,
                 'nombre_host': metrica.device.nombre_host,
+                'puerto_pon': metrica.puerto_pon,
                 'signal': metrica.signal,
                 'power': metrica.power,
                 'noise': metrica.noise,
@@ -259,6 +260,7 @@ def detalle_dispositivo(request, pk):
         #print('Estaciones no registradas:')
         # Después añadimos los dispositivos que no están en estaciones registradas
         las_ip='' # guaramos la última ip añadida, si la lista tiene repetidias con esto la descartamos
+        
         for device in metricas.estaciones:
             if device['ip'] not in ips_estaciones \
             and device['ip'] not in ips_publicas \
@@ -266,21 +268,22 @@ def detalle_dispositivo(request, pk):
                 devices.append({
                     'registrado': False,
                     'estado': 'activo',
-                    'ip_gestion': device['ip'],
+                    'ip_gestion': device.get('ip', ''),
                     'ip_publica': '',
                     'device_pk': 0,
                     'device_status': 'discover',
                     'cliente': '—',
                     'cliente_pk': 0,
                     'cliente_activo': False,
-                    'nombre_host': device['host'],
-                    'signal': device['signal'],
-                    'power': '—',
-                    'noise': device['noise'],
-                    'ccq': device['ccq'],
-                    'distancia': device['distancia'],
-                    'tx': device['tx_rate'],
-                    'rx': device['rx_rate'],
+                    'nombre_host': device.get('host', ''),
+                    'puerto_pon': device.get('pon', 0),
+                    'signal': device.get('signal', 0),
+                    'power': device.get('power', 0),
+                    'noise': device.get('noise', 0),
+                    'ccq': device.get('ccq', 0),
+                    'distancia': device.get('distancia', 0),
+                    'tx': device.get('tx_rate', 0),
+                    'rx': device.get('rx_rate', 0),
                 })
                 las_ip = device['ip']
                 #print(f"ip: {device['ip']} - {device['host']}")

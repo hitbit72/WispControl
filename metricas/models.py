@@ -36,6 +36,7 @@ class DeviceMetrics(models.Model):
     ccq = models.FloatField(null=True, blank=True, verbose_name='CCQ (%)')
     signal = models.FloatField(null=True, blank=True, verbose_name='Señal (dBm)')
     noise = models.FloatField(null=True,blank=True, verbose_name='Noise floor')
+    puerto_pon = models.PositiveIntegerField(null=True, blank=True, verbose_name='Puerto PON')
 
     ssid = models.CharField(max_length=200, null=True, blank=True)
     frequency = models.FloatField(null=True, blank=True, verbose_name='Frecuencia (MHz)')

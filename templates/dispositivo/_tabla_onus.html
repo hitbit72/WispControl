@@ -6,6 +6,7 @@
             <th>st</th>
             <th>IP Gestión</th>
             <th>Cliente</th>
+            <th>PON</th>
             <th>Host</th>
             <th>Señal</th>
             <th>Power</th>
@@ -38,6 +39,7 @@
         {{ metrica.cliente }}
         {% endif %}
         </td>
+        <td>{{ metrica.puerto_pon|default:0 }}</td>
         <td>{{ metrica.nombre_host }}</td>
         <td><span class="badge 
         {% if metrica.signal <= -20 %}bg-danger
