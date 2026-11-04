@@ -361,6 +361,9 @@ def guarda_estaciones_onu(dispositivo, guardar_historico=True, **datos):
             if dispositivo.rol != Dispositivo.Rol.MAIN:
                 continue
 
+            # IP capturado
+            _IP = onu.get("ip", "")
+
             # Puerto optico que conecta la ONU con la OLT
             interfaz = Interfaz.objects.filter(
                 dispositivo=estacion_dev,
@@ -374,10 +377,16 @@ def guarda_estaciones_onu(dispositivo, guardar_historico=True, **datos):
                     nombre='PON1',
                     tipo=Interfaz.Tipo.OPTICO,
                     estado=Interfaz.Estado.ARRIBA,
-                    ip_address=onu.get("ip", ""),
+                    ip_address=_IP,
                     mac_address=onu.get("mac", ""),
                     descripcion='Enlace con OLT',
                 )
+
+            # Actualizar  IP si es necesario
+            if _IP != "" and interfaz.ip_address != _IP:
+                interfaz.ip_address = _IP
+                interfaz.save(update_fields=['ip_address'])
+                
 
             if guardar_historico:
                 if interfaz:

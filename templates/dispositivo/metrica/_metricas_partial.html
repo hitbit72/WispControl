@@ -51,6 +51,7 @@
       {% if metricas.frequency %}(<span>{{ metricas.frequency }} MHz</span>){% endif %}
     {% endif %}
   </p>
+  {% if metricas.puerto_pon %}<p class="mb-1"><strong>Puerto PON: </strong>{{ metricas.puerto_pon }}</p>{% endif %}
   {% endif %}
   {% if dispositivo.tipo.clave in dispositivos_antenas %}
     <div class="row g-2 align-items-start mb-1">
