@@ -721,11 +721,17 @@ def graficas_dispositivo(request, pk):
         if trafico.exists():
             # Convert datetime to ISO string for JSON serialization
             nombre = interfaz.nombre2 if interfaz.nombre2 else interfaz.nombre
-            trafico_interfaces[nombre] = [
-                {'timestamp': t['timestamp'].isoformat(), 'rx': t['rx'], 'tx': t['tx']}
-                for t in trafico.values('timestamp', 'rx', 'tx')
-            ]
-    
+            if dispositivo.modo_metrica == Dispositivo.Modulo_Scan.ONU1:
+                trafico_interfaces[nombre] = [
+                    {'timestamp': t['timestamp'].isoformat(), 'rx': t['tx'], 'tx': t['rx']}
+                    for t in trafico.values('timestamp', 'rx', 'tx')
+                ]
+            else:
+                trafico_interfaces[nombre] = [
+                    {'timestamp': t['timestamp'].isoformat(), 'rx': t['rx'], 'tx': t['tx']}
+                    for t in trafico.values('timestamp', 'rx', 'tx')
+                ]
+            
     # Preparar datos para Chart.js (formato: labels + datasets)
     def prepare_chart_data(queryset, timestamp_field, value_fields, default_value):
         """Convierte queryset a formato Chart.js"""
