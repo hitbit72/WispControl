@@ -7,7 +7,6 @@ Los OIDs son "básicos" para empezar y se deben validar contra equipos reales
 según marca/modelo.
 """
 
-from django.conf import settings
 from dispositivos.models import Marca
 from metricas.models import OIDmetric
 
