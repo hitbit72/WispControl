@@ -2,11 +2,11 @@
 .env
 .venv
 .vscode
-
 env/
 venv/
 
 .agents/
+.opencode/
 
 docs/
 temp/
