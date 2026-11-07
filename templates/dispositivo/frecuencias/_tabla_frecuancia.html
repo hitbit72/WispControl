@@ -72,10 +72,16 @@
     .table thead th {
         font-size: 0.6rem;
     }
+
+    .marcada {
+    	background-image:url('/static/assets/images/system/red.png');
+	    background-repeat: no-repeat;
+	    background-position: center center;
+    }
 </style>
 
 <div class="table-responsive" style="max-height: 55vh; overflow: auto;">
-    <table class="table table-bordered table-sm text-center align-middle table-frecuencias" style="font-size: 0.7rem; white-space: nowrap;">
+    <table id="mainTableFreq" class="table table-bordered table-sm text-center align-middle table-frecuencias" style="font-size: 0.7rem; white-space: nowrap;">
         <thead class="table-light sticky-top">
             <tr>
                 <th class="col-sticky-1 bg-light text-start ps-2">IP</th>
@@ -124,3 +130,14 @@
         </tbody>
     </table>
 </div>
+
+<script>
+// Funcion para marcar/desmarcar la celda al jacer click
+var cellButtons = document.querySelectorAll(".cell-freq");
+cellButtons.forEach(function(cell) {
+    cell.addEventListener("click", function () {
+        // Alterna la clase 'marcada' en la celda pulsada
+        cell.classList.toggle("marcada");
+    });
+});
+</script>
