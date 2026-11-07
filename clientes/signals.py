@@ -99,7 +99,7 @@ def _sincronizar_al_eliminar(sender, instance, **kwargs):
 
 
 def _sincronizar_tarea():
-    # Ejecuta el Command de sincronización, actulizando todas las tareas pendientes.
+    # Ejecuta el Command de sincronización (cron), actulizando todas las tareas pendientes.
 
     #DEBUG -> desactivado, solo usar en producción
     if settings.DEBUG:
