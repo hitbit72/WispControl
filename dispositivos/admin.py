@@ -8,21 +8,21 @@ class InterfazInline(admin.TabularInline):
 
 @admin.register(Marca)
 class MarcaAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'modelo')
+    list_display = ('id', 'nombre', 'modelo')
     list_filter = ('nombre',)
     search_fields = ('nombre', 'modelo')
 
 
 @admin.register(TipoEquipo)
 class TipoEquipoAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'clave')
+    list_display = ('id', 'nombre', 'clave')
     list_filter = ('nombre',)
     search_fields = ('nombre', 'clave')
 
 
 @admin.register(Dispositivo)
 class DispositivoAdmin(admin.ModelAdmin):
-    list_display = ('ip_gestion','nombre', 'nombre_host', 'rol', 'tipo', 'marca', 'sector', 'estado', 'cliente')
+    list_display = ('id', 'ip_gestion','nombre', 'nombre_host', 'rol', 'tipo', 'marca', 'sector', 'estado', 'cliente')
     list_filter = ('rol','tipo', 'marca', 'estado', 'sector')
     search_fields = ('nombre', 'nombre_host', 'ip_gestion', 'mac_address', 'cliente__nombre_completo')
     inlines = [InterfazInline]
@@ -30,7 +30,7 @@ class DispositivoAdmin(admin.ModelAdmin):
 
 @admin.register(Interfaz)
 class InterfazAdmin(admin.ModelAdmin):
-    list_display = ('mostrar', 'alarma_cambio', 'dispositivo', 'nombre', 'nombre2', 'tipo', 'estado', 'velocidad_mbps', 'ip_address')
+    list_display = ('id', 'mostrar', 'alarma_cambio', 'dispositivo', 'nombre', 'nombre2', 'tipo', 'estado', 'velocidad_mbps', 'ip_address')
     list_filter = ('mostrar', 'alarma_cambio', 'tipo', 'estado')
     search_fields = ('nombre', 'nombre2', 'dispositivo__nombre', 'ip_address')
     readonly_fields = ('dispositivo',)

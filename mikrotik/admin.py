@@ -12,7 +12,7 @@ class PlanInline(admin.TabularInline):
 
 @admin.register(Router)
 class RouterAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'modelo', 'numero_serie', 'ip', 'puerto', 'sector')
+    list_display = ('id', 'nombre', 'modelo', 'numero_serie', 'ip', 'puerto', 'sector')
     list_filter = ('sector', 'modelo')
     search_fields = ('nombre', 'ip', 'modelo')
     inlines = [PlanInline]
@@ -23,14 +23,14 @@ class RouterAdmin(admin.ModelAdmin):
 
 @admin.register(Plan)
 class PlanAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'router', 'velocidad_bajada', 'velocidad_subida', 'priority_down', 'priority_up')
+    list_display = ('id', 'nombre', 'router', 'velocidad_bajada', 'velocidad_subida', 'priority_down', 'priority_up')
     list_filter = ('router',)
     search_fields = ('nombre', 'router__nombre')
 
 
 @admin.register(TareaSincronizacion)
 class TareaAdmin(admin.ModelAdmin):
-    list_display = ( 'contrato', 'identificador_mikrotik', 'cliente_nombre', 'plan_nombre', 'operacion', 'estado', 'conexion', 'intentos', 'creada_en', 'procesada_en')
+    list_display = ('id', 'contrato', 'identificador_mikrotik', 'cliente_nombre', 'plan_nombre', 'operacion', 'estado', 'conexion', 'intentos', 'creada_en', 'procesada_en')
     list_filter = ('router', 'plan_nombre')
     search_fields = ('identificador_mikrotik', 'plan_nombre', 'cliente_nombre')
     readonly_fields = ('identificador_mikrotik', 'operacion')
