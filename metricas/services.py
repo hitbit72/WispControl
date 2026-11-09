@@ -89,6 +89,7 @@ def guardar_puertos(dispositivo, guardar_historico=True, **datos):
         elif any(exclude.lower() in puerto['nombre'].lower() for exclude in ('pon', 'sfp')):
             puerto['tipo'] = Interfaz.Tipo.OPTICO
 
+
         # Buscamos el interface
         interfaz = Interfaz.objects.filter(
             dispositivo=dispositivo,
