@@ -404,12 +404,14 @@ def guarda_estaciones_onu(dispositivo, guardar_historico=True, **datos):
                 for puerto in puertos:
                     nombre = puerto.get("nombre", None)
                     if nombre:
-                        interfaz = Interfaz.objects.update_or_create(
-                            dispositivo=estacion_dev,
-                            nombre=nombre.strip(),
-                            estado=puerto.get("estado", "down"),
-                            velocidad_mbps=puerto.get("speed", 0)
-                            )
+                        interfaz, created = Interfaz.objects.update_or_create(
+                                    dispositivo=estacion_dev,
+                                    nombre=nombre.strip(),
+                                    defaults={
+                                        "estado": puerto.get("estado", "down"),
+                                        "velocidad_mbps": puerto.get("speed", 0),
+                                    }
+                                )
             except Exception as e:
                 print(f'services(guarda_estaciones_onu) * Error al guardar: puerto duplicado {nombre}, {estacion_dev.ip_gestion}\n{e}')
 
