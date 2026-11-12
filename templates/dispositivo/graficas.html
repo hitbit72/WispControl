@@ -16,7 +16,8 @@
     <div class="card-body py-2">
         <form method="get" class="row g-2 align-items-end" id="periodo-form">
             <input type="hidden" name="next" value="{{ url_anterior }}">
-            
+            <input type="hidden" name="ifaceselected" id="id_ifaceselected" value="{{ iface_selected }}">
+
             <!-- Botones de periodo rápido -->
             <div class="col-auto">
                 <label class="form-label mb-0 fw-bold">Periodo: </label>
@@ -61,7 +62,7 @@
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="mb-0"><i class="bi bi-arrow-down-up" aria-hidden="true"></i> Tráfico (Mbps)</h5>
                 <div class="d-flex gap-2">
-                    <select class="form-select form-select-sm" id="interface-select" style="width: auto;" onchange="renderTraficoChart()">
+                    <select class="form-select form-select-sm" id="interface-select" style="width: auto;" onchange="selectTraficoChart()">
                         <option value="">Seleccionar interfaz</option>
                     </select>
                 </div>
@@ -151,6 +152,7 @@ const traficoInterfaces = {{ trafico_interfaces|safe }};
 let currentPeriodo = '{{ periodo }}';
 let fechaInicio = '{{ fecha_inicio }}';
 let fechaFin = '{{ fecha_fin }}';
+let interface = {{ iface_selected }};
 
 // Crear/actualizar gráfica simple (un dataset)
 function createSingleChart(canvasId, labels, values, metricKey, extraOptions = {}) {
@@ -328,6 +330,13 @@ function setPeriodo(p) {
     }
 }
 
+function selectTraficoChart(){
+    interface = document.getElementById('interface-select').selectedIndex;
+    document.getElementById('id_ifaceselected').value = interface;
+    alert(interface);
+    renderTraficoChart();
+}
+
 // Inicializar
 document.addEventListener('DOMContentLoaded', () => {
     {% if metrcias_len > 0 %}
@@ -352,11 +361,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Seleccionar primera interfaz por defecto
     if (select.options.length > 1) {
-        select.selectedIndex = 1;
+        if (interface > 0){
+            select.selectedIndex = interface;
+        }else{
+            select.selectedIndex = 1;
+        }
         renderTraficoChart();
     }
     {% endif %}
-    
+
+
     // Inicializar fechas personalizadas si es periodo custom
     if (currentPeriodo === 'custom') {
         setPeriodo('custom');

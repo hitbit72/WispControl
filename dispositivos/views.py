@@ -661,7 +661,8 @@ def graficas_dispositivo(request, pk):
     periodo = request.GET.get('periodo', 'day')  # day, week, month, custom
     fecha_inicio_str = request.GET.get('fecha_inicio')
     fecha_fin_str = request.GET.get('fecha_fin')
-    
+    iface_selected = request.GET.get('ifaceselected', 1)
+
     ahora = timezone.now()
 
     if periodo == 'hour':
@@ -700,7 +701,11 @@ def graficas_dispositivo(request, pk):
         timestamp__gte=fecha_inicio,
         timestamp__lte=fecha_fin
     ).order_by('timestamp')
-    
+
+    if periodo == 'week':
+        # Truco modulo en Postgres para descartar ~25% de los registros de forma uniforme
+        metricas_hist = metricas_hist.extra(where=["id % 4 != 0"])
+        
     # Latencia/ping
     latencias_hist = DeviceLatencyHistory.objects.filter(
         device=dispositivo,
@@ -774,6 +779,7 @@ def graficas_dispositivo(request, pk):
         'periodo': periodo,
         'fecha_inicio': fecha_inicio.isoformat(),
         'fecha_fin': fecha_fin.isoformat(),
+        'iface_selected': iface_selected,
         'metricas_data': json.dumps(metricas_data),
         'latencias_data': json.dumps(latencias_data),
         #'ping_success': json.dumps(ping_success),
