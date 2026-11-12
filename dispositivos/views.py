@@ -645,7 +645,6 @@ def eliminar_enlace(request, pk):
 
     return render(request, 'dispositivo/enlace/confirmar_eliminar_enlace.html', {'enlace': enlace})
 
-
 @login_required
 def graficas_dispositivo(request, pk):
     """
@@ -702,10 +701,12 @@ def graficas_dispositivo(request, pk):
         timestamp__lte=fecha_fin
     ).order_by('timestamp')
 
+    """
     if periodo == 'week':
         # Truco modulo en Postgres para descartar ~25% de los registros de forma uniforme
         metricas_hist = metricas_hist.extra(where=["id % 4 != 0"])
-        
+    """
+
     # Latencia/ping
     latencias_hist = DeviceLatencyHistory.objects.filter(
         device=dispositivo,
