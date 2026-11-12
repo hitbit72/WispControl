@@ -310,13 +310,16 @@ function setPeriodo(p) {
         // Establecer valores por defecto (últimas 24h)
         let ahora = new Date();
         let hace24h = new Date(ahora - 24*60*60*1000);
-        if (fechaInicio){ ahora = new Date(fechaInicio); }
-        if (fechaFin){ hace24h = new Date(fechaFin); }
+        ahora = ahora.toISOString();
+        hace24h = hace24h.toISOString();
 
-        //document.getElementById('id_fecha_inicio').value = hace24h.toISOString().slice(0, 16);
-        //document.getElementById('id_fecha_fin').value = ahora.toISOString().slice(0, 16);
-        document.getElementById('id_fecha_inicio').value = ahora.toISOString().slice(0, 16);
-        document.getElementById('id_fecha_fin').value = hace24h.toISOString().slice(0, 16);
+        if (fechaInicio){ ahora = fechaInicio; }
+        if (fechaFin){ hace24h = fechaFin; }
+
+        document.getElementById('id_fecha_inicio').value = ahora.slice(0, 16);
+        document.getElementById('id_fecha_fin').value = hace24h.slice(0, 16);
+        //document.getElementById('id_fecha_inicio').value = ahora.toISOString().slice(0, 16);
+        //document.getElementById('id_fecha_fin').value = hace24h.toISOString().slice(0, 16);
     } else {
         customGroup.classList.add('d-none');
         customGroup2.classList.add('d-none');
