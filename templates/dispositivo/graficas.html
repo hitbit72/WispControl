@@ -16,8 +16,7 @@
     <div class="card-body py-2">
         <form method="get" class="row g-2 align-items-end" id="periodo-form">
             <input type="hidden" name="next" value="{{ url_anterior }}">
-            <input type="hidden" name="ifaceselected" id="id_ifaceselected" value="{{ iface_selected }}">
-
+            
             <!-- Botones de periodo rápido -->
             <div class="col-auto">
                 <label class="form-label mb-0 fw-bold">Periodo: </label>
@@ -62,7 +61,7 @@
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="mb-0"><i class="bi bi-arrow-down-up" aria-hidden="true"></i> Tráfico (Mbps)</h5>
                 <div class="d-flex gap-2">
-                    <select class="form-select form-select-sm" id="interface-select" style="width: auto;" onchange="selectTraficoChart()">
+                    <select class="form-select form-select-sm" id="interface-select" style="width: auto;" onchange="renderTraficoChart()">
                         <option value="">Seleccionar interfaz</option>
                     </select>
                 </div>
@@ -150,9 +149,6 @@ const latenciasData = {{ latencias_data|safe }};
 const traficoInterfaces = {{ trafico_interfaces|safe }};
 
 let currentPeriodo = '{{ periodo }}';
-let fechaInicio = '{{ fecha_inicio }}';
-let fechaFin = '{{ fecha_fin }}';
-let interface = {{ iface_selected }};
 
 // Crear/actualizar gráfica simple (un dataset)
 function createSingleChart(canvasId, labels, values, metricKey, extraOptions = {}) {
@@ -290,7 +286,7 @@ function renderLatenciaChart() {
 function setPeriodo(p) {
     currentPeriodo = p;
     document.getElementById('id_periodo').value = p;
-
+    
     // Actualizar botones
     document.querySelectorAll('#periodo-buttons button').forEach(btn => {
         btn.classList.toggle('btn-primary', btn.dataset.periodo === p);
@@ -308,18 +304,10 @@ function setPeriodo(p) {
         btnAplicar.classList.remove('d-none');
         
         // Establecer valores por defecto (últimas 24h)
-        // const ahora = new Date();
-        // const hace24h = new Date(ahora - 24*60*60*1000);
-        let ahora = new Date();
-        let hace24h = new Date(ahora - 24*60*60*1000);
-        if (fechaInicio){ ahora = new Date(fechaInicio); }
-        if (fechaFin){ hace24h = new Date(fechaFin); }
-
-        //document.getElementById('id_fecha_inicio').value = hace24h.toISOString().slice(0, 16);
-        //document.getElementById('id_fecha_fin').value = ahora.toISOString().slice(0, 16);
-        document.getElementById('id_fecha_inicio').value = ahora.toISOString().slice(0, 16);
-        document.getElementById('id_fecha_fin').value = hace24h.toISOString().slice(0, 16);
-
+        const ahora = new Date();
+        const hace24h = new Date(ahora - 24*60*60*1000);
+        document.getElementById('id_fecha_inicio').value = hace24h.toISOString().slice(0, 16);
+        document.getElementById('id_fecha_fin').value = ahora.toISOString().slice(0, 16);
     } else {
         customGroup.classList.add('d-none');
         customGroup2.classList.add('d-none');
@@ -328,13 +316,6 @@ function setPeriodo(p) {
         // Auto-submit para periodos predefinidos
         document.getElementById('periodo-form').submit();
     }
-}
-
-function selectTraficoChart(){
-    interface = document.getElementById('interface-select').selectedIndex;
-    document.getElementById('id_ifaceselected').value = interface;
-    alert(interface);
-    renderTraficoChart();
 }
 
 // Inicializar
@@ -361,16 +342,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Seleccionar primera interfaz por defecto
     if (select.options.length > 1) {
-        if (interface > 0){
-            select.selectedIndex = interface;
-        }else{
-            select.selectedIndex = 1;
-        }
+        select.selectedIndex = 1;
         renderTraficoChart();
     }
     {% endif %}
-
-
+    
     // Inicializar fechas personalizadas si es periodo custom
     if (currentPeriodo === 'custom') {
         setPeriodo('custom');
